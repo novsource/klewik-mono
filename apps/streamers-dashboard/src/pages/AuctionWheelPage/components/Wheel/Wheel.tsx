@@ -1,13 +1,31 @@
 import {RefObject, forwardRef, useEffect, useRef} from 'react';
 import {cn} from '../../../../shared/utils/cn';
 import {useWheelInit} from '../../../../shared/hooks/useWheelInit';
+import {getRandomHSLColor} from '../../../../shared/utils/canvas';
+
+const slots: AuctionSlot[] = [
+  {
+    name: 'Test',
+    auctionColor: getRandomHSLColor(),
+    tag: '',
+    value: 1000,
+    _id: '12',
+  },
+  {
+    name: 'Test 2',
+    auctionColor: getRandomHSLColor(),
+    tag: '',
+    value: 2000,
+    _id: '120',
+  },
+];
 
 const Wheel = forwardRef<HTMLCanvasElement>((_, ref) => {
   const wheelSelectorRef = useRef<HTMLCanvasElement>(null);
 
-  const {wheelSize, draw} = useWheelInit({
+  const {draw} = useWheelInit({
     isFullScreen: false,
-    items: [],
+    items: slots,
     wheelCanvasRef: ref as RefObject<HTMLCanvasElement>,
     wheelSelectorCanvasRef: wheelSelectorRef,
   });
