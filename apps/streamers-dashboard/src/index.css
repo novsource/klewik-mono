@@ -9,7 +9,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: theme('colors.dark.foreground');
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -18,7 +18,7 @@
 }
 
 #root {
-  @apply h-screen w-full;
+  @apply h-full w-full;
 }
 
 body {
