@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./src/**/*.{html,js,ts,tsx,jsx}'],
+  darkMode: 'selector',
   theme: {
     colors: {
       white: '#FFF',
@@ -37,6 +38,9 @@ export default {
       medium: '12px',
       large: '24px',
       pill: '10000px',
+    },
+    borderColor: {
+      dark: '#2A2D32',
     },
     extend: {
       spacing: {
