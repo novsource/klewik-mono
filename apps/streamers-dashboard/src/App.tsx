@@ -1,7 +1,7 @@
-import AuctionWheelPage from './pages/AuctionWheelPage';
+import {AppRouter} from './shared/router/RouterProvider';
 
 function App() {
-  return <AuctionWheelPage />;
+  return <AppRouter />;
 }
 
 export default App;
