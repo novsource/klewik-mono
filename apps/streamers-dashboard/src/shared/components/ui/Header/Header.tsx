@@ -8,7 +8,6 @@ const Header = () => {
           <div className="">
             <Icons.Logo />
           </div>
-          <div className="">Logo</div>
         </div>
       </div>
     </header>
