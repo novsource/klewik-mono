@@ -26,7 +26,23 @@ export default {
         DEFAULT: '#505285',
       },
     },
-    extend: {},
+    fontSize: {
+      sm: '11px',
+      body: '14px',
+      title: '17px',
+      titleXL: '21px',
+    },
+    borderRadius: {
+      small: '8px',
+      medium: '12px',
+      large: '24px',
+      pill: '10000px',
+    },
+    extend: {
+      spacing: {
+        '4xl': '1.5rem',
+      },
+    },
   },
   plugins: [],
 };
