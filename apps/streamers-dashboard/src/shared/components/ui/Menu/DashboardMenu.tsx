@@ -11,10 +11,6 @@ type DashboardMenuProps = {
 const DashboardMenu = ({className}: DashboardMenuProps) => {
   const {pathname} = useLocation();
 
-  useEffect(() => {
-    console.log(pathname);
-  }, []);
-
   const menuItems = useMemo(() => {
     return paths.reduce<ReactNode[]>((acc, curr) => {
       const menuIcon = {

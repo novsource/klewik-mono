@@ -3,7 +3,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from 'react-router-dom';
-import AuctionWheelPage from '../../pages/AuctionWheelPage';
+import AuctionWheelPage from '../../pages/AuctionWheelPage/AuctionWheelPage';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(

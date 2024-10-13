@@ -1,6 +1,6 @@
 import {PropsWithChildren} from 'react';
-import Header from '../shared/components/ui/Header/Header';
-import DashboardMenu from '../shared/components/ui/Menu/DashboardMenu';
+import Header from '../components/ui/Header/Header';
+import DashboardMenu from '../components/ui/Menu/DashboardMenu';
 
 const AuctionDashboardLayout = ({children}: PropsWithChildren) => {
   return (
