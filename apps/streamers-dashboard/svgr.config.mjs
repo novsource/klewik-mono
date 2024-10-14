@@ -1,4 +1,4 @@
-const path = require('path');
+const path = import('path');
 const outDir = './src/shared/components/ui/icons'; // путь, до папки, где будут храниться преобразованные иконки
 
 // Шаблон компонента с иконкой
@@ -35,7 +35,7 @@ function indexTemplate(files) {
 }
 
 // Базовая настройка конфига
-module.exports = {
+export default {
   typescript: true,
   icon: true,
   outDir,
