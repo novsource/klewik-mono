@@ -21,6 +21,8 @@ const DashboardMenu = ({className}: DashboardMenuProps) => {
       }[curr.path];
 
       const isCurrentItemInPathname = pathname.includes(curr.path);
+      const routerLink = curr.path.replace('/', '');
+
       const menuItem = (
         <li
           key={curr.path}
@@ -28,7 +30,7 @@ const DashboardMenu = ({className}: DashboardMenuProps) => {
             'text-gray cursor-pointer hover:text-gray-accent transition-all',
             isCurrentItemInPathname && 'text-gray-accent'
           )}>
-          <Link to={curr.path} relative="path">
+          <Link to={routerLink} relative="path">
             {menuIcon}
           </Link>
         </li>
@@ -37,6 +39,7 @@ const DashboardMenu = ({className}: DashboardMenuProps) => {
       acc.push(menuItem);
 
       return acc;
+      behaiver;
     }, []);
   }, [pathname]);
 

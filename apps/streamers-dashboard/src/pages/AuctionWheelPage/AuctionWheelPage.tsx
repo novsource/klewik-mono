@@ -1,12 +1,7 @@
-import AuctionDashboardLayout from '../../shared/layouts/AuctionDashboardLayout';
 import {WheelContainer} from './components/Wheel';
 
 const AuctionWheelPage = () => {
-  return (
-    <AuctionDashboardLayout>
-      <WheelContainer />
-    </AuctionDashboardLayout>
-  );
+  return <WheelContainer />;
 };
 
 export default AuctionWheelPage;

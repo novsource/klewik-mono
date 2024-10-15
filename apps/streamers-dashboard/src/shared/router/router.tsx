@@ -1,21 +1,29 @@
 import {
+  Navigate,
   Route,
   createBrowserRouter,
   createRoutesFromElements,
 } from 'react-router-dom';
 import AuctionWheelPage from '../../pages/AuctionWheelPage/AuctionWheelPage';
+import AuctionDashboardLayout from './layouts/AuctionDashboardLayout';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
-      <Route element={<div>Welcome page</div>} path="/" />
-      <Route path="/dashboard/:auctionId">
-        <Route path="wheel" element={<AuctionWheelPage />} />
-        <Route path="donations" />
-        <Route path="slots" />
-        <Route path="settings" />
+      <Route path="/">
+        <Route index element={<div>Welcome</div>} />
+        <Route path="dashboard/:id">
+          <Route index element={<Navigate to="wheel" />} />
+          <Route element={<AuctionDashboardLayout />}>
+            <Route path="wheel" element={<AuctionWheelPage />} />
+            <Route path="donations" />
+            <Route path="slots" />
+            <Route path="settings" />
+            <Route path="*" element={<Navigate to="wheel" />} />
+          </Route>
+        </Route>
       </Route>
-      <Route path="*" element={<div>Not found</div>} />
+      <Route path="*" element={<Navigate to="/" />} />
     </Route>
   )
 );
