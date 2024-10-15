@@ -12,7 +12,10 @@ const AuctionDashboardLayout = ({children}: PropsWithChildren) => {
             <aside className="w-16 h-full flex-none">
               <DashboardMenu className="absolute top-1/2 -translate-y-1/2 left-2" />
             </aside>
-            <div className="h-full w-full px-4 mt-4">{children}</div>
+            <div className="h-full w-full px-4 flex-shrink-[2]">{children}</div>
+            <div className="min-w-[300px] w-[500px] h-full">
+              <div className="h-full bg-dark rounded-large"></div>
+            </div>
           </div>
         </div>
       </main>

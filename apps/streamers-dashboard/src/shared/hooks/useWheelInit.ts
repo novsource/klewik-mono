@@ -37,7 +37,6 @@ export const useWheelInit: WheelInit = ({
       if (items && !!items.length) {
         drawSlicesItems(wheelCanvas, items);
       } else {
-        // console.log('draw empty');
         drawEmptyWheel(wheelSelectorCanvas);
       }
 

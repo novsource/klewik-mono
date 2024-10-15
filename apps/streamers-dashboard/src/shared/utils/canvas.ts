@@ -2,14 +2,19 @@ export const getMaxSizeCanvas = (wrapper: HTMLDivElement): number => {
   const wrapperWidth = wrapper.offsetWidth;
   const wrapperHeight = wrapper.offsetHeight;
 
+  const rightWidgetMinWidth = 50;
   const isMobile = window.innerWidth <= 1024;
   const wrapperPosY = wrapper.getBoundingClientRect().y;
+
+  const generalMaxWidth = isMobile
+    ? wrapperWidth
+    : wrapperWidth - rightWidgetMinWidth;
 
   const generalMaxHeight = isMobile
     ? window.innerHeight - 56 - wrapperPosY
     : window.innerHeight - wrapperPosY;
 
-  const targetSize = Math.min(wrapperWidth, wrapperHeight, generalMaxHeight);
+  const targetSize = Math.min(generalMaxWidth, wrapperHeight, generalMaxHeight);
 
   return targetSize;
 };

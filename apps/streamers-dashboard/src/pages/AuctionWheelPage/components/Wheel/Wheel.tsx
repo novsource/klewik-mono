@@ -1,5 +1,5 @@
 import {RefObject, forwardRef, useEffect, useRef} from 'react';
-import {cn} from '../../../../shared/utils/cn';
+
 import {useWheelInit} from '../../../../shared/hooks/useWheelInit';
 import {getRandomHSLColor} from '../../../../shared/utils/canvas';
 
@@ -35,7 +35,7 @@ const Wheel = forwardRef<HTMLCanvasElement>((_, ref) => {
   }, []);
 
   return (
-    <div className={cn('flex h-full w-full justify-center')}>
+    <div className="flex flex-shrink-1 h-full w-full justify-center items-center">
       <div className="relative flex h-full w-full items-start justify-center">
         <canvas ref={ref} />
         <canvas className="absolute top-0" ref={wheelSelectorRef} />

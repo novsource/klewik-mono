@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 :root {
+  --header-height: 64px;
+}
+
+:root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -27,4 +31,12 @@ html {
 
 body {
   @apply m-0 h-full w-full
+}
+
+header {
+  height: var(--header-height);
+}
+
+main {
+  max-height: calc(100% - var(--header-height));
 }
