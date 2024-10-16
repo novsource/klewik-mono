@@ -253,17 +253,20 @@ export const getSliceInfo = (
   );
 };
 
-export const getAnglesForItems = (
-  radius: number,
-  lots: AuctionSlot[] | null,
+export const getItemsWithAngles = <T extends AuctionSlot>(
+  lots: T[] | null,
   wheelMode?: WheelMode
-): AuctionSlotWithAngles[] | null => {
-  if (!lots || lots.length === 0) return null;
+): AuctionSlotWithAngles[] => {
+  if (!lots || lots.length === 0) return [];
 
   const newLots =
     wheelMode === 'dropout' ? reverseLotsByValue(lots) : [...lots];
 
   const sumItemsValue = newLots.reduce((acc, lot) => acc + lot['value'], 0);
+
+  // Radius size not important
+  const radius = 1;
+
   const maxWheelArcLength = getMaxCircleLength(radius);
 
   let startAngle = 0;

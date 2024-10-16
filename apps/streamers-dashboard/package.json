@@ -12,6 +12,7 @@
     "icons": "npx @svgr/cli -- ./src/assets/icons"
   },
   "dependencies": {
+    "framer-motion": "^11.11.9",
     "path": "^0.12.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
