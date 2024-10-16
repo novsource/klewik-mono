@@ -16,7 +16,16 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Alias */
+    "paths": {
+      "@/*": ["./src/*"],
+      "@hooks/*": ["./src/shared/hooks/*"],
+      "@ui/*": ["./src/shared/components/ui/*"],
+      "@layouts/*": ["./src/shared/router/layouts/*"],
+      "@utils/*": ["./src/lib/utils/*"]
+    }
   },
   "include": ["vite.config.ts"]
 }

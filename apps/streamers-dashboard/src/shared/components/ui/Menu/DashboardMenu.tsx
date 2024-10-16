@@ -1,5 +1,5 @@
 import {Link, useLocation} from 'react-router-dom';
-import {cn} from '../../../utils/cn';
+import {cn} from '../../../../lib/utils/cn';
 import {Icons} from '../icons';
 import {ReactNode, useMemo} from 'react';
 import {paths} from '../../../router/paths';
@@ -39,7 +39,6 @@ const DashboardMenu = ({className}: DashboardMenuProps) => {
       acc.push(menuItem);
 
       return acc;
-      behaiver;
     }, []);
   }, [pathname]);
 

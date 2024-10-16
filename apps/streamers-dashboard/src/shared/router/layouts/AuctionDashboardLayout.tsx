@@ -1,6 +1,6 @@
-import Header from '../../components/ui/Header/Header';
-import DashboardMenu from '../../components/ui/Menu/DashboardMenu';
 import {Outlet} from 'react-router-dom';
+
+import {Header, DashboardMenu} from '@ui/index';
 
 const AuctionDashboardLayout = () => {
   return (
@@ -17,7 +17,7 @@ const AuctionDashboardLayout = () => {
             </div>
             <div className="min-w-[300px] w-[500px] h-full py-5">
               <div className="h-full flex flex-col gap-y-4">
-                <button className="bg-green text-white font-medium text-title px-5 py-3 rounded-medium">
+                <button className="bg-green text-white font-semibold text-title px-5 py-3 rounded-medium">
                   Spin wheel
                 </button>
                 <div className="h-full bg-dark rounded-large"></div>

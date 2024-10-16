@@ -31,7 +31,6 @@ export const Icons = {
   MoneyBag,
   Preferences,
   ReturnArrow,
-  ReturnArrow,
   Settings,
   Telegram,
   Timer,
