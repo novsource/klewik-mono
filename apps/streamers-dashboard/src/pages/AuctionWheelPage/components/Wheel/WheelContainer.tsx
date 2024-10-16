@@ -1,6 +1,6 @@
+import {getRandomHSLColor} from '@utils/canvas';
 import Wheel from './Wheel';
-import {useWheelInit} from '../../../../shared/hooks/wheel/useWheelInit';
-import {getRandomHSLColor} from '../../../../lib/utils/canvas';
+import {useWheelInit} from '@hooks/wheel/useWheelInit';
 
 const slots: AuctionSlot[] = [
   {

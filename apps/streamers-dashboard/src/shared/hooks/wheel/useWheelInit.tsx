@@ -5,7 +5,7 @@ import {
   drawEmptyWheel,
   drawSelector,
   drawSlicesItems,
-} from '../../../lib/utils/wheelCanvas';
+} from '@utils/wheelCanvas';
 
 type WheelInitHookProps = {
   items: AuctionSlot[] | AuctionSlotWithAngles[] | null;

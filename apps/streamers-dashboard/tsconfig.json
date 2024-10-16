@@ -3,5 +3,15 @@
   "references": [
     {"path": "./tsconfig.app.json"},
     {"path": "./tsconfig.node.json"}
-  ]
+  ],
+  "compilerOptions": {
+    /* Alias */
+    "paths": {
+      "@hooks/*": ["./src/shared/hooks/*"],
+      "@ui/*": ["./src/shared/components/ui/*"],
+      "@layouts/*": ["./src/shared/router/layouts/*"],
+      "@utils/*": ["./src/lib/utils/*"],
+      "@/*": ["./src/*"]
+    }
+  }
 }
