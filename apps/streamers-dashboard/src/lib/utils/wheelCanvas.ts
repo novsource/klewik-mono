@@ -369,6 +369,8 @@ export const calculateRotateWheelCSSValue = (
   const rotateCSSValue =
     360 * spinCount + (selectorDegree - randomValueFromRange);
 
+  console.log(rotateCSSValue);
+
   return rotateCSSValue;
 };
 

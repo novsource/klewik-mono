@@ -3,7 +3,10 @@ import Wheel from './Wheel';
 import {useWheelInit} from '@hooks/wheel/useWheelInit';
 import {useWheelControl} from '@hooks/wheel/useWheelControl';
 import {useMemo, useRef} from 'react';
-import {getItemsWithAngles} from '@utils/wheelCanvas';
+import {
+  getItemsWithAngles,
+  updateSlotsAnglesByRotateValue,
+} from '@utils/wheelCanvas';
 
 const slots: AuctionSlot[] = [
   {
@@ -29,17 +32,20 @@ const WheelContainer = () => {
     refs: {wheelRef, wheelSelectorRef},
   } = useWheelInit({items: slots, isFullScreen: false});
 
-  const slotsWithAngles = useMemo(() => {
-    return getItemsWithAngles(slots);
-  }, []);
-
   const {
+    state: {wheelRotateCSSValue},
     functions: {spinWheel},
-  } = useWheelControl({wheelRef, lotTextRef, items: slotsWithAngles});
+  } = useWheelControl({wheelRef, lotTextRef, items: getItemsWithAngles(slots)});
+
+  const slotsWithActualAngles = useMemo(() => {
+    return updateSlotsAnglesByRotateValue(
+      getItemsWithAngles(slots),
+      wheelRotateCSSValue
+    );
+  }, [wheelRotateCSSValue]);
 
   const handleClick = () => {
-    console.log(slotsWithAngles[0].angles);
-    spinWheel(slotsWithAngles[0], 5);
+    spinWheel(slotsWithActualAngles[0], 5);
   };
 
   return (
