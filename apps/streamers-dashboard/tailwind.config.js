@@ -6,7 +6,8 @@ export default {
     colors: {
       white: '#FFF',
       green: {
-        DEFAULT: '#74DFA2',
+        DEFAULT: '#48C07A',
+        accent: '#74DFA2',
       },
       dark: {
         DEFAULT: '#27272A',
