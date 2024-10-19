@@ -64,7 +64,7 @@ const WheelContainer = () => {
         <div className="h-full flex flex-col gap-y-4">
           <button
             onClick={handleClick}
-            className="bg-green text-white font-semibold text-title px-5 py-3 rounded-medium">
+            className="flex gap-x-2 w-fit items-center justify-center bg-green text-white font-semibold text-title px-5 py-3 rounded-[16px]">
             Spin wheel
           </button>
           <div className="h-full bg-dark rounded-large"></div>

@@ -7,9 +7,9 @@ const AuctionDashboardLayout = () => {
   return (
     <>
       <Header>
-        <button className="rounded-pill h-10 bg-dark px-3 py-2 font-semibold text-gray-accent flex gap-x-1 items-center">
+        <button className="rounded-[12px] h-10 bg-dark px-3 py-2 font-semibold text-gray-accent flex gap-x-1 items-center">
           <Icons.Timer width={21} height={21} />
-          {time}
+          Timer
         </button>
       </Header>
       <main className="h-full w-full">
