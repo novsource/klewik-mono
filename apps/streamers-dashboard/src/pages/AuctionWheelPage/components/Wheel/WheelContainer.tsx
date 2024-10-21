@@ -50,27 +50,12 @@ const WheelContainer = () => {
   };
 
   return (
-    <div className="flex h-full w-full px-4 flex-shrink-1 py-4">
-      <div className="h-full w-full flex flex-col gap-y-2 flex-shrink-[2]">
-        <span
-          ref={lotTextRef}
-          className="font-semibold text-titleXL text-center">
-          Here will be name of lot on wheel selector
-        </span>
-        <div className="w-full h-full">
-          <Wheel ref={wheelRef} wheelSelectorRef={wheelSelectorRef} />
-        </div>
-      </div>
-      <div className="min-w-[300px] w-[500px] h-full">
-        <WheelTab />
-        <div className="h-full flex flex-col gap-y-4">
-          <button
-            onClick={handleClick}
-            className="flex gap-x-2 w-fit items-center justify-center bg-green text-white font-semibold text-title px-5 py-3 rounded-[16px]">
-            Spin wheel
-          </button>
-          <div className="h-full bg-dark rounded-large"></div>
-        </div>
+    <div className="h-full w-full flex flex-col gap-y-2 flex-shrink-[2]">
+      <span ref={lotTextRef} className="font-semibold text-titleXL text-center">
+        Here will be name of lot on wheel selector
+      </span>
+      <div className="w-full h-full">
+        <Wheel ref={wheelRef} wheelSelectorRef={wheelSelectorRef} />
       </div>
     </div>
   );
