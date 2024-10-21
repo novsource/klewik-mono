@@ -12,14 +12,18 @@
     "icons": "npx @svgr/cli -- ./src/assets/icons"
   },
   "dependencies": {
+    "class-variance-authority": "^0.7.0",
     "framer-motion": "^11.11.9",
+    "lucide-react": "^0.453.0",
     "path": "^0.12.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "6"
+    "react-router-dom": "6",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
+    "@types/node": "^22.7.7",
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.2",
