@@ -1,4 +1,4 @@
-const path = import('path');
+import {basename, extname} from 'path';
 const outDir = './src/shared/components/ui/icons'; // путь, до папки, где будут храниться преобразованные иконки
 
 // Шаблон компонента с иконкой
@@ -20,7 +20,7 @@ function indexTemplate(files) {
   const compoundExportEntries = [];
 
   const importEntries = files.map((file) => {
-    const componentName = path.basename(file.path, path.extname(file.path));
+    const componentName = basename(file.path, extname(file.path));
     compoundExportEntries.push(componentName);
 
     return `import { default as ${componentName} } from './${componentName}';`;

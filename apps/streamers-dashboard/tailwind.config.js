@@ -36,7 +36,7 @@ export default {
     },
     borderRadius: {
       small: '8px',
-      medium: '12px',
+      medium: '10px',
       large: '24px',
       pill: '10000px',
     },
