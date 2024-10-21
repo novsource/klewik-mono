@@ -12,6 +12,7 @@
     "icons": "npx @svgr/cli -- ./src/assets/icons"
   },
   "dependencies": {
+    "@radix-ui/react-tabs": "^1.1.1",
     "class-variance-authority": "^0.7.0",
     "framer-motion": "^11.11.9",
     "lucide-react": "^0.453.0",

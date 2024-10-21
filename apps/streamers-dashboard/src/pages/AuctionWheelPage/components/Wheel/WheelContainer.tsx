@@ -7,6 +7,7 @@ import {
   getItemsWithAngles,
   updateSlotsAnglesByRotateValue,
 } from '@utils/wheelCanvas';
+import WheelTab from '../WheelTabs/WheelTab';
 
 const slots: AuctionSlot[] = [
   {
@@ -61,6 +62,7 @@ const WheelContainer = () => {
         </div>
       </div>
       <div className="min-w-[300px] w-[500px] h-full">
+        <WheelTab />
         <div className="h-full flex flex-col gap-y-4">
           <button
             onClick={handleClick}

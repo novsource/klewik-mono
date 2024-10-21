@@ -2,46 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --header-height: 64px;
-}
-
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: theme('colors.dark.foreground');
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-html {
-  @apply h-full w-full;
-}
-
-#root {
-  @apply h-full w-full;
-}
-
-body {
-  @apply m-0 h-full w-full
-}
-
-header {
-  height: var(--header-height);
-}
-
-main {
-  max-height: calc(100% - var(--header-height));
-}
-
 @layer base {
+
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
@@ -68,6 +30,9 @@ main {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    background-color: theme('colors.dark.foreground');
+
   }
 
   .dark {
@@ -95,15 +60,47 @@ main {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    background-color: theme('colors.dark.foreground');
+
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
 
-  body {
-    @apply bg-background text-foreground;
-  }
+:root {
+  --header-height: 64px;
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  @apply h-full w-full;
+}
+
+#root {
+  @apply h-full w-full;
+}
+
+body {
+  @apply m-0 h-full w-full
+}
+
+header {
+  height: var(--header-height);
+}
+
+main {
+  max-height: calc(100% - var(--header-height));
 }
