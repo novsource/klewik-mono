@@ -12,6 +12,7 @@ import { default as Logo } from './Logo';
 import { default as Money } from './Money';
 import { default as MoneyBag } from './MoneyBag';
 import { default as Preferences } from './Preferences';
+import { default as Refresh } from './Refresh';
 import { default as ReturnArrow } from './ReturnArrow';
 import { default as Settings } from './Settings';
 import { default as Telegram } from './Telegram';
@@ -33,6 +34,7 @@ import { default as Tuning } from './Tuning';
   Money,
   MoneyBag,
   Preferences,
+  Refresh,
   ReturnArrow,
   Settings,
   Telegram,
