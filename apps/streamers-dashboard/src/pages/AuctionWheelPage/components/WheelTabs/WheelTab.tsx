@@ -27,7 +27,7 @@ const WheelTab = () => {
     ));
   }, []);
   return (
-    <Tabs defaultValue="control">
+    <Tabs defaultValue="control" className="h-full flex flex-col">
       <TabsList className="dark w-full flex justify-between bg-dark rounded-large">
         {tabsTriggers}
       </TabsList>
