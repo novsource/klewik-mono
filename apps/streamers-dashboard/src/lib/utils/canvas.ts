@@ -143,6 +143,10 @@ const fitText = ({
 }) => {
   let result = '';
 
+  if (ctx.measureText(text).width <= maxWidth) {
+    return text;
+  }
+
   for (let charIndex = 0; charIndex < text.length - 1; charIndex++) {
     const metrics = ctx.measureText(result + separator);
 
