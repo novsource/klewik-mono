@@ -49,6 +49,7 @@ const AnimatedTruncText = ({
   > | null>(null);
 
   const [text, setText] = useState<string>(children);
+  const [isNeedToShowEllipsis, setIsNeedToShowEllipsis] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
   const translateValue = useMotionValue(0);
@@ -79,9 +80,8 @@ const AnimatedTruncText = ({
       if (translateValue.get() !== needToTranslate.current) {
         const controls = animate(translateValue, needToTranslate.current, {
           ease: 'linear',
-          delay: 1,
-          duration: 3,
-
+          delay: 2,
+          duration: needToTranslate.current / 45,
           onPlay: () => {
             setAnimationPlaying(true);
           },
@@ -96,7 +96,8 @@ const AnimatedTruncText = ({
               (boxElement?.getBoundingClientRect().width as number) + latest
             );
 
-            setText(newText);
+            setIsNeedToShowEllipsis(newText.includes('...'));
+            setText(newText.replace('...', ''));
           },
           onStop: () => setAnimationPlaying(false),
           onComplete: () => {
@@ -115,8 +116,8 @@ const AnimatedTruncText = ({
     ) {
       animate(1, 0, {
         ease: 'easeIn',
-        duration: 0.75,
-        delay: 3,
+        duration: 1.25,
+        delay: 2,
         onPlay: () => {
           setAnimationPlaying(true);
         },
@@ -128,7 +129,7 @@ const AnimatedTruncText = ({
         },
       }).then(() => {
         animate(0, 1, {
-          ease: 'easeIn',
+          ease: 'easeOut',
           duration: 0.75,
           onUpdate(op) {
             spanElement?.setAttribute(
@@ -154,10 +155,14 @@ const AnimatedTruncText = ({
 
       spanElement.setAttribute('style', 'transform:translate(0px, -50%)');
 
-      setAnimationPlaying(false);
-      setText(
-        trimText(children, boxElement?.getBoundingClientRect().width as number)
+      const trimmedText = trimText(
+        children,
+        boxElement?.getBoundingClientRect().width as number
       );
+
+      setAnimationPlaying(false);
+      setIsNeedToShowEllipsis(trimmedText.includes('...'));
+      setText(trimmedText.replace('...', ''));
     }
   }, [isHovered, isAnimationPlaying]);
 
@@ -175,6 +180,15 @@ const AnimatedTruncText = ({
         )}>
         {text}
       </span>
+      {isNeedToShowEllipsis && (
+        <span
+          className={cn(
+            'absolute font-medium top-1/2 -translate-y-1/2 right-0',
+            ...classNames
+          )}>
+          ...
+        </span>
+      )}
     </div>
   );
 };
