@@ -6,12 +6,13 @@ import {
 } from 'react-router-dom';
 import AuctionDashboardLayout from './layouts/AuctionDashboardLayout';
 import AuctionWheelPage from '@/pages/AuctionWheelPage/AuctionWheelPage';
+import WelcomePage from '@/pages/WelcomePage/WelcomePage';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
       <Route path="/">
-        <Route index element={<div>Welcome</div>} />
+        <Route index element={<WelcomePage />} />
         <Route path="dashboard/:id">
           <Route index element={<Navigate to="wheel" />} />
           <Route element={<AuctionDashboardLayout />}>

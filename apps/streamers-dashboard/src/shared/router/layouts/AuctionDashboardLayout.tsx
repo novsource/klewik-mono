@@ -12,7 +12,7 @@ const AuctionDashboardLayout = () => {
           Timer
         </button>
       </Header>
-      <main className="h-full w-full">
+      <main className="main--dashboard">
         <div className="px-2 w-full h-full">
           <div className="flex w-full h-full">
             <aside className="w-16 h-full flex-none">
