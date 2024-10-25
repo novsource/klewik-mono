@@ -1,5 +1,5 @@
-import * as React from 'react';
-import type {SVGProps} from 'react';
+import * as React from 'react'
+import type { SVGProps } from 'react'
 const SvgLogo = (props: SVGProps<SVGSVGElement>) => {
   return (
     <svg
@@ -8,7 +8,8 @@ const SvgLogo = (props: SVGProps<SVGSVGElement>) => {
       height="38"
       fill="none"
       viewBox="0 0 32 33"
-      {...props}>
+      {...props}
+    >
       <path
         fill="#6FCF97"
         fillRule="evenodd"
@@ -16,6 +17,6 @@ const SvgLogo = (props: SVGProps<SVGSVGElement>) => {
         clipRule="evenodd"
       />
     </svg>
-  );
-};
-export default SvgLogo;
+  )
+}
+export default SvgLogo

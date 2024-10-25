@@ -1,7 +1,7 @@
-import {AppRouter} from './shared/router/RouterProvider';
+import { AppRouter } from './shared/router/RouterProvider'
 
 function App() {
-  return <AppRouter />;
+  return <AppRouter />
 }
 
-export default App;
+export default App

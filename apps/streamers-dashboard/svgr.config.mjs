@@ -1,8 +1,8 @@
-import {basename, extname} from 'path';
-const outDir = './src/shared/components/ui/icons'; // путь, до папки, где будут храниться преобразованные иконки
+import { basename, extname } from 'path'
+const outDir = './src/shared/components/ui/icons' // путь, до папки, где будут храниться преобразованные иконки
 
 // Шаблон компонента с иконкой
-const iconTemplate = (variables, {tpl}) => tpl`
+const iconTemplate = (variables, { tpl }) => tpl`
 ${variables.imports};
 
 ${variables.interfaces};
@@ -13,25 +13,25 @@ const ${variables.componentName} = (${variables.props}) => {
 }
 
 ${variables.exports};
-`;
+`
 
 // Шаблон файла index.ts, который будет экспортировать все сгенерированные компоненты иконок
 function indexTemplate(files) {
-  const compoundExportEntries = [];
+  const compoundExportEntries = []
 
   const importEntries = files.map((file) => {
-    const componentName = basename(file.path, extname(file.path));
-    compoundExportEntries.push(componentName);
+    const componentName = basename(file.path, extname(file.path))
+    compoundExportEntries.push(componentName)
 
-    return `import { default as ${componentName} } from './${componentName}';`;
-  });
+    return `import { default as ${componentName} } from './${componentName}';`
+  })
 
   return `${importEntries.join('\n')}
 
     export const Icons = {
       ${compoundExportEntries.join(',\n  ')}
     };
-  `;
+  `
 }
 
 // Базовая настройка конфига
@@ -46,4 +46,4 @@ export default {
   prettier: false,
   indexTemplate,
   template: iconTemplate,
-};
+}

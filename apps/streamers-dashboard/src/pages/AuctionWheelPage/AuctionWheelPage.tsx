@@ -1,15 +1,15 @@
-import {WheelContainer} from './components/Wheel';
-import WheelTab from './components/WheelTabs/WheelTab';
+import { WheelContainer } from './components/Wheel'
+import WheelTab from './components/WheelTabs/WheelTab'
 
 const AuctionWheelPage = () => {
   return (
-    <div className="flex h-full w-full px-4 flex-shrink-1 py-4">
+    <div className="flex-shrink-1 flex h-full w-full px-4 py-4">
       <WheelContainer />
-      <div className="min-w-[300px] w-[500px] h-full">
+      <div className="h-full w-[500px] min-w-[300px]">
         <WheelTab />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AuctionWheelPage;
+export default AuctionWheelPage

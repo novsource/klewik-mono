@@ -1,5 +1,5 @@
-import * as React from 'react';
-import type {SVGProps} from 'react';
+import * as React from 'react'
+import type { SVGProps } from 'react'
 const SvgHome = (props: SVGProps<SVGSVGElement>) => {
   return (
     <svg
@@ -8,7 +8,8 @@ const SvgHome = (props: SVGProps<SVGSVGElement>) => {
       height="1em"
       fill="none"
       viewBox="0 0 24 24"
-      {...props}>
+      {...props}
+    >
       <path
         fill="currentColor"
         fillRule="evenodd"
@@ -16,6 +17,6 @@ const SvgHome = (props: SVGProps<SVGSVGElement>) => {
         clipRule="evenodd"
       />
     </svg>
-  );
-};
-export default SvgHome;
+  )
+}
+export default SvgHome

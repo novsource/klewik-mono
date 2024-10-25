@@ -1,15 +1,15 @@
-import {Link, useLocation} from 'react-router-dom';
-import {cn} from '../../../../lib/utils/cn';
-import {Icons} from '../icons';
-import {ReactNode, useMemo} from 'react';
-import {paths} from '../../../router/paths';
+import { Link, useLocation } from 'react-router-dom'
+import { cn } from '../../../../lib/utils/cn'
+import { Icons } from '../icons'
+import { ReactNode, useMemo } from 'react'
+import { paths } from '../../../router/paths'
 
 type DashboardMenuProps = {
-  className: string;
-};
+  className: string
+}
 
-const DashboardMenu = ({className}: DashboardMenuProps) => {
-  const {pathname} = useLocation();
+const DashboardMenu = ({ className }: DashboardMenuProps) => {
+  const { pathname } = useLocation()
 
   const menuItems = useMemo(() => {
     return paths.reduce<ReactNode[]>((acc, curr) => {
@@ -18,37 +18,38 @@ const DashboardMenu = ({className}: DashboardMenuProps) => {
         '/donations': <Icons.CardSend width={21} height={21} />,
         '/settings': <Icons.Settings width={21} height={21} />,
         '/slots': <Icons.List width={21} height={21} />,
-      }[curr.path];
+      }[curr.path]
 
-      const isCurrentItemInPathname = pathname.includes(curr.path);
-      const routerLink = curr.path.replace('/', '');
+      const isCurrentItemInPathname = pathname.includes(curr.path)
+      const routerLink = curr.path.replace('/', '')
 
       const menuItem = (
         <li
           key={curr.path}
           className={cn(
-            'text-gray cursor-pointer hover:text-gray-accent transition-all',
+            'cursor-pointer text-gray transition-all hover:text-gray-accent',
             isCurrentItemInPathname && 'text-gray-accent'
-          )}>
+          )}
+        >
           <Link to={routerLink} relative="path">
             {menuIcon}
           </Link>
         </li>
-      );
+      )
 
-      acc.push(menuItem);
+      acc.push(menuItem)
 
-      return acc;
-    }, []);
-  }, [pathname]);
+      return acc
+    }, [])
+  }, [pathname])
 
   return (
     <nav className={cn(className)}>
-      <div className="py-5 px-4 rounded-medium bg-dark border-dark">
+      <div className="rounded-medium border-dark bg-dark px-4 py-5">
         <ul className="flex flex-col gap-y-7">{menuItems}</ul>
       </div>
     </nav>
-  );
-};
+  )
+}
 
-export default DashboardMenu;
+export default DashboardMenu

@@ -3,10 +3,10 @@ import {
   Route,
   createBrowserRouter,
   createRoutesFromElements,
-} from 'react-router-dom';
-import AuctionDashboardLayout from './layouts/AuctionDashboardLayout';
-import AuctionWheelPage from '@/pages/AuctionWheelPage/AuctionWheelPage';
-import WelcomePage from '@/pages/WelcomePage/WelcomePage';
+} from 'react-router-dom'
+import AuctionDashboardLayout from './layouts/AuctionDashboardLayout'
+import AuctionWheelPage from '@/pages/AuctionWheelPage/AuctionWheelPage'
+import WelcomePage from '@/pages/WelcomePage/WelcomePage'
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,4 +27,4 @@ export const router = createBrowserRouter(
       <Route path="*" element={<Navigate to="/" />} />
     </Route>
   )
-);
+)

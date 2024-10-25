@@ -1,4 +1,4 @@
-import Header from './Header/Header';
-import DashboardMenu from './Menu/DashboardMenu';
+import Header from './Header/Header'
+import DashboardMenu from './Menu/DashboardMenu'
 
-export {Header, DashboardMenu};
+export { Header, DashboardMenu }

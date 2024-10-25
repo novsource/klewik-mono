@@ -1,21 +1,21 @@
-import {RefObject, useCallback, useState} from 'react';
+import { RefObject, useCallback, useState } from 'react'
 
-import {animate, useMotionValue} from 'framer-motion';
+import { animate, useMotionValue } from 'framer-motion'
 import {
   calculateRotateWheelCSSValue,
   getSlotNameOnSelector,
-} from '@utils/wheelCanvas';
+} from '@utils/wheelCanvas'
 
 type WheelControlCallbacks = {
-  onSpinStart: () => void;
-  onSpinComplete: (winnerLot: AuctionSlot) => void;
-};
+  onSpinStart: () => void
+  onSpinComplete: (winnerLot: AuctionSlot) => void
+}
 
 type WheelControl = Partial<WheelControlCallbacks> & {
-  wheelRef: RefObject<HTMLCanvasElement>;
-  lotTextRef: RefObject<HTMLSpanElement>;
-  items: AuctionSlotWithAngles[];
-};
+  wheelRef: RefObject<HTMLCanvasElement>
+  lotTextRef: RefObject<HTMLSpanElement>
+  items: AuctionSlotWithAngles[]
+}
 
 export const useWheelControl = ({
   wheelRef,
@@ -24,44 +24,44 @@ export const useWheelControl = ({
   onSpinStart,
   onSpinComplete,
 }: WheelControl) => {
-  const [isWheelSpinning, setIsWheelSpinning] = useState(false);
-  const framerMotionAnimationValue = useMotionValue(0);
+  const [isWheelSpinning, setIsWheelSpinning] = useState(false)
+  const framerMotionAnimationValue = useMotionValue(0)
 
   const [wheelRotateCSSValue, setWheelRotateCSSValue] = useState(() =>
     framerMotionAnimationValue.get()
-  );
+  )
 
   const rotateWheelAnimation = useCallback(
     (winner: AuctionSlotWithAngles, spinTime: number) => {
       if (wheelRef.current && lotTextRef.current) {
-        const wheel = wheelRef.current;
-        const slotNameTextField = lotTextRef.current;
+        const wheel = wheelRef.current
+        const slotNameTextField = lotTextRef.current
 
         const targetRotateCSSValue =
-          wheelRotateCSSValue + calculateRotateWheelCSSValue(winner);
+          wheelRotateCSSValue + calculateRotateWheelCSSValue(winner)
 
         animate(framerMotionAnimationValue, targetRotateCSSValue, {
           duration: spinTime,
           ease: [0.62, 0.67, 0, 0.99],
           onPlay: () => {
-            setIsWheelSpinning(true);
+            setIsWheelSpinning(true)
 
-            onSpinStart && onSpinStart();
+            onSpinStart && onSpinStart()
           },
           onComplete: () => {
-            setIsWheelSpinning(false);
-            setWheelRotateCSSValue(framerMotionAnimationValue.get());
+            setIsWheelSpinning(false)
+            setWheelRotateCSSValue(framerMotionAnimationValue.get())
 
-            onSpinComplete && onSpinComplete(winner);
+            onSpinComplete && onSpinComplete(winner)
           },
           onUpdate(currentDegree) {
-            const slotName = getSlotNameOnSelector(currentDegree, items);
+            const slotName = getSlotNameOnSelector(currentDegree, items)
 
-            slotNameTextField.innerText = slotName;
+            slotNameTextField.innerText = slotName
 
-            wheel.style.transform = `rotate(${currentDegree}deg)`;
+            wheel.style.transform = `rotate(${currentDegree}deg)`
           },
-        });
+        })
       }
     },
     [
@@ -74,14 +74,14 @@ export const useWheelControl = ({
       wheelRotateCSSValue,
       items,
     ]
-  );
+  )
 
   const spinWheel = (wheelWinner: AuctionSlotWithAngles, spinTime: number) => {
-    rotateWheelAnimation(wheelWinner, spinTime);
-  };
+    rotateWheelAnimation(wheelWinner, spinTime)
+  }
 
   return {
-    state: {wheelRotateCSSValue, isWheelSpinning},
-    functions: {spinWheel},
-  };
-};
+    state: { wheelRotateCSSValue, isWheelSpinning },
+    functions: { spinWheel },
+  }
+}

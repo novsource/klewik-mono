@@ -1,90 +1,96 @@
-import {RefObject, useCallback, useLayoutEffect, useRef, useState} from 'react';
+import {
+  RefObject,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 
-import {getMaxSizeCanvas, resizeCanvas} from '@utils/canvas';
+import { getMaxSizeCanvas, resizeCanvas } from '@utils/canvas'
 import {
   drawEmptyWheel,
   drawSelector,
   drawSlicesItems,
-} from '@utils/wheelCanvas';
+} from '@utils/wheelCanvas'
 
 type WheelInitHookProps = {
-  items: AuctionSlot[] | AuctionSlotWithAngles[] | null;
-  isFullScreen?: boolean;
-  wheelImageSize?: number;
-};
+  items: AuctionSlot[] | AuctionSlotWithAngles[] | null
+  isFullScreen?: boolean
+  wheelImageSize?: number
+}
 
 type WheelInit = {
   refs: {
-    wheelRef: RefObject<HTMLCanvasElement>;
-    wheelSelectorRef: RefObject<HTMLCanvasElement>;
-  };
+    wheelRef: RefObject<HTMLCanvasElement>
+    wheelSelectorRef: RefObject<HTMLCanvasElement>
+  }
   functions: {
-    draw(): void;
-  };
+    draw(): void
+  }
   properties: {
-    wheelSize: number;
-  };
-};
+    wheelSize: number
+  }
+}
 
 export const useWheelInit = ({
   items,
   isFullScreen = false,
   wheelImageSize,
 }: WheelInitHookProps): WheelInit => {
-  const wheelCanvasRef = useRef<HTMLCanvasElement>(null);
-  const wheelSelectorCanvasRef = useRef<HTMLCanvasElement>(null);
+  const wheelCanvasRef = useRef<HTMLCanvasElement>(null)
+  const wheelSelectorCanvasRef = useRef<HTMLCanvasElement>(null)
 
-  const [wheelSize, setWheelSize] = useState(0);
+  const [wheelSize, setWheelSize] = useState(0)
 
   const draw = useCallback(() => {
-    const wheelCanvas = wheelCanvasRef.current;
-    const wheelSelectorCanvas = wheelSelectorCanvasRef.current;
+    const wheelCanvas = wheelCanvasRef.current
+    const wheelSelectorCanvas = wheelSelectorCanvasRef.current
 
     if (wheelCanvas && wheelSelectorCanvas) {
       if (items && !!items.length) {
-        drawSlicesItems(wheelCanvas, items);
+        drawSlicesItems(wheelCanvas, items)
       } else {
-        drawEmptyWheel(wheelSelectorCanvas);
+        drawEmptyWheel(wheelSelectorCanvas)
       }
 
-      drawSelector(wheelSelectorCanvas, wheelImageSize);
+      drawSelector(wheelSelectorCanvas, wheelImageSize)
     }
-  }, [wheelCanvasRef, wheelSelectorCanvasRef, items, wheelImageSize]);
+  }, [wheelCanvasRef, wheelSelectorCanvasRef, items, wheelImageSize])
 
   useLayoutEffect(() => {
-    const wheelCanvas = wheelCanvasRef.current;
-    const wheelSelectorCanvas = wheelSelectorCanvasRef.current;
+    const wheelCanvas = wheelCanvasRef.current
+    const wheelSelectorCanvas = wheelSelectorCanvasRef.current
 
     if (wheelCanvas && wheelSelectorCanvas) {
-      const wrapper = wheelCanvas?.parentElement as HTMLDivElement;
-      const wrapperParent = wrapper?.parentElement as HTMLDivElement;
+      const wrapper = wheelCanvas?.parentElement as HTMLDivElement
+      const wrapperParent = wrapper?.parentElement as HTMLDivElement
 
       const resize = () => {
         if (getMaxSizeCanvas(wrapperParent) >= 300) {
           wrapper.style.width = wrapper.style.height = `${getMaxSizeCanvas(
             wrapperParent
-          )}px`;
+          )}px`
         } else {
-          wrapper.style.width = wrapper.style.height = `${300}px`;
+          wrapper.style.width = wrapper.style.height = `${300}px`
         }
 
         resizeCanvas({
           canvas: wheelCanvas,
           wheelSelector: wheelSelectorCanvas,
           wrapper,
-        });
+        })
 
-        setWheelSize(wheelCanvas.clientWidth);
-        draw();
-      };
+        setWheelSize(wheelCanvas.clientWidth)
+        draw()
+      }
 
-      resize();
+      resize()
 
-      window.removeEventListener('resize', resize);
+      window.removeEventListener('resize', resize)
 
-      window.addEventListener('resize', resize);
+      window.addEventListener('resize', resize)
     }
-  }, [wheelCanvasRef, wheelSelectorCanvasRef, draw, isFullScreen]);
+  }, [wheelCanvasRef, wheelSelectorCanvasRef, draw, isFullScreen])
 
   return {
     refs: {
@@ -97,5 +103,5 @@ export const useWheelInit = ({
     functions: {
       draw,
     },
-  };
-};
+  }
+}

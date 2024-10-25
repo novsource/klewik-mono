@@ -1,10 +1,10 @@
-import {ReactNode} from 'react';
+import { ReactNode } from 'react'
 
 type Path = {
-  path: string;
-  element?: ReactNode;
-};
-type Paths = Path[];
+  path: string
+  element?: ReactNode
+}
+type Paths = Path[]
 
 export const paths: Paths = [
   {
@@ -23,4 +23,4 @@ export const paths: Paths = [
     path: '/settings',
     element: <div>settings</div>,
   },
-];
+]

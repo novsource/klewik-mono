@@ -1,4 +1,4 @@
-import Wheel from './Wheel';
-import WheelContainer from './WheelContainer';
+import Wheel from './Wheel'
+import WheelContainer from './WheelContainer'
 
-export {Wheel, WheelContainer};
+export { Wheel, WheelContainer }

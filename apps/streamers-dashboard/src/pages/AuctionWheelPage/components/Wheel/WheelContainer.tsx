@@ -1,13 +1,13 @@
-import {getRandomHSLColor} from '@utils/canvas';
-import Wheel from './Wheel';
-import {useWheelInit} from '@hooks/wheel/useWheelInit';
-import {useWheelControl} from '@hooks/wheel/useWheelControl';
-import {useMemo, useRef} from 'react';
+import { getRandomHSLColor } from '@utils/canvas'
+import Wheel from './Wheel'
+import { useWheelInit } from '@hooks/wheel/useWheelInit'
+import { useWheelControl } from '@hooks/wheel/useWheelControl'
+import { useMemo, useRef } from 'react'
 import {
   getItemsWithAngles,
   updateSlotsAnglesByRotateValue,
-} from '@utils/wheelCanvas';
-import WheelTab from '../WheelTabs/WheelTab';
+} from '@utils/wheelCanvas'
+import WheelTab from '../WheelTabs/WheelTab'
 
 const slots: AuctionSlot[] = [
   {
@@ -24,41 +24,45 @@ const slots: AuctionSlot[] = [
     value: 2000,
     _id: '120',
   },
-];
+]
 
 const WheelContainer = () => {
-  const lotTextRef = useRef<HTMLSpanElement>(null);
+  const lotTextRef = useRef<HTMLSpanElement>(null)
 
   const {
-    refs: {wheelRef, wheelSelectorRef},
-  } = useWheelInit({items: slots, isFullScreen: false});
+    refs: { wheelRef, wheelSelectorRef },
+  } = useWheelInit({ items: slots, isFullScreen: false })
 
   const {
-    state: {wheelRotateCSSValue},
-    functions: {spinWheel},
-  } = useWheelControl({wheelRef, lotTextRef, items: getItemsWithAngles(slots)});
+    state: { wheelRotateCSSValue },
+    functions: { spinWheel },
+  } = useWheelControl({
+    wheelRef,
+    lotTextRef,
+    items: getItemsWithAngles(slots),
+  })
 
   const slotsWithActualAngles = useMemo(() => {
     return updateSlotsAnglesByRotateValue(
       getItemsWithAngles(slots),
       wheelRotateCSSValue
-    );
-  }, [wheelRotateCSSValue]);
+    )
+  }, [wheelRotateCSSValue])
 
   const handleClick = () => {
-    spinWheel(slotsWithActualAngles[0], 5);
-  };
+    spinWheel(slotsWithActualAngles[0], 5)
+  }
 
   return (
-    <div className="h-full w-full flex flex-col gap-y-2 flex-shrink-[2]">
-      <span ref={lotTextRef} className="font-semibold text-titleXL text-center">
+    <div className="flex h-full w-full flex-shrink-[2] flex-col gap-y-2">
+      <span ref={lotTextRef} className="text-center text-titleXL font-semibold">
         Here will be name of lot on wheel selector
       </span>
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <Wheel ref={wheelRef} wheelSelectorRef={wheelSelectorRef} />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default WheelContainer;
+export default WheelContainer

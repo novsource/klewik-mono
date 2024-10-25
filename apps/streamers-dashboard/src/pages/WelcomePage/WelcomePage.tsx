@@ -1,15 +1,15 @@
-import {Icons} from '@ui/icons';
+import { Icons } from '@ui/icons'
 
 const WelcomePage = () => {
   return (
     <>
       <main className="h-full w-full">
-        <div className="w-full h-full flex flex-row">
-          <div className="h-full w-full basis-1/3 min-w-[400px] max-w-[520px]">
+        <div className="flex h-full w-full flex-row">
+          <div className="h-full w-full min-w-[400px] max-w-[600px] basis-1/3">
             <div className="h-full w-full px-10">
               <div className="flex h-full w-full flex-col justify-between">
                 <div className="mt-5">
-                  <button className="py-2 px-4 w-full font-medium text-body bg-yellow bg-opacity-30 text-yellow rounded-medium flex gap-x-2 items-center justify-center">
+                  <button className="flex w-full items-center justify-center gap-x-2 rounded-medium bg-yellow bg-opacity-30 px-4 py-2 text-body font-medium text-yellow">
                     <Icons.Face
                       width={18}
                       height={18}
@@ -18,23 +18,23 @@ const WelcomePage = () => {
                     Прочитать перед использованием
                   </button>
                 </div>
-                <div className="flex flex-col gap-y-6 mb-32">
+                <div className="mb-32 flex flex-col gap-y-6">
                   <Icons.Logo width={46} height={46} />
                   <div className="flex flex-col gap-y-2">
-                    <h1 className="font-bold text-[24px] leading-7">
+                    <h1 className="text-[24px] font-bold leading-7">
                       Добро пожаловать в поинтовый аукцион!
                     </h1>
-                    <h4 className="font-medium text-body text-gray">
+                    <h4 className="text-body font-medium text-gray">
                       Для продолжения выберите действие
                     </h4>
                   </div>
 
-                  <div className="flex gap-y-3 flex-col w-full">
-                    <button className="py-3 bg-green text-body font-medium rounded-medium hover:bg-opacity-80 transition-all flex gap-x-1 items-center justify-center">
+                  <div className="flex w-full flex-col gap-y-3">
+                    <button className="flex items-center justify-center gap-x-1 rounded-medium bg-green py-3 text-body font-medium transition-all hover:bg-opacity-80">
                       <Icons.Login width={24} height={24} />
                       Войти в аукцион
                     </button>
-                    <button className="bg-dark py-3 text-body font-medium rounded-medium text-gray-accent hover:bg-opacity-80 transition-all flex gap-x-1 items-center justify-center leading-3">
+                    <button className="flex items-center justify-center gap-x-1 rounded-medium bg-dark py-3 text-body font-medium leading-3 text-gray-accent transition-all hover:bg-opacity-80">
                       <Icons.Plus width={24} height={24} />
                       Создать аукцион
                     </button>
@@ -44,21 +44,22 @@ const WelcomePage = () => {
                   <a
                     href="https://www.github.com"
                     target="_blank"
-                    className="flex gap-x-2 hover:text-white transition-all text-gray-accent items-center">
+                    className="flex items-center gap-x-2 text-gray-accent transition-all hover:text-white"
+                  >
                     <Icons.Github width={18} height={18} />
-                    <span className="font-medium text-body">Github</span>
+                    <span className="text-body font-medium">Github</span>
                   </a>
                 </div>
               </div>
             </div>
           </div>
-          <div className="h-full w-full border-l-[1px] border-dark flex-grow">
+          <div className="h-full w-full flex-grow border-l-[1px] border-dark">
             Animation
           </div>
         </div>
       </main>
     </>
-  );
-};
+  )
+}
 
-export default WelcomePage;
+export default WelcomePage
