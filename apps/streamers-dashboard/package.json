@@ -9,7 +9,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "icons": "pnpm exec @svgr/cli -- ./src/assets/icons",
+    "icons": "npx @svgr/cli -- ./src/assets/icons",
     "pretty:write": "pnpm exec prettier . --write",
     "pretty:check": "pnpm exec prettier . --check"
   },
