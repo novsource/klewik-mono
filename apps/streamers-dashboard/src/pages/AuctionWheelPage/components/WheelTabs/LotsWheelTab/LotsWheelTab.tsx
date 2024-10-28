@@ -1,4 +1,4 @@
-import { TabsContent } from '@/components/ui/tabs'
+import { TabsContent } from '@ui/Tabs/Tabs'
 import LotCard from './LotCard/LotCard'
 
 const lots = [

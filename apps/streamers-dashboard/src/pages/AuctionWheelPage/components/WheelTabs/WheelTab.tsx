@@ -1,9 +1,9 @@
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import AppearanceWheelTab from './AppearanceWheelTab/AppearanceWheelTab'
 import ControlWheelTab from './ControlWheelTab/ControlWheelTab'
 import LotsWheelTab from './LotsWheelTab/LotsWheelTab'
 import { useMemo } from 'react'
 import { Icons } from '@ui/icons'
+import { Tabs, TabsList, TabsTrigger } from '@ui/Tabs/Tabs'
 
 const triggersWithIcons = {
   Control: <Icons.Gamepad width={21} height={21} />,

@@ -1,4 +1,4 @@
-import { TabsContent } from '@/components/ui/tabs'
+import { TabsContent } from '@ui/Tabs/Tabs'
 import { Icons } from '@ui/icons'
 
 const ControlWheelTab = () => {
