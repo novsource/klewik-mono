@@ -1,12 +1,17 @@
 import { default as Bill } from './Bill';
 import { default as CardSend } from './CardSend';
+import { default as Copy } from './Copy';
 import { default as Crown } from './Crown';
+import { default as DonateMessage } from './DonateMessage';
+import { default as EyeClosed } from './EyeClosed';
+import { default as EyeOpen } from './EyeOpen';
 import { default as Face } from './Face';
 import { default as Gamepad } from './Gamepad';
 import { default as Github } from './Github';
 import { default as Home } from './Home';
 import { default as Id } from './Id';
 import { default as Key } from './Key';
+import { default as LinkArrow } from './LinkArrow';
 import { default as List } from './List';
 import { default as Login } from './Login';
 import { default as Logo } from './Logo';
@@ -25,13 +30,18 @@ import { default as Warning } from './Warning';
     export const Icons = {
       Bill,
   CardSend,
+  Copy,
   Crown,
+  DonateMessage,
+  EyeClosed,
+  EyeOpen,
   Face,
   Gamepad,
   Github,
   Home,
   Id,
   Key,
+  LinkArrow,
   List,
   Login,
   Logo,
