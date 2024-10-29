@@ -2,9 +2,24 @@ import { Input } from '@ui/Input/input'
 import SliderContent from '@ui/Slider/SliderContent'
 import { Icons } from '@ui/icons'
 import { SliderTrigger } from '@ui/index'
-import { useCallback } from 'react'
+
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+
+type LoginAuction = {
+  auctionId: string
+  password: string
+}
 
 const SliderAdminContent = () => {
+  const { control, handleSubmit } = useForm<LoginAuction>({
+    defaultValues: {
+      auctionId: '',
+      password: '',
+    },
+  })
+
+  const onSubmit: SubmitHandler<LoginAuction> = console.log
+
   return (
     <SliderContent
       className="relative flex h-full w-full flex-col gap-y-6"
@@ -27,18 +42,35 @@ const SliderAdminContent = () => {
         </h4>
       </div>
 
-      <form className="flex w-full flex-col gap-y-6">
+      <form
+        className="flex w-full flex-col gap-y-6"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <div className="flex flex-col gap-y-4">
-          <Input
-            type="text"
-            className="font-semibold tracking-wide"
-            label={{ id: 'auctionId', value: 'Номер аукциона' }}
-            placeholder="AAAA - BBBB - CCCC - DDDD"
+          <Controller
+            name="auctionId"
+            control={control}
+            render={({ field }) => (
+              <Input
+                type="text"
+                className="font-semibold tracking-wide"
+                label={{ id: 'auctionId', value: 'Номер аукциона' }}
+                placeholder="xxxxxxxx&mdash;xxxx&mdash;xxxx&mdash;xxxx&mdash;xxxxxxxxxxxx"
+                {...field}
+              />
+            )}
           />
-          <Input
-            type="password"
-            label={{ id: 'password', value: 'Пароль от аукциона' }}
-            placeholder="••••••••"
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <Input
+                type="password"
+                label={{ id: 'password', value: 'Пароль от аукциона' }}
+                placeholder="••••••••"
+                {...field}
+              />
+            )}
           />
         </div>
         <button

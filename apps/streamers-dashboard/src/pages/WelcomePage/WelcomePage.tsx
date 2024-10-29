@@ -5,6 +5,7 @@ import {
   SliderAdminContent,
   SliderCreateContent,
   SliderRolesContent,
+  SliderSuccessContent,
   SliderWelcomeContent,
 } from './components/SliderContents'
 
@@ -38,6 +39,7 @@ const WelcomePage = () => {
                 <SliderRolesContent />
                 <SliderAdminContent />
                 <SliderCreateContent />
+                <SliderSuccessContent />
               </Slider>
 
               <a

@@ -1,5 +1,7 @@
+import { cn } from '@/lib/utils'
 import { Input } from '@ui/Input/input'
 import SliderContent from '@ui/Slider/SliderContent'
+import { useSliderContext } from '@ui/Slider/SliderContext'
 import { Icons } from '@ui/icons'
 import { SliderTrigger } from '@ui/index'
 import { useState } from 'react'
@@ -10,13 +12,22 @@ type CreateAuctionForm = {
 }
 
 const SliderCreateContent = () => {
+  const [isLoading, setIsLoading] = useState(false)
   const [isPasswordHidden, setIsPasswordHidden] = useState<boolean>(true)
+
+  const {
+    func: { setSelectedKey },
+  } = useSliderContext()
+
   const { control, handleSubmit } = useForm<CreateAuctionForm>({
     defaultValues: {
       password: '',
     },
   })
-  const onSubmit: SubmitHandler<CreateAuctionForm> = (data) => console.log(data)
+  const onSubmit: SubmitHandler<CreateAuctionForm> = () => {
+    setIsLoading(true)
+    setTimeout(() => setSelectedKey('successCreate'), 5000)
+  }
 
   return (
     <SliderContent
@@ -61,10 +72,14 @@ const SliderCreateContent = () => {
         />
 
         <button
-          className="w-full rounded-medium bg-green py-2.5 text-body font-medium leading-4 transition-all hover:bg-opacity-70 xl:py-4 xl:text-body xl:leading-3"
-          type="submit"
+          className={cn(
+            'w-full rounded-medium bg-green py-2.5 text-body font-medium leading-4 opacity-100 transition-[bg-opacity] hover:bg-opacity-70 xl:py-4 xl:text-body xl:leading-3',
+            isLoading && 'opacity-70 hover:bg-opacity-100'
+          )}
+          type={isLoading ? 'button' : 'submit'}
+          disabled={isLoading ? true : false}
         >
-          Создать
+          {isLoading ? 'Создаем аукцион...' : 'Создать'}
         </button>
       </form>
       <div></div>
