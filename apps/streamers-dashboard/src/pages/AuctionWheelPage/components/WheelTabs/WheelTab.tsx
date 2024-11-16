@@ -6,9 +6,9 @@ import { Icons } from '@ui/icons'
 import { Tabs, TabsList, TabsTrigger } from '@ui/Tabs/Tabs'
 
 const triggersWithIcons = {
-  Control: <Icons.Gamepad width={21} height={21} />,
-  Lots: <Icons.List width={21} height={21} />,
-  Appearance: <Icons.Tuning width={21} height={21} />,
+  Control: <Icons.Gamepad width={18} height={18} />,
+  Lots: <Icons.List width={18} height={18} />,
+  Appearance: <Icons.Tuning width={18} height={18} />,
 }
 
 const WheelTab = () => {
@@ -18,12 +18,10 @@ const WheelTab = () => {
     ).map((item) => (
       <TabsTrigger
         value={item.toLowerCase()}
-        className="flex flex-grow gap-x-2 text-body font-semibold data-[state=active]:rounded-[8px] data-[state=active]:bg-dark-accent"
+        className="flex flex-grow gap-x-2 text-body font-medium data-[state=active]:rounded-[8px] data-[state=active]:bg-dark-accent"
       >
-        <>
-          {triggersWithIcons[item]}
-          {item}
-        </>
+        {triggersWithIcons[item]}
+        {item}
       </TabsTrigger>
     ))
   }, [])

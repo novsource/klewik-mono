@@ -4,9 +4,13 @@ import { SliderTrigger } from '@ui/index'
 
 const SliderWelcomeContent = () => {
   return (
-    <SliderContent className="flex flex-col gap-y-6" value="welcome">
+    <SliderContent className="relative flex flex-col gap-y-6" value="welcome">
       <div className="flex flex-col gap-y-2">
-        <Icons.Logo width={46} height={46} />
+        <Icons.Logo
+          className="absolute -top-16 left-0"
+          width={46}
+          height={46}
+        />
         <h1 className="text-titleXL font-bold leading-6 2xl:text-[24px] 2xl:leading-7">
           Добро пожаловать в поинтовый аукцион!
         </h1>

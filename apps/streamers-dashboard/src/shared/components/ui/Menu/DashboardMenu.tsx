@@ -14,10 +14,10 @@ const DashboardMenu = ({ className }: DashboardMenuProps) => {
   const menuItems = useMemo(() => {
     return paths.reduce<ReactNode[]>((acc, curr) => {
       const menuIcon = {
-        '/wheel': <Icons.Home width={21} height={21} />,
-        '/donations': <Icons.CardSend width={21} height={21} />,
-        '/settings': <Icons.Settings width={21} height={21} />,
-        '/slots': <Icons.List width={21} height={21} />,
+        '/wheel': <Icons.Home width={18} height={18} />,
+        '/donations': <Icons.DonateMessage width={18} height={18} />,
+        '/settings': <Icons.Settings width={18} height={18} />,
+        '/slots': <Icons.List width={18} height={18} />,
       }[curr.path]
 
       const isCurrentItemInPathname = pathname.includes(curr.path)
@@ -45,8 +45,8 @@ const DashboardMenu = ({ className }: DashboardMenuProps) => {
 
   return (
     <nav className={cn(className)}>
-      <div className="rounded-medium border-dark bg-dark px-4 py-5">
-        <ul className="flex flex-col gap-y-7">{menuItems}</ul>
+      <div className="rounded-medium border-dark bg-dark px-4 py-4">
+        <ul className="flex flex-col gap-y-5">{menuItems}</ul>
       </div>
     </nav>
   )

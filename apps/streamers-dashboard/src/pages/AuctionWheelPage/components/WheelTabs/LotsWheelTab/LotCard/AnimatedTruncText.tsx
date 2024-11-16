@@ -12,7 +12,7 @@ const trimText = (text: string, maxWidth: number): string => {
   canvas.width = Math.floor(maxWidth * ratio)
   canvas.style.width = `${maxWidth}px`
 
-  canvasContext.font = '17px sans-serif'
+  canvasContext.font = '16px sans-serif'
 
   const trimmedText = fitTextEllipsis(
     canvas.getContext('2d') as CanvasRenderingContext2D,
@@ -31,7 +31,7 @@ const getTextMaxWidth = (text: string, maxWidth: number): number => {
   canvas.width = Math.floor(maxWidth * ratio)
   canvas.style.width = `${maxWidth}px`
 
-  canvasContext.font = '17px sans-serif'
+  canvasContext.font = '16px sans-serif'
 
   return Math.ceil(canvasContext.measureText(text).width)
 }
@@ -177,7 +177,7 @@ const AnimatedTruncText = ({
         ref={spanRef}
         className={cn(
           'absolute top-1/2 -translate-y-1/2 font-medium',
-          ...classNames
+          classNames
         )}
       >
         {text}
@@ -186,7 +186,7 @@ const AnimatedTruncText = ({
         <span
           className={cn(
             'absolute right-0 top-1/2 -translate-y-1/2 font-medium',
-            ...classNames
+            classNames
           )}
         >
           ...
