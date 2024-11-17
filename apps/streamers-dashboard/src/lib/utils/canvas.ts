@@ -1,4 +1,10 @@
-export const getMaxSizeCanvas = (wrapper: HTMLDivElement): number => {
+/**
+ * Returns the maximum canvas size depending on the size of its parent element
+ * @param {HTMLElement} wrapper - Parent HTML element
+ * @return {number} Maximum canvas size in pixels
+ */
+
+export const getMaxSizeCanvas = (wrapper: HTMLElement): number => {
   const wrapperWidth = wrapper.offsetWidth
   const wrapperHeight = wrapper.offsetHeight
 
@@ -19,11 +25,23 @@ export const getMaxSizeCanvas = (wrapper: HTMLDivElement): number => {
   return targetSize
 }
 
+/**
+ * Returns the coordinates of the center point of the transmitted
+ * canvas element
+ * @param {HTMLCanvasElement} canvas - Canvas element
+ * @return {x: number, y: number} Returns the center of the canvas as points {x;y}
+ */
+
 export const getCenterCanvas = (
   canvas: HTMLCanvasElement
 ): { x: number; y: number } => {
   return { x: canvas.width / 2, y: canvas.height / 2 }
 }
+
+/**
+ * Correctly resizes the canvas depending on the pixel ratio
+ * @param {ResizeCanvasProperties} {canvas, wheelSelector, wrapper}
+ */
 
 export const resizeCanvas: ResizeCanvas = ({
   canvas,
@@ -43,6 +61,11 @@ export const resizeCanvas: ResizeCanvas = ({
   canvas.style.height = wheelSelector.style.height = `${size}px`
 }
 
+/**
+ * Draws a piece of a wheel
+ * @param {DrawSliceProperties} properties
+ */
+
 export const drawSlice: DrawSlice = ({
   context: ctx,
   options,
@@ -56,7 +79,6 @@ export const drawSlice: DrawSlice = ({
 
   ctx.save()
 
-  // ctx.fillStyle = getRandomRGBColor();
   ctx.fillStyle = options?.color ?? getRandomHSLColor()
 
   // Draw slice
@@ -83,11 +105,8 @@ export const drawSlice: DrawSlice = ({
   ctx.save()
 
   // Draw text
-
   const angle = convertRadiansToDegrees(endAngle - startAngle)
   const arcLength = getArcLength(angle, radius)
-
-  // const arcPercentToMainArc = getPercentValue(mainArcLength, arcLength) * 100;
 
   if (options?.text) {
     const metrics = ctx.measureText(options.text)
@@ -109,6 +128,10 @@ export const drawSlice: DrawSlice = ({
   ctx.restore()
 }
 
+/**
+ * Draws and compresses text on a slice
+ */
+
 export const drawTextOnSlice = (
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -129,6 +152,10 @@ export const drawTextOnSlice = (
   ctx.rotate(slice.angle)
   ctx.fillText(fitText, slice.x * 0.65, textHeight / 2 - ctx.lineWidth)
 }
+
+/**
+ * Fit the text depending on the specified size
+ */
 
 const fitText = ({
   ctx,
@@ -193,6 +220,10 @@ export const wrapText = ({
   return result
 }
 
+/**
+ * Fit the text depending on the specified size and uses a colon at the end
+ */
+
 export const fitTextEllipsis = (
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -201,11 +232,20 @@ export const fitTextEllipsis = (
   return fitText({ ctx, text, maxWidth, separator: '...' })
 }
 
+/**
+ * Cleans the canvas of everything so that it is rendered on it
+ * @param {HTMLCanvasElement} canvas - Canvas element
+ */
+
 export const clearCanvas = (canvas: HTMLCanvasElement) => {
   const context = canvas.getContext('2d') as CanvasRenderingContext2D
 
   context.clearRect(0, 0, canvas.width, canvas.height)
 }
+
+/**
+ * Sets the correct font size on the canvas according to the wheel size
+ */
 
 export const setFontSizeForCanvasText = (
   ctx: CanvasRenderingContext2D,
