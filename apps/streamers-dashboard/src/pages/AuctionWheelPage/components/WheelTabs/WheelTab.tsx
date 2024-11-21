@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from '@ui/Tabs/Tabs'
 const triggersWithIcons = {
   Control: <Icons.Gamepad width={18} height={18} />,
   Lots: <Icons.List width={18} height={18} />,
-  Appearance: <Icons.Tuning width={18} height={18} />,
+  Appearance: <Icons.Palette width={18} height={18} />,
 }
 
 const WheelTab = () => {
