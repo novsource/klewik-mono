@@ -2,15 +2,15 @@ import { Outlet } from 'react-router-dom'
 
 import { Header, DashboardMenu } from '@ui/index'
 import { Icons } from '@ui/icons'
+import { Button } from '@ui/Button/button'
 
 const AuctionDashboardLayout = () => {
   return (
     <>
       <Header>
-        <button className="flex h-10 items-center gap-x-1 rounded-[12px] bg-dark px-3 py-2 font-semibold text-gray-accent">
-          <Icons.Timer width={21} height={21} />
+        <Button startContent={<Icons.Timer width={24} height={24} />}>
           Timer
-        </button>
+        </Button>
       </Header>
       <main className="main--dashboard">
         <div className="h-full w-full px-2">
