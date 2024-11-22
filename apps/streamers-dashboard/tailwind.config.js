@@ -5,8 +5,8 @@ export default {
   theme: {
     colors: {
       white: {
-        DEFAULT: '#F8F8FF',
-        smooth: '#f4f4f4',
+        accent: '#F8F8FF',
+        DEFAULT: '#f4f4f4',
       },
       green: {
         DEFAULT: '#3F9663',
@@ -25,6 +25,7 @@ export default {
       },
       gray: {
         DEFAULT: '#555',
+        light: '#888',
         accent: '#AAA',
       },
       purple: {
@@ -40,7 +41,7 @@ export default {
     borderRadius: {
       small: '8px',
       medium: '10px',
-      large: '24px',
+      large: '16px',
       pill: '10000px',
     },
     borderColor: {
@@ -48,7 +49,7 @@ export default {
     },
     extend: {
       gridTemplateRows: {
-        slots: 'minmax(34px, 42px) max(50px, 60px) 1fr',
+        slots: 'minmax(34px, 42px) minmax(56px, 64px) 1fr',
       },
       spacing: {
         '4xl': '1.5rem',

@@ -97,6 +97,10 @@ header {
   height: var(--header-height);
 }
 
+section>header {
+  height: auto;
+}
+
 .main--dashboard {
   width: 100%;
   height: 100%;
