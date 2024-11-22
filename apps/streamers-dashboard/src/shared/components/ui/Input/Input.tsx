@@ -1,51 +1,111 @@
-import * as React from 'react'
-
 import { cn } from '@/lib/utils'
+import {
+  InputVariantsProps,
+  contentVariants,
+  contentWrapperVariants,
+  inputVariants,
+  labelVariants,
+} from './InputVariants'
+import {
+  InputHTMLAttributes,
+  ReactNode,
+  forwardRef,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: {
-    id: string
-    value: string
+export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> &
+  Omit<InputVariantsProps, 'withLabel' | 'startContent' | 'endContent'> & {
+    label?: {
+      id: string
+      value: string
+    }
+    startContent?: ReactNode
+    endContent?: ReactNode
   }
-}
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, label, ...props }, ref) => {
-    return label ? (
-      <div className="flex w-full flex-col gap-y-2">
-        {label && (
-          <label
-            htmlFor={label.id.toLocaleLowerCase()}
-            className="text-body font-semibold"
-          >
-            {label.value}
-          </label>
-        )}
-        <input
-          id={label?.id.toLocaleLowerCase()}
-          type={type}
-          className={cn(
-            'file:bg-transparent dark flex h-11 w-full rounded-medium border border-dark bg-background bg-dark-foreground px-3 py-2 text-body font-medium ring-offset-background file:border-0 file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-accent focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-            className
-          )}
-          ref={ref}
-          {...props}
-        />
+const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+  const {
+    size,
+    startContent,
+    endContent,
+    type,
+    className,
+    label,
+    ...otherProps
+  } = props
+
+  const [isHover, setIsHover] = useState(false)
+  const [isFocus, setIsFocus] = useState(false)
+
+  const inputStyle = useMemo(
+    () =>
+      cn(
+        inputVariants({
+          size,
+          startContent: Boolean(startContent),
+          endContent: Boolean(endContent),
+          withLabel: Boolean(label),
+        }),
+        className
+      ),
+    [size, startContent, endContent, label]
+  )
+  const labelStyle = useMemo(() => cn(labelVariants()), [size, label])
+
+  const inputWithContent = useMemo(() => {
+    const contentBaseStyle = contentVariants({ size })
+    const contentWrapperStyle = contentWrapperVariants({ size })
+
+    return (
+      <div
+        className={contentBaseStyle}
+        data-hover={isHover}
+        data-focus={isFocus}
+        onMouseEnter={() => {
+          setIsHover(true)
+        }}
+        onMouseLeave={() => {
+          setIsHover(false)
+        }}
+      >
+        <div className={contentWrapperStyle}>
+          {startContent}
+          <input
+            id={label?.id.toLocaleLowerCase()}
+            type={type}
+            className={inputStyle}
+            ref={ref}
+            onFocus={() => {
+              setIsFocus(true)
+            }}
+            onBlur={() => {
+              setIsFocus(false)
+            }}
+            {...otherProps}
+          />
+          {endContent}
+        </div>
       </div>
-    ) : (
-      <input
-        type={type}
-        className={cn(
-          'file:bg-transparent dark flex h-11 w-full rounded-medium border border-dark bg-background bg-dark-foreground px-3 py-2 text-body font-medium ring-offset-background file:border-0 file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
     )
-  }
-)
+  }, [size, startContent, endContent, isFocus, isHover])
+
+  return label ? (
+    <div className="flex w-full flex-col gap-y-2">
+      {label && (
+        <label htmlFor={label.id.toLocaleLowerCase()} className={labelStyle}>
+          {label.value}
+        </label>
+      )}
+      {(startContent || endContent) && inputWithContent}
+    </div>
+  ) : startContent || endContent ? (
+    inputWithContent
+  ) : (
+    <input type={type} className={inputStyle} ref={ref} {...otherProps} />
+  )
+})
 Input.displayName = 'Input'
 
 export { Input }
