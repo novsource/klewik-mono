@@ -15,43 +15,47 @@ type CardVariants = {
   }
 }
 
-export const cardBaseVariants = cva<CardVariants>('rounded-lg bg-dark', {
+export const cardBaseVariants = cva<CardVariants>('bg-dark rounded-large', {
   variants: {
     variant: {
-      default: 'text-white-smooth',
-      slots: 'text-dark-accent',
+      default: 'text-white',
+      slots: 'text-gray-accent font-semibold',
     },
     size: {
-      default: 'rounded-md',
-      sm: 'rounded-sm',
-      lg: 'rounded-lg',
+      default: 'px-5 py-4',
+      sm: 'px-3 py-2',
+      lg: 'rounded-lg px-8 py-6',
     },
   },
 })
 
-export const cardHeaderVariants = cva<CardVariants>('pt-6', {
+export const cardHeaderVariants = cva<CardVariants>('', {
   variants: {
     variant: { default: '', slots: '' },
-    size: { default: '', sm: '', lg: '' },
+    size: { default: 'pt-1', sm: '', lg: 'pt-4' },
   },
 })
 
 export const cardTitleVariants = cva<CardVariants>(
-  'text-2xl font-semibold leading-none tracking-tight',
+  'leading-none tracking-tight',
   {
     variants: {
-      variant: { default: '', slots: '' },
-      size: { default: '', sm: '', lg: '' },
+      variant: { default: 'text-white', slots: 'text-gray-light' },
+      size: {
+        default: 'text-xl font-semibold',
+        sm: 'text-sm font-semibold',
+        lg: 'text-2xl font-semibold',
+      },
     },
   }
 )
 
 export const cardContentVariants = cva<CardVariants>(
-  'flex flex-col space-y-1.5 p-6',
+  'flex flex-col space-y-1.5',
   {
     variants: {
-      variant: { default: '', slots: '' },
-      size: { default: '', sm: '', lg: '' },
+      variant: { default: '', slots: 'font-semibold text-base' },
+      size: { default: 'py-4', sm: 'py-1', lg: 'py-6' },
     },
   }
 )

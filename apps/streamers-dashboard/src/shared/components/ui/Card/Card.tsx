@@ -30,7 +30,7 @@ const Card = React.forwardRef<
     [className, ...Object.keys(cardStyleProps)]
   )
 
-  return <div ref={ref} className={style} {...props} />
+  return <section ref={ref} className={style} {...props} />
 })
 Card.displayName = 'Card'
 
@@ -105,7 +105,7 @@ const CardFooter = React.forwardRef<
     [className, ...Object.keys(cardStyleProps)]
   )
 
-  return <div ref={ref} className={style} {...props} />
+  return <footer ref={ref} className={style} {...props} />
 })
 CardFooter.displayName = 'CardFooter'
 
