@@ -4,7 +4,10 @@ export default {
   darkMode: ['class'],
   theme: {
     colors: {
-      white: '#F8F8FF',
+      white: {
+        DEFAULT: '#F8F8FF',
+        smooth: '#f4f4f4',
+      },
       green: {
         DEFAULT: '#3F9663',
         accent: '#74DFA2',
@@ -29,8 +32,8 @@ export default {
       },
     },
     fontSize: {
-      sm: '11px',
-      body: '14px',
+      sm: '12px',
+      md: '14px',
       title: '17px',
       titleXL: '21px',
     },
@@ -44,6 +47,9 @@ export default {
       dark: '#2A2D32',
     },
     extend: {
+      gridTemplateRows: {
+        slots: 'minmax(34px, 42px) max(50px, 60px) 1fr',
+      },
       spacing: {
         '4xl': '1.5rem',
       },
