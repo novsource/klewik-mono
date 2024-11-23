@@ -36,7 +36,8 @@ export default {
       sm: '12px',
       md: '14px',
       title: '17px',
-      titleXL: '21px',
+      titleLg: '21px',
+      titleXL: '24px',
     },
     borderRadius: {
       small: '8px',
