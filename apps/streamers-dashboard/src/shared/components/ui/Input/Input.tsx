@@ -11,7 +11,6 @@ import {
   ReactNode,
   forwardRef,
   useMemo,
-  useRef,
   useState,
 } from 'react'
 
@@ -33,11 +32,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     type,
     className,
     label,
+    onFocus,
+    onBlur,
     ...otherProps
   } = props
 
-  const [isHover, setIsHover] = useState(false)
-  const [isFocus, setIsFocus] = useState(false)
+  const [isHovered, setIsHover] = useState(false)
+  const [isFocused, setIsFocus] = useState(false)
 
   const inputStyle = useMemo(
     () =>
@@ -61,8 +62,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     return (
       <div
         className={contentBaseStyle}
-        data-hover={isHover}
-        data-focus={isFocus}
+        data-hover={isHovered}
+        data-focus={isFocused}
         onMouseEnter={() => {
           setIsHover(true)
         }}
@@ -77,10 +78,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
             type={type}
             className={inputStyle}
             ref={ref}
-            onFocus={() => {
+            onFocus={(e) => {
+              onFocus && onFocus(e)
               setIsFocus(true)
             }}
-            onBlur={() => {
+            onBlur={(e) => {
+              onBlur && onBlur(e)
               setIsFocus(false)
             }}
             {...otherProps}
@@ -89,12 +92,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         </div>
       </div>
     )
-  }, [size, startContent, endContent, isFocus, isHover])
-
-  if (!label && (startContent || endContent)) {
-    console.log('here')
-    return inputWithContent
-  }
+  }, [size, startContent, endContent, isFocused, isHovered])
 
   const inputDefault = useMemo(
     () => (
@@ -114,17 +112,21 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     [inputStyle, type]
   )
 
-  return (
-    label && (
-      <div className="flex w-full flex-col gap-y-2">
-        {label && (
-          <label htmlFor={label.id.toLocaleLowerCase()} className={labelStyle}>
-            {label.value}
-          </label>
-        )}
-        {startContent || endContent ? inputWithContent : inputDefault}
-      </div>
-    )
+  if (!label && (startContent || endContent)) {
+    return inputWithContent
+  }
+
+  return label ? (
+    <div className="flex w-full flex-col gap-y-2">
+      {label && (
+        <label htmlFor={label.id.toLocaleLowerCase()} className={labelStyle}>
+          {label.value}
+        </label>
+      )}
+      {startContent || endContent ? inputWithContent : inputDefault}
+    </div>
+  ) : (
+    inputDefault
   )
 })
 Input.displayName = 'Input'
