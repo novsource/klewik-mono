@@ -9,11 +9,11 @@ const AuctionDashboardLayout = () => {
     <>
       <Header>
         <Button startContent={<Icons.Timer width={24} height={24} />}>
-          Timer
+          Таймер
         </Button>
       </Header>
       <main className="main--dashboard">
-        <div className="h-full w-full px-2">
+        <div className="h-full w-full px-4">
           <div className="flex h-full w-full">
             <aside className="h-full w-16 flex-none">
               <DashboardMenu className="absolute left-2 top-1/2 -translate-y-1/2" />
