@@ -91,19 +91,40 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     )
   }, [size, startContent, endContent, isFocus, isHover])
 
-  return label ? (
-    <div className="flex w-full flex-col gap-y-2">
-      {label && (
-        <label htmlFor={label.id.toLocaleLowerCase()} className={labelStyle}>
-          {label.value}
-        </label>
-      )}
-      {(startContent || endContent) && inputWithContent}
-    </div>
-  ) : startContent || endContent ? (
-    inputWithContent
-  ) : (
-    <input type={type} className={inputStyle} ref={ref} {...otherProps} />
+  if (!label && (startContent || endContent)) {
+    console.log('here')
+    return inputWithContent
+  }
+
+  const inputDefault = useMemo(
+    () => (
+      <input
+        type={type}
+        className={inputStyle}
+        ref={ref}
+        onFocus={() => {
+          setIsFocus(true)
+        }}
+        onBlur={() => {
+          setIsFocus(false)
+        }}
+        {...otherProps}
+      />
+    ),
+    [inputStyle, type]
+  )
+
+  return (
+    label && (
+      <div className="flex w-full flex-col gap-y-2">
+        {label && (
+          <label htmlFor={label.id.toLocaleLowerCase()} className={labelStyle}>
+            {label.value}
+          </label>
+        )}
+        {startContent || endContent ? inputWithContent : inputDefault}
+      </div>
+    )
   )
 })
 Input.displayName = 'Input'

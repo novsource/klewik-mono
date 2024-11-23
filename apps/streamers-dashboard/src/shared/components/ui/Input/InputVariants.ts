@@ -25,7 +25,18 @@ type InputVariants = SizesCvaVariants & {
   }
 }
 
-export const labelVariants = cva<LabelVariants>('text-body font-semibold')
+export const labelVariants = cva<LabelVariants>('select-none text-white', {
+  variants: {
+    size: {
+      default: 'text-md font-semibold',
+      lg: 'text-md font-semibold',
+      sm: 'text-sm font-medium',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+})
 
 export const contentVariants = cva<ContentWrapperVariants>(
   'flex w-full rounded-medium bg-dark transition-all ring-gray-light data-[focus=true]:ring-1 data-[hover=true]:ring-1',
@@ -77,7 +88,9 @@ export const inputVariants = cva<InputVariants>(
       startContent: {
         true: 'px-0 focus-visible:ring-0 focus-visible:ring-offset-0',
       },
-      endContent: { true: '' },
+      endContent: {
+        true: 'px-0 focus-visible:ring-0 focus-visible:ring-offset-0',
+      },
     },
     defaultVariants: {
       size: 'default',
