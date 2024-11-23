@@ -1,7 +1,5 @@
+import { CvaClassValue } from '@/shared/utils/types'
 import { VariantProps, cva } from 'class-variance-authority'
-import { ClassValue } from 'clsx'
-
-type CvaClassValue = Omit<ClassValue, 'bigint'>
 
 type CardVariants = {
   variant: {
