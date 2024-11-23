@@ -1,6 +1,6 @@
 import SliderContent from '@ui/Slider/SliderContent'
 import { Icons } from '@ui/icons'
-import { SliderTrigger } from '@ui/index'
+import { Button, SliderTrigger } from '@ui/index'
 
 const SliderWelcomeContent = () => {
   return (
@@ -20,16 +20,21 @@ const SliderWelcomeContent = () => {
       </div>
       <div className="flex w-full flex-col gap-y-3">
         <SliderTrigger className="w-full" value="roles">
-          <button className="flex w-full items-center justify-center gap-x-1 rounded-medium bg-green py-2.5 text-body font-medium leading-4 transition-all hover:bg-opacity-70 xl:py-2.5 xl:text-body xl:leading-3">
-            <Icons.Login width={21} height={21} />
+          <Button
+            className="w-full"
+            variant="action"
+            startContent={<Icons.Login width={21} height={21} />}
+          >
             Войти в аукцион
-          </button>
+          </Button>
         </SliderTrigger>
         <SliderTrigger className="w-full" value="create">
-          <button className="flex w-full items-center justify-center gap-x-1 rounded-medium bg-dark py-2.5 text-body font-medium leading-4 text-gray-accent transition-all hover:bg-opacity-70 xl:py-2.5 xl:text-body xl:leading-3">
-            <Icons.Plus width={21} height={21} />
+          <Button
+            className="w-full"
+            startContent={<Icons.Plus width={21} height={21} />}
+          >
             Создать аукцион
-          </button>
+          </Button>
         </SliderTrigger>
       </div>
     </SliderContent>

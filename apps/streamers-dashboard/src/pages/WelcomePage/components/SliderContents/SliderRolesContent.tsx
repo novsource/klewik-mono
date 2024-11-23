@@ -1,6 +1,6 @@
 import SliderContent from '@ui/Slider/SliderContent'
 import { Icons } from '@ui/icons'
-import { SliderTrigger } from '@ui/index'
+import { Button, SliderTrigger } from '@ui/index'
 
 const SliderRolesContent = () => {
   return (
@@ -9,10 +9,9 @@ const SliderRolesContent = () => {
       value="roles"
     >
       <SliderTrigger className="absolute -top-16 left-0" value="welcome">
-        <button className="flex items-center justify-center gap-x-1 rounded-medium bg-dark px-5 py-2.5 text-body font-medium leading-4 text-gray-accent transition-all hover:bg-opacity-70 xl:py-2.5 xl:text-body xl:leading-3">
-          <Icons.ReturnArrow width={21} height={21} />
+        <Button startContent={<Icons.ReturnArrow width={21} height={21} />}>
           Назад
-        </button>
+        </Button>
       </SliderTrigger>
 
       <div className="flex flex-col gap-y-2">
@@ -25,14 +24,21 @@ const SliderRolesContent = () => {
       </div>
       <div className="flex w-full flex-col gap-y-3">
         <SliderTrigger className="w-full" value="guest">
-          <button className="flex w-full items-center justify-center gap-x-1 rounded-medium bg-green py-2.5 text-body font-medium leading-4 transition-all hover:bg-opacity-70 xl:py-2.5 xl:text-body xl:leading-3">
-            <Icons.Face width={21} height={21} />Я гость
-          </button>
+          <Button
+            className="w-full"
+            startContent={<Icons.Face width={21} height={21} />}
+            variant={'action'}
+          >
+            Я гость
+          </Button>
         </SliderTrigger>
         <SliderTrigger className="w-full" value="admin">
-          <button className="flex w-full items-center justify-center gap-x-1 rounded-medium bg-dark py-2.5 text-body font-medium leading-4 text-gray-accent transition-all hover:bg-opacity-70 xl:py-2.5 xl:text-body xl:leading-3">
-            <Icons.Crown width={21} height={21} />Я администратор
-          </button>
+          <Button
+            className="w-full"
+            startContent={<Icons.Crown width={21} height={21} />}
+          >
+            Я администратор
+          </Button>
         </SliderTrigger>
       </div>
     </SliderContent>

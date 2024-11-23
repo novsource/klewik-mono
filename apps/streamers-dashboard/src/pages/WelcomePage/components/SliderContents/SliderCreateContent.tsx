@@ -3,7 +3,7 @@ import { Input } from '@ui/Input/input'
 import SliderContent from '@ui/Slider/SliderContent'
 import { useSliderContext } from '@ui/Slider/SliderContext'
 import { Icons } from '@ui/icons'
-import { SliderTrigger } from '@ui/index'
+import { Button, SliderTrigger } from '@ui/index'
 import { useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
@@ -35,10 +35,9 @@ const SliderCreateContent = () => {
       value="create"
     >
       <SliderTrigger className="absolute -top-16 left-0" value="welcome">
-        <button className="flex items-center justify-center gap-x-1 rounded-medium bg-dark px-5 py-2.5 text-body font-medium leading-4 text-gray-accent transition-all hover:bg-opacity-70 xl:py-2.5 xl:text-body xl:leading-3">
-          <Icons.ReturnArrow width={21} height={21} />
+        <Button startContent={<Icons.ReturnArrow width={21} height={21} />}>
           Назад
-        </button>
+        </Button>
       </SliderTrigger>
 
       <div className="flex flex-col gap-y-2">
@@ -61,6 +60,23 @@ const SliderCreateContent = () => {
           render={({ field }) => (
             <Input
               type={isPasswordHidden ? 'password' : 'text'}
+              endContent={
+                isPasswordHidden ? (
+                  <Icons.EyeClosed
+                    className="text-gray"
+                    width={18}
+                    height={18}
+                    onClick={() => setIsPasswordHidden(false)}
+                  />
+                ) : (
+                  <Icons.EyeOpen
+                    className="text-gray"
+                    width={18}
+                    height={18}
+                    onClick={() => setIsPasswordHidden(true)}
+                  />
+                )
+              }
               placeholder="••••••••"
               label={{
                 id: 'password',
@@ -71,18 +87,15 @@ const SliderCreateContent = () => {
           )}
         />
 
-        <button
-          className={cn(
-            'w-full rounded-medium bg-green py-2.5 text-body font-medium leading-4 opacity-100 transition-[bg-opacity] hover:bg-opacity-70 xl:py-4 xl:text-body xl:leading-3',
-            isLoading && 'opacity-70 hover:bg-opacity-100'
-          )}
+        <Button
+          className={cn(isLoading && 'opacity-70 hover:bg-opacity-100')}
+          variant="action"
           type={isLoading ? 'button' : 'submit'}
-          disabled={isLoading ? true : false}
+          disabled={isLoading}
         >
           {isLoading ? 'Создаем аукцион...' : 'Создать'}
-        </button>
+        </Button>
       </form>
-      <div></div>
     </SliderContent>
   )
 }
