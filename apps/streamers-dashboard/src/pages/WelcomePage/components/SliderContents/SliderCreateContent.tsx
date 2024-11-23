@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils'
 import { Input } from '@ui/Input/input'
 import SliderContent from '@ui/Slider/SliderContent'
 import { useSliderContext } from '@ui/Slider/SliderContext'
+import Typography from '@ui/Typograghy/Typography'
 import { Icons } from '@ui/icons'
 import { Button, SliderTrigger } from '@ui/index'
 import { useState } from 'react'
@@ -41,14 +42,12 @@ const SliderCreateContent = () => {
       </SliderTrigger>
 
       <div className="flex flex-col gap-y-2">
-        <h1 className="text-titleXL font-bold leading-5 2xl:text-[24px] 2xl:leading-7">
-          Создание нового аукциона
-        </h1>
-        <h4 className="text-body font-medium text-gray">
+        <Typography tag="h1">Создание нового аукциона</Typography>
+        <Typography tag="p" className="text-gray">
           Для продолжения введите желаемый пароль от аукциона, который после
           будет использоваться вами для входа в аукцион в роли администратора.
           Затем нажмите кнопку "Создать"
-        </h4>
+        </Typography>
       </div>
       <form
         className="flex w-full flex-col gap-y-3"

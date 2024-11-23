@@ -1,6 +1,6 @@
 import SliderContent from '@ui/Slider/SliderContent'
 import { Icons } from '@ui/icons'
-import { Button, SliderTrigger } from '@ui/index'
+import { Button, SliderTrigger, Typography } from '@ui/index'
 
 const SliderWelcomeContent = () => {
   return (
@@ -11,12 +11,10 @@ const SliderWelcomeContent = () => {
           width={46}
           height={46}
         />
-        <h1 className="text-titleXL font-bold leading-6 2xl:text-[24px] 2xl:leading-7">
-          Добро пожаловать в поинтовый аукцион!
-        </h1>
-        <h4 className="text-body font-medium text-gray">
+        <Typography tag="h1">Добро пожаловать в поинтовый аукцион!</Typography>
+        <Typography tag="p" className="text-gray">
           Для продолжения выберите действие
-        </h4>
+        </Typography>
       </div>
       <div className="flex w-full flex-col gap-y-3">
         <SliderTrigger className="w-full" value="roles">

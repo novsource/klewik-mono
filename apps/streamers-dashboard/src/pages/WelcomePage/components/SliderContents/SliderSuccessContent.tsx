@@ -1,7 +1,6 @@
-import { Input } from '@ui/Input/Input'
 import SliderContent from '@ui/Slider/SliderContent'
 import { Icons } from '@ui/icons'
-import { Button } from '@ui/index'
+import { Button, Input, Typography } from '@ui/index'
 
 const SliderSuccessContent = () => {
   return (
@@ -10,14 +9,12 @@ const SliderSuccessContent = () => {
       value="successCreate"
     >
       <div className="flex flex-col gap-y-2">
-        <h1 className="text-titleXL font-bold leading-5 2xl:text-[24px] 2xl:leading-7">
-          Аукцион успешно создан!
-        </h1>
-        <h4 className="text-md font-medium text-gray">
+        <Typography tag="h1">Аукцион успешно создан!</Typography>
+        <Typography tag="p" className="text-gray">
           Скопируйте и сохраните себе номер аукциона, а также запомните пароль.
           Эти данные понадобятся вам в дальнейшем для входа в аукцион в роли
           администратора
-        </h4>
+        </Typography>
       </div>
       <div className="flex flex-col gap-y-4">
         <div className="flex items-end justify-center gap-x-2">

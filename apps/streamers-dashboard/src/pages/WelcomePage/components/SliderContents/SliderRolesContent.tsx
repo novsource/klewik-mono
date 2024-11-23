@@ -1,4 +1,5 @@
 import SliderContent from '@ui/Slider/SliderContent'
+import Typography from '@ui/Typograghy/Typography'
 import { Icons } from '@ui/icons'
 import { Button, SliderTrigger } from '@ui/index'
 
@@ -15,12 +16,12 @@ const SliderRolesContent = () => {
       </SliderTrigger>
 
       <div className="flex flex-col gap-y-2">
-        <h1 className="text-titleXL font-bold leading-5 2xl:text-[24px] 2xl:leading-7">
+        <Typography tag="h1">
           Вы хотите войти в аукцион как гость или как администратор аукциона?
-        </h1>
-        <h4 className="text-body font-medium text-gray">
+        </Typography>
+        <Typography tag="p" className="text-gray">
           Для продолжения выберите роль
-        </h4>
+        </Typography>
       </div>
       <div className="flex w-full flex-col gap-y-3">
         <SliderTrigger className="w-full" value="guest">

@@ -1,7 +1,8 @@
 import { Input } from '@ui/Input/Input'
 import SliderContent from '@ui/Slider/SliderContent'
 import { Icons } from '@ui/icons'
-import { Button, SliderTrigger } from '@ui/index'
+import { Button, SliderTrigger, Typography } from '@ui/index'
+import { useState } from 'react'
 
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
@@ -11,6 +12,7 @@ type LoginAuction = {
 }
 
 const SliderAdminContent = () => {
+  const [isPasswordHidden, setIsPasswordHidden] = useState(true)
   const { control, handleSubmit } = useForm<LoginAuction>({
     defaultValues: {
       auctionId: '',
@@ -32,13 +34,11 @@ const SliderAdminContent = () => {
       </SliderTrigger>
 
       <div className="flex flex-col gap-y-2">
-        <h1 className="text-titleXL font-bold leading-5 2xl:text-[24px] 2xl:leading-7">
-          Вход в аукцион в роли администратора
-        </h1>
-        <h4 className="text-body font-medium text-gray">
+        <Typography tag="h1">Вход в аукцион в роли администратора</Typography>
+        <Typography tag="p" className="text-gray">
           Для продолжения введите номер аукциона, а также пароль, указанный при
           его создании. После нажмите кнопку "Войти"
-        </h4>
+        </Typography>
       </div>
 
       <form
@@ -51,8 +51,15 @@ const SliderAdminContent = () => {
             control={control}
             render={({ field }) => (
               <Input
-                type="text"
                 className="font-semibold tracking-wide"
+                type="text"
+                startContent={
+                  <Icons.Id
+                    width={18}
+                    height={18}
+                    className="text-gray-accent"
+                  />
+                }
                 label={{ id: 'auctionId', value: 'Номер аукциона' }}
                 placeholder="xxxxxxxx&mdash;xxxx&mdash;xxxx&mdash;xxxx&mdash;xxxxxxxxxxxx"
                 {...field}
@@ -64,7 +71,31 @@ const SliderAdminContent = () => {
             control={control}
             render={({ field }) => (
               <Input
-                type="password"
+                type={isPasswordHidden ? 'password' : 'text'}
+                startContent={
+                  <Icons.Key
+                    width={18}
+                    height={18}
+                    className="text-gray-accent"
+                  />
+                }
+                endContent={
+                  isPasswordHidden ? (
+                    <Icons.EyeClosed
+                      width={18}
+                      height={18}
+                      className="cursor-pointer text-gray"
+                      onClick={() => setIsPasswordHidden(false)}
+                    />
+                  ) : (
+                    <Icons.EyeOpen
+                      width={18}
+                      height={18}
+                      className="cursor-pointer text-gray"
+                      onClick={() => setIsPasswordHidden(true)}
+                    />
+                  )
+                }
                 label={{ id: 'password', value: 'Пароль от аукциона' }}
                 placeholder="••••••••"
                 {...field}
@@ -72,12 +103,9 @@ const SliderAdminContent = () => {
             )}
           />
         </div>
-        <button
-          className="w-full rounded-medium bg-green py-2.5 text-body font-medium leading-4 transition-all hover:bg-opacity-70 xl:py-4 xl:text-body xl:leading-3"
-          type="submit"
-        >
+        <Button variant={'action'} type="submit">
           Войти
-        </button>
+        </Button>
       </form>
     </SliderContent>
   )
