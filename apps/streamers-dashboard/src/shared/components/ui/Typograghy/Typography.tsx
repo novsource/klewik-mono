@@ -5,9 +5,9 @@ import {
 } from './TypographyVariants'
 import { cn } from '@/lib/utils'
 
-type TypographyElements = 'h1' | 'h2' | 'h3' | 'h4' | 'span' | 'p'
+export type TypographyTags = 'h1' | 'h2' | 'h3' | 'h4' | 'span' | 'p'
 
-type TypographyHTMLElements = Pick<HTMLElementTagNameMap, TypographyElements>
+type TypographyHTMLElements = Pick<HTMLElementTagNameMap, TypographyTags>
 
 type TypographyProps<T extends keyof TypographyHTMLElements> = {
   tag: T
@@ -21,7 +21,7 @@ const Typography = <T extends keyof TypographyHTMLElements>({
   className,
   ...props
 }: TypographyProps<T>) => {
-  const Comp = tag as keyof Pick<JSX.IntrinsicElements, TypographyElements>
+  const Comp = tag as keyof Pick<JSX.IntrinsicElements, TypographyTags>
 
   const styles = useMemo(
     () => cn(typographyVariants({ tag }), className),
