@@ -6,7 +6,7 @@ const Header = ({ children }: PropsWithChildren) => {
     <header className="h-16 w-full">
       <div className="flex h-full w-full items-center justify-between gap-x-4 px-4">
         <Icons.Logo width={32} height={32} />
-        <div className="">{children}</div>
+        {children}
       </div>
     </header>
   )
