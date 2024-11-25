@@ -18,7 +18,7 @@ const AuctionDashboardLayout = () => {
             <aside className="h-full w-16 flex-none">
               <DashboardMenu className="absolute left-2 top-1/2 -translate-y-1/2" />
             </aside>
-            {<Outlet />}
+            <Outlet />
           </div>
         </div>
       </main>
