@@ -1,7 +1,7 @@
 import AnimatedTruncText from './AnimatedTruncText'
 
 const LotCard = (props: AuctionSlot) => {
-  const { _id, auctionColor, name, tag, value, ownerId, sponsorsIds } = props
+  const { _id, auctionColor, name, points, sponsorsIds } = props
 
   return (
     <div className="flex h-10 w-full items-center justify-between gap-x-2 rounded-small bg-dark px-3 py-2">
