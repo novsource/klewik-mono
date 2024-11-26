@@ -13,15 +13,13 @@ const slots: AuctionSlot[] = [
   {
     name: 'Test',
     auctionColor: getRandomHSLColor(),
-    tag: '',
-    value: 1000,
+    points: 1000,
     _id: '12',
   },
   {
     name: 'Test 2',
     auctionColor: getRandomHSLColor(),
-    tag: '',
-    value: 2000,
+    points: 2000,
     _id: '120',
   },
 ]
@@ -55,7 +53,7 @@ const WheelContainer = () => {
 
   return (
     <div className="flex h-full w-full flex-shrink-[2] flex-col gap-y-2">
-      <span ref={lotTextRef} className="text-center text-titleXL font-semibold">
+      <span ref={lotTextRef} className="text-center text-titleLg font-semibold">
         Here will be name of lot on wheel selector
       </span>
       <div className="h-full w-full">

@@ -13,10 +13,8 @@ type Auction = {
 type AuctionSlot = {
   _id: string
   name: string
-  value: number
-  tag: string
+  points: number
   auctionColor: string
-  ownerId?: string
   sponsorsIds?: AuctionSlotSponsor[]
 }
 

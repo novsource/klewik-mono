@@ -45,11 +45,11 @@ export const drawSlicesItems = (
   const y = canvas.height / 2
 
   let startAngle = 0
-  const sumValues = items.reduce((acc, item) => acc + item['value'], 0)
+  const sumValues = items.reduce((acc, item) => acc + item['points'], 0)
 
   for (const item of items) {
     const sliceArcLength =
-      getMaxCircleLength(radius) * getPercentValue(sumValues, item.value)
+      getMaxCircleLength(radius) * getPercentValue(sumValues, item.points)
     const endAngle =
       startAngle +
       convertDegreesToRadians(getDegreeByArcLength(radius, sliceArcLength))
@@ -264,7 +264,7 @@ export const getItemsWithAngles = <T extends AuctionSlot>(
 
   const newLots = wheelMode === 'dropout' ? reverseLotsByValue(lots) : [...lots]
 
-  const sumItemsValue = newLots.reduce((acc, lot) => acc + lot['value'], 0)
+  const sumItemsValue = newLots.reduce((acc, lot) => acc + lot['points'], 0)
 
   // Radius size not important
   const radius = 1
@@ -275,7 +275,7 @@ export const getItemsWithAngles = <T extends AuctionSlot>(
 
   return newLots.reduce((acc: AuctionSlotWithAngles[], item: AuctionSlot) => {
     const itemArcLength =
-      maxWheelArcLength * getPercentValue(sumItemsValue, item['value'])
+      maxWheelArcLength * getPercentValue(sumItemsValue, item['points'])
 
     const degrees = getDegreeByArcLength(radius, itemArcLength)
     const endAngle = startAngle + degrees
@@ -389,15 +389,15 @@ const reverseLotsByValue = (slots: AuctionSlot[]) => {
 
   const sortedLots = slots
     .map((slot) => ({ ...slot }))
-    .sort((a, b) => a.value - b.value)
+    .sort((a, b) => a.points - b.points)
 
   let leftPointer = 0
   let rightPointer = slots.length - 1
 
   while (leftPointer <= rightPointer) {
-    const buffer = sortedLots[leftPointer].value
-    sortedLots[leftPointer].value = sortedLots[rightPointer].value
-    sortedLots[rightPointer].value = buffer
+    const buffer = sortedLots[leftPointer].points
+    sortedLots[leftPointer].points = sortedLots[rightPointer].points
+    sortedLots[rightPointer].points = buffer
 
     leftPointer++
     rightPointer--
@@ -407,7 +407,7 @@ const reverseLotsByValue = (slots: AuctionSlot[]) => {
     const findingLot = sortedLots.find((item) => item._id === lot._id)
 
     if (findingLot) {
-      lot.value = findingLot.value
+      lot.points = findingLot.points
     }
 
     return { ...lot }
