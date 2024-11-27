@@ -54,7 +54,7 @@ const WheelContainer = () => {
   return (
     <div className="flex h-full w-full flex-shrink-[2] flex-col gap-y-2">
       <span ref={lotTextRef} className="text-center text-titleLg font-semibold">
-        Here will be name of lot on wheel selector
+        Ожидание прокрутки колеса...
       </span>
       <div className="h-full w-full">
         <Wheel ref={wheelRef} wheelSelectorRef={wheelSelectorRef} />

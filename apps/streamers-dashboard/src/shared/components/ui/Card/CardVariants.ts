@@ -53,7 +53,7 @@ export const cardContentVariants = cva<CardVariants>(
   {
     variants: {
       variant: { default: '', slots: 'font-semibold text-base' },
-      size: { default: 'py-4', sm: 'py-1', lg: 'py-6' },
+      size: { default: 'py-4', sm: 'pt-1', lg: 'py-6' },
     },
   }
 )

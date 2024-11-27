@@ -27,7 +27,7 @@ const WheelTab = () => {
     ).map((item) => (
       <TabsTrigger
         value={item.toLowerCase()}
-        className="text-md flex flex-grow gap-x-2 font-medium data-[state=active]:rounded-[8px] data-[state=active]:bg-dark-accent"
+        className="flex flex-grow gap-x-2 text-md font-medium data-[state=active]:rounded-[8px]"
       >
         {triggersWithIcons[item].icon}
         {triggersWithIcons[item].title}

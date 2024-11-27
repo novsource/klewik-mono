@@ -19,7 +19,7 @@ const slotsTableColumnHeaders = {
   },
   slotTitle: {
     name: 'Наименование слота',
-    className: 'min-w-[300px]',
+    className: 'min-w-[100px] max-w-[500px]',
   },
   slotPoints: {
     name: 'Количество очков',

@@ -50,7 +50,7 @@ export default {
     },
     extend: {
       gridTemplateRows: {
-        slots: 'minmax(34px, 42px) minmax(56px, 64px) 1fr',
+        slots: 'minmax(40px, 42px) max(62px) 1fr',
       },
       spacing: {
         '4xl': '1.5rem',

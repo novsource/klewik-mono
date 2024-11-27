@@ -8,13 +8,12 @@ const ControlWheelTab = () => {
       value="control"
       className="mt-5 flex flex-col gap-y-3 data-[state=active]:h-full"
     >
-      <div className="flex flex-col gap-y-2">
+      <div className="">
         <Button
-          className="flex w-fit items-center justify-center gap-x-1 rounded-medium bg-green px-4 py-2.5 text-body font-medium text-white"
-          variant={'default'}
+          variant={'action'}
+          startContent={<Icons.Refresh width={18} height={18} />}
         >
-          <Icons.Refresh width={18} height={18} />
-          Spin wheel
+          Прокрутить
         </Button>
       </div>
     </TabsContent>
