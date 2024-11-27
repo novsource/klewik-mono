@@ -6,6 +6,7 @@ import { TabsContextProvider, useTabContext } from './TabsContext'
 import {
   tabsContentVariants,
   tabsListVariants,
+  tabsTriggerRunnerVariants,
   tabsTriggerVariants,
 } from './TabsVariants'
 
@@ -40,9 +41,11 @@ const TabsTriggerRunner = () => {
     }
   }, [triggersData, selectedKey])
 
+  const styles = React.useMemo(() => cn(tabsTriggerRunnerVariants()), [])
+
   return (
     <div
-      className="absolute h-8 rounded-md bg-dark-accent transition-all"
+      className={styles}
       style={{ width, transform: `translateX(${x - 4}px)` }}
     />
   )
