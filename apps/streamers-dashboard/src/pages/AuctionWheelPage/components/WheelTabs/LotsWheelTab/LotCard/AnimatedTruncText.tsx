@@ -12,13 +12,9 @@ const trimText = (text: string, maxWidth: number): string => {
   canvas.width = Math.floor(maxWidth * ratio)
   canvas.style.width = `${maxWidth}px`
 
-  canvasContext.font = '16px sans-serif'
+  canvasContext.font = '15.1px sans-serif'
 
-  const trimmedText = fitTextEllipsis(
-    canvas.getContext('2d') as CanvasRenderingContext2D,
-    text,
-    maxWidth
-  )
+  const trimmedText = fitTextEllipsis(canvasContext, text, maxWidth)
 
   return trimmedText
 }
@@ -166,17 +162,55 @@ const AnimatedTruncText = ({
     }
   }, [isHovered, isAnimationPlaying])
 
+  useEffect(() => {
+    const boxElement = boxRef.current
+    const spanElement = spanRef.current
+    const eventController = new AbortController()
+
+    if (boxElement && spanElement) {
+      window.addEventListener(
+        'resize',
+        () => {
+          if (isAnimationPlaying && animationControls !== null) {
+            animationControls.cancel()
+          }
+
+          needToTranslate.current = 0
+
+          spanElement.setAttribute('style', 'transform:translate(0px, -50%)')
+
+          const trimmedText = trimText(
+            children,
+            boxElement?.getBoundingClientRect().width as number
+          )
+
+          setAnimationPlaying(false)
+          setIsNeedToShowEllipsis(trimmedText.includes('...'))
+          setText(trimmedText.replace('...', ''))
+        },
+        {
+          signal: eventController.signal,
+        }
+      )
+    }
+
+    return () => {
+      eventController.abort()
+    }
+  }, [boxRef.current, spanRef.current])
+
   return (
     <div
       ref={boxRef}
-      className="relative h-8 w-full overflow-hidden text-nowrap"
+      className="relative w-full overflow-hidden text-nowrap"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      <span className="opacity-0">{children}</span>
       <span
         ref={spanRef}
         className={cn(
-          'absolute top-1/2 -translate-y-1/2 font-medium',
+          'absolute left-0 top-1/2 z-10 -translate-y-1/2 font-medium',
           classNames
         )}
       >
