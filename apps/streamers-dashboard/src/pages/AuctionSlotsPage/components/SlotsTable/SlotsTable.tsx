@@ -1,4 +1,5 @@
 import AnimatedTruncText from '@/pages/AuctionWheelPage/components/WheelTabs/LotsWheelTab/LotCard/AnimatedTruncText'
+import { Typography } from '@ui/index'
 
 import {
   Table,
@@ -9,64 +10,191 @@ import {
   TableHeader,
   TableRow,
 } from '@ui/Table/Table'
+import { useCallback, useMemo, useState } from 'react'
 
 type SlotsTableProps = {}
 
-const slotsTableColumnHeaders = {
-  id: {
-    name: 'ID',
-    className: 'w-[100px]',
-  },
-  slotTitle: {
-    name: 'Наименование слота',
-    className: 'min-w-[100px] max-w-[500px]',
-  },
-  slotPoints: {
-    name: 'Количество очков',
-    className: 'min-w-[150px] w-[200px]',
-  },
-  chance: {
-    name: 'Шанс победы',
-    className: 'w-[150px]',
-  },
-}
-
 const items: AuctionSlot[] = Array(20).fill({
-  _id: '#123',
+  _id: '123',
   name: Array(100).fill('Test').join(' '),
   points: 1000,
   chance: 10,
 })
 
+type TableColumn<T> = {
+  key: keyof T
+  label: string
+}
+
+type TableColumnKeys<T> = Array<
+  T extends { readonly [index: number]: { key: infer K } } ? K : never
+>
+
+type TypedUseCallback<T extends Function> = ReturnType<typeof useCallback<T>>
+
+type RenderCellFn<
+  T = unknown,
+  K extends Array<TableColumn<T>> = Array<TableColumn<T>>,
+> = TypedUseCallback<
+  (columnKey: TableColumnKeys<K>[number], dataItem: T) => JSX.Element
+>
+
+type RenderRowFn<
+  T = unknown,
+  K extends Array<TableColumn<T>> = Array<TableColumn<T>>,
+> = TypedUseCallback<
+  (
+    dataItem: T,
+    columnsKeys: TableColumnKeys<K>,
+    renderCellFn: RenderCellFn<T, K>
+  ) => JSX.Element
+>
+
+type RenderColumnsFn<
+  T = unknown,
+  K extends Array<TableColumn<T>> = Array<TableColumn<T>>,
+> = TypedUseCallback<(columns: K) => JSX.Element[]>
+
+const tableColumns: TableColumn<
+  Omit<AuctionSlot, 'sponsorsIds' | 'slotHSVColor'>
+>[] = [
+  {
+    key: '_id',
+    label: 'ID',
+  },
+  {
+    key: 'name',
+    label: 'Наименование слота',
+  },
+  {
+    key: 'points',
+    label: 'Количество очков',
+  },
+  {
+    key: 'chance',
+    label: 'Шанс',
+  },
+] as const
+
 const SlotsTable = (props: SlotsTableProps) => {
+  const [initTableData, setInitTableData] = useState<AuctionSlot[]>(() => items)
+
+  const columnsKeys = useMemo(
+    () => tableColumns.map((column) => column.key),
+    []
+  )
+
+  const renderRowFn: RenderRowFn<AuctionSlot, typeof tableColumns> =
+    useCallback(
+      (item, columnsKeys, renderCellFn) => (
+        <TableRow className="overflow-clip">
+          {columnsKeys.map((columnKey) => renderCellFn(columnKey, item))}
+        </TableRow>
+      ),
+      []
+    )
+
+  const renderCellFn: RenderCellFn<AuctionSlot, typeof tableColumns> =
+    useCallback((columnKey, dataItem) => {
+      switch (columnKey) {
+        case '_id': {
+          return (
+            <TableCell
+              className="w-[50px] min-w-[40px]"
+              key={String(dataItem[columnKey])}
+            >
+              {`#${dataItem[columnKey]}`}
+            </TableCell>
+          )
+        }
+        case 'name': {
+          return (
+            <TableCell
+              className="min-w-[250px] max-w-[500px]"
+              key={String(dataItem[columnKey])}
+            >
+              <Typography
+                tag={'span'}
+                className="inline-block w-full overflow-clip font-medium"
+              >
+                {dataItem[columnKey]}
+              </Typography>
+            </TableCell>
+          )
+        }
+        case 'points': {
+          return (
+            <TableCell
+              className="min-w-[100px] max-w-[250px]"
+              key={String(dataItem[columnKey])}
+            >
+              {new Intl.NumberFormat('ru-ru').format(dataItem[columnKey])}
+            </TableCell>
+          )
+        }
+        case 'chance': {
+          return (
+            <TableCell
+              className="w-[80px] max-w-[120px]"
+              key={String(dataItem[columnKey])}
+            >
+              {dataItem[columnKey]
+                ? new Intl.NumberFormat('ru-ru').format(dataItem[columnKey])
+                : 0}
+            </TableCell>
+          )
+        }
+      }
+    }, [])
+
+  const renderColumnsFn: RenderColumnsFn<AuctionSlot, typeof tableColumns> =
+    useCallback(
+      (columns) =>
+        columns.map((column) => {
+          const { key, label } = column
+
+          switch (key) {
+            case '_id': {
+              return (
+                <TableHead className="min-w-[50px] max-w-[80px]" key={key}>
+                  {label}
+                </TableHead>
+              )
+            }
+            case 'name': {
+              return (
+                <TableHead className="min-w-[250px]" key={key}>
+                  {label}
+                </TableHead>
+              )
+            }
+            case 'points': {
+              return (
+                <TableHead className="w-[150px] max-w-[200px]" key={key}>
+                  {label}
+                </TableHead>
+              )
+            }
+            case 'chance': {
+              return (
+                <TableHead className="w-[40px]" key={key}>
+                  {label}
+                </TableHead>
+              )
+            }
+          }
+        }),
+      []
+    )
+
   return (
     <Table>
       <TableCaption>Последнее обновление: 5 минут назад</TableCaption>
-      <TableHeader>
-        {(
-          Object.keys(slotsTableColumnHeaders) as Array<
-            keyof typeof slotsTableColumnHeaders
-          >
-        ).map((key) => {
-          const { name, className } = slotsTableColumnHeaders[key]
-          return <TableHead className={className}>{name}</TableHead>
-        })}
-      </TableHeader>
+      <TableHeader>{renderColumnsFn(tableColumns)}</TableHeader>
       <TableBody>
-        {items.map((item) => {
-          return (
-            <TableRow key={item._id}>
-              {(Object.keys(item) as Array<keyof typeof item>).map((key) => (
-                <TableCell className="max-w-[500px] overflow-clip" key={key}>
-                  <AnimatedTruncText>{String(item[key])}</AnimatedTruncText>
-                  {/* {typeof item[key] === 'number'
-                    ? new Intl.NumberFormat('ru-ru').format(item[key])
-                    : String(item[key])} */}
-                </TableCell>
-              ))}
-            </TableRow>
-          )
-        })}
+        {initTableData.map((item) =>
+          renderRowFn(item, columnsKeys, renderCellFn)
+        )}
       </TableBody>
     </Table>
   )
