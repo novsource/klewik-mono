@@ -13,7 +13,7 @@ type TableCardInfoProps = HTMLAttributes<HTMLDivElement>
 const TableCardInfo = (props: TableCardInfoProps) => {
   return (
     <CardContainer size="sm" variant="slots">
-      <div className="flex flex-nowrap gap-x-2">
+      <div className="flex flex-nowrap gap-x-2 [&>section]:rounded-medium">
         <Card>
           <CardHeader>
             <CardTitle className="text-nowrap">
