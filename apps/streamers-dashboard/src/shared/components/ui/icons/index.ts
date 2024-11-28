@@ -1,6 +1,7 @@
 import { default as Bill } from './Bill';
 import { default as Bin } from './Bin';
 import { default as CardSend } from './CardSend';
+import { default as Close } from './Close';
 import { default as Copy } from './Copy';
 import { default as Crown } from './Crown';
 import { default as DonateMessage } from './DonateMessage';
@@ -37,6 +38,7 @@ import { default as Warning } from './Warning';
       Bill,
   Bin,
   CardSend,
+  Close,
   Copy,
   Crown,
   DonateMessage,
