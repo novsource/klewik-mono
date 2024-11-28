@@ -3,11 +3,11 @@ import LotCard from './LotCard/LotCard'
 
 const lots = [
   {
-    auctionColor: '#FFF',
+    slotHSVColor: '#FFF',
     name: 'Hello',
   },
   {
-    auctionColor: '#FFF',
+    slotHSVColor: '#FFF',
     name: 'Hello',
   },
 ] as AuctionSlot[]
