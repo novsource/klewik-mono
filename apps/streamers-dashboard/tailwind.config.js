@@ -103,6 +103,12 @@ export default {
         },
       },
     },
+    boxShadow: {
+      tableBorder: '0px 4x 0px 0px rgba(85, 85, 85, 0.7)',
+    },
+    fontFamily: {
+      golosF: ["'Golos'"],
+    },
   },
   plugins: [require('tailwindcss-animate')],
 }
