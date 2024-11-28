@@ -14,8 +14,9 @@ type AuctionSlot = {
   _id: string
   name: string
   points: number
-  auctionColor: string
+  slotHSVColor: string
   sponsorsIds?: AuctionSlotSponsor[]
+  chance?: number
 }
 
 type AuctionSlotWithAngles = AuctionSlot & {

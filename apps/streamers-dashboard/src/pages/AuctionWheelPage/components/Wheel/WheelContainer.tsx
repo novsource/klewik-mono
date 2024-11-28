@@ -12,13 +12,13 @@ import WheelTab from '../WheelTabs/WheelTab'
 const slots: AuctionSlot[] = [
   {
     name: 'Test',
-    auctionColor: getRandomHSLColor(),
+    slotHSVColor: getRandomHSLColor(),
     points: 1000,
     _id: '12',
   },
   {
     name: 'Test 2',
-    auctionColor: getRandomHSLColor(),
+    slotHSVColor: getRandomHSLColor(),
     points: 2000,
     _id: '120',
   },
