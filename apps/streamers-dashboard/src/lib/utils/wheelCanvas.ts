@@ -57,7 +57,7 @@ export const drawSlicesItems = (
     drawSlice({
       context: ctx,
       sliceParameters: { x, y, radius, startAngle, endAngle },
-      options: { text: item.name, color: item.auctionColor },
+      options: { text: item.name, color: item.slotHSVColor },
     })
 
     startAngle = endAngle
@@ -219,7 +219,7 @@ export const drawSlicesItemsWithSelectedItem = (
     },
     options: {
       text: selectedItem.name,
-      color: selectedItem.auctionColor,
+      color: selectedItem.slotHSVColor,
     },
   })
 }
@@ -247,7 +247,7 @@ export const getSliceInfo = (
       },
       options: {
         text: item.name,
-        color: item.auctionColor,
+        color: item.slotHSVColor,
       },
       onDraw: (slice) => {
         if (ctx.isPointInPath(slice, mouse.x, mouse.y)) console.log(item)
