@@ -15,7 +15,7 @@ export default {
       dark: {
         DEFAULT: '#27272A',
         accent: '#3E4145',
-        foreground: '#18181B',
+        foreground: '#19191B',
       },
       yellow: {
         DEFAULT: '#CFC56F',
@@ -40,13 +40,18 @@ export default {
       titleXL: '24px',
     },
     borderRadius: {
+      none: '0px',
       small: '8px',
       medium: '10px',
       large: '16px',
       pill: '10000px',
     },
-    borderColor: {
-      dark: '#2A2D32',
+    screens: {
+      mobile: '640px',
+      tablet: '1024px',
+      landtop: '1440px',
+      desktop: '1920px',
+      desktopLg: '2560px',
     },
     extend: {
       gridTemplateRows: {
@@ -54,6 +59,9 @@ export default {
       },
       spacing: {
         '4xl': '1.5rem',
+      },
+      borderWidth: {
+        1: '1px',
       },
       borderRadius: {
         lg: 'var(--radius)',
