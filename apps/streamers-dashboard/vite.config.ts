@@ -9,6 +9,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
+      '@root': path.resolve(__dirname, './'),
       '@ui': path.resolve(__dirname, './src/shared/components/ui'),
       '@components': path.resolve(__dirname, './src/shared/components'),
       '@icons': path.resolve(__dirname, './src/shared/icons'),

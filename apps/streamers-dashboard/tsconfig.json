@@ -12,7 +12,8 @@
       "@ui/*": ["./src/shared/components/ui/*"],
       "@layouts/*": ["./src/shared/router/layouts/*"],
       "@utils/*": ["./src/lib/utils/*"],
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@root/*": ["./*"]
     }
   }
 }
