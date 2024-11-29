@@ -67,6 +67,7 @@
 
 :root {
   --header-height: 64px;
+  --footer-height: 52px;
 }
 
 :root {
@@ -99,6 +100,10 @@ header {
   height: var(--header-height);
 }
 
+footer {
+  height: var(--footer-height);
+}
+
 section > header {
   height: auto;
 }
@@ -107,4 +112,10 @@ section > header {
   width: 100%;
   height: 100%;
   max-height: calc(100% - var(--header-height));
+}
+
+@media screen and (max-width: theme(screens.tablet)) {
+  .main--dashboard {
+    max-height: calc(100% - var(--header-height) - var(--footer-height));
+  }
 }

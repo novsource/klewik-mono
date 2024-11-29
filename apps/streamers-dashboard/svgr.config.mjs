@@ -2,17 +2,33 @@ import { basename, extname } from 'path'
 const outDir = './src/shared/components/ui/icons' // путь, до папки, где будут храниться преобразованные иконки
 
 // Шаблон компонента с иконкой
-const iconTemplate = (variables, { tpl }) => tpl`
-${variables.imports};
+const iconTemplate = (
+  { imports, interfaces, props, componentName, jsx, exports },
+  { tpl }
+) => tpl`
+${imports};
 
-${variables.interfaces};
+${interfaces};
 
-const ${variables.componentName} = (${variables.props}) => {
+type Sizes = 'xs' | 'sm' | 'default' | 'lg'
 
-  return ${variables.jsx}
+type IconsProps = SVGProps<SVGSVGElement> & {
+  size: Sizes
 }
 
-${variables.exports};
+const sizes: Record<Sizes, number> = {
+  xs: 16,
+  sm: 18,
+  default: 21,
+  lg: 24
+}
+
+const ${componentName} = (props: IconsProps) => {
+  props = {...props, width: sizes[props.size] ?? props.width ?? sizes['default'], height: sizes[props.size] ?? props.height ?? sizes['default']}
+  return ${jsx}
+}
+
+${exports};
 `
 
 // Шаблон файла index.ts, который будет экспортировать все сгенерированные компоненты иконок
