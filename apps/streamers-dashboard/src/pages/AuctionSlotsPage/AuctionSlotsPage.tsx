@@ -1,44 +1,65 @@
-import {
-  Card,
-  CardContainer,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@ui/Card/Card'
 import { Icons } from '@ui/icons'
 import SearchInput from './components/SearchInput/SearchInput'
 import { Button } from '@ui/index'
 import SlotsTable from './components/SlotsTable/SlotsTable'
 import TableCardInfo from './components/TableCardInfo/TableCardInfo'
+import { useMediaQuery } from '@hooks/useMediaQuery'
+import { tailwindScreens } from '@/lib/constants/twScreens'
+import { TableItemCard } from './components/TableItemCard/TableItemCard'
 
 type AuctionSlotsPageProps = {}
 
+const items: AuctionSlot[] = Array(20).fill({
+  _id: '123',
+  name: Array(100).fill('Test').join(' '),
+  points: 1000,
+  chance: 10,
+})
+
 const AuctionSlotsPage = (props: AuctionSlotsPageProps) => {
+  const isMediaLargeThenTablet = useMediaQuery(
+    `(min-width: ${tailwindScreens.tablet})`
+  )
+
   return (
-    <div className="grid h-full w-full grid-rows-slots gap-y-7 py-4 pl-4">
+    <div className="tablet:pl-4 tablet:py-4 tablet:gap-y-7 grid-rows-slotsTable table:grid-rows-slotsDesktop mobile:gap-y-5 mb-4 grid h-full w-full gap-y-3 pt-2">
       <div className="flex flex-nowrap items-center gap-x-4">
-        <SearchInput />
+        <SearchInput size={!isMediaLargeThenTablet ? 'lg' : 'default'} />
         <div className="flex items-center gap-x-2">
           <Button
+            size={!isMediaLargeThenTablet ? 'lg' : 'default'}
             variant={'default'}
-            startContent={<Icons.Pencil width={16} height={16} />}
+            startContent={<Icons.Pencil size="sm" />}
           >
-            Редактировать
+            {isMediaLargeThenTablet && 'Редактировать'}
           </Button>
           <Button
+            size={!isMediaLargeThenTablet ? 'lg' : 'default'}
             variant={'action'}
-            startContent={<Icons.Plus width={16} height={16} />}
+            startContent={<Icons.Plus size="sm" />}
           >
-            Добавить слот
+            {isMediaLargeThenTablet && 'Добавить слот'}
           </Button>
         </div>
       </div>
 
-      <div className="h-full w-full overflow-x-scroll">
-        <TableCardInfo />
-      </div>
+      {isMediaLargeThenTablet && (
+        <div className="h-full w-full overflow-x-scroll">
+          <TableCardInfo />
+        </div>
+      )}
 
-      <SlotsTable />
+      {isMediaLargeThenTablet ? (
+        <SlotsTable />
+      ) : (
+        <div className="h-full w-full overflow-scroll">
+          <ul className="flex h-full w-full flex-col gap-y-2">
+            {items.map((item) => (
+              <TableItemCard data={item} />
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }
