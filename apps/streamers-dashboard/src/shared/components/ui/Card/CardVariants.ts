@@ -20,7 +20,7 @@ export const cardBaseVariants = cva<CardVariants>('bg-dark rounded-large', {
       slots: 'text-gray-accent font-semibold',
     },
     size: {
-      default: 'px-5 py-4',
+      default: 'px-4 py-3',
       sm: 'px-3 py-2',
       lg: 'rounded-lg px-8 py-6',
     },
@@ -53,7 +53,7 @@ export const cardContentVariants = cva<CardVariants>(
   {
     variants: {
       variant: { default: '', slots: 'font-semibold text-base' },
-      size: { default: 'py-4', sm: 'pt-1', lg: 'py-6' },
+      size: { default: 'py-2', sm: 'pt-1', lg: 'py-4' },
     },
   }
 )
@@ -68,14 +68,11 @@ export const cardDescriptionVariants = cva<CardVariants>(
   }
 )
 
-export const cardFooterVariants = cva<CardVariants>(
-  'flex items-center p-6 pt-0',
-  {
-    variants: {
-      variant: { default: '', slots: '' },
-      size: { default: '', sm: '', lg: '' },
-    },
-  }
-)
+export const cardFooterVariants = cva<CardVariants>('flex items-center pt-0', {
+  variants: {
+    variant: { default: '', slots: '' },
+    size: { default: '', sm: '', lg: '' },
+  },
+})
 
 export type CardStyleProps = VariantProps<typeof cardBaseVariants>

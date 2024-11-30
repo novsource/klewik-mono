@@ -113,12 +113,7 @@ const SlotsTable = (props: SlotsTableProps) => {
               className="min-w-[250px] max-w-[500px]"
               key={String(dataItem[columnKey])}
             >
-              <Typography
-                tag={'span'}
-                className="inline-block w-full overflow-clip font-medium"
-              >
-                {dataItem[columnKey]}
-              </Typography>
+              <AnimatedTruncText>{dataItem[columnKey]}</AnimatedTruncText>
             </TableCell>
           )
         }
@@ -163,14 +158,17 @@ const SlotsTable = (props: SlotsTableProps) => {
             }
             case 'name': {
               return (
-                <TableHead className="min-w-[250px]" key={key}>
+                <TableHead className="min-w-[150px]" key={key}>
                   {label}
                 </TableHead>
               )
             }
             case 'points': {
               return (
-                <TableHead className="w-[150px] max-w-[200px]" key={key}>
+                <TableHead
+                  className="min-[100px] w-[150px] max-w-[200px]"
+                  key={key}
+                >
                   {label}
                 </TableHead>
               )

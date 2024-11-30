@@ -55,7 +55,8 @@ export default {
     },
     extend: {
       gridTemplateRows: {
-        slots: 'minmax(40px, 42px) max(62px) 1fr',
+        slotsDesktop: 'minmax(40px, 42px) max(62px) 1fr',
+        slotsTable: 'minmax(40px, 42px) 1fr',
       },
       spacing: {
         '4xl': '1.5rem',

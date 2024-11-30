@@ -68,7 +68,7 @@ export const inputVariants = cva<InputVariants>(
   [
     'flex w-full items-center',
     'dark bg-dark',
-    'text-body font-medium text-white',
+    'font-medium text-white',
     'file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground',
     'disabled:cursor-not-allowed disabled:opacity-50',
     'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:ring-gray',
@@ -79,7 +79,7 @@ export const inputVariants = cva<InputVariants>(
     variants: {
       size: {
         default: 'h-10 text-md px-4 py-3',
-        lg: 'h-11 px-5 py-4',
+        lg: 'h-11 text-md px-4 py-4',
         sm: 'h-9 text-sm px-3 py-2',
       },
       withLabel: {
