@@ -20,9 +20,8 @@ const AuctionSlotsPage = (props: AuctionSlotsPageProps) => {
   const isMediaLargeThenTablet = useMediaQuery(
     `(min-width: ${tailwindScreens.tablet})`
   )
-
   return (
-    <div className="tablet:pl-4 tablet:py-4 tablet:gap-y-7 grid-rows-slotsTable table:grid-rows-slotsDesktop mobile:gap-y-5 mb-4 grid h-full w-full gap-y-3 pt-2">
+    <div className="table:grid-rows-slotsDesktop mb-4 grid h-full w-full grid-rows-slotsTable gap-y-3 pt-2 mobile:gap-y-5 tablet:gap-y-7 tablet:py-4 tablet:pl-4">
       <div className="flex flex-nowrap items-center gap-x-4">
         <SearchInput size={!isMediaLargeThenTablet ? 'lg' : 'default'} />
         <div className="flex items-center gap-x-2">
