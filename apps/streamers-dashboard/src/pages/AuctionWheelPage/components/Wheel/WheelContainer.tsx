@@ -7,7 +7,6 @@ import {
   getItemsWithAngles,
   updateSlotsAnglesByRotateValue,
 } from '@utils/wheelCanvas'
-import WheelTab from '../WheelTabs/WheelTab'
 
 const slots: AuctionSlot[] = [
   {
@@ -20,6 +19,18 @@ const slots: AuctionSlot[] = [
     name: 'Test 2',
     slotHSVColor: getRandomHSLColor(),
     points: 2000,
+    _id: '120',
+  },
+  {
+    name: 'Test 3',
+    slotHSVColor: getRandomHSLColor(),
+    points: 2000,
+    _id: '120',
+  },
+  {
+    name: 'Test 4',
+    slotHSVColor: getRandomHSLColor(),
+    points: 100,
     _id: '120',
   },
 ]

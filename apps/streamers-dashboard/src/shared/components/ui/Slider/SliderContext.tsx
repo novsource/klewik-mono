@@ -4,6 +4,8 @@ import {
   SetStateAction,
   createContext,
   useContext,
+  useEffect,
+  useRef,
   useState,
 } from 'react'
 
@@ -14,6 +16,7 @@ type SliderContext<Keys extends SliderKeys = SliderKeys> = {
     keys: Keys
     selectedKey: Keys[number]
     defaultKey: Keys[number]
+    history: Keys
   }
   func: {
     setKeys: Dispatch<SetStateAction<Keys>>
@@ -37,11 +40,27 @@ export const SliderProvider = ({
 }: SliderContextProps) => {
   const [keys, setKeys] = useState<string[]>(props.keys || [''])
   const [selectedKey, setSelectedKey] = useState<string>(defaultKey || keys[0])
+  const history = useRef<string[]>([])
+
+  useEffect(() => {
+    history.current.push(selectedKey)
+  }, [selectedKey])
+
+  const goBack = () => {
+    if (history.current.length >= 2) {
+      setSelectedKey(history.current[history.current.length - 2])
+    }
+  }
 
   return (
     <SliderContext.Provider
       value={{
-        state: { keys: keys, selectedKey, defaultKey: keys[0] },
+        state: {
+          keys: keys,
+          selectedKey,
+          defaultKey: keys[0],
+          history: history.current,
+        },
         func: { setKeys, setSelectedKey },
       }}
     >

@@ -24,11 +24,13 @@ type RoutesElements = {
  * @description If warning, read this title: https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars#limitations
  * @param modulePath
  */
+
 const lazyLoadModule = async (modulePath: string) => {
   if (modulePath === '' || modulePath.length === 0) {
     throw Error()
   }
 
+  /* @vite-ignore */
   const comp = await import(`${modulePath}.tsx`)
 
   const moduleProps = Object.getOwnPropertyNames(comp)

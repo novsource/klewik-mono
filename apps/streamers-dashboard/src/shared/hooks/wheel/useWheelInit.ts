@@ -66,7 +66,7 @@ export const useWheelInit = ({
       const wrapperParent = wrapper?.parentElement as HTMLDivElement
 
       const resize = () => {
-        if (getMaxSizeCanvas(wrapperParent) >= 300) {
+        if (getMaxSizeCanvas(wrapperParent) > 300) {
           wrapper.style.width = wrapper.style.height = `${getMaxSizeCanvas(
             wrapperParent
           )}px`
@@ -89,6 +89,10 @@ export const useWheelInit = ({
       window.removeEventListener('resize', resize)
 
       window.addEventListener('resize', resize)
+
+      return () => {
+        window.removeEventListener('resize', resize)
+      }
     }
   }, [wheelCanvasRef, wheelSelectorCanvasRef, draw, isFullScreen])
 

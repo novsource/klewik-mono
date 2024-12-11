@@ -70,57 +70,67 @@ export const drawSelector = (
 ) => {
   const ctx = selectorCanvas.getContext('2d') as CanvasRenderingContext2D
 
-  const selectorHeight = selectorCanvas.width / 50
   const center = selectorCanvas.width / 2
   const radius = selectorCanvas.width / 2
-
-  const startAngle =
-    window.devicePixelRatio <= 1
-      ? convertDegreesToRadians(255)
-      : convertDegreesToRadians(245)
-  const endAngle =
-    window.devicePixelRatio <= 1
-      ? convertDegreesToRadians(285)
-      : convertDegreesToRadians(295)
-
-  ctx.strokeStyle = 'white'
-  ctx.fillStyle = '#283345'
-  ctx.lineWidth = 2
 
   ctx.save()
 
   // Draw circle those wrapping image in wheel center
 
-  ctx.beginPath()
+  // ctx.beginPath()
+  // ctx.arc(center, center, radius * wheelImageSize, 0, 2 * Math.PI)
+  // ctx.closePath()
 
-  ctx.moveTo(center, center)
-  ctx.arc(center, center, radius * wheelImageSize, 0, 2 * Math.PI * radius)
-  ctx.closePath()
-  ctx.fill()
+  // ctx.fill()
 
   ctx.restore()
 
+  ctx.save()
+
   // Draw selector
 
+  const selectorWidth = Math.max(55, selectorCanvas.clientWidth * 0.045)
+  const selectorHeight = Math.max(25, selectorCanvas.clientHeight * 0.03)
+
   const selectorX = center
-  const selectorY = center - (selectorCanvas.width * wheelImageSize) / 2
+  const selectorY = radius * 0.1 + selectorHeight
+  // const selectorY = center - (selectorCanvas.width * wheelImageSize) / 2
 
-  ctx.beginPath()
-
-  ctx.moveTo(selectorX, selectorY - selectorHeight)
-
-  ctx.arc(
-    center,
-    center,
-    (selectorCanvas.width * wheelImageSize) / 2,
-    startAngle,
-    endAngle
+  const strokeGradient = ctx.createLinearGradient(
+    selectorX,
+    selectorY - selectorHeight,
+    selectorX,
+    selectorY
   )
 
-  ctx.fill()
+  strokeGradient.addColorStop(0.975, '#AAA')
+  strokeGradient.addColorStop(0.025, '#454545')
 
+  ctx.strokeStyle = strokeGradient
+  ctx.fillStyle = '#3E4145'
+  ctx.lineWidth = 4
+
+  ctx.beginPath()
+  ctx.moveTo(selectorX, selectorY)
+
+  ctx.arcTo(
+    selectorX - selectorWidth / 2,
+    selectorY,
+    selectorX - selectorWidth / 4,
+    selectorY - selectorHeight / 2,
+    6
+  )
+  ctx.arcTo(
+    selectorX,
+    selectorY - selectorHeight,
+    selectorX + selectorWidth / 4,
+    selectorY - selectorHeight / 2,
+    4
+  )
+  ctx.arcTo(selectorX + selectorWidth / 2, selectorY, selectorX, selectorY, 6)
   ctx.closePath()
 
+  ctx.fill()
   ctx.stroke()
 
   ctx.restore()

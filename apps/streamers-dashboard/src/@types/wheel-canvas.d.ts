@@ -10,6 +10,7 @@ type DrawSliceOptions = {
   text?: string
   color?: string
   textAngle?: number
+  disableText?: boolean
 }
 
 type SliceParameters = {

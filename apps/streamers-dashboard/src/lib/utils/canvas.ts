@@ -71,36 +71,35 @@ export const drawSlice: DrawSlice = ({
   options,
   onDraw,
   sliceParameters: { x, y, radius, startAngle, endAngle },
-}) => {
+}: DrawSliceProperties) => {
   const slice = new Path2D()
+  const sliceHeight = radius * 0.92
 
-  ctx.strokeStyle = 'white'
+  ctx.strokeStyle = '#1F1F22'
   ctx.lineWidth = 2
+
+  ctx.globalCompositeOperation = 'source-over'
 
   ctx.save()
 
-  ctx.fillStyle = options?.color ?? getRandomHSLColor()
+  ctx.fillStyle = options?.color ?? getRandomHEXColor()
 
   // Draw slice
   ctx.beginPath()
-
   ctx.moveTo(x, y)
-  slice.moveTo(x, y)
-
   ctx.arc(x, y, radius - ctx.lineWidth, startAngle, endAngle)
-
-  slice.arc(x, y, radius - ctx.lineWidth, startAngle, endAngle)
-
+  ctx.moveTo(x, y)
   ctx.closePath()
 
-  slice.closePath()
-
   ctx.fill()
-
-  ctx.moveTo(x, y)
-  slice.moveTo(x, y)
-
   ctx.stroke()
+
+  ctx.beginPath()
+  ctx.arc(x, y, sliceHeight, 0, 2 * Math.PI)
+  ctx.closePath()
+
+  ctx.fillStyle = '#1F1F22'
+  ctx.fill()
 
   ctx.save()
 
@@ -108,7 +107,8 @@ export const drawSlice: DrawSlice = ({
   const angle = convertRadiansToDegrees(endAngle - startAngle)
   const arcLength = getArcLength(angle, radius)
 
-  if (options?.text) {
+  // TODO: Fix angle of text
+  if (options?.text && !options?.disableText && false) {
     const metrics = ctx.measureText(options.text)
     const textHeight =
       metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
@@ -293,6 +293,54 @@ export const getRandomRGBColor = () => {
   })`
 }
 
+export const getRandomHEXColor = () => {
+  return `#${Math.floor(16777215 * Math.random()).toString(16)}`
+}
+
 export const getRandomHSLColor = () => {
   return 'hsl(' + 360 * Math.random() + ',40%,48%)'
 }
+
+export const getCoordsOfDotByVectorAngle = (
+  centerX: number,
+  centerY: number,
+  radius: number,
+  angle: number
+) => {
+  const x = centerX + radius * Math.cos(angle)
+  const y = centerY + radius * Math.sin(angle)
+
+  return { x, y }
+}
+
+export const getAngleByCoords = (x: number, y: number) => {
+  const angleInRadians = Math.atan2(y, x)
+
+  let angleInDegrees = angleInRadians * (180 / Math.PI)
+
+  if (angleInDegrees < 0) {
+    angleInDegrees += 360
+  }
+
+  return angleInDegrees
+}
+
+// export const createNoiseImage = (
+//   ctx: CanvasRenderingContext2D,
+//   options: {
+//     x: number
+//     y: number
+//     width: number
+//     height: number
+//   }
+// ) => {
+//   const noiseImage = ctx.createImageData(options.width, options.height)
+//   const imageBuffer = new Uint32Array(noiseImage.data.buffer)
+
+//   let i = 0
+//   for (; i < imageBuffer.length; i++) {
+//     if (Math.random() < 0.5) imageBuffer[i] = 0xffffffff
+
+//     ctx.putImageData(noiseImage, 0, 0)
+//   }
+// }
