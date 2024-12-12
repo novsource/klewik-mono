@@ -6,6 +6,7 @@ import {
   TableBody,
   TableCaption,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -77,7 +78,7 @@ const tableColumns: TableColumn<
 ] as const
 
 const SlotsTable = (props: SlotsTableProps) => {
-  const [initTableData, setInitTableData] = useState<AuctionSlot[]>(() => items)
+  const [initTableData, setInitTableData] = useState<AuctionSlot[]>(() => [])
 
   const columnsKeys = useMemo(
     () => tableColumns.map((column) => column.key),
@@ -185,14 +186,26 @@ const SlotsTable = (props: SlotsTableProps) => {
       []
     )
 
+  const emptyContent = useMemo(() => {
+    return (
+      initTableData.length === 0 && (
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <Typography tag="span" className="text-gray-light">
+            На данный момент в аукционе нет слотов
+          </Typography>
+        </div>
+      )
+    )
+  }, [initTableData])
+
   return (
-    <Table>
-      <TableCaption>Последнее обновление: 5 минут назад</TableCaption>
+    <Table className="h-full">
       <TableHeader>{renderColumnsFn(tableColumns)}</TableHeader>
       <TableBody>
         {initTableData.map((item) =>
           renderRowFn(item, columnsKeys, renderCellFn)
         )}
+        {emptyContent}
       </TableBody>
     </Table>
   )
