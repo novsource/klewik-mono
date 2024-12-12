@@ -1,7 +1,9 @@
 import { ReactNode, useEffect, useMemo, useRef } from 'react'
-import { motion } from 'framer-motion'
-import { useSliderContext } from './SliderContext'
+
 import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
+
+import { useSliderContext } from './SliderContext'
 
 type SliderContentProps = {
   children: ReactNode | ReactNode[]

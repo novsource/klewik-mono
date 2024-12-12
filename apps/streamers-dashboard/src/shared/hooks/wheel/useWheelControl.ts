@@ -1,6 +1,7 @@
 import { RefObject, useCallback, useState } from 'react'
 
 import { animate, useMotionValue } from 'framer-motion'
+
 import {
   calculateRotateWheelCSSValue,
   getSlotNameOnSelector,

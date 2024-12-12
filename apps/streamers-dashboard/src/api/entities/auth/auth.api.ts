@@ -1,4 +1,4 @@
-import { baseHttpClient, HttpClientRequestOptions } from '@/api/instance'
+import { HttpClientRequestOptions, baseHttpClient } from '@api/instance'
 
 export const loginInAuction = async (
   auctionId: string,

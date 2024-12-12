@@ -1,4 +1,5 @@
 import { basename, extname } from 'path'
+
 const outDir = './src/shared/components/ui/icons' // путь, до папки, где будут храниться преобразованные иконки
 
 // Шаблон компонента с иконкой

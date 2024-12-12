@@ -1,5 +1,6 @@
-import { Icons } from '@ui/icons'
 import { PropsWithChildren } from 'react'
+
+import { Icons } from '@ui/icons'
 
 const Header = ({ children }: PropsWithChildren) => {
   return (

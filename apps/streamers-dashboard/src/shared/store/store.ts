@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
+
 import { appReducer } from './slices/app.slice'
 import { auctionReducer } from './slices/auction.slice'
 

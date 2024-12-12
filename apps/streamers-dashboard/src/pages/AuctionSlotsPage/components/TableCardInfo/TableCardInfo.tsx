@@ -1,3 +1,5 @@
+import { HTMLAttributes } from 'react'
+
 import {
   Card,
   CardContainer,
@@ -6,7 +8,6 @@ import {
   CardTitle,
 } from '@ui/Card/Card'
 import { Icons } from '@ui/icons'
-import { HTMLAttributes } from 'react'
 
 type TableCardInfoProps = HTMLAttributes<HTMLDivElement>
 

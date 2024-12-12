@@ -1,5 +1,6 @@
+import { useCallback, useMemo, useState } from 'react'
+
 import AnimatedTruncText from '@/pages/AuctionWheelPage/components/WheelTabs/LotsWheelTab/LotCard/AnimatedTruncText'
-import { Typography } from '@ui/index'
 
 import {
   Table,
@@ -11,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@ui/Table/Table'
-import { useCallback, useMemo, useState } from 'react'
+import { Typography } from '@ui/index'
 
 type SlotsTableProps = {}
 

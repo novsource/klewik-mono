@@ -23,12 +23,18 @@
     /* Alias */
     "baseUrl": ".",
     "paths": {
+      "@api/*": ["./src/api/*"],
+      "@components/*": ["./src/shared/components/*"],
       "@hooks/*": ["./src/shared/hooks/*"],
+      "@routing/*": ["./src/shared/router/*"],
       "@ui/*": ["./src/shared/components/ui/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@store/*": ["./src/shared/store/*"],
       "@layouts/*": ["./src/shared/router/layouts/*"],
       "@utils/*": ["./src/lib/utils/*"],
-      "@/*": ["./src/*"],
-      "@root/*": ["./*"]
+      "@icons/*": ["./src/shared/icons/*"],
+      "@root/*": ["./*"],
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src"]

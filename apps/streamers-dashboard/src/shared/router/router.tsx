@@ -4,11 +4,13 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from 'react-router-dom'
-import AuctionDashboardLayout from './layouts/AuctionDashboardLayout'
-import WelcomePage from '@/pages/WelcomePage/WelcomePage'
-import AuctionWheelPage from '@/pages/AuctionWheelPage/AuctionWheelPage'
-import AnimatedRoute from './AnimatedRoute'
+
 import AuctionSlotsPage from '@/pages/AuctionSlotsPage/AuctionSlotsPage'
+import AuctionWheelPage from '@/pages/AuctionWheelPage/AuctionWheelPage'
+import WelcomePage from '@/pages/WelcomePage/WelcomePage'
+
+import AnimatedRoute from './AnimatedRoute'
+import AuctionDashboardLayout from './layouts/AuctionDashboardLayout'
 
 type RoutesElements = {
   path: string

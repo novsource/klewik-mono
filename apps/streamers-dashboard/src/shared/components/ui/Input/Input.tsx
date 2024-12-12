@@ -1,11 +1,3 @@
-import { cn } from '@/lib/utils'
-import {
-  InputVariantsProps,
-  contentVariants,
-  contentWrapperVariants,
-  inputVariants,
-  labelVariants,
-} from './InputVariants'
 import {
   InputHTMLAttributes,
   ReactNode,
@@ -13,6 +5,16 @@ import {
   useMemo,
   useState,
 } from 'react'
+
+import { cn } from '@/lib/utils'
+
+import {
+  InputVariantsProps,
+  contentVariants,
+  contentWrapperVariants,
+  inputVariants,
+  labelVariants,
+} from './InputVariants'
 
 export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> &
   Omit<InputVariantsProps, 'withLabel' | 'startContent' | 'endContent'> & {

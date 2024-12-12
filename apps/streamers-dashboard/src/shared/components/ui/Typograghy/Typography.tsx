@@ -1,9 +1,11 @@
 import { HTMLAttributes, ReactNode, useMemo } from 'react'
+
+import { cn } from '@/lib/utils'
+
 import {
   TypographyVariantsProps,
   typographyVariants,
 } from './TypographyVariants'
-import { cn } from '@/lib/utils'
 
 export type TypographyTags = 'h1' | 'h2' | 'h3' | 'h4' | 'span' | 'p'
 

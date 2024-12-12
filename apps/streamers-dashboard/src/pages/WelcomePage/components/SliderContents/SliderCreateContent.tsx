@@ -1,17 +1,19 @@
-import { createAuction } from '@/api/entities/auction/auction.api'
-import { loginInAuction } from '@/api/entities/auth/auth.api'
+import { useEffect, useMemo, useState } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+
 import { cn } from '@/lib/utils'
-import { useStoreDispatch } from '@/shared/store/hooks'
-import { appActions } from '@/shared/store/slices/app.slice'
-import { auctionActions } from '@/shared/store/slices/auction.slice'
+import { createAuction } from '@api/entities/auction/auction.api'
+import { loginInAuction } from '@api/entities/auth/auth.api'
+import { useStoreDispatch } from '@store/hooks'
+import { appActions } from '@store/slices/app.slice'
+import { auctionActions } from '@store/slices/auction.slice'
+
 import { Input } from '@ui/Input/input'
 import SliderContent from '@ui/Slider/SliderContent'
 import { useSliderContext } from '@ui/Slider/SliderContext'
 import Typography from '@ui/Typograghy/Typography'
 import { Icons } from '@ui/icons'
 import { Button, SliderTrigger } from '@ui/index'
-import { useEffect, useMemo, useState } from 'react'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 type CreateAuctionForm = {
   password: string

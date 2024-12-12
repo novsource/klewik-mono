@@ -1,10 +1,13 @@
-import { Link, useLocation } from 'react-router-dom'
-import { cn } from '../../../../lib/utils/cn'
-import { Icons } from '../icons'
 import { ReactNode, useMemo } from 'react'
-import { paths } from '../../../router/paths'
-import { useMediaQuery } from '@hooks/useMediaQuery'
+import { Link, useLocation } from 'react-router-dom'
+
 import { tailwindScreens } from '@/lib/constants/twScreens'
+
+import { useMediaQuery } from '@hooks/useMediaQuery'
+
+import { cn } from '../../../../lib/utils/cn'
+import { paths } from '../../../router/paths'
+import { Icons } from '../icons'
 
 type DashboardMenuProps = {
   className: string

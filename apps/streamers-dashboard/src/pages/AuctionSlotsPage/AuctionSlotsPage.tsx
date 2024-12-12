@@ -1,10 +1,13 @@
+import { tailwindScreens } from '@/lib/constants/twScreens'
+
+import { useMediaQuery } from '@hooks/useMediaQuery'
+
 import { Icons } from '@ui/icons'
-import SearchInput from './components/SearchInput/SearchInput'
 import { Button } from '@ui/index'
+
+import SearchInput from './components/SearchInput/SearchInput'
 import SlotsTable from './components/SlotsTable/SlotsTable'
 import TableCardInfo from './components/TableCardInfo/TableCardInfo'
-import { useMediaQuery } from '@hooks/useMediaQuery'
-import { tailwindScreens } from '@/lib/constants/twScreens'
 import { TableItemCard } from './components/TableItemCard/TableItemCard'
 
 type AuctionSlotsPageProps = {}

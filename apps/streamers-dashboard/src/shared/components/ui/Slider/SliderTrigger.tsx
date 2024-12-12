@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+
 import { SliderContextProps, useSliderContext } from './SliderContext'
 
 type SliderTriggerProps = {

@@ -1,6 +1,7 @@
 import { Icons } from '@ui/icons'
-import CloverAnimation from './components/CloverAnimation/CloverAnimation'
 import { Button, Slider, Typography } from '@ui/index'
+
+import CloverAnimation from './components/CloverAnimation/CloverAnimation'
 import {
   SliderAdminContent,
   SliderCreateContent,

@@ -1,4 +1,5 @@
 import AnimatedTruncText from '@/pages/AuctionWheelPage/components/WheelTabs/LotsWheelTab/LotCard/AnimatedTruncText'
+
 import { Card, CardContainer, CardContent, CardFooter } from '@ui/Card/Card'
 import { Icons } from '@ui/icons'
 import { Typography } from '@ui/index'

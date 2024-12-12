@@ -1,5 +1,6 @@
 import { CvaClassValue } from '@/shared/utils/types'
 import { VariantProps, cva } from 'class-variance-authority'
+
 import { TypographyTags } from './Typography'
 
 type TypographyVariants = {

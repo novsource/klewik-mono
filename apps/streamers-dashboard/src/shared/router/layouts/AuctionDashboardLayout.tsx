@@ -1,8 +1,10 @@
 import { Outlet } from 'react-router-dom'
 
-import { Header, DashboardMenu } from '@ui/index'
-import { useMediaQuery } from '@hooks/useMediaQuery'
 import { tailwindScreens } from '@/lib/constants/twScreens'
+
+import { useMediaQuery } from '@hooks/useMediaQuery'
+
+import { DashboardMenu, Header } from '@ui/index'
 
 const AuctionDashboardLayout = () => {
   const isTablet = useMediaQuery(`(min-width:${tailwindScreens.tablet})`)

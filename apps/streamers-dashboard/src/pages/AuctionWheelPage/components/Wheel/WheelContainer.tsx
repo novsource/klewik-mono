@@ -1,12 +1,15 @@
-import { getRandomHSLColor } from '@utils/canvas'
-import Wheel from './Wheel'
-import { useWheelInit } from '@hooks/wheel/useWheelInit'
-import { useWheelControl } from '@hooks/wheel/useWheelControl'
 import { useMemo, useRef } from 'react'
+
+import { useWheelControl } from '@hooks/wheel/useWheelControl'
+import { useWheelInit } from '@hooks/wheel/useWheelInit'
+
+import { getRandomHSLColor } from '@utils/canvas'
 import {
   getItemsWithAngles,
   updateSlotsAnglesByRotateValue,
 } from '@utils/wheelCanvas'
+
+import Wheel from './Wheel'
 
 const slots: AuctionSlot[] = [
   {

@@ -1,5 +1,6 @@
-import { useStoreSelector } from '@/shared/store/hooks'
-import { auctionSelectors } from '@/shared/store/slices/auction.slice'
+import { useStoreSelector } from '@store/hooks'
+import { auctionSelectors } from '@store/slices/auction.slice'
+
 import SliderContent from '@ui/Slider/SliderContent'
 import { Icons } from '@ui/icons'
 import { Button, Input, Typography } from '@ui/index'

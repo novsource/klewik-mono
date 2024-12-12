@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+
 import { CloverCanvas } from './worker/CanvasCloverWorker'
 
 const TINY_CLOVER_PATH_2D = new Path2D(

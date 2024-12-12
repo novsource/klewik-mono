@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+
 import { SliderContextProps, SliderProvider } from './SliderContext'
 
 type SliderProps = SliderContextProps & {
