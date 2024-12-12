@@ -1,48 +1,63 @@
 import { baseHttpClient, HttpClientRequestOptions } from '@/api/instance'
+import { AxiosPromise } from 'axios'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 type UseFetchReturn<T> = {
   state: {
     error: NullablePossible<Error>
-    isLoading: boolean
+    isPending: boolean
     data: NullablePossible<T>
+  }
+  func: {
+    query: (fetchOptions?: HttpClientRequestOptions) => AxiosPromise<T>
+    abort: () => void
   }
 }
 
 export const useFetch = <T>(
   url: string,
-  fetchOptions?: HttpClientRequestOptions
+  initFetchOptions?: HttpClientRequestOptions
 ): UseFetchReturn<T> => {
+  const [isPending, setIsPending] = useState<boolean>(false)
   const [data, setData] = useState<NullablePossible<T>>(null)
-  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<NullablePossible<Error>>(null)
 
-  const fetching = useCallback(async () => {
-    const abortController = new AbortController()
+  const abortController = useMemo(() => new AbortController(), [])
 
-    if (!isLoading) {
-      setIsLoading(true)
+  const startFetching = useCallback(
+    async (fetchOptions?: HttpClientRequestOptions) => {
+      setIsPending(true)
 
-      // Use GET method like default method
-      baseHttpClient
-        .request<T>(url, fetchOptions)
+      return baseHttpClient
+        .request<T>(url, {
+          ...initFetchOptions,
+          ...fetchOptions,
+          signal: abortController.signal,
+        })
         .then((response) => {
           setData(response.data)
+          return response
         })
-        .catch((err) => setError(err))
-        .finally(() => setIsLoading(false))
-    }
-    return () => {
-      if (isLoading) abortController.abort()
-    }
-  }, [url, fetchOptions])
+        .catch((err) => {
+          setError(err)
+          throw err
+        })
+        .finally(() => setIsPending(false))
+    },
+    [url, initFetchOptions]
+  )
 
   useEffect(() => {
-    fetching()
-  }, [fetching])
+    if (!isPending) startFetching()
+
+    return () => {
+      if (isPending) abortController.abort()
+    }
+  }, [startFetching, isPending])
 
   return {
-    state: { error, isLoading, data },
+    state: { error, isPending, data },
+    func: { query: startFetching, abort: abortController.abort },
   }
 }
