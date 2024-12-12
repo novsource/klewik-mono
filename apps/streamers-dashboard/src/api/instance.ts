@@ -94,12 +94,9 @@ export class BaseHttpClient implements BaseHttpClientMethods {
   private _internalRequest<T>(url: string, config: HttpClientRequestOptions) {
     const request = this._axiosInstance.request<T>(config)
 
-    // Caching all requests with get methods
-    if (config.method?.toLocaleLowerCase() === 'get') {
-      this._requestPromisesCollection.set(url, request)
+    this._requestPromisesCollection.set(url, request)
+    // request.finally(() => this._requestPromisesCollection.delete(url))
 
-      request.finally(() => this._requestPromisesCollection.delete(url))
-    }
     return request
   }
 
