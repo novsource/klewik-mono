@@ -1,8 +1,12 @@
+import { useStoreSelector } from '@/shared/store/hooks'
+import { auctionSelectors } from '@/shared/store/slices/auction.slice'
 import SliderContent from '@ui/Slider/SliderContent'
 import { Icons } from '@ui/icons'
 import { Button, Input, Typography } from '@ui/index'
 
 const SliderSuccessContent = () => {
+  const auctionInfo = useStoreSelector(auctionSelectors.getAuctionInfo)
+
   return (
     <SliderContent
       className="relative flex h-full w-full flex-col gap-y-6"
@@ -21,7 +25,7 @@ const SliderSuccessContent = () => {
           <Input
             disabled
             label={{ id: 'auctionId', value: 'Номер аукциона' }}
-            placeholder="05ab06a2-ee4c-40d3-bebb-fad2a8d69202"
+            value={auctionInfo._id}
           />
           <Button startContent={<Icons.Copy width={18} height={18} />}>
             Скопировать
@@ -30,20 +34,26 @@ const SliderSuccessContent = () => {
         <div className="flex items-end justify-center gap-x-2">
           <Input
             disabled
-            label={{ id: 'auctionURL', value: 'Ссылка на аукцион для гостей' }}
-            placeholder="https://auction.klewik.ru/fdashfasfsafsa"
+            label={{
+              id: 'auctionURL',
+              value: 'Ссылка на аукцион для участников',
+            }}
+            value={`https://auction.klewik.ru/${auctionInfo.url}`}
           />
           <Button startContent={<Icons.Copy width={18} height={18} />}>
             Скопировать
           </Button>
         </div>
       </div>
-      <Button
-        variant={'action'}
-        startContent={<Icons.LinkArrow width={18} height={18} />}
-      >
-        Перейти в аукцион
-      </Button>
+      <a href={`/dashboard/${auctionInfo.url}`}>
+        <Button
+          className="w-full"
+          variant={'action'}
+          startContent={<Icons.LinkArrow width={18} height={18} />}
+        >
+          Перейти в панель управления
+        </Button>
+      </a>
     </SliderContent>
   )
 }

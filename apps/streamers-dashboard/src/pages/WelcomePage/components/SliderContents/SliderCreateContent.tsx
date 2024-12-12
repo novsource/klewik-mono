@@ -1,11 +1,16 @@
+import { createAuction } from '@/api/entities/auction/auction.api'
+import { loginInAuction } from '@/api/entities/auth/auth.api'
 import { cn } from '@/lib/utils'
+import { useStoreDispatch } from '@/shared/store/hooks'
+import { appActions } from '@/shared/store/slices/app.slice'
+import { auctionActions } from '@/shared/store/slices/auction.slice'
 import { Input } from '@ui/Input/input'
 import SliderContent from '@ui/Slider/SliderContent'
 import { useSliderContext } from '@ui/Slider/SliderContext'
 import Typography from '@ui/Typograghy/Typography'
 import { Icons } from '@ui/icons'
 import { Button, SliderTrigger } from '@ui/index'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 type CreateAuctionForm = {
@@ -13,8 +18,12 @@ type CreateAuctionForm = {
 }
 
 const SliderCreateContent = () => {
-  const [isLoading, setIsLoading] = useState(false)
+  const dispatch = useStoreDispatch()
+
+  const [isPending, setIsPending] = useState(false)
   const [isPasswordHidden, setIsPasswordHidden] = useState<boolean>(true)
+
+  const abortController = useMemo(() => new AbortController(), [])
 
   const {
     func: { setSelectedKey },
@@ -25,10 +34,43 @@ const SliderCreateContent = () => {
       password: '',
     },
   })
-  const onSubmit: SubmitHandler<CreateAuctionForm> = () => {
-    setIsLoading(true)
-    setTimeout(() => setSelectedKey('successCreate'), 5000)
+
+  const onSubmit: SubmitHandler<CreateAuctionForm> = async ({ password }) => {
+    try {
+      setIsPending(true)
+      const response = await createAuction(password, {
+        signal: abortController.signal,
+      })
+      await loginInAuction(response.data.auctionId, password, {
+        signal: abortController.signal,
+      })
+
+      dispatch(
+        auctionActions.setAuction({
+          _id: response.data.auctionId,
+          url: response.data.url,
+          startDate: Date.now(),
+        })
+      )
+
+      dispatch(appActions.setAuctionId(response.data.auctionId))
+      dispatch(appActions.setAuctionUrl(response.data.url))
+
+      setSelectedKey('successCreate')
+      setIsPending(false)
+    } catch (err) {
+      setIsPending(false)
+    }
   }
+
+  useEffect(() => {
+    return () => {
+      if (isPending) {
+        abortController.abort()
+        setIsPending(false)
+      }
+    }
+  }, [])
 
   return (
     <SliderContent
@@ -36,7 +78,10 @@ const SliderCreateContent = () => {
       value="create"
     >
       <SliderTrigger className="absolute -top-16 left-0" value="welcome">
-        <Button startContent={<Icons.ReturnArrow width={21} height={21} />}>
+        <Button
+          startContent={<Icons.ReturnArrow size="lg" />}
+          onClick={abortController.abort}
+        >
           Назад
         </Button>
       </SliderTrigger>
@@ -44,9 +89,9 @@ const SliderCreateContent = () => {
       <div className="flex flex-col gap-y-2">
         <Typography tag="h1">Создание нового аукциона</Typography>
         <Typography tag="p" className="text-gray">
-          Для продолжения введите желаемый пароль от аукциона, который после
+          Для продолжения введите выданный вам мастер-пароль. Далее он также
           будет использоваться вами для входа в аукцион в роли администратора.
-          Затем нажмите кнопку "Создать"
+          После ввода нажмите кнопку "Создать"
         </Typography>
       </div>
       <form
@@ -62,16 +107,14 @@ const SliderCreateContent = () => {
               endContent={
                 isPasswordHidden ? (
                   <Icons.EyeClosed
-                    className="text-gray"
-                    width={18}
-                    height={18}
+                    className="cursor-pointer select-none text-gray transition-colors hover:text-gray-light"
+                    size="default"
                     onClick={() => setIsPasswordHidden(false)}
                   />
                 ) : (
                   <Icons.EyeOpen
-                    className="text-gray"
-                    width={18}
-                    height={18}
+                    className="cursor-pointer select-none text-gray transition-colors hover:text-gray-light"
+                    size="default"
                     onClick={() => setIsPasswordHidden(true)}
                   />
                 )
@@ -87,12 +130,12 @@ const SliderCreateContent = () => {
         />
 
         <Button
-          className={cn(isLoading && 'opacity-70 hover:bg-opacity-100')}
+          className={cn(isPending && 'opacity-70 hover:bg-opacity-100')}
           variant="action"
-          type={isLoading ? 'button' : 'submit'}
-          disabled={isLoading}
+          type={isPending ? 'button' : 'submit'}
+          disabled={isPending}
         >
-          {isLoading ? 'Создаем аукцион...' : 'Создать'}
+          {isPending ? 'Создаем аукцион...' : 'Создать'}
         </Button>
       </form>
     </SliderContent>
