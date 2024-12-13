@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import {
+  Controller,
+  FieldErrors,
+  Resolver,
+  ResolverResult,
+  SubmitHandler,
+  useForm,
+} from 'react-hook-form'
 
 import { cn } from '@/lib/utils'
 import { createAuction } from '@api/entities/auction/auction.api'
@@ -7,16 +14,50 @@ import { loginInAuction } from '@api/entities/auth/auth.api'
 import { useStoreDispatch } from '@store/hooks'
 import { appActions } from '@store/slices/app.slice'
 import { auctionActions } from '@store/slices/auction.slice'
+import { z } from 'zod'
 
-import { Input } from '@ui/Input/input'
+import { Input } from '@ui/Input/Input'
 import SliderContent from '@ui/Slider/SliderContent'
 import { useSliderContext } from '@ui/Slider/SliderContext'
 import Typography from '@ui/Typograghy/Typography'
 import { Icons } from '@ui/icons'
 import { Button, SliderTrigger } from '@ui/index'
 
-type CreateAuctionForm = {
-  password: string
+const createAuctionSchema = z.object({
+  password: z.string().refine((check) => check.length >= 1, {
+    message: 'Поле не может быть пустым',
+  }),
+})
+
+type CreateAuctionForm = z.infer<typeof createAuctionSchema>
+
+const formResolver = (
+  values: CreateAuctionForm
+): ResolverResult<Resolver<CreateAuctionForm>> => {
+  const result = createAuctionSchema.safeParse(values)
+
+  if (!result.success) {
+    return {
+      values: {},
+      errors: result.error.errors.reduce<FieldErrors<CreateAuctionForm>>(
+        (acc, error) => {
+          const fieldName = error.path[0] as keyof CreateAuctionForm
+
+          acc[fieldName] = {
+            type: error.code,
+            message: error.message,
+          }
+
+          return acc
+        },
+        {}
+      ),
+    }
+  }
+  return {
+    values: result.data,
+    errors: {},
+  }
 }
 
 const SliderCreateContent = () => {
@@ -28,14 +69,19 @@ const SliderCreateContent = () => {
   const abortController = useMemo(() => new AbortController(), [])
 
   const {
-    func: { setSelectedKey },
-  } = useSliderContext()
-
-  const { control, handleSubmit } = useForm<CreateAuctionForm>({
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CreateAuctionForm>({
     defaultValues: {
       password: '',
     },
+    resolver: formResolver,
   })
+
+  const {
+    func: { setSelectedKey },
+  } = useSliderContext()
 
   const onSubmit: SubmitHandler<CreateAuctionForm> = async ({ password }) => {
     try {
@@ -43,7 +89,7 @@ const SliderCreateContent = () => {
       const response = await createAuction(password, {
         signal: abortController.signal,
       })
-      await loginInAuction(response.data.auctionId, password, {
+      await loginInAuction(response.data.auctionId, '', {
         signal: abortController.signal,
       })
 
@@ -91,10 +137,11 @@ const SliderCreateContent = () => {
       <div className="flex flex-col gap-y-2">
         <Typography tag="h1">Создание нового аукциона</Typography>
         <Typography tag="p" className="text-gray">
-          Для продолжения введите выданный вам мастер-пароль. Далее он также
+          Для продолжения введите выданный вам мастер-пароль. Позже он также
           будет использоваться вами для входа в аукцион в роли администратора.
           После ввода нажмите кнопку "Создать"
         </Typography>
+        {errors.root?.message}
       </div>
       <form
         className="flex w-full flex-col gap-y-3"
@@ -106,6 +153,12 @@ const SliderCreateContent = () => {
           render={({ field }) => (
             <Input
               type={isPasswordHidden ? 'password' : 'text'}
+              label={{
+                id: 'password',
+                value: 'Мастер-ключ',
+              }}
+              errorMessage={errors.password?.message}
+              placeholder="••••••••"
               endContent={
                 isPasswordHidden ? (
                   <Icons.EyeClosed
@@ -121,11 +174,6 @@ const SliderCreateContent = () => {
                   />
                 )
               }
-              placeholder="••••••••"
-              label={{
-                id: 'password',
-                value: 'Пароль от аукциона (не менее 6 символов)',
-              }}
               {...field}
             />
           )}

@@ -21,7 +21,7 @@ export default {
         DEFAULT: '#CFC56F',
       },
       red: {
-        DEFAULT: '#CF6F6F',
+        DEFAULT: '#e74c3c',
       },
       gray: {
         DEFAULT: '#555',
