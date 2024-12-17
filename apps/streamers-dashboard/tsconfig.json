@@ -1,4 +1,5 @@
 {
+  "extends": "./tsconfig.paths.json",
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
@@ -8,16 +9,10 @@
     "baseUrl": ".",
     /* Alias */
     "paths": {
-      "@api/*": ["./src/api/*"],
-      "@components/*": ["./src/shared/components/*"],
-      "@hooks/*": ["./src/shared/hooks/*"],
-      "@routing/*": ["./src/shared/router/*"],
-      "@ui/*": ["./src/shared/components/ui/*"],
+      "@app/*": ["./src/app/*"],
       "@pages/*": ["./src/pages/*"],
-      "@store/*": ["./src/shared/store/*"],
-      "@layouts/*": ["./src/shared/router/layouts/*"],
-      "@utils/*": ["./src/lib/utils/*"],
-      "@icons/*": ["./src/shared/icons/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@ui/*": ["./src/shared/components/ui/*"],
       "@root/*": ["./*"],
       "@/*": ["./src/*"]
     }

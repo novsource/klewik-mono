@@ -5,7 +5,7 @@ import { animate, useMotionValue } from 'framer-motion'
 import {
   calculateRotateWheelCSSValue,
   getSlotNameOnSelector,
-} from '@utils/wheelCanvas'
+} from '~shared/utils/wheel-canvas'
 
 type WheelControlCallbacks = {
   onSpinStart: () => void
