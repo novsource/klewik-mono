@@ -4,7 +4,7 @@ const zHexColor = z.custom<`#${string}`>((val: unknown) => {
   return typeof val === 'string'
     ? z.string().min(3).max(6).safeParse(val).success
     : false
-})
+}, 'Zod parse error: Wrong hex color value')
 
 const zRGBColor = z.custom<[number, number, number, number?]>((val) => {
   if (!Array.isArray(val)) {
@@ -20,6 +20,6 @@ const zRGBColor = z.custom<[number, number, number, number?]>((val) => {
   }
 
   return true
-})
+}, 'Zod parse error: Wrong RGB color value')
 
 export { zHexColor, zRGBColor }
