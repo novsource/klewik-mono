@@ -3,26 +3,26 @@ import { useMemo } from 'react'
 import { Icons } from '~shared/ui/icons'
 import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
 
-import AppearanceWheelTab from './appearance-wheel-tab/appearance-wheel-tab'
-import ControlWheelTab from './control-wheel-tab/control-wheel-tab'
-import LotsWheelTab from './lots-wheel-tab/lots-wheel-tab'
+import { AppearanceWheelTab } from './wheel-tab-appereance'
+import { ControlWheelTab } from './wheel-tab-control'
+import { SlotsWheelTab } from './wheel-tab-slots'
 
 const triggersWithIcons = {
   control: {
     title: 'Управление',
-    icon: <Icons.Gamepad width={18} height={18} />,
+    icon: <Icons.Gamepad size="default" />,
   },
   lots: {
     title: 'Слоты',
-    icon: <Icons.List width={18} height={18} />,
+    icon: <Icons.List size="default" />,
   },
   appearance: {
     title: 'Внешний вид',
-    icon: <Icons.Palette width={18} height={18} />,
+    icon: <Icons.Palette size="default" />,
   },
 }
 
-const WheelTab = () => {
+const WheelTabs = () => {
   const tabsTriggers = useMemo(() => {
     return (
       Object.keys(triggersWithIcons) as Array<keyof typeof triggersWithIcons>
@@ -42,10 +42,10 @@ const WheelTab = () => {
         {tabsTriggers}
       </TabsList>
       <ControlWheelTab />
-      <LotsWheelTab />
+      <SlotsWheelTab slots={[]} />
       <AppearanceWheelTab />
     </Tabs>
   )
 }
 
-export default WheelTab
+export default WheelTabs
