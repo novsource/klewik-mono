@@ -1,5 +1,6 @@
-import { useStoreSelector } from '~shared/store'
-import { auctionSelectors } from '~shared/store/slices/auction.slice'
+import { auctionSelectors } from '~app/providers/store/slices/auction.slice'
+
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'

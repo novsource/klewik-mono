@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 const zHexColor = z.custom<`#${string}`>((val: unknown) => {
   return typeof val === 'string'
-    ? z.string().min(3).max(6).safeParse(val).success
+    ? z.string().min(4).max(7).safeParse(val).success
     : false
 }, 'Zod parse error: Wrong hex color value')
 

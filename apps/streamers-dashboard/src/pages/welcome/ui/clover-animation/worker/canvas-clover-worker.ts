@@ -10,7 +10,7 @@ export class CloverCanvas {
 
   init() {
     const worker = new Worker(
-      'src/pages/welcome/ui/CloverAnimation/worker/worker.ts'
+      'src/pages/welcome/ui/clover-animation/worker/worker.ts'
     )
     this.canvasWorker = this.canvas.transferControlToOffscreen()
 

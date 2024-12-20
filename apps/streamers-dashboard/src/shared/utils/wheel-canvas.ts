@@ -103,8 +103,8 @@ export const drawSelector = (
     selectorY
   )
 
-  strokeGradient.addColorStop(0.975, '#AAA')
-  strokeGradient.addColorStop(0.025, '#454545')
+  strokeGradient.addColorStop(0.075, '#6FCF97')
+  strokeGradient.addColorStop(0.925, '#6FCF97')
 
   ctx.strokeStyle = strokeGradient
   ctx.fillStyle = '#3E4145'
@@ -118,7 +118,7 @@ export const drawSelector = (
     selectorY,
     selectorX - selectorWidth / 4,
     selectorY - selectorHeight / 2,
-    6
+    4
   )
   ctx.arcTo(
     selectorX,
@@ -127,7 +127,7 @@ export const drawSelector = (
     selectorY - selectorHeight / 2,
     4
   )
-  ctx.arcTo(selectorX + selectorWidth / 2, selectorY, selectorX, selectorY, 6)
+  ctx.arcTo(selectorX + selectorWidth / 2, selectorY, selectorX, selectorY, 4)
   ctx.closePath()
 
   ctx.fill()
