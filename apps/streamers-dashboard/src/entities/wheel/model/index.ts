@@ -1,3 +1,4 @@
-import { WheelMode } from './wheel.types'
+import { WheelSlotContract } from './wheel.contracts'
+import type { WheelMode, WheelSlot } from './wheel.types'
 
-export { WheelMode }
+export { WheelMode, WheelSlot, WheelSlotContract }
