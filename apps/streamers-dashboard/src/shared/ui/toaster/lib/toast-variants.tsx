@@ -17,7 +17,7 @@ export const toastSuccessNotification = (
   const successDescription = (
     <div className="w-full flex items-center gap-x-1">
       <div className="flex items-center justify-center h-5 w-5 bg-green/30 rounded-md">
-        <Icons.Warning className="text-green" width={12} height={12} />
+        <Icons.Success className="text-green" size="xs" />
       </div>
       <Typography className="text-sm text-green font-medium" tag="p">
         Успешно

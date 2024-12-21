@@ -3,7 +3,7 @@ import type { SVGProps } from 'react'
 
 type Sizes = 'xs' | 'sm' | 'default' | 'lg'
 type IconsProps = SVGProps<SVGSVGElement> & {
-  size: Sizes
+  size?: Sizes
 }
 const sizes: Record<Sizes, number> = {
   xs: 16,
@@ -11,11 +11,11 @@ const sizes: Record<Sizes, number> = {
   default: 21,
   lg: 24,
 }
-const SvgClose = (props: IconsProps) => {
+const SvgSuccess = ({ size = 'default', ...props }: IconsProps) => {
   props = {
     ...props,
-    width: sizes[props.size] ?? props.width ?? sizes['default'],
-    height: sizes[props.size] ?? props.height ?? sizes['default'],
+    width: sizes[size] ?? props.width ?? sizes['default'],
+    height: sizes[size] ?? props.height ?? sizes['default'],
   }
   return (
     <svg
@@ -23,17 +23,17 @@ const SvgClose = (props: IconsProps) => {
       width="1em"
       height="1em"
       fill="none"
-      viewBox="0 0 25 24"
+      viewBox="0 0 24 24"
       {...props}
     >
       <path
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={2}
-        d="m17.038 7.757-8.486 8.486m8.486 0L8.552 7.757"
+        strokeWidth={2.5}
+        d="m5 13 3.526 2.821a2 2 0 0 0 2.736-.224L19 7"
       />
     </svg>
   )
 }
-export default SvgClose
+export default SvgSuccess

@@ -1,6 +1,6 @@
 import { basename, extname } from 'path'
 
-const outDir = './src/shared/components/ui/icons' // путь, до папки, где будут храниться преобразованные иконки
+const outDir = './src/shared/ui/icons' // путь, до папки, где будут храниться преобразованные иконки
 
 // Шаблон компонента с иконкой
 const iconTemplate = (
@@ -14,7 +14,7 @@ ${interfaces};
 type Sizes = 'xs' | 'sm' | 'default' | 'lg'
 
 type IconsProps = SVGProps<SVGSVGElement> & {
-  size: Sizes
+  size?: Sizes
 }
 
 const sizes: Record<Sizes, number> = {
