@@ -3,7 +3,7 @@ import { ZodError } from 'zod'
 import { WheelSlot, WheelSlotContract } from '../model'
 
 type WheelEventsMap = {
-  spin: WheelSlot | WheelSlot[] | undefined
+  spin: WheelSlot | undefined
   spinEnded: void
 }
 
@@ -13,7 +13,7 @@ class EventBus<EventsMap extends Record<string, unknown>> {
     Array<(...args: unknown[]) => void>
   >()
 
-  subscribe(key: string, callback: (...args: unknown[]) => void) {
+  subscribe(key: keyof EventsMap, callback: (...args: unknown[]) => void) {
     const subscriptions = this._subscriptions.get(key)
 
     this._subscriptions.set(
@@ -30,7 +30,7 @@ class EventBus<EventsMap extends Record<string, unknown>> {
     this._subscriptions.get(key)?.forEach((callbackfn) => callbackfn(...args))
   }
 
-  unsubcribe(key: string, callback: (...args: unknown[]) => void) {
+  unsubcribe(key: keyof EventsMap, callback: (...args: unknown[]) => void) {
     const subscriptions = this._subscriptions.get(key)
 
     this._subscriptions.set(

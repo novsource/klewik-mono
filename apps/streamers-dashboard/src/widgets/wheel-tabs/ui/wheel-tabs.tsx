@@ -28,6 +28,7 @@ const WheelTabs = () => {
       Object.keys(triggersWithIcons) as Array<keyof typeof triggersWithIcons>
     ).map((item) => (
       <TabsTrigger
+        key={triggersWithIcons[item].title}
         value={item.toLowerCase()}
         className="flex flex-grow gap-x-2 text-md font-medium data-[state=active]:rounded-[8px]"
       >

@@ -2,20 +2,22 @@ import { RefObject, useCallback, useState } from 'react'
 
 import { animate, useMotionValue } from 'framer-motion'
 
+import { WheelSlot } from '~entities/wheel/model'
+
 import {
   calculateRotateWheelCSSValue,
   getSlotNameOnSelector,
-} from '~shared/utils/wheel-canvas'
+} from './wheel-canvas'
 
 type WheelControlCallbacks = {
   onSpinStart: () => void
-  onSpinComplete: (winnerLot: AuctionSlot) => void
+  onSpinComplete: (winnerLot: WheelSlot) => void
 }
 
 type WheelControl = Partial<WheelControlCallbacks> & {
   wheelRef: RefObject<HTMLCanvasElement>
   lotTextRef: RefObject<HTMLSpanElement>
-  items: AuctionSlotWithAngles[]
+  items: WheelSlot[]
 }
 
 export const useWheelControl = ({
@@ -33,7 +35,7 @@ export const useWheelControl = ({
   )
 
   const rotateWheelAnimation = useCallback(
-    (winner: AuctionSlotWithAngles, spinTime: number) => {
+    (winner: WheelSlot, spinTime: number) => {
       if (wheelRef.current && lotTextRef.current) {
         const wheel = wheelRef.current
         const slotNameTextField = lotTextRef.current
@@ -77,7 +79,7 @@ export const useWheelControl = ({
     ]
   )
 
-  const spinWheel = (wheelWinner: AuctionSlotWithAngles, spinTime: number) => {
+  const spinWheel = (wheelWinner: WheelSlot, spinTime: number) => {
     rotateWheelAnimation(wheelWinner, spinTime)
   }
 

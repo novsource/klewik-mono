@@ -6,14 +6,11 @@ import {
   useState,
 } from 'react'
 
-import { getMaxSizeCanvas, resizeCanvas } from '~shared/utils/canvas'
-import {
-  drawEmptyWheel,
-  drawSelector,
-  drawSlicesItems,
-} from '~shared/utils/wheel-canvas'
+import { AuctionSlot } from '~entities/auction-slot/model'
 
-drawSlicesItems
+import { getMaxSizeCanvas, resizeCanvas } from '~shared/utils/canvas'
+
+import { drawEmptyWheel, drawSelector, drawSlicesItems } from './wheel-canvas'
 
 type WheelInitHookProps = {
   items: AuctionSlot[] | AuctionSlotWithAngles[] | null

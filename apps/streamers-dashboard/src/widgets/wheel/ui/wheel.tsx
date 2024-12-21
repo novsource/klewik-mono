@@ -1,12 +1,17 @@
-import { RefObject, forwardRef, useMemo, useRef } from 'react'
+import { RefObject, forwardRef, useEffect, useRef } from 'react'
 
-import { useWheelControl } from '~shared/hooks/wheel/useWheelControl'
-import { useWheelInit } from '~shared/hooks/wheel/useWheelInit'
-import { getRandomHSLColor } from '~shared/utils/colors'
+import { AuctionSlot } from '~entities/auction-slot/model/@x/auction-slot'
+import { WheelSlot } from '~entities/wheel/model'
+import { wheelActions } from '~entities/wheel/store'
+
+import { useStoreDispatch, useStoreSelector } from '~shared/lib/redux-toolkit'
+import { getRandomHEXColor, getRandomHSLColor } from '~shared/utils/colors'
+
+import { useWheelControl, useWheelInit } from '../utils'
 import {
   getItemsWithAngles,
   updateSlotsAnglesByRotateValue,
-} from '~shared/utils/wheel-canvas'
+} from '../utils/wheel-canvas'
 
 type WheelProps = {
   wheelSelectorRef: RefObject<HTMLCanvasElement>
@@ -15,27 +20,27 @@ type WheelProps = {
 const slots: AuctionSlot[] = [
   {
     name: 'Test',
-    slotHSVColor: getRandomHSLColor(),
+    color: getRandomHEXColor(),
     points: 1000,
-    _id: '12',
+    id: 12,
   },
   {
     name: 'Test 2',
-    slotHSVColor: getRandomHSLColor(),
+    color: getRandomHEXColor(),
     points: 2000,
-    _id: '120',
+    id: 120,
   },
   {
     name: 'Test 3',
-    slotHSVColor: getRandomHSLColor(),
+    color: getRandomHEXColor(),
     points: 2000,
-    _id: '120',
+    id: 120,
   },
   {
     name: 'Test 4',
-    slotHSVColor: getRandomHSLColor(),
+    color: getRandomHEXColor(),
     points: 100,
-    _id: '120',
+    id: 120,
   },
 ]
 
@@ -53,6 +58,8 @@ const WheelCanvas = forwardRef<HTMLCanvasElement, WheelProps>(
 )
 
 const WheelContainer = () => {
+  const dispatch = useStoreDispatch()
+  const wheelEventBus = useStoreSelector((state) => state.wheel.emitter)
   const lotTextRef = useRef<HTMLSpanElement>(null)
 
   const {
@@ -68,16 +75,35 @@ const WheelContainer = () => {
     items: getItemsWithAngles(slots),
   })
 
-  const slotsWithActualAngles = useMemo(() => {
-    return updateSlotsAnglesByRotateValue(
+  // const slotsWithActualAngles = useMemo(() => {
+  //   return updateSlotsAnglesByRotateValue(
+  //     getItemsWithAngles(slots),
+  //     wheelRotateCSSValue
+  //   )
+  // }, [wheelRotateCSSValue])
+
+  useEffect(() => {
+    const slotsWithActualAngles = updateSlotsAnglesByRotateValue(
       getItemsWithAngles(slots),
       wheelRotateCSSValue
     )
+
+    console.log(slotsWithActualAngles)
+
+    dispatch(wheelActions.setSlots(slotsWithActualAngles))
   }, [wheelRotateCSSValue])
 
-  const handleClick = () => {
-    spinWheel(slotsWithActualAngles[0], 5)
-  }
+  useEffect(() => {
+    const callback = (winner: WheelSlot) => {
+      spinWheel(winner, 5)
+    }
+
+    wheelEventBus.subscribe('spin', callback)
+
+    return () => {
+      wheelEventBus.unsubcribe('spin', callback)
+    }
+  }, [spinWheel])
 
   return (
     <div className="flex h-full w-full flex-shrink-[2] flex-col gap-y-2">

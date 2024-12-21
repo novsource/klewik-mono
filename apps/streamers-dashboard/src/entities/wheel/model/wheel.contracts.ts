@@ -4,8 +4,8 @@ import { AuctionSlotContract } from '~entities/auction-slot/model/@x/auction-slo
 
 const WheelSlotContract = z
   .object({
-    startAngle: z.number().positive().max(6),
-    endAngle: z.number().positive().max(6),
+    startAngle: z.number().min(0).max(360),
+    endAngle: z.number().min(0).max(360),
   })
   .merge(AuctionSlotContract)
 
