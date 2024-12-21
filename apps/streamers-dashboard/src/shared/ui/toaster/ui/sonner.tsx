@@ -1,24 +1,48 @@
+import { useMemo } from 'react'
+
 import { useTheme } from 'next-themes'
 import { Toaster as Sonner } from 'sonner'
+
+import { descriptionVariants } from '~shared/ui/input/styles/input-variants'
+
+import {
+  actionButtonSonnerVariants,
+  baseSonnerVariants,
+  cancelButtonSonnerVariants,
+  toastSonnerVariants,
+} from '../styles/sonner-variants'
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'dark' } = useTheme()
 
+  const slotsStyles = useMemo(() => {
+    const base = baseSonnerVariants()
+    const toast = toastSonnerVariants()
+    const descripiton = descriptionVariants()
+    const actionButton = actionButtonSonnerVariants()
+    const cancelButton = cancelButtonSonnerVariants()
+
+    return {
+      base,
+      toast,
+      descripiton,
+      actionButton,
+      cancelButton,
+    }
+  }, [])
+
   return (
     <Sonner
       theme={theme as ToasterProps['theme']}
-      className="toaster group"
+      className={slotsStyles.base}
       toastOptions={{
         classNames: {
-          toast:
-            'group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg',
-          description: 'group-[.toast]:text-muted-foreground',
-          actionButton:
-            'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground',
-          cancelButton:
-            'group-[.toast]:bg-muted group-[.toast]:text-muted-foreground',
+          toast: slotsStyles.toast,
+          description: slotsStyles.descripiton,
+          actionButton: slotsStyles.actionButton,
+          cancelButton: slotsStyles.cancelButton,
         },
       }}
       {...props}
