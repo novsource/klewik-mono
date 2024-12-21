@@ -1,7 +1,6 @@
 import { SpinWheelButton } from '~features/wheel/spin-wheel/ui'
 
 import { TabsContent } from '~shared/ui/tabs'
-import { Toaster } from '~shared/ui/toaster'
 
 const ControlWheelTab = () => {
   return (
@@ -12,7 +11,6 @@ const ControlWheelTab = () => {
       >
         <SpinWheelButton />
       </TabsContent>
-      <Toaster />
     </>
   )
 }

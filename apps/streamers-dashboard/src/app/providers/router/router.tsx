@@ -1,10 +1,10 @@
-import { Navigate, createBrowserRouter } from 'react-router-dom'
+import { Navigate, Outlet, createBrowserRouter } from 'react-router-dom'
 
 import { auctionSlotsPageRoute } from '~pages/auction-slots/routing'
 import { auctionWheelPageRoute } from '~pages/auction-wheel/routing'
 import { welcomePageRoute } from '~pages/welcome/routing'
 
-import { lazyLoadModule } from '~shared/lib/react-router-dom'
+import { Toaster } from '~shared/ui/toaster'
 
 import { AuctionDashboardLayout } from './layouts'
 
@@ -14,6 +14,12 @@ const auctionWheelRouteObject = auctionWheelPageRoute()
 
 const browserRouter = createBrowserRouter([
   {
+    element: (
+      <>
+        <Outlet />
+        <Toaster />
+      </>
+    ),
     children: [
       {
         path: '/',
@@ -46,26 +52,4 @@ const browserRouter = createBrowserRouter([
   },
 ])
 
-// const routes = createRoutesFromElements(
-//   <Route>
-//     <Route path="/">
-//       {/* {test} */}
-//       {/* <WelcomeRoute disableTransition={true} /> */}
-//       <Route path="dashboard/:slug">
-//         <Route index element={<Navigate to="wheel" />} />
-//         <Route
-//           element={<AuctionDashboardLayout />}
-//           lazy={() => lazyLoadModule('./layouts/AuctionDashboardLayout')}
-//         >
-//           <Route path="donations" />
-//           <Route path="settings" />
-//           <Route path="*" element={<Navigate to="wheel" />} />
-//         </Route>
-//       </Route>
-//     </Route>
-//     <Route path="*" element={<Navigate to="/" />} />
-//   </Route>
-// )
-
-// export const router = createBrowserRouter(routes)
 export { browserRouter }

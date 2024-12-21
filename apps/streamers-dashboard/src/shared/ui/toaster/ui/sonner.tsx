@@ -15,7 +15,7 @@ import {
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = 'dark' } = useTheme()
+  const { theme = 'system' } = useTheme()
 
   const slotsStyles = useMemo(() => {
     const base = baseSonnerVariants()

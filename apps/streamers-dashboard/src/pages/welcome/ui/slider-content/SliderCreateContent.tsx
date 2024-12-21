@@ -26,7 +26,6 @@ import {
   SliderTrigger,
   useSliderContext,
 } from '~shared/ui/slider'
-import { Toaster } from '~shared/ui/toaster'
 import { Typography } from '~shared/ui/typograghy'
 import { cn } from '~shared/utils'
 
@@ -198,8 +197,6 @@ const SliderCreateContent = () => {
           {isPending ? 'Создаем аукцион...' : 'Создать'}
         </Button>
       </form>
-
-      <Toaster />
     </SliderContent>
   )
 }
