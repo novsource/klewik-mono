@@ -4,7 +4,7 @@ import { zHexColor, zRGBColor } from '~shared/lib/zod'
 
 const AuctionSlotContract = z.object({
   id: z.number().nonnegative(),
-  name: z.string().nonempty(),
+  name: z.string().nonempty().max(200),
   points: z.number().nonnegative(),
   color: z.union([zRGBColor, zHexColor]),
 })

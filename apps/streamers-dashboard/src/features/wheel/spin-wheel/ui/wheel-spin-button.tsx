@@ -12,7 +12,6 @@ const SpinWheelButton = () => {
 
   const handleOnClick = useCallback(() => {
     const winner = generateWinner(wheelSlots)
-
     wheelEventBus.notify('spin', winner)
   }, [wheelSlots])
 

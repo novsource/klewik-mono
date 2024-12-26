@@ -57,6 +57,9 @@ export default {
       desktopLg: '2560px',
     },
     extend: {
+      height: {
+        sheet: 'var(--sheet-height)',
+      },
       gridTemplateRows: {
         slotsDesktop: 'minmax(40px, 42px) max(62px) 1fr',
         slotsTable: 'minmax(40px, 42px) 1fr',
