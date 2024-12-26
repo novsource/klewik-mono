@@ -51,7 +51,7 @@ const SheetContent = React.forwardRef<
       className={cn(sheetVariants({ side }), className)}
       {...props}
     >
-      {children}
+      <div className="flex flex-col h-full w-full p-6">{children}</div>
       <SheetPrimitive.Close className={sheetCloseButtonVariants()}>
         <Icons.Close size="lg" />
         <span className="sr-only">Close</span>
