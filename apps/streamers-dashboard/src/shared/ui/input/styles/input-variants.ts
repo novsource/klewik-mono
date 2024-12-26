@@ -1,5 +1,14 @@
-import { CvaClassValue } from '@/shared/utils/types'
 import { VariantProps, cva } from 'class-variance-authority'
+
+import { CvaClassValue } from '~shared/utils/types'
+
+export type InputSlots =
+  | 'base'
+  | 'input'
+  | 'wrapper'
+  | 'content'
+  | 'description'
+  | 'label'
 
 type ErrorCvaVariants = {
   isError: {
@@ -74,11 +83,14 @@ export const descriptionVariants = cva<DescriptionVariants>(
 )
 
 export const contentVariants = cva<ContentBaseVariants>(
-  'flex w-full rounded-medium bg-dark transition-all ring-gray-light data-[focus=true]:ring-1 data-[hover=true]:ring-1',
+  [
+    'flex w-full rounded-medium bg-dark transition-all ring-gray-light data-[focus=true]:ring-1 data-[hover=true]:ring-1',
+    'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-1',
+  ],
   {
     variants: {
       size: { default: 'h-10', sm: 'h-9', lg: 'h-11' },
-      isError: { true: 'ring-red', false: 'ring-gray-light' },
+      isError: { true: 'ring-red/80', false: 'ring-gray-light' },
     },
     defaultVariants: {
       size: 'default',
@@ -105,12 +117,12 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
 
 export const inputVariants = cva<InputVariants>(
   [
-    'flex w-full items-center px-2',
+    'flex w-full items-center',
     'dark bg-dark',
     'font-medium text-white',
     'file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground',
     'disabled:cursor-not-allowed disabled:opacity-50',
-    'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-1',
+    'focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none',
     'rounded-medium ring-offset-background',
     'placeholder:text-gray',
   ],
@@ -129,10 +141,10 @@ export const inputVariants = cva<InputVariants>(
         true: '',
       },
       startContent: {
-        true: 'px-0 focus-visible:ring-0 focus-visible:ring-offset-0',
+        true: 'px-0',
       },
       endContent: {
-        true: 'px-0 focus-visible:ring-0 focus-visible:ring-offset-0',
+        true: 'px-0',
       },
     },
     defaultVariants: {
