@@ -1,4 +1,4 @@
-import { HttpClientRequestOptions, baseHttpClient } from '~shared/api/instance'
+import { HttpClientRequestOptions, baseHttpClient } from '../../instance'
 
 export type CreateAuctionResponse = {
   auctionId: string
