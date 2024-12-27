@@ -1,8 +1,8 @@
 import SliderAdminContent from './SliderAdminContent'
-import SliderCreateContent from './SliderCreateContent'
 import SliderRolesContent from './SliderRolesContent'
 import SliderSuccessContent from './SliderSuccessContent'
 import SliderWelcomeContent from './SliderWelcomeContent'
+import SliderCreateContent from './slider-create-auction'
 
 export {
   SliderWelcomeContent,
