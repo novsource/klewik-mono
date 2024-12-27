@@ -31,6 +31,7 @@ export class BaseHttpClient implements BaseHttpClientMethods {
     Promise<unknown>
   >([])
   private readonly _axiosInstance
+  private readonly _testMap = new Map()
 
   constructor(options?: BaseApiClientOptions) {
     this._axiosInstance = axiosRateLimit(
@@ -119,11 +120,11 @@ export class BaseHttpClient implements BaseHttpClientMethods {
   }
 
   private _internalRequest<T>(url: string, config: HttpClientRequestOptions) {
-    const request = this._axiosInstance.request<T>(config)
+    const request = this._axiosInstance
+      .request<T>(config)
+      .finally(() => this._requestPromisesCollection.delete(url))
 
     this._requestPromisesCollection.set(url, request)
-
-    // request.finally(() => this._requestPromisesCollection.delete(url))
 
     return request
   }
