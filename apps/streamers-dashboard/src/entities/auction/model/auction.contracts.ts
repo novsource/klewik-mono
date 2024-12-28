@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import { AuctionSlotSchema } from '~entities/auction-slot/model/@x/auction-slot'
 
-import { zUnixTimestampMs } from '~shared/lib/zod'
+import { UnixTimestampInMsSchema } from '~shared/lib/zod'
 
 const AuctionSchema = z.object({
   id: z.string().uuid(),
@@ -12,8 +12,8 @@ const AuctionSchema = z.object({
   dropoutSlots: AuctionSlotSchema.array(),
   wheelMode: z.enum(['classic', 'dropout']),
   isEnded: z.boolean(),
-  createAt: zUnixTimestampMs,
-  endedAt: zUnixTimestampMs,
+  createAt: UnixTimestampInMsSchema,
+  endedAt: UnixTimestampInMsSchema,
 })
 
 export { AuctionSchema }
