@@ -31,12 +31,11 @@ export class BaseHttpClient implements BaseHttpClientMethods {
     Promise<unknown>
   >([])
   private readonly _axiosInstance
-  private readonly _testMap = new Map()
 
   constructor(options?: BaseApiClientOptions) {
     this._axiosInstance = axiosRateLimit(
       axios.create({
-        baseURL: 'http://localhost:3000',
+        baseURL: import.meta.env.SERVER_URL,
         ...options?.axiosOptions,
       }),
       { maxRPS: this._defaultMaxRPS, ...options?.rateLimiterOptions }
