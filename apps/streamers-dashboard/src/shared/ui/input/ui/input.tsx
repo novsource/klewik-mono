@@ -30,7 +30,9 @@ export type InputProps = Omit<
     endContent?: JSX.Element
     description?: string
     errorMessage?: string
-    classNames?: Record<InputSlots, NullablePossible<CvaClassValue>>
+    slotClassNames?: {
+      [Slot in InputSlots]?: CvaClassValue
+    }
   }
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
@@ -41,7 +43,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     startContent,
     endContent,
     type,
-    classNames,
+    slotClassNames: classNames,
     label,
     onFocus,
     onBlur,
