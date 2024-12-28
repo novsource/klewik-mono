@@ -35,7 +35,7 @@ export class BaseHttpClient implements BaseHttpClientMethods {
   constructor(options?: BaseApiClientOptions) {
     this._axiosInstance = axiosRateLimit(
       axios.create({
-        baseURL: import.meta.env.SERVER_URL,
+        baseURL: import.meta.env.VITE_SERVER_URL,
         ...options?.axiosOptions,
       }),
       { maxRPS: this._defaultMaxRPS, ...options?.rateLimiterOptions }
