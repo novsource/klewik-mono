@@ -1,14 +1,8 @@
-import { useCallback, useMemo } from 'react'
-import {
-  Controller,
-  FieldErrors,
-  useFieldArray,
-  useForm,
-} from 'react-hook-form'
+import { HTMLAttributes, useCallback, useMemo } from 'react'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
-import { z } from 'zod'
 
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
@@ -16,21 +10,16 @@ import { Input } from '~shared/ui/input'
 import { NumberInput } from '~shared/ui/number-input'
 import { deleteAllSpacesFromString } from '~shared/utils/string-format'
 
-const createSlotSchema = z.object({
-  slots: z
-    .object({
-      name: z.string().min(3),
-      points: z.string().min(3),
-    })
-    .array()
-    .min(1),
-})
+import { CreateSlotForm, FormArrayData, createSlotSchema } from '../model'
 
-type CreateSlotForm = z.infer<typeof createSlotSchema>
+type CreateSlotsFormProps = HTMLAttributes<HTMLFormElement> & {
+  multiplySlots?: boolean
+}
 
-type FormArrayData = Record<'slots', CreateSlotForm[]>
-
-export const CreateSlotsForm = () => {
+export const CreateSlotsForm = ({
+  multiplySlots,
+  ...formProps
+}: CreateSlotsFormProps) => {
   const {
     control,
     handleSubmit,
@@ -41,11 +30,11 @@ export const CreateSlotsForm = () => {
       createSlotSchema.transform((val) => {
         return val['slots'].map((item) => ({
           ...item,
-          points: deleteAllSpacesFromString(item.points),
+          points: Number(deleteAllSpacesFromString(item.points)),
         }))
       })
     ),
-    mode: 'all',
+    mode: 'onChange',
     reValidateMode: 'onChange',
   })
 
@@ -66,7 +55,10 @@ export const CreateSlotsForm = () => {
       if (errors.slots === undefined) return undefined
 
       if (Array.isArray(errors['slots'])) {
-        if (errors['slots'][fieldIndex][fieldName]) {
+        if (
+          errors['slots'][fieldIndex] &&
+          errors['slots'][fieldIndex][fieldName]
+        ) {
           return errors['slots'][fieldIndex][fieldName].message
         }
       }
@@ -75,7 +67,12 @@ export const CreateSlotsForm = () => {
   )
 
   const formFields = useMemo(() => {
-    return fields.map((field, index) => (
+    if (fields.length === 0) {
+      append({ name: '', points: '' })
+      return
+    }
+
+    return (multiplySlots ? fields : fields.slice(0, 1)).map((field, index) => (
       <motion.li
         key={field.id}
         className="flex w-full gap-x-2"
@@ -86,11 +83,14 @@ export const CreateSlotsForm = () => {
           render={({ field }) => (
             <Input
               classNames={{
-                base: 'font-golosF',
-                input: 'px-1',
-                description: 'text-nowrap',
+                base: 'font-golosF w-full',
+                description: 'text-wrap',
               }}
               placeholder="Название слота"
+              onAnimationStart={() => {
+                console.log('animation')
+              }}
+              onAnimationEnd={() => console.log(this)}
               errorMessage={getErrorMessageForField('name', index)}
               {...field}
             />
@@ -102,49 +102,56 @@ export const CreateSlotsForm = () => {
           render={({ field }) => (
             <NumberInput
               classNames={{
-                base: 'font-golosF',
-                input: 'px-1',
+                base: 'font-golosF w-full',
                 description: 'text-wrap',
               }}
               placeholder="Очки"
-              // errorMessage={getErrorMessageForField('points', index)}
+              onAnimationStart={() => {
+                console.log('animation')
+              }}
+              errorMessage={getErrorMessageForField('points', index)}
               {...field}
             />
           )}
           control={control}
           name={`slots.${index}.points` as const}
         />
-        <Button
-          className="transition-colors bg-red/10 text-red/60 hover:text-red hover:bg-red/20"
-          isIconOnly
-          startContent={<Icons.Bin size="default" />}
-          onClick={() => remove(index)}
-        />
+        {multiplySlots && fields.length > 1 && (
+          <Button
+            className="transition-colors bg-red/10 text-red/60 hover:text-red hover:bg-red/20"
+            isIconOnly
+            startContent={<Icons.Bin size="default" />}
+            onClick={() => remove(index)}
+          />
+        )}
       </motion.li>
     ))
-  }, [fields, getErrorMessageForField])
+  }, [fields, getErrorMessageForField, multiplySlots])
 
   return (
     <form
       className="flex flex-col w-full h-full justify-between"
       onSubmit={handleSubmit((data) => console.log(data))}
+      {...formProps}
     >
       <div className="flex w-full flex-col gap-y-6 items-stretch">
         <ul className="flex flex-col w-full gap-y-3">
           <div className="flex w-full flex-col gap-y-3 h-full overflow-y-scroll p-1">
             {formFields}
-            <Button
-              className="w-fit"
-              type="button"
-              startContent={<Icons.Plus size="sm" />}
-              size={'sm'}
-              onClick={() => {
-                append({ name: '', points: '' })
-                trigger('slots')
-              }}
-            >
-              Создать слот
-            </Button>
+            {multiplySlots && (
+              <Button
+                className="w-fit"
+                type="button"
+                startContent={<Icons.Plus size="sm" />}
+                size={'sm'}
+                onClick={() => {
+                  append({ name: '', points: '' })
+                  trigger('slots')
+                }}
+              >
+                Создать слот
+              </Button>
+            )}
           </div>
         </ul>
       </div>
