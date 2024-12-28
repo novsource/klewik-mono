@@ -101,6 +101,19 @@ header {
   height: var(--header-height);
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-background-clip: text;
+  animation-name: onAutoFillStart;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+input:not(:-webkit-autofill) {
+  animation-name: onAutoFillCancel;
+}
+
 footer {
   height: var(--footer-height);
 }

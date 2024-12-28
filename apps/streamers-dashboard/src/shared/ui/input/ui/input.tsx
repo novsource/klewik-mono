@@ -99,57 +99,24 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     />
   )
 
-  const inputDefault = useMemo(() => {
-    const contentBaseStyle = cn(
-      contentVariants({ size, isError: !!errorMessage }),
-      classNames?.base
-    )
-    const contentWrapperStyle = cn(
-      contentWrapperVariants({
-        size,
-      }),
-      classNames?.wrapper
-    )
+  const contentBaseStyle = useMemo(
+    () => cn(contentVariants(), classNames?.base),
+    [classNames?.base]
+  )
+  const contentWrapperStyle = useMemo(
+    () =>
+      cn(
+        contentWrapperVariants({
+          size,
+          isError: !!errorMessage,
+        }),
+        classNames?.wrapper
+      ),
+    [classNames?.wrapper, errorMessage]
+  )
 
-    return (
-      <div
-        className={contentBaseStyle}
-        data-slot="base"
-        data-hover={isHovered}
-        data-focus={isFocused}
-        onMouseEnter={() => {
-          setIsHover(true)
-        }}
-        onMouseLeave={() => {
-          setIsHover(false)
-        }}
-      >
-        <div className={contentWrapperStyle} data-slot="wrapper">
-          {startContent}
-          {baseInput}
-          {endContent}
-        </div>
-      </div>
-    )
-  }, [
-    size,
-    baseInput,
-    startContent,
-    endContent,
-    isFocused,
-    isHovered,
-    errorMessage,
-    classNames?.base,
-    classNames?.wrapper,
-    classNames?.input,
-  ])
-
-  if (!label && (startContent || endContent)) {
-    return inputDefault
-  }
-
-  return label || errorMessage || description ? (
-    <div className="flex w-full flex-col gap-y-2">
+  return (
+    <div className={contentBaseStyle} data-slot="base">
       {label && (
         <label
           htmlFor={label.id.toLocaleLowerCase()}
@@ -159,7 +126,22 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           {label.value}
         </label>
       )}
-      {inputDefault}
+      <div
+        className={contentWrapperStyle}
+        data-slot="wrapper"
+        data-hover={isHovered}
+        data-focus={isFocused}
+        onMouseEnter={() => {
+          setIsHover(true)
+        }}
+        onMouseLeave={() => {
+          setIsHover(false)
+        }}
+      >
+        {startContent}
+        {baseInput}
+        {endContent}
+      </div>
       {(errorMessage || description) && (
         <Typography
           tag="p"
@@ -170,8 +152,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         </Typography>
       )}
     </div>
-  ) : (
-    inputDefault
   )
 })
 Input.displayName = 'Input'

@@ -34,6 +34,9 @@ export default {
       purple: {
         DEFAULT: '#505285',
       },
+      transparent: {
+        DEFAULT: 'rgba(255,255,255,0)',
+      },
     },
     fontSize: {
       sm: '12px',

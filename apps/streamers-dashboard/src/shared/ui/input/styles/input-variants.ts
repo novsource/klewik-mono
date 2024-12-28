@@ -27,8 +27,8 @@ type SizesCvaVariants = {
 type LabelVariants = SizesCvaVariants & ErrorCvaVariants
 type DescriptionVariants = SizesCvaVariants & ErrorCvaVariants
 
-type ContentBaseVariants = SizesCvaVariants & ErrorCvaVariants
-type ContentWrapperVariants = SizesCvaVariants
+type ContentBaseVariants = CvaClassValue
+type ContentWrapperVariants = SizesCvaVariants & ErrorCvaVariants
 
 type InputVariants = SizesCvaVariants &
   ErrorCvaVariants & {
@@ -82,15 +82,23 @@ export const descriptionVariants = cva<DescriptionVariants>(
   }
 )
 
-export const contentVariants = cva<ContentBaseVariants>(
+export const contentVariants = cva<ContentBaseVariants>([
+  'group flex flex-col gap-y-2',
+])
+
+export const contentWrapperVariants = cva<ContentWrapperVariants>(
   [
-    'flex w-full rounded-medium bg-dark transition-all ring-gray-light data-[focus=true]:ring-1 data-[hover=true]:ring-1',
     'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-1',
+    'flex w-full items-center bg-dark transition-all ring-gray-light  data-[focus=true]:ring-1 data-[hover=true]:ring-1 rounded-medium',
   ],
   {
     variants: {
-      size: { default: 'h-10', sm: 'h-9', lg: 'h-11' },
-      isError: { true: 'ring-red/80', false: 'ring-gray-light' },
+      size: {
+        default: 'h-10 px-4 gap-x-2',
+        sm: 'h-9 px-3 py-2 gap-x-1',
+        lg: 'h-11 px-4 py-4 gap-x-3',
+      },
+      isError: { true: 'ring-red/80 ring-1', false: 'ring-gray-light' },
     },
     defaultVariants: {
       size: 'default',
@@ -99,39 +107,23 @@ export const contentVariants = cva<ContentBaseVariants>(
   }
 )
 
-export const contentWrapperVariants = cva<ContentWrapperVariants>(
-  'flex w-full items-center',
-  {
-    variants: {
-      size: {
-        default: 'px-3 gap-x-2',
-        sm: 'px-2 gap-x-1',
-        lg: 'px-4 gap-x-3',
-      },
-    },
-    defaultVariants: {
-      size: 'default',
-    },
-  }
-)
-
 export const inputVariants = cva<InputVariants>(
   [
-    'flex w-full items-center',
-    'dark bg-dark',
+    'flex w-full h-full items-center',
+    'dark bg-transparent',
     'font-medium text-white',
     'file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground',
     'disabled:cursor-not-allowed disabled:opacity-50',
     'focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none',
-    'rounded-medium ring-offset-background',
+    'ring-offset-background',
     'placeholder:text-gray',
   ],
   {
     variants: {
       size: {
-        default: 'h-10 text-md px-4 py-3',
-        lg: 'h-11 text-md px-4 py-4',
-        sm: 'h-9 text-sm px-3 py-2',
+        default: 'py-3 text-md',
+        lg: 'text-md',
+        sm: 'text-sm ',
       },
       isError: {
         true: 'focus-visible:ring-red',
