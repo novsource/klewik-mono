@@ -1,12 +1,12 @@
 import { z } from 'zod'
 
-import { AuctionSlotContract } from '~entities/auction-slot/model/@x/auction-slot'
+import { AuctionSlotSchema } from '~entities/auction-slot/model/@x/auction-slot'
 
-const WheelSlotContract = z
+const WheelSlotSchema = z
   .object({
     startAngle: z.number().min(0).max(360),
     endAngle: z.number().min(0).max(360),
   })
-  .merge(AuctionSlotContract)
+  .merge(AuctionSlotSchema)
 
-export { WheelSlotContract }
+export { WheelSlotSchema }

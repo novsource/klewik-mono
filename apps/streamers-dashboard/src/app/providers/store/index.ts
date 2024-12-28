@@ -1,3 +1,3 @@
-import { StoreProvider } from './storeProvider'
+import { StoreProvider } from './store-provider'
 
 export { StoreProvider }

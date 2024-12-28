@@ -30,7 +30,7 @@ const SvgClose = (props: IconsProps) => {
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={1.5}
+        strokeWidth={2}
         d="m17.038 7.757-8.486 8.486m8.486 0L8.552 7.757"
       />
     </svg>

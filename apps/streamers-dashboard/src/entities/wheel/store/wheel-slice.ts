@@ -1,8 +1,8 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 import { WheelEventsBus } from '../events'
+import { validateSlotsPayload } from '../lib/react-redux'
 import { WheelSlot } from '../model'
-import { validateSlotsPayload } from './actions-validation'
 
 export type WheelState = {
   slots: WheelSlot[]

@@ -12,6 +12,9 @@ export default {
         DEFAULT: '#3F9663',
         accent: '#74DFA2',
       },
+      black: {
+        DEFAULT: '#000',
+      },
       dark: {
         DEFAULT: '#27272A',
         accent: '#3E4145',
@@ -30,6 +33,9 @@ export default {
       },
       purple: {
         DEFAULT: '#505285',
+      },
+      transparent: {
+        DEFAULT: 'rgba(255,255,255,0)',
       },
     },
     fontSize: {
@@ -54,6 +60,9 @@ export default {
       desktopLg: '2560px',
     },
     extend: {
+      height: {
+        sheet: 'var(--sheet-height)',
+      },
       gridTemplateRows: {
         slotsDesktop: 'minmax(40px, 42px) max(62px) 1fr',
         slotsTable: 'minmax(40px, 42px) 1fr',

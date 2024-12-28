@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 
-import { useTheme } from 'next-themes'
 import { Toaster as Sonner } from 'sonner'
 
 import { descriptionVariants } from '~shared/ui/input/styles/input-variants'
@@ -15,8 +14,6 @@ import {
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = 'system' } = useTheme()
-
   const slotsStyles = useMemo(() => {
     const base = baseSonnerVariants()
     const toast = toastSonnerVariants()
@@ -35,8 +32,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
 
   return (
     <Sonner
-      theme={theme as ToasterProps['theme']}
       className={slotsStyles.base}
+      pauseWhenPageIsHidden
+      offset={16}
+      style={{}}
       toastOptions={{
         classNames: {
           toast: slotsStyles.toast,

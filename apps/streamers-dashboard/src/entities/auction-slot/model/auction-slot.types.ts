@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
-import AuctionSlotContract from './auction-slot.contracts'
+import AuctionSlotSchema from './auction-slot.contracts'
 
-type AuctionSlot = z.infer<typeof AuctionSlotContract>
+type AuctionSlot = z.infer<typeof AuctionSlotSchema>
 
 export default AuctionSlot

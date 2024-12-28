@@ -35,7 +35,7 @@ export class BaseHttpClient implements BaseHttpClientMethods {
   constructor(options?: BaseApiClientOptions) {
     this._axiosInstance = axiosRateLimit(
       axios.create({
-        baseURL: 'http://localhost:3000',
+        baseURL: import.meta.env.VITE_SERVER_URL,
         ...options?.axiosOptions,
       }),
       { maxRPS: this._defaultMaxRPS, ...options?.rateLimiterOptions }
@@ -119,11 +119,11 @@ export class BaseHttpClient implements BaseHttpClientMethods {
   }
 
   private _internalRequest<T>(url: string, config: HttpClientRequestOptions) {
-    const request = this._axiosInstance.request<T>(config)
+    const request = this._axiosInstance
+      .request<T>(config)
+      .finally(() => this._requestPromisesCollection.delete(url))
 
     this._requestPromisesCollection.set(url, request)
-
-    // request.finally(() => this._requestPromisesCollection.delete(url))
 
     return request
   }

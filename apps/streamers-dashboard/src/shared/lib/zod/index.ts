@@ -1,4 +1,4 @@
-import { zHexColor, zRGBColor } from './color-custom.schema'
-import { zUnixTimestampMs } from './unix-timestamp-custom.schema'
+import { HexColorSchema, RGBColorSchema } from './color-custom.schema'
+import { UnixTimestampInMsSchema } from './unix-timestamp-custom.schema'
 
-export { zHexColor, zRGBColor, zUnixTimestampMs }
+export { HexColorSchema, RGBColorSchema, UnixTimestampInMsSchema }

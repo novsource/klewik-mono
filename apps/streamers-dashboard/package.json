@@ -9,11 +9,13 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "icons": "npx @svgr/cli -- ./src/assets/icons",
+    "icons": "npx @svgr/cli -- ./src/shared/assets/icons",
     "pretty:write": "pnpm exec prettier . --write",
     "pretty:check": "pnpm exec prettier . --check"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.9.1",
+    "@radix-ui/react-dialog": "^1.1.4",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tabs": "^1.1.1",
     "@reduxjs/toolkit": "^2.5.0",
@@ -29,6 +31,7 @@
     "react-hook-form": "^7.53.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "6",
+    "socket.io-client": "^4.8.1",
     "sonner": "^1.7.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.1"

@@ -2,8 +2,10 @@ import { InputHTMLAttributes, forwardRef, useMemo, useState } from 'react'
 
 import { Typography } from '~shared/ui/typograghy'
 import { cn } from '~shared/utils'
+import { CvaClassValue } from '~shared/utils/types'
 
 import {
+  InputSlots,
   InputVariantsProps,
   contentVariants,
   contentWrapperVariants,
@@ -12,7 +14,10 @@ import {
   labelVariants,
 } from '../styles/input-variants'
 
-export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> &
+export type InputProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'size' | 'className'
+> &
   Omit<
     InputVariantsProps,
     'withLabel' | 'startContent' | 'endContent' | 'isError'
@@ -25,6 +30,9 @@ export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> &
     endContent?: JSX.Element
     description?: string
     errorMessage?: string
+    slotClassNames?: {
+      [Slot in InputSlots]?: CvaClassValue
+    }
   }
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
@@ -35,7 +43,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     startContent,
     endContent,
     type,
-    className,
+    slotClassNames: classNames,
     label,
     onFocus,
     onBlur,
@@ -46,16 +54,21 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const [isFocused, setIsFocus] = useState(false)
 
   const labelStyle = useMemo(
-    () => cn(labelVariants({ size, isError: !!errorMessage })),
-    [size, label, errorMessage]
+    () =>
+      cn(labelVariants({ size, isError: !!errorMessage }), classNames?.label),
+    [size, label, errorMessage, classNames?.label]
   )
 
   const descriptionStyle = useMemo(
-    () => cn(descriptionVariants({ size, isError: !!errorMessage })),
-    [size, label, errorMessage]
+    () =>
+      cn(
+        descriptionVariants({ size, isError: !!errorMessage }),
+        classNames?.description
+      ),
+    [size, label, errorMessage, classNames?.description]
   )
 
-  const inputStyle = useMemo(
+  const baseInputStyle = useMemo(
     () =>
       cn(
         inputVariants({
@@ -65,16 +78,17 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           withLabel: Boolean(label),
           isError: Boolean(errorMessage),
         }),
-        className
+        classNames?.input
       ),
-    [size, startContent, endContent, label, errorMessage]
+    [size, startContent, endContent, label, errorMessage, classNames?.input]
   )
 
-  const inputDefault = (
+  const baseInput = (
     <input
       type={type}
-      className={inputStyle}
+      className={baseInputStyle}
       ref={ref}
+      data-slot="input"
       onFocus={(e) => {
         onFocus && onFocus(e)
         setIsFocus(true)
@@ -87,15 +101,36 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     />
   )
 
-  const inputWithContent = useMemo(() => {
-    const contentBaseStyle = contentVariants({ size, isError: !!errorMessage })
-    const contentWrapperStyle = contentWrapperVariants({
-      size,
-    })
+  const contentBaseStyle = useMemo(
+    () => cn(contentVariants(), classNames?.base),
+    [classNames?.base]
+  )
+  const contentWrapperStyle = useMemo(
+    () =>
+      cn(
+        contentWrapperVariants({
+          size,
+          isError: !!errorMessage,
+        }),
+        classNames?.wrapper
+      ),
+    [classNames?.wrapper, errorMessage]
+  )
 
-    return (
+  return (
+    <div className={contentBaseStyle} data-slot="base">
+      {label && (
+        <label
+          htmlFor={label.id.toLocaleLowerCase()}
+          className={labelStyle}
+          data-slot="label"
+        >
+          {label.value}
+        </label>
+      )}
       <div
-        className={contentBaseStyle}
+        className={contentWrapperStyle}
+        data-slot="wrapper"
         data-hover={isHovered}
         data-focus={isFocused}
         onMouseEnter={() => {
@@ -105,44 +140,20 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           setIsHover(false)
         }}
       >
-        <div className={contentWrapperStyle}>
-          {startContent}
-          {inputDefault}
-          {endContent}
-        </div>
+        {startContent}
+        {baseInput}
+        {endContent}
       </div>
-    )
-  }, [size, startContent, endContent, isFocused, isHovered, errorMessage])
-
-  if (!label && (startContent || endContent)) {
-    return inputWithContent
-  }
-
-  return label ? (
-    <div className="flex w-full flex-col gap-y-2">
-      {label && (
-        <label htmlFor={label.id.toLocaleLowerCase()} className={labelStyle}>
-          {label.value}
-        </label>
-      )}
-      {startContent || endContent ? inputWithContent : inputDefault}
       {(errorMessage || description) && (
-        <Typography tag="p" className={descriptionStyle}>
+        <Typography
+          tag="p"
+          className={descriptionStyle}
+          data-slot="description"
+        >
           {errorMessage || description}
         </Typography>
       )}
     </div>
-  ) : errorMessage || description ? (
-    <div className="flex w-full flex-col gap-y-2">
-      {inputDefault}
-      {
-        <Typography tag="p" className={descriptionStyle}>
-          {errorMessage || description}
-        </Typography>
-      }
-    </div>
-  ) : (
-    inputDefault
   )
 })
 Input.displayName = 'Input'

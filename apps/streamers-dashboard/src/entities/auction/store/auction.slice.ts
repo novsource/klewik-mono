@@ -1,8 +1,12 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
+import { WheelSlot } from '~entities/wheel/model/@x'
+
+import { Auction } from '../model'
+
 type AuctionSliceState = {
   auctionInfo: Partial<Auction>
-  wheelSlotsData: AuctionSlotWithAngles[]
+  wheelSlotsData: WheelSlot[]
 }
 
 const initialState: AuctionSliceState = {
@@ -19,7 +23,7 @@ const auctionSlice = createSlice({
 
       state.auctionInfo = { ...auctionData }
     },
-    setWheelSlots(state, payload: PayloadAction<AuctionSlotWithAngles[]>) {
+    setWheelSlots(state, payload: PayloadAction<WheelSlot[]>) {
       const slots = payload.payload
 
       state.wheelSlotsData = [...slots]

@@ -1,12 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit'
 
+import { auctionReducer } from '~entities/auction/store'
 import { wheelReducer } from '~entities/wheel/store'
 
 import { appReducer } from './slices/app.slice'
-import { auctionReducer } from './slices/auction.slice'
+import { socketReducer } from './slices/socket.slice'
 
 export const store = configureStore({
-  reducer: { app: appReducer, auction: auctionReducer, wheel: wheelReducer },
+  reducer: {
+    app: appReducer,
+    auction: auctionReducer,
+    wheel: wheelReducer,
+    socket: socketReducer,
+  },
 })
 
 export type RootState = ReturnType<typeof store.getState>

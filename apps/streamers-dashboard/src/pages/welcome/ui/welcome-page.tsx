@@ -1,9 +1,10 @@
+import { CloverAnimation } from '~widgets/big-clover-animation/ui'
+
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Slider } from '~shared/ui/slider'
 import { Typography } from '~shared/ui/typograghy'
 
-import CloverAnimation from './clover-animation/clover-animation'
 import {
   SliderAdminContent,
   SliderCreateContent,

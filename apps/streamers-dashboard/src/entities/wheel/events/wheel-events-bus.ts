@@ -1,6 +1,6 @@
 import { ZodError } from 'zod'
 
-import { WheelSlot, WheelSlotContract } from '../model'
+import { WheelSlot, WheelSlotSchema } from '../model'
 
 type WheelEventsMap = {
   spin: WheelSlot | undefined
@@ -62,7 +62,7 @@ class WheelEventsBus extends EventBus<WheelEventsMap> {
         case 'spin': {
           const castData = data as WheelEventsMap['spin']
 
-          WheelSlotContract.parse(castData)
+          WheelSlotSchema.parse(castData)
           break
         }
         case 'spinEnded': {

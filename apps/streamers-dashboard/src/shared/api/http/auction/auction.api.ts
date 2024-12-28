@@ -1,4 +1,6 @@
-import { HttpClientRequestOptions, baseHttpClient } from '~shared/api/instance'
+import { AUCTION_ENDPOINTS } from '~shared/constants/api/http'
+
+import { HttpClientRequestOptions, baseHttpClient } from '../instance'
 
 export type CreateAuctionResponse = {
   auctionId: string
@@ -10,7 +12,7 @@ export const createAuction = async (
   key: string,
   fetchOptions?: HttpClientRequestOptions
 ) => {
-  return baseHttpClient.post<CreateAuctionResponse>('/api/auction/create', {
+  return baseHttpClient.post<CreateAuctionResponse>(AUCTION_ENDPOINTS.CREATE, {
     ...fetchOptions,
     data: { password: key },
     headers: {

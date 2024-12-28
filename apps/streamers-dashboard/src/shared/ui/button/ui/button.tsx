@@ -35,7 +35,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           }),
           className
         ),
-      [isIconOnly, variant, size, startContent, endContent]
+      [isIconOnly, variant, size, startContent, endContent, className]
     )
 
     return (
