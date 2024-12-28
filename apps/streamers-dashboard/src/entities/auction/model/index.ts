@@ -1,4 +1,4 @@
-import { AuctionContract } from './auction.contracts'
+import { AuctionSchema } from './auction.contracts'
 import type { Auction } from './auction.types'
 
-export { Auction, AuctionContract }
+export { Auction, AuctionSchema }

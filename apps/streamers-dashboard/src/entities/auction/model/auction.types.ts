@@ -1,5 +1,5 @@
 import { z } from 'zod'
 
-import { AuctionContract } from './auction.contracts'
+import { AuctionSchema } from './auction.contracts'
 
-export type Auction = z.infer<typeof AuctionContract>
+export type Auction = z.infer<typeof AuctionSchema>
