@@ -2,8 +2,10 @@ import { useRef } from 'react'
 
 import { auctionSelectors } from '~entities/auction/store'
 
-import { useCopyToClipboard } from '~shared/hooks/use-copy-to-clipboard'
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import { useCopyToClipboard } from '~shared/hooks/use-copy-to-clipboard'
+
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'

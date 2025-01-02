@@ -12,7 +12,7 @@
     "^~features/(.*)$",
     "^~entities/(.*)$",
     "^~ui/(.*)$",
-    "^~shared/api/(.*)$"
+    "^~shared/api/(.*)$",
     "^~shared/store/(.*)$",
     "^~shared/router/(.*)$",
     "^~shared/lib/(.*)$",

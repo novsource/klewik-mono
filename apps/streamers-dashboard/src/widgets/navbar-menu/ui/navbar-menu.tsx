@@ -1,10 +1,13 @@
 import { ReactNode, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { tailwindScreens } from '~shared/constants/tailwindcss'
 import { useMediaQuery } from '~shared/hooks/use-media-query'
+
 import { Icons } from '~shared/ui/icons'
 import { Navbar, NavbarItem, NavbarProps } from '~shared/ui/navbar'
+
+import { tailwindScreens } from '~shared/constants/tailwindcss'
+
 import { cn } from '~shared/utils'
 
 type NavbarMenuProps = NavbarProps

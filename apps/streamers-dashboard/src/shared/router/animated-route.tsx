@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { motion } from 'framer-motion'
+
 import { cn } from '~shared/utils/cn'
 
 type Props = {

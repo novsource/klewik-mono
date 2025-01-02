@@ -9,12 +9,16 @@ import { auctionActions } from '~entities/auction/store'
 
 import { createAuction } from '~shared/api/http/auction/auction.api'
 import { loginInAuction } from '~shared/api/http/auth/auth.api'
-import { useStoreDispatch } from '~shared/lib/redux-toolkit'
+
 import { appActions } from '~shared/store/slices'
+
+import { useStoreDispatch } from '~shared/lib/redux-toolkit'
+
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
 import { toastErrorNotification } from '~shared/ui/toaster/lib'
+
 import { cn } from '~shared/utils'
 
 const createAuctionSchema = z.object({

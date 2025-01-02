@@ -1,6 +1,7 @@
 import { ChangeEvent, forwardRef, useCallback, useRef } from 'react'
 
 import { Input, InputProps } from '~shared/ui/input'
+
 import {
   deleteAllSpacesFromString,
   isStringContainNotOnlyNumbers,

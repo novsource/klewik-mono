@@ -6,12 +6,15 @@ import { motion } from 'framer-motion'
 
 import { AuctionSlotService } from '~entities/auction-slot/api'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { appSelectors } from '~shared/store/slices'
+
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
 import { NumberInput } from '~shared/ui/number-input'
+
 import { deleteAllSpacesFromString } from '~shared/utils/string-format'
 
 import { CreateSlotForm, FormArrayData, createSlotSchema } from '../model'

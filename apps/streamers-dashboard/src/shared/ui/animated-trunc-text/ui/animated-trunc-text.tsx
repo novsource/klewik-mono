@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 
 import { animate, useMotionValue } from 'framer-motion'
 
-import { cn } from '~shared/utils'
 import { fitTextEllipsis } from '~shared/utils/canvas'
+
+import { cn } from '~shared/utils'
 
 const trimText = (text: string, maxWidth: number): string => {
   const canvas = document.createElement('canvas')
