@@ -1,10 +1,37 @@
 import { z } from 'zod'
 
+import { deleteAllSpacesFromString } from '~shared/utils/string-format'
+
 export const createSlotSchema = z.object({
   slots: z
     .object({
-      name: z.string().min(3),
-      points: z.string().min(3),
+      name: z
+        .string()
+        .refine((check) => {
+          const strWithoutSpaces = deleteAllSpacesFromString(check)
+
+          if (strWithoutSpaces.length < 3) return false
+
+          return true
+        }, 'Слишком короткое название слота. Минимальный размер - 3 символа')
+        .refine((check) => {
+          const strWithoutSpaces = deleteAllSpacesFromString(check)
+
+          if (strWithoutSpaces.length >= 120) return false
+
+          return true
+        }, 'Количество символов в названии слота не может быть больше 120-ти символов'),
+      points: z
+        .string()
+        .min(1, 'Поле не может быть пустым')
+        .max(20, 'Слишком большое количество очков'),
+      // .refine((check) => {
+      //   const strWithoutSpaces = deleteAllSpacesFromString(check)
+
+      //   if (Number(strWithoutSpaces) === 0) return false
+
+      //   return true
+      // }, 'Количество очков должно быть больше нуля'),
     })
     .array()
     .min(1),
