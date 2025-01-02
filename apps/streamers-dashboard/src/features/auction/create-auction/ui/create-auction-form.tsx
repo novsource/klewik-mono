@@ -5,13 +5,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
 import { z } from 'zod'
 
-import { appActions } from '~app/providers/store/slices/app.slice'
-
 import { auctionActions } from '~entities/auction/store'
 
-import { createAuction } from '~shared/api/http/entities/auction/auction.api'
-import { loginInAuction } from '~shared/api/http/entities/auth/auth.api'
+import { createAuction } from '~shared/api/http/auction/auction.api'
+import { loginInAuction } from '~shared/api/http/auth/auth.api'
 import { useStoreDispatch } from '~shared/lib/redux-toolkit'
+import { appActions } from '~shared/store/slices'
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
@@ -52,14 +51,13 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
   })
 
   const onSubmit: SubmitHandler<CreateAuctionForm> = async ({ password }) => {
-    console.log(password, isPending)
     try {
       setIsPending(true)
       const response = await createAuction(password, {
         signal: abortController.signal,
       })
 
-      await loginInAuction(response.data.auctionId, '', {
+      await loginInAuction(response.data.auctionId, password, {
         signal: abortController.signal,
       })
 

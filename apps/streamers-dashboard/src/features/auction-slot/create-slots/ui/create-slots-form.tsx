@@ -4,6 +4,10 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 
+import { AuctionSlotService } from '~entities/auction-slot/api'
+
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { appSelectors } from '~shared/store/slices'
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
@@ -11,6 +15,8 @@ import { NumberInput } from '~shared/ui/number-input'
 import { deleteAllSpacesFromString } from '~shared/utils/string-format'
 
 import { CreateSlotForm, FormArrayData, createSlotSchema } from '../model'
+
+appSelectors
 
 type CreateSlotsFormProps = HTMLAttributes<HTMLFormElement> & {
   multiplySlots?: boolean
@@ -20,6 +26,10 @@ export const CreateSlotsForm = ({
   multiplySlots,
   ...formProps
 }: CreateSlotsFormProps) => {
+  const auctionId = useStoreSelector((state) =>
+    appSelectors.getAuctionId(state)
+  ) as string
+
   const {
     control,
     handleSubmit,
@@ -34,7 +44,7 @@ export const CreateSlotsForm = ({
         }))
       })
     ),
-    mode: 'onChange',
+    mode: 'all',
     reValidateMode: 'onChange',
   })
 
@@ -43,7 +53,9 @@ export const CreateSlotsForm = ({
     name: 'slots',
   })
 
-  const onSubmit = async (formData: FormArrayData) => {}
+  const onSubmit = async (formData: FormArrayData) => {
+    const response = await AuctionSlotService.createSlot(auctionId, formData)
+  }
 
   const getErrorMessageForField = useCallback(
     (
@@ -68,29 +80,25 @@ export const CreateSlotsForm = ({
 
   const formFields = useMemo(() => {
     if (fields.length === 0) {
-      append({ name: '', points: '' })
+      append({ name: '', points: '10' })
       return
     }
 
     return (multiplySlots ? fields : fields.slice(0, 1)).map((field, index) => (
       <motion.li
         key={field.id}
-        className="flex w-full gap-x-2"
+        className="flex w-full gap-x-2 relative"
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
       >
         <Controller
           render={({ field }) => (
             <Input
-              classNames={{
-                base: 'font-golosF w-full',
+              slotClassNames={{
+                base: 'font-golosF w-full basis-1/2 flex-grow',
                 description: 'text-wrap',
               }}
               placeholder="Название слота"
-              onAnimationStart={() => {
-                console.log('animation')
-              }}
-              onAnimationEnd={() => console.log(this)}
               errorMessage={getErrorMessageForField('name', index)}
               {...field}
             />
@@ -101,14 +109,12 @@ export const CreateSlotsForm = ({
         <Controller
           render={({ field }) => (
             <NumberInput
-              classNames={{
-                base: 'font-golosF w-full',
+              slotClassNames={{
+                base: 'font-golosF w-full basis-1/3 desktopLg:basis-1/4',
                 description: 'text-wrap',
               }}
               placeholder="Очки"
-              onAnimationStart={() => {
-                console.log('animation')
-              }}
+              maxValue={1000000}
               errorMessage={getErrorMessageForField('points', index)}
               {...field}
             />
@@ -131,11 +137,11 @@ export const CreateSlotsForm = ({
   return (
     <form
       className="flex flex-col w-full h-full justify-between"
-      onSubmit={handleSubmit((data) => console.log(data))}
+      onSubmit={handleSubmit(onSubmit)}
       {...formProps}
     >
       <div className="flex w-full flex-col gap-y-6 items-stretch">
-        <ul className="flex flex-col w-full gap-y-3">
+        <ul className="flex flex-col w-full">
           <div className="flex w-full flex-col gap-y-3 h-full overflow-y-scroll p-1">
             {formFields}
             {multiplySlots && (
@@ -145,7 +151,7 @@ export const CreateSlotsForm = ({
                 startContent={<Icons.Plus size="sm" />}
                 size={'sm'}
                 onClick={() => {
-                  append({ name: '', points: '' })
+                  append({ name: '', points: '10' })
                   trigger('slots')
                 }}
               >
