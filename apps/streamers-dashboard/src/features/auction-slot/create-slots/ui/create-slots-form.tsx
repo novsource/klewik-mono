@@ -57,7 +57,10 @@ export const CreateSlotsForm = ({
   })
 
   const onSubmit = async (formData: FormArrayData) => {
-    const response = await AuctionSlotService.createSlot(auctionId, formData)
+    const response = await AuctionSlotService.getInstance().createSlot(
+      auctionId,
+      formData
+    )
   }
 
   const getErrorMessageForField = useCallback(
