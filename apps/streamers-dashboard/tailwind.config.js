@@ -64,7 +64,7 @@ export default {
         sheet: 'var(--sheet-height)',
       },
       gridTemplateRows: {
-        slotsDesktop: 'minmax(40px, 42px) max(62px) 1fr',
+        slotsDesktop: 'max(62px) minmax(40px, 42px) 1fr',
         slotsTable: 'minmax(40px, 42px) 1fr',
       },
       spacing: {
