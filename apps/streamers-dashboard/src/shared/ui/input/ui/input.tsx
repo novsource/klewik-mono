@@ -116,7 +116,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         }),
         classNames?.wrapper
       ),
-    [classNames?.wrapper, errorMessage]
+    [classNames?.wrapper, size, errorMessage]
   )
 
   return (
