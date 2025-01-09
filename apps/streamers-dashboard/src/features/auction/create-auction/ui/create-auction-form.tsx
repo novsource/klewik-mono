@@ -3,7 +3,6 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
-import { z } from 'zod'
 
 import { auctionActions } from '~entities/auction/store'
 
@@ -21,13 +20,7 @@ import { toastErrorNotification } from '~shared/ui/toaster/lib'
 
 import { cn } from '~shared/utils'
 
-const createAuctionSchema = z.object({
-  password: z.string().refine((check) => check.length >= 1, {
-    message: 'Поле не может быть пустым',
-  }),
-})
-
-type CreateAuctionForm = z.infer<typeof createAuctionSchema>
+import { CreateAuctionFormData, CreateAuctionSchema } from '../model'
 
 type CreateAuctionFormProps = Partial<{
   onSuccess: () => void
@@ -46,15 +39,17 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateAuctionForm>({
+  } = useForm<CreateAuctionFormData>({
     defaultValues: {
       password: '',
     },
     mode: 'onChange',
-    resolver: zodResolver(createAuctionSchema),
+    resolver: zodResolver(CreateAuctionSchema),
   })
 
-  const onSubmit: SubmitHandler<CreateAuctionForm> = async ({ password }) => {
+  const onSubmit: SubmitHandler<CreateAuctionFormData> = async ({
+    password,
+  }) => {
     try {
       setIsPending(true)
       const response = await createAuction(password, {
@@ -80,9 +75,14 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
 
       props.onSuccess && props.onSuccess()
     } catch (err) {
-      console.log('here')
       if (axios.isAxiosError(err)) {
-        toastErrorNotification('Не удалось создать аукцион', err.response?.data)
+        const errorMessage = err.response?.data
+        toastErrorNotification(
+          'Не удалось создать аукцион',
+          typeof errorMessage !== 'string'
+            ? JSON.stringify(errorMessage)
+            : errorMessage
+        )
       }
       setIsPending(false)
       props.onError && props.onError()
