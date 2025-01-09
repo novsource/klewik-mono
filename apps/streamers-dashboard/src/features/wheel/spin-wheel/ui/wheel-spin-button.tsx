@@ -3,6 +3,7 @@ import { useCallback } from 'react'
 import { generateWinner } from '~widgets/wheel/utils/wheel-canvas'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 

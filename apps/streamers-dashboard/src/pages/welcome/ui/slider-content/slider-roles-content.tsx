@@ -10,7 +10,7 @@ const SliderRolesContent = () => {
       value="roles"
     >
       <SliderTrigger className="absolute -top-16 left-0" value="welcome">
-        <Button startContent={<Icons.ReturnArrow width={21} height={21} />}>
+        <Button startContent={<Icons.ReturnArrow size="default" />}>
           Назад
         </Button>
       </SliderTrigger>
@@ -27,7 +27,7 @@ const SliderRolesContent = () => {
         <SliderTrigger className="w-full" value="guest">
           <Button
             className="w-full"
-            startContent={<Icons.Face width={21} height={21} />}
+            startContent={<Icons.Face size="default" />}
             variant={'action'}
           >
             Я гость
@@ -36,7 +36,7 @@ const SliderRolesContent = () => {
         <SliderTrigger className="w-full" value="admin">
           <Button
             className="w-full"
-            startContent={<Icons.Crown width={21} height={21} />}
+            startContent={<Icons.Crown size="default" />}
           >
             Я администратор
           </Button>

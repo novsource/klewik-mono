@@ -5,6 +5,7 @@ import { WheelSlot } from '~entities/wheel/model'
 import { wheelActions } from '~entities/wheel/store'
 
 import { useStoreDispatch, useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { getRandomHEXColor, getRandomHSLColor } from '~shared/utils/colors'
 
 import { useWheelControl, useWheelInit } from '../utils'

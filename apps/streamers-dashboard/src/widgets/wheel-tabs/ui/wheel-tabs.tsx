@@ -10,15 +10,15 @@ import { SlotsWheelTab } from './wheel-tab-slots'
 const triggersWithIcons = {
   control: {
     title: 'Управление',
-    icon: <Icons.Gamepad size="default" />,
+    icon: <Icons.Gamepad size="sm" />,
   },
   lots: {
     title: 'Слоты',
-    icon: <Icons.List size="default" />,
+    icon: <Icons.Slots size="sm" />,
   },
   appearance: {
     title: 'Внешний вид',
-    icon: <Icons.Palette size="default" />,
+    icon: <Icons.Palette size="sm" />,
   },
 }
 

@@ -13,7 +13,7 @@ export const sheetVariants = cva(
           'inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
         left: 'inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm',
         right:
-          'inset-y-0 border-gray/20 my-auto right-2.5 h-sheet rounded-large w-3/4 max-w-[300px] tablet:max-w-[450px] desktop:max-w-[500px] border data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm',
+          'inset-y-0 border-gray/20 my-auto right-2.5 h-sheet rounded-large w-3/4 max-w-[300px] tablet:max-w-[500px] landtop:max-w-[550px] desktop:max-w-[600px] desktopLg:max-w-[650px] border data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm',
       },
     },
     defaultVariants: {

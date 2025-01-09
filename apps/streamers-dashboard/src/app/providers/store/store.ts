@@ -3,7 +3,8 @@ import { configureStore } from '@reduxjs/toolkit'
 import { auctionReducer } from '~entities/auction/store'
 import { wheelReducer } from '~entities/wheel/store'
 
-import { appReducer } from './slices/app.slice'
+import { appReducer } from '~shared/store/slices'
+
 import { socketReducer } from './slices/socket.slice'
 
 export const store = configureStore({

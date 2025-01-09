@@ -1,14 +1,25 @@
-import { auctionSelectors } from '~app/providers/store/slices/auction.slice'
+import { useRef } from 'react'
+
+import { auctionSelectors } from '~entities/auction/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import { useCopyToClipboard } from '~shared/hooks/use-copy-to-clipboard'
+
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
 import { SliderContent } from '~shared/ui/slider'
+import { toastSuccessNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
 
 const SliderSuccessContent = () => {
   const auctionInfo = useStoreSelector(auctionSelectors.getAuctionInfo)
+
+  const inputNumberRef = useRef<HTMLInputElement>(null)
+  const inputURLRef = useRef<HTMLInputElement>(null)
+
+  const { copyToClipboard } = useCopyToClipboard()
 
   return (
     <SliderContent
@@ -26,24 +37,40 @@ const SliderSuccessContent = () => {
       <div className="flex flex-col gap-y-4">
         <div className="flex items-end justify-center gap-x-2">
           <Input
+            ref={inputNumberRef}
             disabled
+            slotClassNames={{ base: 'w-full' }}
             label={{ id: 'auctionId', value: 'Номер аукциона' }}
-            value={auctionInfo._id}
+            value={auctionInfo.id}
           />
-          <Button startContent={<Icons.Copy width={18} height={18} />}>
+          <Button
+            onClick={() => {
+              copyToClipboard(inputNumberRef.current?.value || '')
+              toastSuccessNotification('Номер аукциона скопирован в буфер')
+            }}
+            startContent={<Icons.Copy size="default" />}
+          >
             Скопировать
           </Button>
         </div>
         <div className="flex items-end justify-center gap-x-2">
           <Input
+            ref={inputURLRef}
             disabled
+            slotClassNames={{ base: 'w-full' }}
             label={{
               id: 'auctionURL',
               value: 'Ссылка на аукцион для участников',
             }}
             value={`https://auction.klewik.ru/${auctionInfo.url}`}
           />
-          <Button startContent={<Icons.Copy width={18} height={18} />}>
+          <Button
+            onClick={() => {
+              copyToClipboard(inputURLRef.current?.value || '')
+              toastSuccessNotification('Ссылка на аукцион скопирована в буфер')
+            }}
+            startContent={<Icons.Copy size="default" />}
+          >
             Скопировать
           </Button>
         </div>
@@ -52,7 +79,7 @@ const SliderSuccessContent = () => {
         <Button
           className="w-full"
           variant={'action'}
-          startContent={<Icons.LinkArrow width={18} height={18} />}
+          startContent={<Icons.LinkArrow size="default" />}
         >
           Перейти в панель управления
         </Button>

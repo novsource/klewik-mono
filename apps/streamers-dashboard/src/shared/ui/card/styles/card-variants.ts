@@ -1,5 +1,6 @@
-import { CvaClassValue } from '@/shared/utils/types'
 import { VariantProps, cva } from 'class-variance-authority'
+
+import { CvaClassValue } from '~shared/utils/types'
 
 type CardVariants = {
   variant: {

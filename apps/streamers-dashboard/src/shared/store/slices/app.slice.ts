@@ -1,12 +1,12 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 type AppStore = {
-  auctionId: NullablePossible<Auction['_id']>
+  auctionId: string
   auctionUrl: string
 }
 
 const initialState: AppStore = {
-  auctionId: null,
+  auctionId: '',
   auctionUrl: '',
 }
 

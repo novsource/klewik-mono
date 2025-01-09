@@ -1,8 +1,10 @@
 import { InputHTMLAttributes, forwardRef, useMemo, useState } from 'react'
 
 import { Typography } from '~shared/ui/typograghy'
-import { cn } from '~shared/utils'
+
 import { CvaClassValue } from '~shared/utils/types'
+
+import { cn } from '~shared/utils'
 
 import {
   InputSlots,
@@ -114,7 +116,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         }),
         classNames?.wrapper
       ),
-    [classNames?.wrapper, errorMessage]
+    [classNames?.wrapper, size, errorMessage]
   )
 
   return (

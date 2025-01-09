@@ -1,10 +1,13 @@
 import { ReactNode, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { tailwindScreens } from '~shared/constants/tailwindcss'
 import { useMediaQuery } from '~shared/hooks/use-media-query'
+
 import { Icons } from '~shared/ui/icons'
 import { Navbar, NavbarItem, NavbarProps } from '~shared/ui/navbar'
+
+import { tailwindScreens } from '~shared/constants/tailwindcss'
+
 import { cn } from '~shared/utils'
 
 type NavbarMenuProps = NavbarProps
@@ -18,9 +21,9 @@ export const NavbarMenu = (props: NavbarMenuProps) => {
   const menuItems = useMemo(() => {
     const paths = [
       { path: '/wheel' },
+      { path: '/slots' },
       { path: '/donations' },
       { path: '/settings' },
-      { path: '/slots' },
     ]
     return paths.reduce<ReactNode[]>((acc, curr: (typeof paths)[number]) => {
       const menuIcon = {
@@ -31,7 +34,7 @@ export const NavbarMenu = (props: NavbarMenuProps) => {
         '/settings': (
           <Icons.Settings size={isLargeThenTablet ? 'sm' : 'default'} />
         ),
-        '/slots': <Icons.List size={isLargeThenTablet ? 'sm' : 'default'} />,
+        '/slots': <Icons.Slots size={isLargeThenTablet ? 'sm' : 'default'} />,
       }[curr.path]
 
       const isCurrentItemInPathname = pathname.includes(curr.path)

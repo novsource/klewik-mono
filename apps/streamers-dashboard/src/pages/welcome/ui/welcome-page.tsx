@@ -8,6 +8,7 @@ import { Typography } from '~shared/ui/typograghy'
 import {
   SliderAdminContent,
   SliderCreateContent,
+  SliderGuestContent,
   SliderRolesContent,
   SliderSuccessContent,
   SliderWelcomeContent,
@@ -46,6 +47,7 @@ const WelcomePage = () => {
                 <SliderAdminContent />
                 <SliderCreateContent />
                 <SliderSuccessContent />
+                <SliderGuestContent />
               </Slider>
 
               <a

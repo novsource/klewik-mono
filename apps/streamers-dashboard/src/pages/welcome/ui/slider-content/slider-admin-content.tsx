@@ -52,7 +52,7 @@ const SliderAdminContent = () => {
             control={control}
             render={({ field }) => (
               <Input
-                className="font-semibold tracking-wide"
+                slotClassNames={{ input: 'font-semibold tracking-wide' }}
                 type="text"
                 startContent={
                   <Icons.Id size="default" className="text-gray-accent" />
