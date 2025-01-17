@@ -110,7 +110,7 @@ const CardFooter = React.forwardRef<
     [className, ...Object.keys(cardStyleProps)]
   )
 
-  return <footer ref={ref} className={style} {...props} />
+  return <div ref={ref} className={style} {...props} />
 })
 CardFooter.displayName = 'CardFooter'
 
