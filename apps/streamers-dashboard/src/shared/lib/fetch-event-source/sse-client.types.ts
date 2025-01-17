@@ -10,4 +10,23 @@ type SSEEvents = Pick<
   'onmessage' | 'onopen' | 'onerror' | 'onclose'
 >
 
-export type { EventSourceMessage, SSEEvents }
+type SSEClientListeners = {
+  onopen: (response: Response) => Promise<void>
+  onmessage: (message: EventSourceMessage) => void
+  onerror: (error: unknown) => void
+  onclose: () => void
+}
+
+type SSEClientConnectOptions = FetchEventSourceInit & {
+  retry?: {
+    counts: number
+    delay: number
+  }
+}
+
+export type {
+  EventSourceMessage,
+  SSEEvents,
+  SSEClientListeners,
+  SSEClientConnectOptions,
+}

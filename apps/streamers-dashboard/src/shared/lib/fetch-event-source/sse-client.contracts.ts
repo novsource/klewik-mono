@@ -4,7 +4,7 @@ const EventSourceMessageSchema = z.object({
   id: z.string().nonempty(),
   event: z.string().nonempty().max(50),
   data: z.string(),
-  retry: z.undefined(),
+  retry: z.number().optional(),
 })
 
 export { EventSourceMessageSchema }

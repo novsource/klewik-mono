@@ -3,99 +3,125 @@ import {
   fetchEventSource,
 } from '@microsoft/fetch-event-source'
 
-import { EventSourceMessage } from './sse-client.types'
+import { EventSourceMessageSchema } from './sse-client.contracts'
+import {
+  EventSourceMessage,
+  SSEClientConnectOptions,
+  SSEClientListeners,
+} from './sse-client.types'
 
-export type SSEClientListeners = {
-  onopen: (response: Response) => void
-  onmessage: (message: EventSourceMessage) => void
-  onerror: (error: unknown) => void
-  onclose: () => void
-}
+type AuthorizationError = Error
 
-export type SSEClientConnectOptions = {
-  retry?: {
-    counts: number
-    delay: number
-  }
-}
+const AuthorizationError = () => new Error('Authorization error')
 
 class SSEClient {
   async connect(
     url: string,
-    listeners: SSEClientListeners,
-    options?: SSEClientConnectOptions
+    inputListeners: SSEClientListeners,
+    inputOptions?: SSEClientConnectOptions
   ) {
     const onOpen = async (response: Response) => {
       if (
         response.ok &&
         response.headers.get('content-type') === EventStreamContentType
       ) {
-        listeners.onopen(response)
+        inputListeners.onopen(response)
         return
       } else if (
         response.status >= 400 &&
         response.status < 500 &&
         response.status !== 429
       ) {
-        throw new Error()
+        if (response.status === 401) {
+          throw AuthorizationError()
+        }
       } else {
+        if (response.status === 500) {
+          throw new Error()
+        }
+
         throw new Error()
       }
     }
 
-    const onMessage = (message: EventSourceMessage) =>
-      listeners.onmessage(message)
+    const onMessage = (message: EventSourceMessage) => {
+      const parsedMessage = EventSourceMessageSchema.parse(message)
 
-    const onClose = () => {}
+      inputListeners.onmessage(parsedMessage)
+    }
 
-    const onError = (err: Error) => {
-      listeners.onerror(err)
+    const onClose = () => {
+      inputListeners.onclose()
+    }
+
+    const onError = (err: unknown) => {
+      inputListeners.onerror(err)
       throw err
     }
 
-    if (options?.retry) {
-      return this.retryConnect(
-        url,
-        listeners,
-        options.retry.delay,
-        options.retry.counts
-      )
+    const listeners: SSEClientListeners = {
+      onopen: onOpen,
+      onclose: onClose,
+      onerror: onError,
+      onmessage: onMessage,
     }
 
-    return fetchEventSource(
+    const options: SSEClientConnectOptions = {
+      ...inputOptions,
+      openWhenHidden: true,
+      credentials: 'include',
+      headers: {
+        'Access-Control-Allow-Origin': import.meta.env.VITE_SERVER_URL,
+      },
+    }
+
+    if (Reflect.has(options, 'retry')) {
+      return this.retryConnect(url, listeners, options)
+    }
+
+    return this._internalRequest(
       `${import.meta.env.VITE_SERVER_URL}/api/sse/${url}`,
-      {
-        onopen: onOpen,
-        onmessage: onMessage,
-        onclose: onClose,
-        onerror: onError,
-        openWhenHidden: true,
-      }
+      listeners,
+      options
     )
   }
 
   async retryConnect(
     url: string,
     listeners: SSEClientListeners,
-    delay: number = 1000,
-    counts: number = 3
+    options: Omit<SSEClientConnectOptions, 'retry'> & {
+      retry: NonNullable<SSEClientConnectOptions['retry']>
+    }
   ): Promise<void> {
-    console.log(counts)
     const reconnect = async (err: Error): Promise<void> => {
-      console.log(counts)
+      options.retry.counts -= 1
 
-      counts -= 1
-
-      if (counts <= 0) {
+      if (options.retry.counts <= 0) {
         throw err
       }
 
-      const wait = () => new Promise((res) => setTimeout(res, delay))
+      const wait = () =>
+        new Promise((res) => setTimeout(res, options.retry.delay))
 
-      return wait().then(() => this.retryConnect(url, listeners, delay, counts))
+      return wait().then(() => this.retryConnect(url, listeners, options))
     }
 
-    return this.connect(url, listeners).catch(reconnect)
+    return this._internalRequest(
+      `${import.meta.env.VITE_SERVER_URL}/api/sse/${url}`,
+      listeners,
+      options
+    ).catch(reconnect)
+  }
+
+  private _internalRequest(
+    url: string,
+    listeners: SSEClientListeners,
+    options: SSEClientConnectOptions
+  ) {
+    return fetchEventSource(url, {
+      ...listeners,
+      ...options,
+    })
   }
 }
 
