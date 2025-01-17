@@ -1,3 +1,5 @@
+import { AuctionSlot } from '~entities/auction-slot/model'
+
 import { AnimatedTruncText } from '~shared/ui/animated-trunc-text'
 import { Card, CardContainer, CardContent, CardFooter } from '~shared/ui/card'
 import { Icons } from '~shared/ui/icons'
@@ -44,7 +46,7 @@ const TableItemCard = <T extends AuctionSlot>({
           <div className="flex items-center gap-x-2">
             <Icons.Id className="text-gray-accent" size="sm" />
             <Typography tag="span" className="font-golosF">
-              #{data._id}
+              #{data.id}
             </Typography>
           </div>
         </CardFooter>

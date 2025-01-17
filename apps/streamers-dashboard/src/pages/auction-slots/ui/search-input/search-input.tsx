@@ -7,14 +7,12 @@ type SearchInputProps = {} & InputProps
 const SearchInput = (props: SearchInputProps) => {
   return (
     <Input
-      startContent={
-        <Icons.Magnifier className="text-gray" width={16} height={16} />
-      }
+      slotClassNames={{ base: 'w-full', input: 'px-1' }}
+      startContent={<Icons.Magnifier className="text-gray" size="xs" />}
       endContent={
         <Icons.Close
           className="cursor-pointer text-gray transition-colors hover:text-gray-accent"
-          width={24}
-          height={24}
+          size="default"
         />
       }
       {...props}

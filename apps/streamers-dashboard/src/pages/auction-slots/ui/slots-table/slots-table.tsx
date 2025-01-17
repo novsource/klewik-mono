@@ -1,5 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 
+import { AuctionSlot } from '~entities/auction-slot/model'
+
 import { AnimatedTruncText } from '~shared/ui/animated-trunc-text'
 import {
   Table,
@@ -58,7 +60,7 @@ const tableColumns: TableColumn<
   Omit<AuctionSlot, 'sponsorsIds' | 'slotHSVColor'>
 >[] = [
   {
-    key: '_id',
+    key: 'id',
     label: 'ID',
   },
   {
@@ -96,7 +98,7 @@ const SlotsTable = (props: SlotsTableProps) => {
   const renderCellFn: RenderCellFn<AuctionSlot, typeof tableColumns> =
     useCallback((columnKey, dataItem) => {
       switch (columnKey) {
-        case '_id': {
+        case 'id': {
           return (
             <TableCell
               className="w-[50px] min-w-[40px]"
@@ -148,7 +150,7 @@ const SlotsTable = (props: SlotsTableProps) => {
           const { key, label } = column
 
           switch (key) {
-            case '_id': {
+            case 'id': {
               return (
                 <TableHead className="min-w-[50px] max-w-[80px]" key={key}>
                   {label}
