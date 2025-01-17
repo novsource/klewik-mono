@@ -1,9 +1,7 @@
 export const chain = <Args extends unknown>(
-  fnOne: (...args: Args[]) => unknown,
-  fnTwo: (...args: Args[]) => unknown
-) => {
-  const fnArr = [fnOne, fnTwo]
-  return (...args: Args[]) => {
-    return fnArr.forEach((callback) => callback(...args))
+  ...callbacks: Array<(...args: Args[]) => void>
+): ((...args: Args[]) => void) => {
+  return (...args: Args[]): Promise<void> | void => {
+    return callbacks.forEach((callback) => callback(...args))
   }
 }
