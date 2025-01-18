@@ -62,7 +62,7 @@ const SliderSuccessContent = () => {
               id: 'auctionURL',
               value: 'Ссылка на аукцион для участников',
             }}
-            value={`https://auction.klewik.ru/${auctionInfo.url}`}
+            value={auctionInfo.url}
           />
           <Button
             onClick={() => {
@@ -75,7 +75,7 @@ const SliderSuccessContent = () => {
           </Button>
         </div>
       </div>
-      <a href={`/dashboard/${auctionInfo.url}`}>
+      <a href={`/dashboard/${auctionInfo.url?.split('/').at(-1)}`}>
         <Button
           className="w-full"
           variant={'action'}
