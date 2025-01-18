@@ -27,7 +27,7 @@ const Typography = <T extends keyof TypographyHTMLElements>({
 
   const styles = useMemo(
     () => cn(typographyVariants({ tag }), className),
-    [tag]
+    [className, tag]
   )
 
   return (
