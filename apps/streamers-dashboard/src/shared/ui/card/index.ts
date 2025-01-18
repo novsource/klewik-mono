@@ -1,6 +1,5 @@
 import {
   Card,
-  CardContainer,
   CardContent,
   CardDescription,
   CardFooter,
@@ -8,12 +7,4 @@ import {
   CardTitle,
 } from './ui/card'
 
-export {
-  Card,
-  CardContainer,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-}
+export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }

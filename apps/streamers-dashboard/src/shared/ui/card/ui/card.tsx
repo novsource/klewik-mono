@@ -2,12 +2,9 @@ import * as React from 'react'
 
 import { cn } from '~shared/utils'
 
+import { CardProvider, useCardContext } from '../context/card-context'
 import {
-  CardContextProps,
-  CardProvider,
-  useCardContext,
-} from '../context/card-context'
-import {
+  CardStyleProps,
   cardBaseVariants,
   cardContentVariants,
   cardDescriptionVariants,
@@ -16,26 +13,20 @@ import {
   cardTitleVariants,
 } from '../styles/card-variants'
 
-const CardContainer = ({ children, size, variant }: CardContextProps) => {
-  return (
-    <CardProvider variant={variant} size={size}>
-      {children}
-    </CardProvider>
-  )
-}
-
 const Card = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
-  const cardStyleProps = useCardContext()
-
+  React.HTMLAttributes<HTMLDivElement> & CardStyleProps
+>(({ className, size, variant, ...htmlProps }, ref) => {
   const style = React.useMemo(
-    () => cn(cardBaseVariants({ ...cardStyleProps }), className),
-    [className, ...Object.keys(cardStyleProps)]
+    () => cn(cardBaseVariants({ size, variant }), className),
+    [className, size, variant]
   )
 
-  return <section ref={ref} className={style} {...props} />
+  return (
+    <CardProvider variant={variant ?? 'default'} size={size ?? 'default'}>
+      <section ref={ref} className={style} {...htmlProps} />
+    </CardProvider>
+  )
 })
 Card.displayName = 'Card'
 
@@ -114,12 +105,4 @@ const CardFooter = React.forwardRef<
 })
 CardFooter.displayName = 'CardFooter'
 
-export {
-  CardContainer,
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardDescription,
-  CardContent,
-}
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }

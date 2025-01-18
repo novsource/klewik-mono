@@ -26,12 +26,20 @@ export const cardBaseVariants = cva<CardVariants>('bg-dark rounded-large', {
       lg: 'rounded-lg px-8 py-6',
     },
   },
+  defaultVariants: {
+    size: 'default',
+    variant: 'default',
+  },
 })
 
 export const cardHeaderVariants = cva<CardVariants>('', {
   variants: {
     variant: { default: '', slots: '' },
     size: { default: 'pt-1', sm: '', lg: 'pt-4' },
+  },
+  defaultVariants: {
+    size: 'default',
+    variant: 'default',
   },
 })
 
@@ -45,6 +53,10 @@ export const cardTitleVariants = cva<CardVariants>(
         sm: 'text-sm font-semibold',
         lg: 'text-2xl font-semibold',
       },
+    },
+    defaultVariants: {
+      size: 'default',
+      variant: 'default',
     },
   }
 )
@@ -66,6 +78,10 @@ export const cardDescriptionVariants = cva<CardVariants>(
       variant: { default: '', slots: '' },
       size: { default: '', sm: '', lg: '' },
     },
+    defaultVariants: {
+      size: 'default',
+      variant: 'default',
+    },
   }
 )
 
@@ -73,6 +89,10 @@ export const cardFooterVariants = cva<CardVariants>('flex items-center pt-0', {
   variants: {
     variant: { default: '', slots: '' },
     size: { default: '', sm: '', lg: '' },
+  },
+  defaultVariants: {
+    size: 'default',
+    variant: 'default',
   },
 })
 
