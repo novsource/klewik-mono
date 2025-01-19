@@ -15,7 +15,7 @@ import {
 
 const Card = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & CardStyleProps
+  React.ComponentProps<'div'> & CardStyleProps
 >(({ className, size, variant, ...htmlProps }, ref) => {
   const style = React.useMemo(
     () => cn(cardBaseVariants({ size, variant }), className),
