@@ -16,7 +16,13 @@ const AuctionSlotsEventsMessageSchema = EventSourceMessageSchema.merge(
   z.object({
     event: z.custom<`auction-slots/${(typeof AuctionSlotsEvents)[number]}`>(
       (val) => {
-        return AuctionSlotsEvents.includes(val)
+        if (typeof val !== 'string') return false
+
+        const events = AuctionSlotsEvents.map(
+          (event) => `auction-slots/${event}`
+        )
+
+        return events.includes(val)
       }
     ),
     data: z.string().nonempty(),
