@@ -3,6 +3,8 @@ import {
   fetchEventSource,
 } from '@microsoft/fetch-event-source'
 
+import { refreshTokens } from '~shared/api/http/auth/auth.api'
+
 import { EventSourceMessageSchema } from './sse-client.contracts'
 import {
   EventSourceMessage,
@@ -33,6 +35,7 @@ class SSEClient {
         response.status !== 429
       ) {
         if (response.status === 401) {
+          await refreshTokens()
           throw AuthorizationError()
         }
       } else {
@@ -45,9 +48,18 @@ class SSEClient {
     }
 
     const onMessage = (message: EventSourceMessage) => {
-      const parsedMessage = EventSourceMessageSchema.parse(message)
+      const parsedMessage = EventSourceMessageSchema.safeParse(message)
 
-      inputListeners.onmessage(parsedMessage)
+      if (!parsedMessage.success) {
+        inputListeners.onerror(
+          new Error(
+            'Invalid SSE message: ' + parsedMessage.error.errors.join('')
+          )
+        )
+        return
+      }
+
+      inputListeners.onmessage(parsedMessage.data)
     }
 
     const onClose = () => {
