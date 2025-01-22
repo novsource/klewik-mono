@@ -25,7 +25,7 @@ const sizes: Record<Sizes, number> = {
 }
 
 const ${componentName} = (props: IconsProps) => {
-  props = {...props, width: sizes[props.size] ?? props.width ?? sizes['default'], height: sizes[props.size] ?? props.height ?? sizes['default']}
+  props = {...props, width: props.size ? sizes[props.size] : props.width ?? sizes['default'], height: props.size ? sizes[props.size] : props.height ?? sizes['default']}
   return ${jsx}
 }
 
