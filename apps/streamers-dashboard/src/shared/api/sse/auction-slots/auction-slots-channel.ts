@@ -37,7 +37,6 @@ export class AuctionSlotsBroadcastChannel extends BroadcastLeaderChannel<Auction
   }
 
   private _dispatchEvent(message: AuctionEventSourceMessage) {
-    console.log(message, this.isLeader)
     switch (message.event) {
       case 'auction-slots/add': {
         this._addingSlots(message)
