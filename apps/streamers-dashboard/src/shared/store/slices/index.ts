@@ -1,3 +1,11 @@
-import { appActions, appReducer, appSelectors, appSlice } from './app.slice'
+import {
+  appActions,
+  appReducer,
+  appSelectors,
+  appSlice,
+  connectDonationAlertsSSE,
+} from './app.slice'
 
 export { appSlice, appActions, appReducer, appSelectors }
+
+export { connectDonationAlertsSSE }
