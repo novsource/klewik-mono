@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, forwardRef, useMemo, useState } from 'react'
+import { ComponentProps, forwardRef, useMemo, useState } from 'react'
 
 import { Typography } from '~shared/ui/typograghy'
 
@@ -16,10 +16,7 @@ import {
   labelVariants,
 } from '../styles/input-variants'
 
-export type InputProps = Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  'size' | 'className'
-> &
+export type InputProps = Omit<ComponentProps<'input'>, 'size' | 'className'> &
   Omit<
     InputVariantsProps,
     'withLabel' | 'startContent' | 'endContent' | 'isError'

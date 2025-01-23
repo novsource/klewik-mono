@@ -33,14 +33,16 @@ export const toastSuccessNotification = (
 
 export const toastErrorNotification = (
   operationName: string,
-  reason: string,
+  reason?: string,
   toastOptions?: ExternalToast
 ) => {
   const errorDescription = (
     <div className="w-full flex flex-col gap-y-2">
-      <Typography className="text-sm" tag="p">
-        Причина: {reason}
-      </Typography>
+      {reason && (
+        <Typography className="text-sm" tag="p">
+          Причина: {reason}
+        </Typography>
+      )}
       <div className="w-full flex items-center gap-x-1">
         <div className="flex items-center justify-center h-5 w-5 bg-red/30 rounded-md">
           <Icons.Close className="text-red" size="default" />

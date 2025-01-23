@@ -17,7 +17,7 @@ export const loginInAuction = async (
 export const refreshTokens = async (
   fetchOptions?: HttpClientRequestOptions
 ) => {
-  return baseHttpClient.get(AUTH_ENDPOINTS.REFRESH, {
+  return baseHttpClient.post(AUTH_ENDPOINTS.REFRESH, {
     ...fetchOptions,
     withCredentials: true,
   })

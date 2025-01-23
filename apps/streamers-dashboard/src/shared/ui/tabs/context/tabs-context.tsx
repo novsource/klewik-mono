@@ -13,12 +13,14 @@ type TabsContext = {
     selectedKey: string
     keys: string[]
     triggersData: TriggersData
+    isTriggerRunnerRended: boolean
   }
   dispatch: {
     setDefaultKey: Dispatch<SetStateAction<string>>
     setSelectedKey: Dispatch<SetStateAction<string>>
     setKeys: Dispatch<SetStateAction<string[]>>
     setTriggersData: Dispatch<SetStateAction<TriggersData>>
+    setIsTriggerRunnerRended: Dispatch<SetStateAction<boolean>>
   }
 }
 
@@ -43,6 +45,9 @@ export const TabsContextProvider = ({
   const [defaultKey, setDefaultKey] = useState<string>(defaultValue ?? '')
   const [selectedKey, setSelectedKey] = useState<string>('')
 
+  const [isTriggerRunnerRended, setIsTriggerRunnerRended] =
+    useState<boolean>(false)
+
   const [triggersData, setTriggersData] = useState<TriggersData>([])
 
   useEffect(() => {
@@ -60,8 +65,20 @@ export const TabsContextProvider = ({
   return (
     <TabsContext.Provider
       value={{
-        state: { defaultKey, selectedKey, keys, triggersData },
-        dispatch: { setKeys, setDefaultKey, setSelectedKey, setTriggersData },
+        state: {
+          isTriggerRunnerRended,
+          defaultKey,
+          selectedKey,
+          keys,
+          triggersData,
+        },
+        dispatch: {
+          setKeys,
+          setDefaultKey,
+          setSelectedKey,
+          setTriggersData,
+          setIsTriggerRunnerRended,
+        },
       }}
     >
       {children}

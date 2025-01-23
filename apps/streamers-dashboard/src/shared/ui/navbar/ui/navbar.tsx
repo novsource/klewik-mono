@@ -1,11 +1,11 @@
-import { HTMLAttributes, ReactNode } from 'react'
+import { ComponentProps, HTMLAttributes, ReactNode } from 'react'
 import { Link, LinkProps } from 'react-router-dom'
 
 import { cn } from '~shared/utils'
 
-export type NavbarProps = HTMLAttributes<HTMLElement>
+export type NavbarProps = ComponentProps<'nav'>
 type NavbarItemProps = {
-  htmlProps: HTMLAttributes<HTMLLIElement>
+  htmlProps: ComponentProps<'li'>
   linkProps: LinkProps
   children: ReactNode
 }

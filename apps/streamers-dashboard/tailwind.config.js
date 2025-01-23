@@ -60,6 +60,21 @@ export default {
       desktopLg: '2560px',
     },
     extend: {
+      keyframes: {
+        fadeChange: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+      },
+      animation: {
+        fadeIn: 'fadeIn 2s ease',
+        fadeOut: 'fadeIn 2s ease reverse',
+        fadeChange: 'fadeChange 2s ease',
+      },
       height: {
         sheet: 'var(--sheet-height)',
       },

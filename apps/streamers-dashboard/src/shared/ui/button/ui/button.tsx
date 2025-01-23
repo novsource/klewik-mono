@@ -7,7 +7,7 @@ import { cn } from '~shared/utils'
 import { ButtonVariantsProps, buttonVariants } from '../styles/button-variants'
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends React.ComponentProps<'button'>,
     Omit<ButtonVariantsProps, 'startContent' | 'endContent'> {
   asChild?: boolean
   startContent?: React.ReactNode
