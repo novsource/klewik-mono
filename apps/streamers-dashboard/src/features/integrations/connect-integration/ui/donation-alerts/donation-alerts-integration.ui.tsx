@@ -28,7 +28,7 @@ const DonationAlertsRedirectDisplay = memo(() => {
 
   const navigate = useNavigate()
 
-  const { set, value } = useLocalStorage('donationAlerts')
+  const { set } = useLocalStorage('donationAlerts')
 
   useEffect(() => {
     if (isConnected) {
@@ -105,10 +105,9 @@ const DonationAlertsIntegrationButton = () => {
     <Button
       className={cn(
         !isConnected && 'border-1 border-dark-accent transition-all',
-        isConnected && 'bg-green/30 border-0 text-green/100'
+        isConnected && 'bg-green/20 border-0 text-green/100'
       )}
       size="sm"
-      // disabled={isPressed || isConnected}
       startContent={
         isConnected && <Icons.Success size="sm" className="text-green" />
       }
