@@ -1,22 +1,8 @@
 import { AuctionSlot } from '~entities/auction-slot/model'
+import { WheelSlot } from '~entities/wheel/model'
 
 import { AnimatedTruncText } from '~shared/ui/animated-trunc-text'
 import { TabsContent } from '~shared/ui/tabs'
-
-const slots = [
-  {
-    id: 1,
-    points: 1000,
-    color: '#FFF',
-    name: 'Hello',
-  },
-  {
-    id: 2,
-    points: 1000,
-    color: '#FFF',
-    name: 'Hello',
-  },
-] as AuctionSlot[]
 
 const SlotCard = (props: AuctionSlot) => {
   const { color } = props
@@ -36,7 +22,7 @@ const SlotCard = (props: AuctionSlot) => {
 }
 
 type SlotsWheelTabProps = {
-  slots: AuctionSlot[]
+  slots: WheelSlot[]
 }
 
 const SlotsWheelTab = ({ slots }: SlotsWheelTabProps) => {

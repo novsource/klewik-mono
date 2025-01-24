@@ -105,7 +105,8 @@ const DonationAlertsIntegrationButton = () => {
     <Button
       className={cn(
         !isConnected && 'border-1 border-dark-accent transition-all',
-        isConnected && 'bg-green/20 border-0 text-green/100'
+        isConnected &&
+          'bg-green/20 border-0 text-green/100 cursor-default hover:bg-green/20'
       )}
       size="sm"
       startContent={
