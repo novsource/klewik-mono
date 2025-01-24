@@ -35,7 +35,7 @@ export const sheetTitleVariants = cva(
 export const sheetDescriptionVariants = cva('text-md text-muted-foreground')
 
 export const sheetCloseButtonVariants = cva(
-  'absolute right-5 top-6 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary'
+  'absolute right-5 top-6 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary'
 )
 
 export const sheetFooterVariants = cva(

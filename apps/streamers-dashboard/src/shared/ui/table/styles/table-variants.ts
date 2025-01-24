@@ -15,16 +15,16 @@ export const tableHeadVariants = cva(
 export const tableBodyVariants = cva('[&_tr:last-child]:border-0')
 
 export const tableFooterVariants = cva(
-  'border-t font-medium [&>tr]:last:border-b-0'
+  'border-t font-medium last:[&>tr]:border-b-0'
 )
 
 export const tableRowVariants = cva('', {
   variants: {
     withBorder: {
-      true: '[&>td]:border-b-1 [&>td]:border-gray/40 [&>td]:last:border-b-0',
+      true: '[&>td]:border-b-1 [&>td]:border-gray/40 last:[&>td]:border-b-0',
       false:
-        // '[&>td]:before:transition-all [&>td]:before:hover:ring-1 [&>td]:before:hover:ring-gray [&>td]:hover:before:bg-dark/30 cursor-pointer',
-        '[&>td]:hover:before:border-t-1 [&>td]:hover:before:border-b-1 [&>td]:before:border-gray-light [&>td]:hover:before:bg-dark/30 cursor-pointer',
+        // '[&>td]:before:transition-all hover:[&>td]:before:ring-1 hover:[&>td]:before:ring-gray hover:[&>td]:before:bg-dark/30 cursor-pointer',
+        'hover:[&>td]:before:border-t-1 hover:[&>td]:before:border-b-1 [&>td]:before:border-gray-light hover:[&>td]:before:bg-dark/30 cursor-pointer',
     },
   },
   defaultVariants: {

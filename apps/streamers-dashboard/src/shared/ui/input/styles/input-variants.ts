@@ -88,7 +88,7 @@ export const contentVariants = cva<ContentBaseVariants>([
 
 export const contentWrapperVariants = cva<ContentWrapperVariants>(
   [
-    'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-1',
+    'focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-offset-1',
     'flex w-full items-center bg-dark transition-all ring-gray-light rounded-medium',
     'data-[focus=true]:ring-1 data-[hover=true]:ring-1 data-[focus=true]:bg-[#1F1F22] data-[hover=true]:bg-[#1F1F22]',
   ],
@@ -115,7 +115,7 @@ export const inputVariants = cva<InputVariants>(
     'font-medium text-white',
     'file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground',
     'disabled:cursor-not-allowed disabled:opacity-50',
-    'focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none',
+    'focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-hidden',
     'ring-offset-background',
     'placeholder:text-gray',
   ],

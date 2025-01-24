@@ -30,7 +30,7 @@ const WheelTabs = () => {
       <TabsTrigger
         key={triggersWithIcons[item].title}
         value={item.toLowerCase()}
-        className="flex flex-grow gap-x-2 text-md font-medium data-[state=active]:rounded-[8px]"
+        className="flex grow gap-x-2 text-md font-medium data-[state=active]:rounded-[8px] cursor-pointer text-gray-light/70 hover:text-gray-light"
       >
         {triggersWithIcons[item].icon}
         {triggersWithIcons[item].title}

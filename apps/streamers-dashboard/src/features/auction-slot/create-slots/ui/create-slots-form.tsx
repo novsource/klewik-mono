@@ -101,7 +101,7 @@ export const CreateSlotsForm = ({
           render={({ field }) => (
             <Input
               slotClassNames={{
-                base: 'font-golosF w-full basis-1/2 flex-grow',
+                base: 'font-golosF w-full basis-1/2 grow',
                 description: 'text-wrap',
               }}
               placeholder="Название слота"

@@ -107,7 +107,7 @@ const WheelContainer = () => {
   }, [spinWheel])
 
   return (
-    <div className="flex h-full w-full flex-shrink-[2] flex-col gap-y-2">
+    <div className="flex h-full w-full flex-shrink-2 flex-col gap-y-2">
       <span ref={lotTextRef} className="text-center text-titleLg font-semibold">
         Ожидание прокрутки колеса...
       </span>
