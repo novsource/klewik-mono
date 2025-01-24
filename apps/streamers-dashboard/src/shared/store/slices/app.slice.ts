@@ -8,16 +8,16 @@ type DonationAlertsIntegrationStatus = {
 }
 
 type AppStore = {
-  auctionId: string
-  auctionUrl: string
+  auctionId: NullablePossible<string>
+  auctionUrl: NullablePossible<string>
   integrations: {
     donationAlerts: DonationAlertsIntegrationStatus
   }
 }
 
 const initialState: AppStore = {
-  auctionId: '',
-  auctionUrl: '',
+  auctionId: null,
+  auctionUrl: null,
   integrations: {
     donationAlerts:
       localStorage.getItem('donationAlerts') === null
@@ -47,6 +47,7 @@ export const appSlice = createSlice({
   reducers: {
     setAuctionId: (state, payload: PayloadAction<string>) => {
       state.auctionId = payload.payload
+      state.auctionUrl = `https://auctions.klewik.ru/${payload.payload}`
     },
     setAuctionUrl: (state, payload: PayloadAction<string>) => {
       state.auctionUrl = payload.payload
