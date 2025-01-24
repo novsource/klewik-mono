@@ -34,16 +34,16 @@ type ButtonVariants = {
 export const buttonVariants = cva<ButtonVariants>(
   [
     'inline-flex items-center justify-center gap-2',
-    'ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+    'ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
     'disabled:pointer-events-none disabled:opacity-50',
     '[&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:pointer-events-none',
-    'whitespace-nowrap rounded-medium transition-colors select-none',
+    'whitespace-nowrap rounded-medium transition-colors select-none cursor-pointer',
   ],
   {
     variants: {
       variant: {
-        default: 'bg-dark text-gray-accent hover:bg-opacity-80',
-        action: 'bg-green text-white hover:bg-opacity-80',
+        default: 'bg-dark text-gray-accent hover:bg-dark/80',
+        action: 'bg-green text-white hover:bg-green/80',
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline:

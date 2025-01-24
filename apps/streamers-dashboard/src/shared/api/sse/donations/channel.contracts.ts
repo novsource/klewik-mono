@@ -7,7 +7,7 @@ const DonationSchema = z.object({
   name: z.string(),
   provider: z.enum(['donation-alerts', 'donate-pay']),
   message: z.string().max(210).nullable(),
-  messageType: z.enum(['text', 'audio']),
+  message_type: z.enum(['text', 'audio']),
   amount: z.number(),
   currency: z.string(),
 })

@@ -1,6 +1,148 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@plugin 'tailwindcss-animate';
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-*: initial;
+  --color-white-accent: #f8f8ff;
+  --color-white: #f4f4f4;
+
+  --color-green: #3f9663;
+  --color-green-accent: #74dfa2;
+
+  --color-black: #000;
+
+  --color-dark: #27272a;
+  --color-dark-accent: #3e4145;
+  --color-dark-foreground: #19191b;
+
+  --color-yellow: #cfc56f;
+
+  --color-red: #e74c3c;
+
+  --color-gray: #555;
+  --color-gray-light: #888;
+  --color-gray-accent: #aaa;
+
+  --color-purple: #505285;
+
+  --color-transparent: rgba(255, 255, 255, 0);
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  --text-*: initial;
+  --text-sm: 12px;
+  --text-md: 14px;
+  --text-title: 17px;
+  --text-title-lg: 21px;
+  --text-title-xL: 24px;
+
+  --radius-*: initial;
+  --radius-none: 0px;
+  --radius-small: 8px;
+  --radius-medium: 10px;
+  --radius-large: 16px;
+  --radius-pill: 10000px;
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --breakpoint-*: initial;
+  --breakpoint-mobile: 640px;
+  --breakpoint-tablet: 1024px;
+  --breakpoint-landtop: 1440px;
+  --breakpoint-desktop: 1920px;
+  --breakpoint-desktop-lg: 2560px;
+
+  --shadow-*: initial;
+  --shadow-table-border: 0px 4x 0px 0px rgba(85, 85, 85, 0.7);
+
+  --font-*: initial;
+  --font-golos-f: 'Golos';
+
+  --animate-fade-in: fadeIn 2s ease;
+  --animate-fade-out: fadeIn 2s ease reverse;
+  --animate-fade-change: fadeChange 2s ease;
+
+  --height-sheet: var(--sheet-height);
+
+  --grid-template-rows-slots-desktop: max(62px) minmax(40px, 42px) 1fr;
+  --grid-template-rows-slots-table: minmax(40px, 42px) 1fr;
+
+  --spacing-4xl: 1.5rem;
+
+  --border-width-1: 1px;
+
+  @keyframes fadeChange {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
 
 @layer base {
   @import url('https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
@@ -32,7 +174,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
 
-    background-color: theme('colors.dark.foreground');
+    background-color: var(--color-dark-foreground);
   }
 
   .dark {
@@ -61,7 +203,7 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
-    background-color: theme('colors.dark.foreground');
+    background-color: var(--color-dark-foreground);
   }
 }
 

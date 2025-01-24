@@ -211,10 +211,7 @@ const AnimatedTruncText = ({
       <span className="opacity-0">{children}</span>
       <span
         ref={spanRef}
-        className={cn(
-          'absolute left-0 top-1/2 z-10 -translate-y-1/2 font-medium',
-          classNames
-        )}
+        className={cn('absolute left-0 top-1/2 z-10 font-medium', classNames)}
       >
         {text}
       </span>
