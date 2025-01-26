@@ -8,7 +8,7 @@ const SliderWelcomeContent = () => {
     <SliderContent className="relative flex flex-col gap-y-6" value="welcome">
       <div className="flex flex-col gap-y-2">
         <Icons.Logo
-          className="absolute -top-16 left-0"
+          className="absolute -top-16 left-0 text-green-accent"
           width={46}
           height={46}
         />
