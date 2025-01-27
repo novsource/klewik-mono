@@ -21,6 +21,7 @@ import { default as Login } from './Login';
 import { default as Logo } from './Logo';
 import { default as MagicStick } from './MagicStick';
 import { default as Magnifier } from './Magnifier';
+import { default as Minus } from './Minus';
 import { default as Money } from './Money';
 import { default as MoneyBag } from './MoneyBag';
 import { default as Palette } from './Palette';
@@ -62,6 +63,7 @@ import { default as Warning } from './Warning';
   Logo,
   MagicStick,
   Magnifier,
+  Minus,
   Money,
   MoneyBag,
   Palette,
