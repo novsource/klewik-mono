@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 
 type LocalStorageOptions<T extends unknown = unknown> = {
   value?: T
@@ -21,17 +21,14 @@ const setItemToLocalStorage = (
   dispatchStorageEvent({ key, storageArea: storage, newValue: value, oldValue })
 }
 
-const getItemFromLocalStorage = <T>(
-  key: string,
-  deserializer: NonNullable<LocalStorageOptions<T>['deserializer']>
-) => {
-  const rawData = localStorage.getItem(key)
+const getItemFromLocalStorage = (storage: Storage, key: string) => {
+  const rawData = storage.getItem(key)
 
   if (!rawData) {
-    return null
+    return undefined
   }
 
-  return deserializer(rawData)
+  return rawData
 }
 
 const removeItemFromLocalStorage = (storage: Storage, key: string) => {
@@ -50,15 +47,21 @@ const localStorageSubscribe = (callback: () => void) => {
 }
 
 const useLocalStorage = <T>(key: string, options?: LocalStorageOptions<T>) => {
-  const serializer = (value: T) => {
-    try {
-      if (!options?.serializer) return JSON.stringify(value)
+  const localStorage = window.localStorage
+  const initialValue = options?.value ?? undefined
 
-      return options.serializer(value)
-    } catch (err) {
-      return ''
-    }
-  }
+  const serializer = useCallback(
+    (value: T) => {
+      try {
+        if (!options?.serializer) return JSON.stringify(value)
+
+        return options.serializer(value)
+      } catch (err) {
+        return ''
+      }
+    },
+    [options?.serializer]
+  )
 
   const deserializer = (raw: string) => {
     try {
@@ -70,17 +73,25 @@ const useLocalStorage = <T>(key: string, options?: LocalStorageOptions<T>) => {
     }
   }
 
-  const getSnapshot = () => getItemFromLocalStorage(key, deserializer)
-  const set = (value: T) =>
-    setItemToLocalStorage(window.localStorage, key, serializer(value))
-  const remove = () => removeItemFromLocalStorage(window.localStorage, key)
+  const getSnapshot = () => getItemFromLocalStorage(localStorage, key)
 
-  const store = useSyncExternalStore<string>(localStorageSubscribe, getSnapshot)
+  const set = (value: T) =>
+    setItemToLocalStorage(localStorage, key, serializer(value))
+  const remove = () => removeItemFromLocalStorage(localStorage, key)
+
+  const store = useSyncExternalStore(localStorageSubscribe, getSnapshot)
+
+  useEffect(() => {
+    const value = getItemFromLocalStorage(localStorage, key)
+
+    if (initialValue !== undefined && value === undefined) {
+      setItemToLocalStorage(localStorage, key, serializer(initialValue))
+    }
+  }, [key])
 
   return {
     value: store ? deserializer(store) : undefined,
     set,
-    get: getSnapshot,
     remove,
   }
 }
