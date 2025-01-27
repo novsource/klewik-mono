@@ -19,7 +19,7 @@ const SpinWheelButton = () => {
   return (
     <Button
       variant="action"
-      startContent={<Icons.Refresh size="default" />}
+      startContent={<Icons.Refresh size="lg" />}
       onClick={handleOnClick}
     >
       Прокрутить
