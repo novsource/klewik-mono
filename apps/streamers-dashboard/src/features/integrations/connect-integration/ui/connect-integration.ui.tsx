@@ -36,11 +36,11 @@ const IntegrationCard = (props: IntegrationCardProps) => {
         {integrationButton}
       </CardHeader>
       <CardContent>
-        <Typography tag="h3" className="font-golosF">
+        <Typography tag="h3" className="font-golos-f">
           {integrationSystem}
         </Typography>
         {description && (
-          <Typography tag="p" className="text-gray-accent font-golosF">
+          <Typography tag="p" className="text-gray-accent font-golos-f">
             {description}
           </Typography>
         )}

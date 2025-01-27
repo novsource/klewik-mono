@@ -18,8 +18,8 @@ const AuctionDashboardLayout = () => {
         <div className="h-full w-full px-4">
           <div className="flex h-full w-full">
             {isTablet && (
-              <aside className="h-full w-16 flex-none">
-                <NavbarMenu className="absolute left-2 top-1/2 -translate-y-1/2" />
+              <aside className="h-full w-13 flex-none">
+                <NavbarMenu className="fixed left-3 top-1/2 -translate-y-1/2" />
               </aside>
             )}
             <Outlet />
