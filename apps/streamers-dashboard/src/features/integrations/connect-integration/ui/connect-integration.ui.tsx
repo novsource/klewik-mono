@@ -1,4 +1,5 @@
-import { memo } from 'react'
+import { memo, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Card, CardContent, CardHeader } from '~shared/ui/card'
 import { Icons } from '~shared/ui/icons'
@@ -57,6 +58,14 @@ const RedirectDisplay = memo((props: RedirectDisplayProps) => {
     donalerts: <DonationAlertsRedirectDisplay />,
     donatepay: <></>,
   }[props.provider]
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (window.location.host !== document.referrer) {
+      navigate('/')
+    }
+  }, [])
 
   return redirectDisplay
 })
