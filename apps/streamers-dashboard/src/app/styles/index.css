@@ -126,6 +126,92 @@
   }
 }
 
+@keyframes sheet-open {
+  0% {
+    opacity: var(--sheet-enter-opacity, 0);
+    transform: translate3d(
+        var(--sheet-enter-translate-x, 0),
+        var(--sheet-enter-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--sheet-enter-scale, 1),
+        var(--sheet-enter-scale, 1),
+        var(--sheet-enter-scale, 1)
+      )
+      rotate(var(--sheet-enter-rotate, 0));
+  }
+}
+
+@keyframes sheet-exit {
+  100% {
+    opacity: var(--sheet-exit-opacity, 1);
+    transform: translate3d(
+        var(--sheet-exit-translate-x, 0),
+        var(--sheet-exit-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--sheet-exit-scale, 1),
+        var(--sheet-exit-scale, 1),
+        var(--sheet-exit-scale, 1)
+      )
+      rotate(var(--sheet-exit-rotate, 0));
+  }
+}
+
+@utility slide-out-to-top {
+  --sheet-exit-translate-y: -0.25rem;
+}
+
+@utility slide-in-from-top {
+  --sheet-enter-translate-y: -0.25rem;
+}
+
+@utility slide-in-from-bottom {
+  --sheet-enter-translate-y: 100%;
+}
+
+@utility slide-out-to-bottom {
+  --sheet-exit-translate-y: 100%;
+}
+
+@utility slide-out-to-left {
+  --sheet-exit-translate-x: 100%;
+}
+
+@utility slide-in-from-left {
+  --sheet-enter-translate-x: 100%;
+}
+
+@utility slide-out-to-right {
+  --sheet-exit-translate-x: 100%;
+}
+
+@utility slide-in-from-right {
+  --sheet-enter-translate-x: 100%;
+}
+
+@utility animate-enter-sheet {
+  animation-name: sheet-open;
+  animation-duration: 0.15s;
+  --sheet-enter-opacity: initial;
+  --sheet-enter-scale: initial;
+  --sheet-enter-rotate: initial;
+  --sheet-enter-translate-x: initial;
+  --sheet-enter-translate-y: initial;
+}
+
+@utility animate-exit-sheet {
+  animation-name: sheet-exit;
+  animation-duration: 0.15s;
+  --sheet-enter-opacity: initial;
+  --sheet-enter-scale: initial;
+  --sheet-enter-rotate: initial;
+  --sheet-enter-translate-x: initial;
+  --sheet-enter-translate-y: initial;
+}
+
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
@@ -210,7 +296,7 @@
 :root {
   --header-height: 64px;
   --footer-height: 52px;
-  --sheet-height: 98%;
+  --sheet-height: calc(100% - 20px);
 }
 
 :root {
@@ -248,6 +334,7 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   -webkit-background-clip: text;
+  -webkit-text-fill-color: #f4f4f4 !important;
   animation-name: onAutoFillStart;
   transition: background-color 5000s ease-in-out 0s;
 }
