@@ -9,7 +9,7 @@ import { BROADCAST_CHANNEL_NAMES as BROADCAST_CHANNELS_NAMES } from '~shared/con
 
 import { AuctionSlotsBroadcastChannel } from './auction-slots-channel'
 import { AuctionSlotsEventsMessageSchema } from './channel.contracts'
-import { AuctionSlotsEventsCallbacks } from './channel.types'
+import { AuctionSlotsEventsMap } from './channel.types'
 
 class AuctionSlotsSSEClient extends SSEClient {
   private static _instance: AuctionSlotsSSEClient
@@ -79,7 +79,9 @@ class AuctionSlotsSSEClient extends SSEClient {
     })
   }
 
-  onAddingSlots(callback: AuctionSlotsEventsCallbacks['auction-slots/add']) {
+  onAddingSlots(
+    callback: (data: AuctionSlotsEventsMap['auction-slots/add']) => void
+  ) {
     return this._broadcastChannel.on('auction-slots/add', callback)
   }
 }
