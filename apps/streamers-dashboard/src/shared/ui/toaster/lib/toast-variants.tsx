@@ -26,7 +26,7 @@ export const toastSuccessNotification = (
   )
   return toast(operationName, {
     description: successDescription,
-    classNames: { content: 'gap-y-2' },
+    classNames: { content: 'gap-y-3' },
     ...toastOptions,
   })
 }
@@ -44,8 +44,8 @@ export const toastErrorNotification = (
         </Typography>
       )}
       <div className="w-full flex items-center gap-x-1">
-        <div className="flex items-center justify-center h-5 w-5 bg-red/30 rounded-md">
-          <Icons.Close className="text-red" size="default" />
+        <div className="flex items-center justify-center h-4 w-4 bg-red/30 rounded-md">
+          <Icons.Close className="text-red" size="sm" />
         </div>
         <Typography className="text-sm text-red font-medium" tag="p">
           Ошибка
