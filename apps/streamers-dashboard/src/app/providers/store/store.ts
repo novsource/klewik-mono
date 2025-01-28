@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 
 import { auctionSlotsReducer } from '~entities/auction-slot/store'
 import { auctionReducer } from '~entities/auction/store'
+import { donationsReducer } from '~entities/donation/store'
 import { wheelReducer } from '~entities/wheel/store'
 
 import { appReducer } from '~shared/store/slices'
@@ -11,6 +12,7 @@ export const store = configureStore({
     app: appReducer,
     auction: auctionReducer,
     auctionSlots: auctionSlotsReducer,
+    donations: donationsReducer,
     wheel: wheelReducer,
   },
 })

@@ -1,5 +1,9 @@
 import { DonationSchema } from './donation.contracts'
-import { Donation } from './donation.types'
+import {
+  DonatePayDonation,
+  Donation,
+  DonationAlertsDonation,
+} from './donation.types'
 
 export { DonationSchema }
-export type { Donation }
+export type { Donation, DonationAlertsDonation, DonatePayDonation }
