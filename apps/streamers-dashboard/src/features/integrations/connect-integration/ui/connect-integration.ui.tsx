@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Card, CardContent, CardHeader } from '~shared/ui/card'
@@ -54,6 +54,8 @@ type RedirectDisplayProps = {
 }
 
 const RedirectDisplay = memo((props: RedirectDisplayProps) => {
+  const [isCheckOrigin, setIsCheckOrigin] = useState(false)
+
   const redirectDisplay = {
     donalerts: <DonationAlertsRedirectDisplay />,
     donatepay: <></>,
@@ -62,12 +64,14 @@ const RedirectDisplay = memo((props: RedirectDisplayProps) => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (window.location.host !== document.referrer) {
+    if (`${window.location.origin}/` !== document.referrer.toString()) {
       navigate('/')
     }
+
+    setIsCheckOrigin(true)
   }, [])
 
-  return redirectDisplay
+  return isCheckOrigin && redirectDisplay
 })
 
 export { IntegrationCard, RedirectDisplay }
