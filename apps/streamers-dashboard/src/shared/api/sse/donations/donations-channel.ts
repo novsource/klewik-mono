@@ -3,7 +3,7 @@ import { ZodError } from 'zod'
 
 import { BroadcastLeaderChannel } from '~shared/lib/broadcast-channel'
 
-import { DonationSchema } from './channel.contracts'
+import { DonationDTOSchema } from './channel.contracts'
 import {
   DonationsEventSourceMessage,
   DonationsEventsCallbacks,
@@ -58,7 +58,7 @@ export class DonationsBroadcastChannel extends BroadcastLeaderChannel<DonationsE
         )
       }
 
-      const donation = DonationSchema.parse(data)
+      const donation = DonationDTOSchema.parse(data)
 
       this._subscriptions.get('donations/add')?.forEach((cb) => cb(donation))
     } catch (err) {

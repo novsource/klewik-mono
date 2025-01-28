@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import { EventSourceMessageSchema } from '~shared/lib/fetch-event-source'
 
-const DonationSchema = z.object({
+const DonationDTOSchema = z.object({
   id: z.number(),
   username: z.string(),
   provider: z.enum(['donation-alerts', 'donate-pay']),
@@ -19,4 +19,4 @@ const DonationsEventSourceMessageSchema = EventSourceMessageSchema.merge(
   })
 )
 
-export { DonationSchema, DonationsEventSourceMessageSchema }
+export { DonationDTOSchema, DonationsEventSourceMessageSchema }
