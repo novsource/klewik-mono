@@ -80,7 +80,7 @@ class DonationsSSEClient extends SSEClient {
     })
   }
 
-  onAddingSlots(callback: DonationsEventsCallbacks['donations/add']) {
+  onNewDonation(callback: DonationsEventsCallbacks['donations/add']) {
     return this._broadcastChannel.on('donations/add', callback)
   }
 }

@@ -19,12 +19,12 @@ export class DonationsBroadcastChannel extends BroadcastLeaderChannel<DonationsE
   constructor(channelName: string, options?: BroadcastChannelOptions) {
     super(channelName, options)
 
-    this.onMessage(this._dispatchEvent)
+    this.onMessage((message) => this._dispatchEvent(message))
   }
 
   on<K extends keyof DonationsEventsMap>(
     event: K,
-    callback: (data: DonationsEventsCallbacks[K]) => void
+    callback: DonationsEventsCallbacks[K]
   ) {
     const listeners = this._subscriptions.get(event)
 

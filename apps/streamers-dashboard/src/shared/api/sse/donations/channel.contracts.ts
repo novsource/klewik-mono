@@ -4,7 +4,7 @@ import { EventSourceMessageSchema } from '~shared/lib/fetch-event-source'
 
 const DonationSchema = z.object({
   id: z.number(),
-  name: z.string(),
+  username: z.string(),
   provider: z.enum(['donation-alerts', 'donate-pay']),
   message: z.string().max(210).nullable(),
   message_type: z.enum(['text', 'audio']),
