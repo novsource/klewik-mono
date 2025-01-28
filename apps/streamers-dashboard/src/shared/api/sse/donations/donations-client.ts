@@ -69,6 +69,10 @@ class DonationsSSEClient extends SSEClient {
 
         this._emitter.notify('onmessage', parsedMessage.data)
         this._broadcastChannel.postMessage(parsedMessage.data)
+
+        if (this._broadcastChannel.isLeader) {
+          this._broadcastChannel.emit(parsedMessage.data)
+        }
       },
       onclose: () => this._emitter.notify('onclose'),
     }

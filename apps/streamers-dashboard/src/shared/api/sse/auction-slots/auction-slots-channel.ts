@@ -39,6 +39,10 @@ export class AuctionSlotsBroadcastChannel extends BroadcastLeaderChannel<Auction
     this._subscriptions.set(event, [...listeners, callback])
   }
 
+  emit(message: AuctionEventSourceMessage) {
+    this._dispatchEvent(message)
+  }
+
   private _dispatchEvent(message: AuctionEventSourceMessage) {
     switch (message.event) {
       case 'auction-slots/add': {

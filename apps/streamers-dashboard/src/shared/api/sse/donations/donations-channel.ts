@@ -36,6 +36,10 @@ export class DonationsBroadcastChannel extends BroadcastLeaderChannel<DonationsE
     this._subscriptions.set(event, [...listeners, callback])
   }
 
+  emit(message: DonationsEventSourceMessage) {
+    this._dispatchEvent(message)
+  }
+
   private _dispatchEvent(message: DonationsEventSourceMessage) {
     switch (message.event) {
       case 'donations/add': {
