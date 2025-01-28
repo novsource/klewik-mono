@@ -31,6 +31,14 @@ const slice = createSlice({
       state.slots = [...filtredSlots, payload]
     },
   },
+  selectors: {
+    getSlots(state) {
+      return state.slots
+    },
+    getDropoutSlots(state) {
+      return state.dropoutSlots
+    },
+  },
 })
 
 const {
