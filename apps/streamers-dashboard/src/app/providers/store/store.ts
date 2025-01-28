@@ -1,18 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit'
 
+import { auctionSlotsReducer } from '~entities/auction-slot/store'
 import { auctionReducer } from '~entities/auction/store'
 import { wheelReducer } from '~entities/wheel/store'
 
 import { appReducer } from '~shared/store/slices'
 
-import { socketReducer } from './slices/socket.slice'
-
 export const store = configureStore({
   reducer: {
     app: appReducer,
     auction: auctionReducer,
+    auctionSlots: auctionSlotsReducer,
     wheel: wheelReducer,
-    socket: socketReducer,
   },
 })
 
