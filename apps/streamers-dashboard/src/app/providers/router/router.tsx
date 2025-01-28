@@ -3,13 +3,13 @@ import { Navigate, Outlet, createBrowserRouter } from 'react-router-dom'
 import { auctionSettingsPageRoute } from '~pages/auction-settings/routing'
 import { auctionSlotsPageRoute } from '~pages/auction-slots/routing'
 import { auctionWheelPageRoute } from '~pages/auction-wheel/routing'
-import { authPageRoute } from '~pages/auth/routing'
 import { redirectPageRoute } from '~pages/redirect/routing'
 import { welcomePageRoute } from '~pages/welcome/routing'
 
 import { Toaster } from '~shared/ui/toaster'
 
 import { AuctionDashboardLayout } from './layouts'
+import { auctionPrepareRoute } from './routes'
 
 const WelcomePageRouteObject = welcomePageRoute()
 const AuctionSlotsRouteObject = auctionSlotsPageRoute()
@@ -33,7 +33,7 @@ const browserRouter = createBrowserRouter([
           {
             path: 'dashboard/:auctionId',
             children: [
-              authPageRoute([
+              auctionPrepareRoute([
                 RedirectRouteObject,
                 { index: true, element: <Navigate to={'wheel'} /> },
                 {
