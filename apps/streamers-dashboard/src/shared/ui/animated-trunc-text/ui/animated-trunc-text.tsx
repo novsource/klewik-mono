@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
+import { ClassValue } from 'clsx'
 import { animate, useMotionValue } from 'framer-motion'
 
 import { fitTextEllipsis } from '~shared/utils/canvas'
@@ -36,10 +37,10 @@ const getTextMaxWidth = (text: string, maxWidth: number): number => {
 
 const AnimatedTruncText = ({
   children,
-  classNames = '',
+  className,
 }: {
   children: string
-  classNames?: string
+  className?: ClassValue
 }) => {
   const [isAnimationPlaying, setAnimationPlaying] = useState<boolean>(false)
   const [animationControls, setAnimationControls] = useState<ReturnType<
@@ -211,7 +212,7 @@ const AnimatedTruncText = ({
       <span className="opacity-0">{children}</span>
       <span
         ref={spanRef}
-        className={cn('absolute left-0 top-1/2 z-10 font-medium', classNames)}
+        className={cn('absolute left-0 top-1/2 z-10 font-medium', className)}
       >
         {text}
       </span>
@@ -219,7 +220,7 @@ const AnimatedTruncText = ({
         <span
           className={cn(
             'absolute right-0 top-1/2 -translate-y-1/2 font-medium',
-            classNames
+            className
           )}
         >
           ...
