@@ -14,17 +14,17 @@
 
   --color-black: #000;
 
-  --color-dark: #27272a;
-  --color-dark-accent: #3e4145;
-  --color-dark-foreground: #19191b;
+  --color-dark: #232323;
+  --color-dark-accent: #393939;
+  --color-dark-foreground: #181818;
 
   --color-yellow: #cfc56f;
 
-  --color-red: #e74c3c;
+  --color-red: #fe7968;
 
-  --color-gray: #555;
+  --color-gray: #5b5b5b;
   --color-gray-light: #888;
-  --color-gray-accent: #aaa;
+  --color-gray-accent: #b5b5b5;
 
   --color-purple: #505285;
 
