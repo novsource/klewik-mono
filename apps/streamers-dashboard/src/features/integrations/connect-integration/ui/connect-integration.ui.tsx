@@ -30,7 +30,7 @@ const IntegrationCard = (props: IntegrationCardProps) => {
   }[integrationSystem]
 
   return (
-    <Card className="bg-[#1F1F22] max-w-[350px]">
+    <Card className="bg-dark max-w-[350px]">
       <CardHeader className="flex w-full justify-between items-center">
         {integrationIcon}
         {integrationButton}
