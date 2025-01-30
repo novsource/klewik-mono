@@ -50,7 +50,7 @@ export const buttonVariants = cva<ButtonVariants>(
           'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
         secondary:
           'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        ghost: 'bg-transparent',
         link: 'text-primary underline-offset-4 hover:underline',
       },
       isIconOnly: {
@@ -77,6 +77,10 @@ export const buttonVariants = cva<ButtonVariants>(
       size: 'default',
       isIconOnly: false,
     },
+    compoundVariants: [
+      { isIconOnly: true, size: 'default', className: 'px-3' },
+      { isIconOnly: true, size: 'sm', className: 'px-2.5 h-8' },
+    ],
   }
 )
 
