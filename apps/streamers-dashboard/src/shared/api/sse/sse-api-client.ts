@@ -1,60 +1,76 @@
-import { BroadcastLeaderChannel } from '~shared/lib/broadcast-channel'
-import { EventSourceMessage } from '~shared/lib/fetch-event-source'
-
 import { BROADCAST_CHANNEL_NAMES } from '~shared/constants/broadcast-channels'
 
 import { AuctionSlotsSSEClient } from './auction-slots'
 import { DonationsSSEClient } from './donations'
+import {
+  SSEApiBroadcastChannel,
+  SSEApiEventSourceMessage,
+} from './sse-api-channel'
 
 class SSEApiClient {
   private static _instance: SSEApiClient
 
-  private _broadcastChannel: BroadcastLeaderChannel<EventSourceMessage>
+  private _broadcastChannel: SSEApiBroadcastChannel
   private _onConnectListeners: Array<() => void> = []
   private _connectedClients: Array<string> = []
   private _isConnectedToSSE: boolean = false
 
-  private constructor() {
-    this._broadcastChannel = new BroadcastLeaderChannel<EventSourceMessage>(
-      BROADCAST_CHANNEL_NAMES.MANAGER
+  private constructor(private _auctionId: string) {
+    this._broadcastChannel = new SSEApiBroadcastChannel(
+      BROADCAST_CHANNEL_NAMES.MANAGER,
+      { auctionId: this._auctionId }
     )
 
-    this._broadcastChannel.postMessage({
-      id: '0',
-      data: '',
-      event: 'manager/new',
-      retry: undefined,
-    })
-
-    this._broadcastChannel.onMessage((message) => {
-      if (message.event === 'manager/new' && this._broadcastChannel.isLeader) {
-        this._broadcastChannel.postMessage({
-          id: '0',
-          event: 'manager/status',
-          data: JSON.stringify({ status: this._isConnectedToSSE }),
-        })
-      }
-    })
-
-    this._broadcastChannel.onMessage((message) => {
-      if (
-        message.event === 'manager/status' &&
-        !this._broadcastChannel.isLeader
-      ) {
+    const checkStatus = async (message: SSEApiEventSourceMessage) => {
+      const isHasLeader = await this._broadcastChannel.hasLeader
+      if (message.event === 'manager/status' && isHasLeader) {
         const data = JSON.parse(message.data)
 
-        this._isConnectedToSSE = data.status
+        if (data.auctionId !== this._auctionId) {
+          return
+        }
+
+        this._isConnectedToSSE = data.isConnected
 
         if (data.status) {
           this._onConnectListeners.forEach((cb) => cb())
         }
       }
+    }
+
+    // Notify the new sse manager about currentlly connection status
+    this.onLeadership(() => {
+      this._broadcastChannel.removeOnMessageCallback(checkStatus)
+
+      this._broadcastChannel.onMessage((message) => {
+        if (message.event === 'manager/new') {
+          this._broadcastChannel.postMessage({
+            id: '',
+            event: 'manager/status',
+            data: JSON.stringify({
+              auctionId: this._auctionId,
+              isConnected: this._isConnectedToSSE,
+            }),
+          })
+        }
+      })
     })
+
+    // Read message when create a new tab
+    this._broadcastChannel.onMessage(checkStatus)
+  }
+
+  static init(auctionId: string) {
+    if (this._instance) return this._instance
+
+    this._instance = new SSEApiClient(auctionId)
+
+    return this._instance
   }
 
   static getInstance() {
     if (!this._instance) {
-      this._instance = new SSEApiClient()
+      throw new Error('Instance of SSEApiClient not found')
     }
 
     return this._instance
@@ -76,13 +92,13 @@ class SSEApiClient {
     this._broadcastChannel.onLeadership(callback)
   }
 
-  postMessage(message: EventSourceMessage) {
+  postMessage(message: SSEApiEventSourceMessage) {
     this._broadcastChannel.postMessage(message)
   }
 
-  async connectToAllEvents(auctionId: string) {
-    const connectToSlots = this.auctionSlots().connectToServer(auctionId)
-    const connectToDonations = this.donations().connectToServer(auctionId)
+  async connectToAllEvents() {
+    const connectToSlots = this.auctionSlots().connectToServer(this._auctionId)
+    const connectToDonations = this.donations().connectToServer(this._auctionId)
 
     this.auctionSlots().on('onopen', () => {
       this._connectedClients.push('auctionSlots')
@@ -100,6 +116,20 @@ class SSEApiClient {
         this._onConnectListeners.forEach((cb) => cb())
         this._isConnectedToSSE = true
       }
+    })
+
+    this.onLeadership(() => {
+      this.onConnect(() => {
+        this.postMessage({
+          id: '',
+          data: JSON.stringify({
+            auctionId: this._auctionId,
+            isConnected: true,
+          }),
+          event: 'manager/status',
+          retry: undefined,
+        })
+      })
     })
 
     return Promise.all([connectToSlots, connectToDonations])
