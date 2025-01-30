@@ -28,6 +28,8 @@
 
   --color-purple: #505285;
 
+  --color-orange: #f58c08;
+
   --color-transparent: rgba(255, 255, 255, 0);
 
   --color-background: hsl(var(--background));
@@ -65,6 +67,7 @@
   --color-chart-5: hsl(var(--chart-5));
 
   --text-*: initial;
+  --text-xs: 9px;
   --text-sm: 12px;
   --text-md: 14px;
   --text-title: 17px;
