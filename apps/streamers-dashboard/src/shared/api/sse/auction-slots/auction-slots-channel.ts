@@ -43,6 +43,19 @@ export class AuctionSlotsBroadcastChannel extends BroadcastLeaderChannel<Auction
     this._dispatchEvent(message)
   }
 
+  removeListener<K extends keyof AuctionSlotsEventsMap>(
+    event: K,
+    callback: (data: AuctionSlotsEventsMap[K]) => void
+  ) {
+    const listeners = this._subscriptions.get(event)
+
+    if (!listeners) return
+
+    const filtredListeners = listeners.filter((cb) => cb !== callback)
+
+    this._subscriptions.set(event, filtredListeners)
+  }
+
   private _dispatchEvent(message: AuctionEventSourceMessage) {
     switch (message.event) {
       case 'auction-slots/add': {
