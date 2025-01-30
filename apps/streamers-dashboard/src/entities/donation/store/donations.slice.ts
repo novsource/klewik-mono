@@ -17,7 +17,7 @@ const initialState: DonationsSliceState = {
 }
 
 const slice = createSlice({
-  name: 'donationsSlice',
+  name: 'donations',
   initialState,
   reducers: {
     addDonation(state, action: PayloadAction<Donation>) {
