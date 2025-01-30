@@ -56,6 +56,17 @@ const AuctionPrepare = () => {
 
     AuctionSlotsSSEClient.getInstance().onAddingSlots(dispatchSlots)
     DonationsSSEClient.getInstance().onNewDonation(dispatchDonation)
+
+    return () => {
+      AuctionSlotsSSEClient.getInstance().removeListener(
+        'auction-slots/add',
+        dispatchSlots
+      )
+      DonationsSSEClient.getInstance().removeListener(
+        'donations/add',
+        dispatchDonation
+      )
+    }
   }, [])
 
   useEffect(() => {
