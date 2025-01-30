@@ -40,6 +40,19 @@ export class DonationsBroadcastChannel extends BroadcastLeaderChannel<DonationsE
     this._dispatchEvent(message)
   }
 
+  removeListener<K extends keyof DonationsEventsMap>(
+    event: K,
+    callback: (data: DonationsEventsMap[K]) => void
+  ) {
+    const listeners = this._subscriptions.get(event)
+
+    if (!listeners) return
+
+    const filtredListeners = listeners.filter((cb) => cb !== callback)
+
+    this._subscriptions.set(event, filtredListeners)
+  }
+
   private _dispatchEvent(message: DonationsEventSourceMessage) {
     switch (message.event) {
       case 'donations/add': {

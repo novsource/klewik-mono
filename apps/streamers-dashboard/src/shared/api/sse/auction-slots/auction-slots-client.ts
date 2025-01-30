@@ -49,6 +49,13 @@ class AuctionSlotsSSEClient extends SSEClient {
     return this._broadcastChannel.on('auction-slots/add', callback)
   }
 
+  removeListener<K extends keyof AuctionSlotsEventsMap>(
+    event: K,
+    callback: (data: AuctionSlotsEventsMap[K]) => void
+  ) {
+    return this._broadcastChannel.removeListener(event, callback)
+  }
+
   async connectToServer(auctionId: string): Promise<void> {
     const listeners: SSEClientListeners = {
       onopen: async (response) => {
