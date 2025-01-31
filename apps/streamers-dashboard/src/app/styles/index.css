@@ -332,6 +332,10 @@ header {
   height: var(--header-height);
 }
 
+li {
+  list-style-type: none;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

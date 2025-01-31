@@ -5,7 +5,7 @@ import { Typography } from '~shared/ui/typograghy'
 
 const AuctionSettingsPage = () => {
   return (
-    <div className="mb-4 flex gap-y-3 mobile:gap-y-5 tablet:gap-y-7 tablet:pb-4 tablet:px-2 max-w-[1500px] desktop:max-w-[1800px] desktopLg:max-w-[2100px] mx-auto w-full h-full">
+    <div className="mb-4 flex gap-y-3 mobile:gap-y-5 tablet:max-w-[1100px] landtop:max-w-[1300px] tablet:gap-y-7 tablet:pb-4 tablet:px-2 desktop:max-w-[1800px] desktop-lg:max-w-[2100px] mx-auto w-full h-full">
       <div className="flex flex-col h-full w-full gap-y-10">
         <div className="flex flex-col gap-y-3 w-full h-fit">
           <Typography tag="h2">Интеграции</Typography>

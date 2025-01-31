@@ -12,7 +12,7 @@ const AuctionDonationsPage = () => {
   )
 
   return (
-    <div className="mb-4 flex flex-col gap-y-3 mobile:gap-y-5 tablet:grid-rows-slots-desktop tablet:max-w-[1100px] landtop:max-w-[1300px] tablet:gap-y-7 tablet:pb-4 tablet:px-2 desktop:max-w-s[1800px] desktop-lg:max-w-[2100px] mx-auto w-full h-full">
+    <div className="mb-4 flex flex-col gap-y-3 mobile:gap-y-5 tablet:max-w-[1100px] landtop:max-w-[1300px] tablet:gap-y-7 tablet:pb-4 tablet:px-2 desktop:max-w-[1800px] desktop-lg:max-w-[2100px] mx-auto w-full h-full">
       <div className="flex flex-nowrap items-center justify-between gap-x-4 pt-1">
         <SearchInput size={!isMediaLargeThenTablet ? 'lg' : 'default'} />
       </div>
