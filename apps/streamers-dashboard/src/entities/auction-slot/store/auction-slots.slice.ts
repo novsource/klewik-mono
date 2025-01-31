@@ -5,11 +5,13 @@ import { AuctionSlot } from '../model'
 type AuctionSlotsState = {
   slots: AuctionSlot[]
   dropoutSlots: AuctionSlot[]
+  slotsPointsSum: number
 }
 
 const initialState: AuctionSlotsState = {
   slots: [],
   dropoutSlots: [],
+  slotsPointsSum: 0,
 }
 
 const slice = createSlice({
@@ -19,7 +21,17 @@ const slice = createSlice({
     addSlots(state, action: PayloadAction<AuctionSlot[]>) {
       const payload = action.payload
 
-      const filtredSlots = state.slots.filter((slot) => !payload.includes(slot))
+      const filtredSlots = state.slots.filter(
+        (slot) => !payload.find((item) => slot.id === item.id)
+      )
+
+      if (filtredSlots.length === state.slots.length) {
+        state.slotsPointsSum += payload.reduce((a, slot) => a + slot.points, 0)
+      } else {
+        state.slotsPointsSum =
+          filtredSlots.reduce((a, b) => a + b.points, 0) +
+          payload.reduce((a, b) => a + b.points, 0)
+      }
 
       state.slots = [...filtredSlots, ...payload]
     },
@@ -37,6 +49,9 @@ const slice = createSlice({
     },
     getDropoutSlots(state) {
       return state.dropoutSlots
+    },
+    getSlotsPointsSum(state) {
+      return state.slotsPointsSum
     },
   },
 })
