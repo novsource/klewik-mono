@@ -1,7 +1,13 @@
-import { memo, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { appSelectors, connectDonationAlertsSSE } from '~shared/store/slices'
+import { sha256 } from 'js-sha256'
+
+import {
+  appActions,
+  appSelectors,
+  connectDonationAlertsSSE,
+} from '~shared/store/slices'
 
 import { useStoreDispatch, useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -29,6 +35,26 @@ const DonationAlertsRedirectDisplay = memo(() => {
   const navigate = useNavigate()
 
   const { set } = useLocalStorage('donationAlerts')
+  const { value, remove } = useLocalStorage('redirect:donalerts')
+
+  useEffect(() => {
+    if (value === undefined || !value[auctionId!]) {
+      return navigate(`/dashboard/${auctionId}/settings`)
+    }
+
+    const time = value[auctionId!].time
+    const redirectKey = value[auctionId!].key
+
+    const key = sha256.hmac(
+      import.meta.env.VITE_REDIRECT_KEY,
+      import.meta.env.VITE_REDIRECT_SECRET + time
+    )
+
+    if (redirectKey !== key) {
+      remove()
+      return navigate(`/dashboard/${auctionId}/settings`)
+    }
+  }, [])
 
   useEffect(() => {
     if (isConnected) {
@@ -40,20 +66,30 @@ const DonationAlertsRedirectDisplay = memo(() => {
 
   useEffect(() => {
     const connect = async () => {
-      const response = await dispatch(connectDonationAlertsSSE(auctionId))
+      const response = await dispatch(connectDonationAlertsSSE(auctionId!))
 
       if (response.meta.requestStatus === 'fulfilled') {
-        set(response.payload)
+        remove()
+
+        set({ [auctionId!]: response.payload })
+
         setConnectionText('DonationAlerts успешно подключен!')
+
+        dispatch(
+          appActions.setDonationAlertsStatus({
+            isConnected: true,
+            isValid: true,
+          })
+        )
       }
     }
 
     connect()
-  }, [])
+  }, [auctionId])
 
   return (
     <div className="relative flex w-full h-full gap-x-16 tablet:gap-x-36 items-center pb-8">
-      <Icons.Logo width={54} height={54} />
+      <Icons.Logo className="text-green-accent" width={54} height={54} />
       <Icons.DonationAlerts width={54} height={54} />
       <div className="absolute w-full h-4 bottom-2 px-7">
         <div className="relative w-full h-full">
@@ -81,10 +117,13 @@ const DonationAlertsRedirectDisplay = memo(() => {
 })
 
 const DonationAlertsIntegrationButton = () => {
+  const auctionId = useStoreSelector(appSelectors.getAuctionId)
   const { isConnected } = useStoreSelector(appSelectors.getDonationAlertsStatus)
   const [isPressed, setIsPressed] = useState(false)
 
-  const openDonationAlertAuth = () => {
+  const { set } = useLocalStorage('redirect:donalerts')
+
+  const openDonationAlertAuth = useCallback(() => {
     const donalertsUrlParams = new URLSearchParams({
       client_id: import.meta.env.VITE_DONALERTS_APP_ID,
       redirect_url: `${import.meta.env.VITE_SERVER_URL}/api/auth/integrations/donalerts/callback`,
@@ -98,14 +137,26 @@ const DonationAlertsIntegrationButton = () => {
 
     setIsPressed(true)
 
-    if (!isConnected) window.open(url, '_self')
-  }
+    if (!isConnected) {
+      set({
+        [auctionId!]: {
+          time: Date.now(),
+          key: sha256.hmac(
+            import.meta.env.VITE_REDIRECT_KEY,
+            import.meta.env.VITE_REDIRECT_SECRET + Date.now().toString()
+          ),
+        },
+      })
+      window.open(url, '_self')
+    }
+  }, [isConnected])
 
   return (
     <Button
       className={cn(
         !isConnected && 'border-1 border-dark-accent transition-all',
-        isConnected && 'bg-green/20 border-0 text-green/100'
+        isConnected &&
+          'bg-green/20 border-0 text-green/100 cursor-default hover:bg-green/20'
       )}
       size="sm"
       startContent={

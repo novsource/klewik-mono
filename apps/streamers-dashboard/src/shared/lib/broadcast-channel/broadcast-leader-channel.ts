@@ -38,6 +38,10 @@ export class BroadcastLeaderChannel<T extends EventSourceMessage> {
     this._onLeadershipListeners.push(listener)
   }
 
+  removeOnMessageCallback(callback: (message: T) => void) {
+    this._elector.broadcastChannel.removeEventListener('message', callback)
+  }
+
   async postMessage(msg: T) {
     return this._channel.postMessage(msg)
   }

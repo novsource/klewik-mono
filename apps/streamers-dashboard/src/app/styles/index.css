@@ -14,19 +14,21 @@
 
   --color-black: #000;
 
-  --color-dark: #27272a;
-  --color-dark-accent: #3e4145;
-  --color-dark-foreground: #19191b;
+  --color-dark: #232323;
+  --color-dark-accent: #393939;
+  --color-dark-foreground: #181818;
 
   --color-yellow: #cfc56f;
 
-  --color-red: #e74c3c;
+  --color-red: #fe7968;
 
-  --color-gray: #555;
+  --color-gray: #5b5b5b;
   --color-gray-light: #888;
-  --color-gray-accent: #aaa;
+  --color-gray-accent: #b5b5b5;
 
   --color-purple: #505285;
+
+  --color-orange: #f58c08;
 
   --color-transparent: rgba(255, 255, 255, 0);
 
@@ -65,11 +67,12 @@
   --color-chart-5: hsl(var(--chart-5));
 
   --text-*: initial;
+  --text-xs: 9px;
   --text-sm: 12px;
   --text-md: 14px;
   --text-title: 17px;
   --text-title-lg: 21px;
-  --text-title-xL: 24px;
+  --text-title-xl: 24px;
 
   --radius-*: initial;
   --radius-none: 0px;
@@ -124,6 +127,92 @@
       opacity: 1;
     }
   }
+}
+
+@keyframes sheet-open {
+  0% {
+    opacity: var(--sheet-enter-opacity, 0);
+    transform: translate3d(
+        var(--sheet-enter-translate-x, 0),
+        var(--sheet-enter-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--sheet-enter-scale, 1),
+        var(--sheet-enter-scale, 1),
+        var(--sheet-enter-scale, 1)
+      )
+      rotate(var(--sheet-enter-rotate, 0));
+  }
+}
+
+@keyframes sheet-exit {
+  100% {
+    opacity: var(--sheet-exit-opacity, 1);
+    transform: translate3d(
+        var(--sheet-exit-translate-x, 0),
+        var(--sheet-exit-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--sheet-exit-scale, 1),
+        var(--sheet-exit-scale, 1),
+        var(--sheet-exit-scale, 1)
+      )
+      rotate(var(--sheet-exit-rotate, 0));
+  }
+}
+
+@utility slide-out-to-top {
+  --sheet-exit-translate-y: -0.25rem;
+}
+
+@utility slide-in-from-top {
+  --sheet-enter-translate-y: -0.25rem;
+}
+
+@utility slide-in-from-bottom {
+  --sheet-enter-translate-y: 100%;
+}
+
+@utility slide-out-to-bottom {
+  --sheet-exit-translate-y: 100%;
+}
+
+@utility slide-out-to-left {
+  --sheet-exit-translate-x: 100%;
+}
+
+@utility slide-in-from-left {
+  --sheet-enter-translate-x: 100%;
+}
+
+@utility slide-out-to-right {
+  --sheet-exit-translate-x: 100%;
+}
+
+@utility slide-in-from-right {
+  --sheet-enter-translate-x: 100%;
+}
+
+@utility animate-enter-sheet {
+  animation-name: sheet-open;
+  animation-duration: 0.15s;
+  --sheet-enter-opacity: initial;
+  --sheet-enter-scale: initial;
+  --sheet-enter-rotate: initial;
+  --sheet-enter-translate-x: initial;
+  --sheet-enter-translate-y: initial;
+}
+
+@utility animate-exit-sheet {
+  animation-name: sheet-exit;
+  animation-duration: 0.15s;
+  --sheet-enter-opacity: initial;
+  --sheet-enter-scale: initial;
+  --sheet-enter-rotate: initial;
+  --sheet-enter-translate-x: initial;
+  --sheet-enter-translate-y: initial;
 }
 
 /*
@@ -210,7 +299,7 @@
 :root {
   --header-height: 64px;
   --footer-height: 52px;
-  --sheet-height: 98%;
+  --sheet-height: calc(100% - 20px);
 }
 
 :root {
@@ -243,11 +332,16 @@ header {
   height: var(--header-height);
 }
 
+li {
+  list-style-type: none;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   -webkit-background-clip: text;
+  -webkit-text-fill-color: #f4f4f4 !important;
   animation-name: onAutoFillStart;
   transition: background-color 5000s ease-in-out 0s;
 }

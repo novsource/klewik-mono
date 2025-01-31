@@ -18,9 +18,9 @@ const WelcomePage = () => {
   return (
     <main className="h-full w-full">
       <div className="flex h-full w-full flex-row">
-        <div className="flex-shrink-1 mx-auto h-full grow max-tablet:container max-tablet:max-w-[650px]">
-          <div className="h-full w-full px-5 desktop:px-8 desktopLg:px-10">
-            <div className="flex h-full w-full flex-col justify-between">
+        <div className="mx-auto h-full grow basis-1/4 landtop:min-w-[450px] landtop:basis-1/5 container max-w-[650px]">
+          <div className="h-full w-full px-5 desktop:px-8 desktop-lg:px-10">
+            <div className="relative flex h-full w-full flex-col justify-between">
               <div className="mt-5">
                 <Button
                   className="w-full bg-yellow/40 text-yellow hover:bg-yellow/30 tablet:text-nowrap"
@@ -31,7 +31,7 @@ const WelcomePage = () => {
               </div>
 
               <Slider
-                className="flex min-h-[400px] flex-col gap-y-6 transition-[height]"
+                className="absolute w-full top-[43%] -translate-y-[43%] flex flex-col gap-y-6 transition-[height] text-ti"
                 defaultKey="welcome"
                 keys={[
                   'welcome',
@@ -58,7 +58,7 @@ const WelcomePage = () => {
                 <Icons.Github size="lg" />
                 <Typography
                   tag="span"
-                  className="hidden desktopLg:inline-block desktopLg:text-md desktopLg:font-medium"
+                  className="hidden desktop-lg:inline-block desktop-lg:text-md desktop-lg:font-medium"
                 >
                   Github
                 </Typography>

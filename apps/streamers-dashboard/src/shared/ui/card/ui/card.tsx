@@ -24,7 +24,7 @@ const Card = React.forwardRef<
 
   return (
     <CardProvider variant={variant ?? 'default'} size={size ?? 'default'}>
-      <section ref={ref} className={style} {...htmlProps} />
+      <div ref={ref} className={style} {...htmlProps} />
     </CardProvider>
   )
 })

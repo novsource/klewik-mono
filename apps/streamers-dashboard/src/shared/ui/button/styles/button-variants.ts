@@ -36,7 +36,7 @@ export const buttonVariants = cva<ButtonVariants>(
     'inline-flex items-center justify-center gap-2',
     'ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
     'disabled:pointer-events-none disabled:opacity-50',
-    '[&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:pointer-events-none',
+    '[&_svg]:shrink-0 [&_svg]:pointer-events-none',
     'whitespace-nowrap rounded-medium transition-colors select-none cursor-pointer',
   ],
   {
@@ -50,7 +50,7 @@ export const buttonVariants = cva<ButtonVariants>(
           'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
         secondary:
           'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        ghost: 'bg-transparent',
         link: 'text-primary underline-offset-4 hover:underline',
       },
       isIconOnly: {
@@ -58,9 +58,10 @@ export const buttonVariants = cva<ButtonVariants>(
         false: '',
       },
       size: {
-        default: 'h-10 px-3 py-1 text-md leading-6 rounded-md font-medium',
-        sm: 'h-9 rounded-md px-2 text-sm leading-6 font-regular',
-        lg: 'h-11 rounded-md px-3 font-medium',
+        default:
+          'h-10 px-3 py-1 text-md leading-6 rounded-md font-medium [&_svg]:size-4.5',
+        sm: 'h-9 rounded-md px-2 text-sm leading-6 font-regular [&_svg]:size-4',
+        lg: 'h-11 rounded-md px-3 font-medium [&_svg]:size-5',
       },
       startContent: {
         true: 'flex items-center justify-center gap-x-1',
@@ -76,6 +77,10 @@ export const buttonVariants = cva<ButtonVariants>(
       size: 'default',
       isIconOnly: false,
     },
+    compoundVariants: [
+      { isIconOnly: true, size: 'default', className: 'px-3' },
+      { isIconOnly: true, size: 'sm', className: 'px-2.5 h-8' },
+    ],
   }
 )
 

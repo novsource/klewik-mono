@@ -3,7 +3,7 @@ import { ZodError } from 'zod'
 
 import { BroadcastLeaderChannel } from '~shared/lib/broadcast-channel'
 
-import { DonationSchema } from './channel.contracts'
+import { DonationDTOSchema } from './channel.contracts'
 import {
   DonationsEventSourceMessage,
   DonationsEventsCallbacks,
@@ -19,12 +19,12 @@ export class DonationsBroadcastChannel extends BroadcastLeaderChannel<DonationsE
   constructor(channelName: string, options?: BroadcastChannelOptions) {
     super(channelName, options)
 
-    this.onMessage(this._dispatchEvent)
+    this.onMessage((message) => this._dispatchEvent(message))
   }
 
   on<K extends keyof DonationsEventsMap>(
     event: K,
-    callback: (data: DonationsEventsCallbacks[K]) => void
+    callback: DonationsEventsCallbacks[K]
   ) {
     const listeners = this._subscriptions.get(event)
 
@@ -34,6 +34,23 @@ export class DonationsBroadcastChannel extends BroadcastLeaderChannel<DonationsE
     }
 
     this._subscriptions.set(event, [...listeners, callback])
+  }
+
+  emit(message: DonationsEventSourceMessage) {
+    this._dispatchEvent(message)
+  }
+
+  removeListener<K extends keyof DonationsEventsMap>(
+    event: K,
+    callback: (data: DonationsEventsMap[K]) => void
+  ) {
+    const listeners = this._subscriptions.get(event)
+
+    if (!listeners) return
+
+    const filtredListeners = listeners.filter((cb) => cb !== callback)
+
+    this._subscriptions.set(event, filtredListeners)
   }
 
   private _dispatchEvent(message: DonationsEventSourceMessage) {
@@ -58,7 +75,7 @@ export class DonationsBroadcastChannel extends BroadcastLeaderChannel<DonationsE
         )
       }
 
-      const donation = DonationSchema.parse(data)
+      const donation = DonationDTOSchema.parse(data)
 
       this._subscriptions.get('donations/add')?.forEach((cb) => cb(donation))
     } catch (err) {

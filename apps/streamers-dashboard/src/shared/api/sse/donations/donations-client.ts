@@ -8,7 +8,7 @@ import {
 import { BROADCAST_CHANNEL_NAMES as BROADCAST_CHANNELS_NAMES } from '~shared/constants/broadcast-channels'
 
 import { DonationsEventSourceMessageSchema } from './channel.contracts'
-import { DonationsEventsCallbacks } from './channel.types'
+import { DonationsEventsCallbacks, DonationsEventsMap } from './channel.types'
 import { DonationsBroadcastChannel } from './donations-channel'
 
 class DonationsSSEClient extends SSEClient {
@@ -43,6 +43,13 @@ class DonationsSSEClient extends SSEClient {
     this._broadcastChannel.onLeadership(listener)
   }
 
+  removeListener<K extends keyof DonationsEventsMap>(
+    event: K,
+    callback: (data: DonationsEventsMap[K]) => void
+  ) {
+    return this._broadcastChannel.removeListener(event, callback)
+  }
+
   async connectToServer(auctionId: string): Promise<void> {
     const listeners: SSEClientListeners = {
       onopen: async (response) => {
@@ -69,6 +76,10 @@ class DonationsSSEClient extends SSEClient {
 
         this._emitter.notify('onmessage', parsedMessage.data)
         this._broadcastChannel.postMessage(parsedMessage.data)
+
+        if (this._broadcastChannel.isLeader) {
+          this._broadcastChannel.emit(parsedMessage.data)
+        }
       },
       onclose: () => this._emitter.notify('onclose'),
     }
@@ -80,7 +91,7 @@ class DonationsSSEClient extends SSEClient {
     })
   }
 
-  onAddingSlots(callback: DonationsEventsCallbacks['donations/add']) {
+  onNewDonation(callback: DonationsEventsCallbacks['donations/add']) {
     return this._broadcastChannel.on('donations/add', callback)
   }
 }

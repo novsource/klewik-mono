@@ -1,4 +1,5 @@
-import { memo } from 'react'
+import { memo, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Card, CardContent, CardHeader } from '~shared/ui/card'
 import { Icons } from '~shared/ui/icons'
@@ -29,17 +30,17 @@ const IntegrationCard = (props: IntegrationCardProps) => {
   }[integrationSystem]
 
   return (
-    <Card className="bg-[#1F1F22] max-w-[350px]">
+    <Card className="bg-dark max-w-[350px]">
       <CardHeader className="flex w-full justify-between items-center">
         {integrationIcon}
         {integrationButton}
       </CardHeader>
       <CardContent>
-        <Typography tag="h3" className="font-golosF">
+        <Typography tag="h3" className="font-golos-f">
           {integrationSystem}
         </Typography>
         {description && (
-          <Typography tag="p" className="text-gray-accent font-golosF">
+          <Typography tag="p" className="text-gray-accent font-golos-f">
             {description}
           </Typography>
         )}
@@ -53,12 +54,24 @@ type RedirectDisplayProps = {
 }
 
 const RedirectDisplay = memo((props: RedirectDisplayProps) => {
+  const [isCheckOrigin, setIsCheckOrigin] = useState(false)
+
   const redirectDisplay = {
     donalerts: <DonationAlertsRedirectDisplay />,
     donatepay: <></>,
   }[props.provider]
 
-  return redirectDisplay
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (`${window.location.origin}/` !== document.referrer.toString()) {
+      navigate('/')
+    }
+
+    setIsCheckOrigin(true)
+  }, [])
+
+  return isCheckOrigin && redirectDisplay
 })
 
 export { IntegrationCard, RedirectDisplay }

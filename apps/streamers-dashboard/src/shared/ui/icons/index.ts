@@ -2,6 +2,7 @@ import { default as Bill } from './Bill';
 import { default as Bin } from './Bin';
 import { default as CardSend } from './CardSend';
 import { default as Close } from './Close';
+import { default as Coin } from './Coin';
 import { default as Copy } from './Copy';
 import { default as Crown } from './Crown';
 import { default as DonateMessage } from './DonateMessage';
@@ -21,6 +22,7 @@ import { default as Login } from './Login';
 import { default as Logo } from './Logo';
 import { default as MagicStick } from './MagicStick';
 import { default as Magnifier } from './Magnifier';
+import { default as Minus } from './Minus';
 import { default as Money } from './Money';
 import { default as MoneyBag } from './MoneyBag';
 import { default as Palette } from './Palette';
@@ -43,6 +45,7 @@ import { default as Warning } from './Warning';
   Bin,
   CardSend,
   Close,
+  Coin,
   Copy,
   Crown,
   DonateMessage,
@@ -62,6 +65,7 @@ import { default as Warning } from './Warning';
   Logo,
   MagicStick,
   Magnifier,
+  Minus,
   Money,
   MoneyBag,
   Palette,

@@ -1,5 +1,5 @@
-import { ComponentProps, HTMLAttributes, ReactNode } from 'react'
-import { Link, LinkProps } from 'react-router-dom'
+import { ComponentProps, ReactNode } from 'react'
+import { LinkProps, NavLink } from 'react-router-dom'
 
 import { cn } from '~shared/utils'
 
@@ -20,7 +20,7 @@ export const NavbarItem = ({
       className="cursor-pointer text-gray transition-all hover:text-gray-accent"
       {...htmlProps}
     >
-      <Link {...linkProps}> {children}</Link>
+      <NavLink {...linkProps}> {children}</NavLink>
     </li>
   )
 }

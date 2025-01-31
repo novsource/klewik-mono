@@ -9,7 +9,7 @@ import { BROADCAST_CHANNEL_NAMES as BROADCAST_CHANNELS_NAMES } from '~shared/con
 
 import { AuctionSlotsBroadcastChannel } from './auction-slots-channel'
 import { AuctionSlotsEventsMessageSchema } from './channel.contracts'
-import { AuctionSlotsEventsCallbacks } from './channel.types'
+import { AuctionSlotsEventsMap } from './channel.types'
 
 class AuctionSlotsSSEClient extends SSEClient {
   private static _instance: AuctionSlotsSSEClient
@@ -43,6 +43,19 @@ class AuctionSlotsSSEClient extends SSEClient {
     this._broadcastChannel.onLeadership(listener)
   }
 
+  onAddingSlots(
+    callback: (data: AuctionSlotsEventsMap['auction-slots/add']) => void
+  ) {
+    return this._broadcastChannel.on('auction-slots/add', callback)
+  }
+
+  removeListener<K extends keyof AuctionSlotsEventsMap>(
+    event: K,
+    callback: (data: AuctionSlotsEventsMap[K]) => void
+  ) {
+    return this._broadcastChannel.removeListener(event, callback)
+  }
+
   async connectToServer(auctionId: string): Promise<void> {
     const listeners: SSEClientListeners = {
       onopen: async (response) => {
@@ -68,6 +81,10 @@ class AuctionSlotsSSEClient extends SSEClient {
 
         this._emitter.notify('onmessage', parsedMessage.data)
         this._broadcastChannel.postMessage(parsedMessage.data)
+
+        if (this._broadcastChannel.isLeader) {
+          this._broadcastChannel.emit(parsedMessage.data)
+        }
       },
       onclose: () => this._emitter.notify('onclose'),
     }
@@ -77,10 +94,6 @@ class AuctionSlotsSSEClient extends SSEClient {
     }).catch((err) => {
       throw err
     })
-  }
-
-  onAddingSlots(callback: AuctionSlotsEventsCallbacks['auction-slots/add']) {
-    return this._broadcastChannel.on('auction-slots/add', callback)
   }
 }
 

@@ -42,6 +42,7 @@ export const NavbarMenu = (props: NavbarMenuProps) => {
 
       acc.push(
         <NavbarItem
+          key={curr.path}
           htmlProps={{
             className: cn(
               'cursor-pointer text-gray transition-all hover:text-gray-accent',

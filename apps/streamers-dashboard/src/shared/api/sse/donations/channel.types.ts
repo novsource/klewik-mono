@@ -1,11 +1,11 @@
 import { z } from 'zod'
 
 import {
-  DonationSchema,
+  DonationDTOSchema,
   DonationsEventSourceMessageSchema,
 } from './channel.contracts'
 
-type DonationDTO = z.infer<typeof DonationSchema>
+type DonationDTO = z.infer<typeof DonationDTOSchema>
 
 type DonationsEventSourceMessage = z.infer<
   typeof DonationsEventSourceMessageSchema

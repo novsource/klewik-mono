@@ -3,30 +3,33 @@ import { ZodError } from 'zod'
 
 import { BroadcastLeaderChannel } from '~shared/lib/broadcast-channel'
 
+import { getRandomHEXColor } from '~shared/utils/colors'
+
 import { AuctionSlotDTOSchema } from './channel.contracts'
 import {
   AuctionEventSourceMessage,
-  AuctionSlotsEventsCallbacks,
   AuctionSlotsEventsMap,
 } from './channel.types'
 
 export class AuctionSlotsBroadcastChannel extends BroadcastLeaderChannel<AuctionEventSourceMessage> {
   private readonly _subscriptions = new Map<
     keyof AuctionSlotsEventsMap,
-    Array<AuctionSlotsEventsCallbacks[keyof AuctionSlotsEventsMap]>
+    Array<(data: any) => void>
   >([])
 
   constructor(channelName: string, options?: BroadcastChannelOptions) {
     super(channelName, options)
 
-    this.onMessage(this._dispatchEvent)
+    this.onMessage((message) => this._dispatchEvent(message))
   }
 
   on<K extends keyof AuctionSlotsEventsMap>(
     event: K,
-    callback: (data: AuctionSlotsEventsCallbacks[K]) => void
+    callback: (data: AuctionSlotsEventsMap[K]) => void
   ) {
-    const listeners = this._subscriptions.get(event)
+    const listeners = this._subscriptions.get(event) as
+      | Array<(data: AuctionSlotsEventsMap[K]) => void>
+      | undefined
 
     if (!listeners) {
       this._subscriptions.set(event, [callback])
@@ -34,6 +37,23 @@ export class AuctionSlotsBroadcastChannel extends BroadcastLeaderChannel<Auction
     }
 
     this._subscriptions.set(event, [...listeners, callback])
+  }
+
+  emit(message: AuctionEventSourceMessage) {
+    this._dispatchEvent(message)
+  }
+
+  removeListener<K extends keyof AuctionSlotsEventsMap>(
+    event: K,
+    callback: (data: AuctionSlotsEventsMap[K]) => void
+  ) {
+    const listeners = this._subscriptions.get(event)
+
+    if (!listeners) return
+
+    const filtredListeners = listeners.filter((cb) => cb !== callback)
+
+    this._subscriptions.set(event, filtredListeners)
   }
 
   private _dispatchEvent(message: AuctionEventSourceMessage) {
@@ -61,7 +81,8 @@ export class AuctionSlotsBroadcastChannel extends BroadcastLeaderChannel<Auction
       const parseResult = data.reduce<
         AuctionSlotsEventsMap['auction-slots/add']
       >((acc, item) => {
-        const result = AuctionSlotDTOSchema.parse(item)
+        const itemForParse = { ...item, color: getRandomHEXColor() }
+        const result = AuctionSlotDTOSchema.parse(itemForParse)
 
         acc.push(result)
 
