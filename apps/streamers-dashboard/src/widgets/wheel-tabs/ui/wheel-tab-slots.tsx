@@ -13,7 +13,7 @@ const SlotCard = (props: AuctionSlot) => {
         style={{ backgroundColor: `${color}` }}
         className="h-3 w-3 rounded-pill"
       />
-      <AnimatedTruncText classNames="text-[15px] font-medium">
+      <AnimatedTruncText className="text-[15px] font-medium">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab deleniti
         repellat, commodi aliquid,
       </AnimatedTruncText>

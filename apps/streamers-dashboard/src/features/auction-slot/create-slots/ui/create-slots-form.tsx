@@ -19,8 +19,6 @@ import { deleteAllSpacesFromString } from '~shared/utils/string-format'
 
 import { CreateSlotForm, FormArrayData, createSlotSchema } from '../model'
 
-appSelectors
-
 type CreateSlotsFormProps = HTMLAttributes<HTMLFormElement> & {
   multiplySlots?: boolean
 }
@@ -130,11 +128,11 @@ export const CreateSlotsForm = ({
         />
         {multiplySlots && fields.length > 1 && (
           <Button
-            className="transition-colors bg-red/10 text-red/60 hover:text-red hover:bg-red/20"
-            isIconOnly
-            startContent={<Icons.Bin size="default" />}
+            className="transition-colors bg-red/10 text-red/60 hover:text-red hover:bg-red/20 text-sm"
             onClick={() => remove(index)}
-          />
+          >
+            Удалить
+          </Button>
         )}
       </motion.li>
     ))
