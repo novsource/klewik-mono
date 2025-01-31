@@ -60,7 +60,7 @@ export const buttonVariants = cva<ButtonVariants>(
       size: {
         default:
           'h-10 px-3 py-1 text-md leading-6 rounded-md font-medium [&_svg]:size-4.5',
-        sm: 'h-9 rounded-md px-2 text-sm leading-6 font-regular [&_svg]:size-3',
+        sm: 'h-9 rounded-md px-2 text-sm leading-6 font-regular [&_svg]:size-4',
         lg: 'h-11 rounded-md px-3 font-medium [&_svg]:size-5',
       },
       startContent: {
