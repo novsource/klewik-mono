@@ -10,6 +10,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "icons": "npx @svgr/cli -- ./src/shared/assets/icons",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
     "pretty:write": "pnpm exec prettier . --write",
     "pretty:check": "pnpm exec prettier . --check"
   },
@@ -49,6 +51,7 @@
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.2",
+    "@vitest/coverage-v8": "3.0.4",
     "clsx": "^2.1.1",
     "eslint": "^9.12.0",
     "eslint-config-prettier": "^9.1.0",
@@ -66,6 +69,7 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.8.1",
     "vite": "^5.4.8",
-    "vite-tsconfig-paths": "^5.0.1"
+    "vite-tsconfig-paths": "^5.0.1",
+    "vitest": "^3.0.4"
   }
 }
