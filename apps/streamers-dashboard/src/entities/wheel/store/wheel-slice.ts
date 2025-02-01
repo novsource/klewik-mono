@@ -43,6 +43,23 @@ const wheelSlice = createSlice({
       }),
     },
   },
+  selectors: {
+    getSlots: (state) => {
+      return state.slots
+    },
+    getSettings: (state) => {
+      return state.settings
+    },
+    getEventBus: (state) => {
+      return state.emitter
+    },
+  },
 })
 
-export { wheelSlice }
+const {
+  actions: wheelActions,
+  selectors: wheelSelectors,
+  reducer: wheelReducer,
+} = wheelSlice
+
+export { wheelActions, wheelSelectors, wheelReducer }
