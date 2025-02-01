@@ -1,3 +1,3 @@
-import { wheelSlice } from './wheel-slice'
+import { wheelActions, wheelReducer, wheelSelectors } from './wheel-slice'
 
-export const { actions: wheelActions, reducer: wheelReducer } = wheelSlice
+export { wheelActions, wheelReducer, wheelSelectors }
