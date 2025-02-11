@@ -12,7 +12,7 @@ type TypographyVariants = {
 export const typographyVariants = cva<TypographyVariants>("", {
   variants: {
     tag: {
-      h1: "text-title-lg font-bold leading-7 desktop:text-title-xl desktop-xl:text-[24px] desktop-xl:leading-7",
+      h1: "text-title-lg font-bold leading-5 landtop:leading-7 landtop:text-title-xl desktop-xl:text-[24px]",
       h2: "text-title-lg font-bold",
       h3: "text-title font-semibold",
       h4: "text-md font-semibold",

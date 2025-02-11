@@ -3,14 +3,14 @@ import { ComponentProps } from "react";
 
 const Header = ({ children, ...otherProps }: ComponentProps<"header">) => {
   return (
-    <header className="h-16 w-full" {...otherProps}>
-      <div className="flex h-full w-full items-center justify-between gap-x-4 px-4">
+    <header className="h-14 w-full" {...otherProps}>
+      <div className="container flex h-full w-full items-center justify-between gap-x-4 mx-auto">
         <Image
           alt="Logo"
           src={"/logo.svg"}
           className="text-green-accent"
-          width={28}
-          height={28}
+          width={24}
+          height={24}
           priority
         />
         {children}

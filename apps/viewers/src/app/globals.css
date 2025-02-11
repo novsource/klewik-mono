@@ -212,6 +212,12 @@
     --sheet-enter-translate-y: initial;
 }
 
+@utility container {
+    margin-inline: auto;
+    padding-inline: 2rem;
+    @apply max-mobile:px-4;
+}
+
 @layer base {
     *,
     ::after,
@@ -286,7 +292,7 @@
 }
 
 :root {
-    --header-height: 64px;
+    --header-height: 56px;
     --footer-height: 52px;
     --sheet-height: calc(100% - 20px);
 }
@@ -323,6 +329,11 @@ header {
 
 li {
     list-style-type: none;
+}
+
+.main_auction {
+    @apply w-full overflow-y-clip px-4 tablet:px-0;
+    height: calc(100% - (var(--header-height)) - 40px);
 }
 
 input:-webkit-autofill,
