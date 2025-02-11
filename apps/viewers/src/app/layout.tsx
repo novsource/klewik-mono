@@ -3,7 +3,7 @@ import { Golos_Text } from "next/font/google";
 import "./globals.css";
 
 const golosText = Golos_Text({
-  variable: "--font-golot-text",
+  variable: "--font-golos-text",
   subsets: ["cyrillic", "latin"],
 });
 
