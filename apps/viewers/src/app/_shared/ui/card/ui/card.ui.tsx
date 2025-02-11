@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { CardContextProps, useCardContext } from "../context/card-context";
+import { CardContextProps } from "../context/card-context";
 import {
   CardStyleProps,
   cardBaseVariants,
