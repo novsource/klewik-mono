@@ -28,7 +28,15 @@ type LabelVariants = SizesCvaVariants & ErrorCvaVariants;
 type DescriptionVariants = SizesCvaVariants & ErrorCvaVariants;
 
 type ContentBaseVariants = CvaClassValue;
-type ContentWrapperVariants = SizesCvaVariants & ErrorCvaVariants;
+type ContentWrapperVariants = SizesCvaVariants &
+  ErrorCvaVariants & {
+    startContent: {
+      true: CvaClassValue;
+    };
+    endContent: {
+      true: CvaClassValue;
+    };
+  };
 
 type InputVariants = SizesCvaVariants &
   ErrorCvaVariants & {
@@ -88,6 +96,7 @@ export const contentVariants = cva<ContentBaseVariants>([
 
 export const contentWrapperVariants = cva<ContentWrapperVariants>(
   [
+    "relative",
     "border border-1 border-dark-accent focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-offset-1",
     "flex w-full items-center bg-dark transition-all ring-gray-light rounded-medium",
     "data-[focus=true]:ring-1 data-[hover=true]:ring-1 data-[focus=true]:bg-dark/70 data-[hover=true]:bg-dark/70",
@@ -100,6 +109,12 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
         lg: "h-11 py-2 gap-x-3",
       },
       isError: { true: "ring-red/80 ring-1", false: "ring-gray-light" },
+      startContent: {
+        true: "pl-3",
+      },
+      endContent: {
+        true: "pr-3",
+      },
     },
     defaultVariants: {
       size: "default",

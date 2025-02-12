@@ -112,10 +112,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         contentWrapperVariants({
           size,
           isError: !!errorMessage,
+          startContent: !!startContent,
+          endContent: !!endContent,
         }),
         classNames?.wrapper,
       ),
-    [classNames?.wrapper, size, errorMessage],
+    [classNames?.wrapper, size, errorMessage, startContent, endContent],
   );
 
   return (
