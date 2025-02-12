@@ -3,18 +3,11 @@ import { notFound } from "next/navigation";
 import Header from "../../_shared/ui/header/ui/header.ui";
 import { Typography } from "../../_shared/ui/typography";
 
-import { SearchSlotsInput } from "./components/search-slots-input";
-import { SlotCard } from "./components/slot-card";
 import { IntegrationPlatformChip } from "./components/integration-chip";
+import { Post } from "./components/slots-list/slots-list.ui";
+import { ControlledSlotsMemo } from "./_widgets/controlled-slots/controlled-slots.ui";
 
-interface Post {
-  userId: number;
-  id: number;
-  title: string;
-  body: string;
-}
-
-export const revalidate = 60;
+export const revalidate = 120;
 export const dynamicParams = true;
 
 async function getPosts() {
@@ -70,13 +63,13 @@ export default async function AuctionPage() {
         <div className="container w-full h-full mx-auto py-4">
           <div className="flex flex-col w-full h-full gap-y-8">
             <div className="flex flex-col gap-y-4">
-              <div className="flex flex-col gap-y-1">
+              <div className="flex flex-col gap-y-0.5">
                 <Typography tag="h1">Аукцион №1000</Typography>
                 <Typography
                   className="text-xs tablet:text-sm text-gray"
                   tag="span"
                 >
-                  {new Date().toUTCString()}
+                  Аукцион создан: {new Intl.DateTimeFormat().format(Date.now())}
                 </Typography>
               </div>
               <div className="flex flex-col gap-y-4">
@@ -114,23 +107,7 @@ export default async function AuctionPage() {
                 </div>
               </div>
             </div>
-
-            <div className="flex flex-col gap-y-2 overflow-y-scroll p-1">
-              <SearchSlotsInput />
-              <ul className="flex flex-col gap-y-2 my-2 overflow-y-scroll">
-                {posts.map((post) => (
-                  <li key={post.id}>
-                    <SlotCard
-                      id={post.id}
-                      color="#F0F0F0"
-                      name={post.title}
-                      points={1000}
-                      percent={10}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <ControlledSlotsMemo slots={posts} />
           </div>
         </div>
       </main>
