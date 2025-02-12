@@ -27,7 +27,7 @@ export const ControlledSlotsMemo = memo(function ControlledSlots(
   }, [containerRef]);
 
   return (
-    <div ref={containerRef} className="flex h-full flex-col gap-y-4">
+    <div ref={containerRef} className="flex h-full flex-col gap-y-4 px-0.5">
       <div className="flex w-full justify-between max-tablet:flex-col max-tablet:gap-y-1">
         <SearchSlotsInput onChange={(e) => setSearchValue(e.target.value)} />
       </div>

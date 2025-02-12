@@ -28,13 +28,16 @@ const AuctionCardChip = (props: AuctionCardChipProps) => {
   return (
     <div
       className={cn(
-        "px-2 py-1 bg-gray/30 flex flex-row gap-x-1.5 items-center rounded-md",
+        "px-2 py-1 bg-gray/30 flex gap-x-1.5 items-center justify-center rounded-md",
         classNames?.base,
       )}
     >
       {startContent}
       <Typography
-        className={cn("text-md font-medium text-gray-accent", classNames?.text)}
+        className={cn(
+          "text-sm max-tablet:leading-4.5 tablet:text-md font-medium text-gray-accent",
+          classNames?.text,
+        )}
         tag="span"
       >
         {children}
@@ -56,14 +59,14 @@ export default function SlotCard(props: AuctionSlotCardProps) {
         <CardTitle className="w-full">
           <Typography
             tag="span"
-            className="text-title font-semibold font-golos-f"
+            className="inline-block font-semibold font-golos-f leading-5 tablet:text-title"
           >
             {name}
           </Typography>
         </CardTitle>
       </CardHeader>
       <CardContent className="w-full flex flex-col gap-y-2 pt-0">
-        <div className="w-full flex flex-row gap-x-2 items-center">
+        <div className="w-full flex gap-x-1.5 mobile:gap-x-2 items-center">
           <AuctionCardChip
             startContent={
               <Image
