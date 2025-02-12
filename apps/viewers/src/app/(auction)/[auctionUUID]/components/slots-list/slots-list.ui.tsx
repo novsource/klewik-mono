@@ -2,11 +2,11 @@
 
 import { memo, useEffect, useRef, useState } from "react";
 import { SlotCard } from "../slot-card";
-import { cn } from "~/app/_shared/utils";
 
 type SlotsListProps = {
   slots: Post[];
   filterTitle?: string | null;
+  listHeight: number;
 };
 
 export interface Post {
@@ -16,13 +16,18 @@ export interface Post {
   body: string;
 }
 
+const filterSlotsByTitle = (slots: Post[], filterTitle: Post["title"]) => {
+  return slots.filter((slot) =>
+    slot.title.toLocaleLowerCase().includes(filterTitle.toLocaleLowerCase()),
+  );
+};
+
 const SlotsList = memo(function List(props: SlotsListProps) {
   const [slots, setSlots] = useState<Post[]>(() => {
-    if (!props.filterTitle || props.filterTitle === null) return props.slots;
+    if (props.filterTitle === undefined || props.filterTitle === null)
+      return props.slots;
 
-    return props.slots.filter((slot) =>
-      slot.title.includes(props?.filterTitle),
-    );
+    return filterSlotsByTitle(props.slots, props.filterTitle);
   });
 
   const renderCounts = useRef(-1);
@@ -34,27 +39,21 @@ const SlotsList = memo(function List(props: SlotsListProps) {
       return setSlots(props.slots);
     }
 
-    const newSlots = props.slots.filter((slot) =>
-      slot.title.includes(props?.filterTitle),
-    );
+    const newSlots = filterSlotsByTitle(props.slots, props.filterTitle);
 
     setSlots([...newSlots]);
   }, [props?.filterTitle, props.slots]);
 
   return (
-    <ul className="flex flex-col gap-y-2 my-2 overflow-y-scroll">
-      {slots.map((slot, index) => (
-        <li
-          className={cn("animate-fade-in")}
-          key={slot.id}
-          style={{ animationDelay: `${index * 100}ms` }}
-        >
+    <ul className="flex flex-col gap-y-2">
+      {slots.map((slot) => (
+        <li key={slot.id}>
           <SlotCard
             id={slot.id}
-            color="#F0F0F0"
             name={slot.title}
             points={1000}
             percent={10}
+            color="#FFF"
           />
         </li>
       ))}

@@ -6,6 +6,7 @@ import { Typography } from "../../_shared/ui/typography";
 import { IntegrationPlatformChip } from "./components/integration-chip";
 import { Post } from "./components/slots-list/slots-list.ui";
 import { ControlledSlotsMemo } from "./_widgets/controlled-slots/controlled-slots.ui";
+import { RefreshPageTimer } from "./components/refresh--page-timer";
 
 export const revalidate = 120;
 export const dynamicParams = true;
@@ -59,9 +60,9 @@ export default async function AuctionPage() {
   return (
     <div className="flex flex-col h-full w-full font-[family-name:var(--font-golos-text)]">
       <Header className="shrink-0 tablet:px-0" />
-      <main className="h-fit">
-        <div className="container w-full h-full mx-auto py-4">
-          <div className="flex flex-col w-full h-full gap-y-8">
+      <main className="main_auction pb-4">
+        <div className="container w-full h-full mx-auto">
+          <div className="flex flex-col w-full h-full gap-y-8 overflow-y-scroll">
             <div className="flex flex-col gap-y-4">
               <div className="flex flex-col gap-y-0.5">
                 <Typography tag="h1">Аукцион №1000</Typography>
@@ -69,7 +70,7 @@ export default async function AuctionPage() {
                   className="text-xs tablet:text-sm text-gray"
                   tag="span"
                 >
-                  Аукцион создан: {new Intl.DateTimeFormat().format(Date.now())}
+                  Cоздан: {new Intl.DateTimeFormat().format(Date.now())}
                 </Typography>
               </div>
               <div className="flex flex-col gap-y-4">
@@ -105,6 +106,11 @@ export default async function AuctionPage() {
                     />
                   </div>
                 </div>
+                <Typography className="text-sm text-gray-accent" tag="span">
+                  Сайт обновится через:{" "}
+                  {<RefreshPageTimer startTime={Date.now()} value={120} />}{" "}
+                  секунд
+                </Typography>
               </div>
             </div>
             <ControlledSlotsMemo slots={posts} />

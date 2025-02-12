@@ -334,8 +334,8 @@ li {
 }
 
 .main_auction {
-    @apply w-full overflow-y-clip px-4 tablet:px-0;
-    height: calc(100% - (var(--header-height)) - 40px);
+    @apply w-full overflow-y-clip tablet:px-0;
+    height: calc(100% - (var(--header-height)));
 }
 
 input:-webkit-autofill,
