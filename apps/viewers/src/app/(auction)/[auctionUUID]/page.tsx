@@ -7,6 +7,7 @@ import { IntegrationPlatformChip } from "./components/integration-chip";
 import { Post } from "./components/slots-list/slots-list.ui";
 import { ControlledSlotsMemo } from "./_widgets/controlled-slots/controlled-slots.ui";
 import { RefreshPageTimer } from "./components/refresh--page-timer";
+import { IntegrationsInfo } from "./_widgets/integrations-info";
 
 export const revalidate = 120;
 export const dynamicParams = true;
@@ -62,9 +63,9 @@ export default async function AuctionPage() {
       <Header className="shrink-0 tablet:px-0" />
       <main className="main_auction pb-4">
         <div className="container w-full h-full mx-auto">
-          <div className="flex flex-col w-full h-full gap-y-8 overflow-y-scroll">
-            <div className="flex flex-col gap-y-4">
-              <div className="flex flex-col gap-y-0.5">
+          <div className="flex flex-col w-full h-full gap-y-6 tablet:gap-y-8 overflow-y-scroll">
+            <div className="flex flex-col gap-y-2.5 tablet:gap-y-4">
+              <div className="flex flex-col gap-y-1">
                 <Typography tag="h1">Аукцион №1000</Typography>
                 <Typography
                   className="text-xs tablet:text-sm text-gray"
@@ -73,39 +74,8 @@ export default async function AuctionPage() {
                   Cоздан: {new Intl.DateTimeFormat().format(Date.now())}
                 </Typography>
               </div>
-              <div className="flex flex-col gap-y-4">
-                <div className="flex flex-col gap-y-1.5 items-start">
-                  <Typography
-                    className="text-sm font-semibold text-gray-accent"
-                    tag="p"
-                  >
-                    Транслируется на стриминговые платформы
-                  </Typography>
-                  <div className="flex divide-x-1 divide-gray/50 -ml-1">
-                    <IntegrationPlatformChip
-                      href="https://www.twitch.tv/nyamuras"
-                      integrationName="Twitch"
-                    />
-                    <IntegrationPlatformChip
-                      href="https://www.youtube.com"
-                      integrationName="Youtube"
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-y-1.5 items-start">
-                  <Typography
-                    className="text-sm font-semibold text-gray-accent"
-                    tag="p"
-                  >
-                    Системы пожертвований, работающих с этим аукционом
-                  </Typography>
-                  <div className="flex divide-x-1 divide-gray/50 -ml-1">
-                    <IntegrationPlatformChip
-                      href="https://www.donationalerts.com/r/bratishkinoff"
-                      integrationName="Donation Alerts"
-                    />
-                  </div>
-                </div>
+              <div className="flex flex-col gap-y-2">
+                <IntegrationsInfo />
                 <Typography className="text-sm text-gray-accent" tag="span">
                   Сайт обновится через:{" "}
                   {<RefreshPageTimer startTime={Date.now()} value={120} />}{" "}
