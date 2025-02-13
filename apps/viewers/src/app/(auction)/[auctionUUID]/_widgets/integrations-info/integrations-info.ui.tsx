@@ -1,9 +1,41 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
 import { Typography } from "~/app/_shared/ui/typography";
 import { IntegrationPlatformChip } from "../../components/integration-chip";
+import { useIntersection } from "~/app/_shared/hooks/use-intersection";
+import { useAppContext } from "~/app/_shared/context/app-context";
 
-export default function IntegrationsInfo() {
+const IntegrationsInfo = () => {
+  const {
+    state: { integrations },
+    dispatchers,
+  } = useAppContext();
+  const integrationsCardWrapperRef = useRef<HTMLDivElement | null>(null);
+
+  const intersection = useIntersection(integrationsCardWrapperRef, {
+    threshold: 0,
+  });
+
+  useEffect(() => {
+    if (integrations.ratio !== intersection.intersectRatio)
+      dispatchers?.integrations({
+        inView: true,
+        ratio: intersection.intersectRatio,
+      });
+  }, [
+    intersection.inFullView,
+    intersection.intersectRatio,
+    dispatchers,
+    integrations.ratio,
+  ]);
+
   return (
-    <div className="flex flex-col gap-y-2.5 tablet:gap-y-4">
+    <div
+      ref={integrationsCardWrapperRef}
+      className="flex flex-col gap-y-2.5 tablet:gap-y-4"
+    >
       <div className="flex flex-col gap-y-1.5 items-start">
         <Typography className="text-sm font-semibold text-gray-accent" tag="p">
           Транслируется на стриминговые платформы
@@ -32,4 +64,6 @@ export default function IntegrationsInfo() {
       </div>
     </div>
   );
-}
+};
+
+export { IntegrationsInfo };

@@ -1,3 +1,3 @@
-import IntegrationsInfo from "./integrations-info.ui";
+import { IntegrationsInfo } from "./integrations-info.ui";
 
 export { IntegrationsInfo };
