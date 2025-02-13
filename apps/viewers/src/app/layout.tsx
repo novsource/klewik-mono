@@ -10,7 +10,7 @@ const golosText = Golos_Text({
 export const metadata: Metadata = {
   title: "Просмотр аукционов | Klewik",
   description:
-    "На этом сайте вы можете просмотреть актуальные, участвующие в аукционе стримерf",
+    "На этом сайте вы можете просмотреть актуальные, участвующие в аукционе стример",
 };
 
 export default function RootLayout({
@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru">
+    <html lang="ru" suppressHydrationWarning>
       <body className={`${golosText.variable} antialiased`}>{children}</body>
     </html>
   );

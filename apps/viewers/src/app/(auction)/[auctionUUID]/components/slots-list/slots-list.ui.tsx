@@ -1,12 +1,11 @@
 "use client";
 
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { SlotCard } from "../slot-card";
 
 type SlotsListProps = {
   slots: Post[];
   filterTitle?: string | null;
-  listHeight: number;
 };
 
 export interface Post {
@@ -30,10 +29,6 @@ const SlotsList = memo(function List(props: SlotsListProps) {
     return filterSlotsByTitle(props.slots, props.filterTitle);
   });
 
-  const renderCounts = useRef(-1);
-
-  renderCounts.current++;
-
   useEffect(() => {
     if (!props.filterTitle || props.filterTitle === null) {
       return setSlots(props.slots);
@@ -45,7 +40,7 @@ const SlotsList = memo(function List(props: SlotsListProps) {
   }, [props?.filterTitle, props.slots]);
 
   return (
-    <ul className="flex flex-col gap-y-2">
+    <ul className="flex flex-col gap-y-2 pb-4">
       {slots.map((slot) => (
         <li key={slot.id}>
           <SlotCard
