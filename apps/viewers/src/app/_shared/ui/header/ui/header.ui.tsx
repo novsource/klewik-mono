@@ -9,8 +9,8 @@ const Header = ({ children, ...otherProps }: ComponentProps<"header">) => {
           alt="Logo"
           src={"/logo.svg"}
           className="text-green-accent"
-          width={24}
-          height={24}
+          width={21}
+          height={21}
           priority
         />
         {children}
