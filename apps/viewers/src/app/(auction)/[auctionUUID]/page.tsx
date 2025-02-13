@@ -1,13 +1,12 @@
 import { notFound } from "next/navigation";
 
-import Header from "../../_shared/ui/header/ui/header.ui";
 import { Typography } from "../../_shared/ui/typography";
 
-import { IntegrationPlatformChip } from "./components/integration-chip";
 import { Post } from "./components/slots-list/slots-list.ui";
 import { ControlledSlotsMemo } from "./_widgets/controlled-slots/controlled-slots.ui";
 import { RefreshPageTimer } from "./components/refresh--page-timer";
 import { IntegrationsInfo } from "./_widgets/integrations-info";
+import { AuctionHeader } from "./components/test-header";
 
 export const revalidate = 120;
 export const dynamicParams = true;
@@ -60,12 +59,12 @@ export default async function AuctionPage() {
 
   return (
     <div className="flex flex-col h-full w-full font-[family-name:var(--font-golos-text)]">
-      <Header className="shrink-0 tablet:px-0" />
-      <main className="main_auction pb-4">
+      <AuctionHeader />
+      <main className="main_auction">
         <div className="container w-full h-full mx-auto">
-          <div className="flex flex-col w-full h-full gap-y-6 tablet:gap-y-8 overflow-y-scroll">
+          <div className="flex flex-col w-full h-full gap-y-6 tablet:gap-y-8 overflow-y-scroll pt-4">
             <div className="flex flex-col gap-y-2.5 tablet:gap-y-4">
-              <div className="flex flex-col gap-y-1">
+              <div className="flex flex-col gap-y-0.5">
                 <Typography tag="h1">Аукцион №1000</Typography>
                 <Typography
                   className="text-xs tablet:text-sm text-gray"
