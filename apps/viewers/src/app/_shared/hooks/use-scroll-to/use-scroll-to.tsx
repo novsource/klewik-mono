@@ -1,34 +1,21 @@
-import { RefObject, useCallback, useLayoutEffect, useRef } from "react";
+import { RefObject, useCallback } from "react";
 
-type UseScrollToOptions = ScrollIntoViewOptions & {
-  scrollOnInit: boolean;
-};
+type UseScrollToOptions = ScrollToOptions;
 
 const useScrollTo = (
   target: RefObject<HTMLElement | null>,
-  options: UseScrollToOptions,
+  options?: UseScrollToOptions,
 ) => {
-  const { scrollOnInit, ...scrollIntoViewOptions } = options;
-
-  const isScrolledOnInit = useRef(false);
-
   const scrollTo = useCallback(
-    (options?: ScrollIntoViewOptions) => {
+    (scrollToOptions?: ScrollToOptions) => {
       const element = target.current;
 
       if (!element) return;
 
-      element.scrollIntoView(options);
+      element.scrollTo(scrollToOptions ?? options);
     },
-    [target],
+    [target, options],
   );
-
-  useLayoutEffect(() => {
-    if (!isScrolledOnInit.current && scrollOnInit) {
-      isScrolledOnInit.current = true;
-      scrollTo(scrollIntoViewOptions);
-    }
-  }, [scrollTo, scrollOnInit, scrollIntoViewOptions]);
 
   return scrollTo;
 };
