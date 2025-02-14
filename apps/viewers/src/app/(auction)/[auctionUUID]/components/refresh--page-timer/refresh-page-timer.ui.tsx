@@ -13,7 +13,6 @@ const calcTimeDifference = (initTime: number, value: number) => {
   const diff = Math.floor(Math.abs(initTime - Date.now()) / 1000);
 
   if (diff >= value) {
-    location.reload();
     return 0;
   } else return value - diff;
 };
