@@ -7,6 +7,7 @@ import { ControlledSlotsMemo } from "./_widgets/controlled-slots/controlled-slot
 import { RefreshPageTimer } from "./components/refresh--page-timer";
 import { IntegrationsInfo } from "./_widgets/integrations-info";
 import { AuctionHeader } from "./components/test-header";
+import { AuctionTitle } from "./components/auction-title";
 
 export const revalidate = 120;
 export const dynamicParams = true;
@@ -64,15 +65,7 @@ export default async function AuctionPage() {
         <div className="container w-full h-full mx-auto">
           <div className="flex flex-col w-full h-full gap-y-6 tablet:gap-y-8 overflow-y-scroll pt-4">
             <div className="flex flex-col gap-y-2.5 tablet:gap-y-4">
-              <div className="flex flex-col gap-y-0.5">
-                <Typography tag="h1">Аукцион №1000</Typography>
-                <Typography
-                  className="text-xs tablet:text-sm text-gray"
-                  tag="span"
-                >
-                  Cоздан: {new Intl.DateTimeFormat().format(Date.now())}
-                </Typography>
-              </div>
+              <AuctionTitle title={"Тестовый аукцион"} />
               <div className="flex flex-col gap-y-2">
                 <IntegrationsInfo />
                 <Typography className="text-sm text-gray-accent" tag="span">
