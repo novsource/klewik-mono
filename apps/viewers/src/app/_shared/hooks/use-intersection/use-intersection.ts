@@ -1,50 +1,68 @@
 "use client";
 
-import { RefObject, useCallback, useEffect, useState } from "react";
+import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 
 type IntersectionReturn = {
-  intersectRatio: number;
-  inFullView: boolean;
+  entry: IntersectionObserverEntry;
+  inView: boolean;
 };
 
 const useIntersection = (
   targetRef: RefObject<HTMLElement | null>,
-  options?: IntersectionObserverInit,
+  options: Partial<IntersectionObserverInit>,
 ) => {
-  const [intersection, setIntersection] = useState<IntersectionReturn>({
-    inFullView: false,
-    intersectRatio: 0,
-  });
+  const [inView, setInView] = useState<IntersectionReturn["inView"]>(false);
+  const [entry, setEntry] = useState<IntersectionReturn["entry"] | null>(null);
+
+  const observer = useRef<IntersectionObserver | null>(null);
 
   const intersectionCallback = useCallback<IntersectionObserverCallback>(
     (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting && entry.target === targetRef.current) {
-          setIntersection(() => ({
-            inFullView: entry.intersectionRatio === 1,
-            intersectRatio: entry.intersectionRatio,
-          }));
-        }
+        const thresholds = Array.isArray(options.threshold)
+          ? options.threshold
+          : [options.threshold ?? 0];
+
+        const inView =
+          entry.isIntersecting &&
+          thresholds.some((threshold) => threshold <= entry.intersectionRatio);
+
+        setInView(inView);
+        setEntry(entry);
       });
     },
-    [targetRef],
+    [options.threshold],
   );
 
   useEffect(() => {
     const target = targetRef.current;
 
-    if (target === null)
-      return setIntersection({ intersectRatio: 0, inFullView: false });
-    const observer = new IntersectionObserver(intersectionCallback, options);
+    if (target === null) {
+      setInView(false);
+      setEntry(null);
 
-    observer.observe(target);
+      return;
+    }
+
+    if (observer.current === null) {
+      const targetObserver = new IntersectionObserver(
+        intersectionCallback,
+        options,
+      );
+
+      observer.current = targetObserver;
+      observer.current.observe(target);
+    }
 
     return () => {
-      observer.disconnect();
+      if (observer.current) {
+        observer.current.disconnect();
+        observer.current = null;
+      }
     };
   }, [targetRef, intersectionCallback, options]);
 
-  return intersection;
+  return { inView, entry };
 };
 
 export { useIntersection };

@@ -9,7 +9,7 @@ import {
 } from "react";
 
 type ViewState = {
-  ratio: number;
+  entry: IntersectionObserverEntry | null;
   inView: boolean;
 };
 
@@ -24,16 +24,16 @@ type AppContextState = {
 const appContextInitValue: AppContextState = {
   state: {
     integrations: {
-      inView: true,
-      ratio: 1,
+      inView: false,
+      entry: null,
     },
     searchBar: {
-      inView: true,
-      ratio: 1,
+      inView: false,
+      entry: null,
     },
     title: {
-      inView: true,
-      ratio: 1,
+      inView: false,
+      entry: null,
     },
   },
 };
