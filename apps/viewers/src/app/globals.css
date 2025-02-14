@@ -294,7 +294,7 @@
 }
 
 :root {
-    --header-height: 52px;
+    --header-height: 56px;
     --footer-height: 52px;
     --sheet-height: calc(100% - 20px);
 }
