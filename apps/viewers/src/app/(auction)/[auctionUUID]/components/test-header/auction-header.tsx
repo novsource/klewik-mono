@@ -7,11 +7,13 @@ import { Typography } from "~/app/_shared/ui/typography";
 import { cn } from "~/app/_shared/utils";
 import { Button } from "~/app/_shared/ui/button";
 import { MagnifierIcon } from "~/app/_shared/ui/icons";
+import { useSearchContext } from "~/app/_shared/context/search-bar-context/search-bar-context";
 
 const AuctionHeader = () => {
   const {
     state: { searchBar, title },
   } = useAppContext();
+  const { inputRef } = useSearchContext();
 
   return (
     <Header
@@ -50,6 +52,9 @@ const AuctionHeader = () => {
             startContent={<MagnifierIcon className="text-gray" />}
             size="sm"
             style={{ opacity: 1 - (searchBar.entry?.intersectionRatio ?? 1) }}
+            onClick={() => {
+              inputRef.current?.focus();
+            }}
           >
             Перейти к строке поиска{" "}
           </Button>
