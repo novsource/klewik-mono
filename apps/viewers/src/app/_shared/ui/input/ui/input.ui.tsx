@@ -1,6 +1,7 @@
 import {
   ComponentProps,
   forwardRef,
+  HTMLAttributes,
   ReactNode,
   useMemo,
   useState,
@@ -34,6 +35,8 @@ export type InputProps = Omit<ComponentProps<"input">, "size" | "className"> &
     slotClassNames?: {
       [Slot in InputSlots]?: CvaClassValue;
     };
+    inputStyles?: HTMLAttributes<HTMLInputElement>["style"];
+    baseStyles?: HTMLAttributes<HTMLDivElement>["style"];
   };
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
@@ -48,6 +51,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     label,
     onFocus,
     onBlur,
+    baseStyles,
+    inputStyles,
     ...otherProps
   } = props;
 
@@ -98,6 +103,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         if (onBlur) onBlur(e);
         setIsFocus(false);
       }}
+      style={inputStyles}
       {...otherProps}
     />
   );
@@ -121,7 +127,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   );
 
   return (
-    <div className={contentBaseStyle} data-slot="base">
+    <div className={contentBaseStyle} data-slot="base" style={baseStyles}>
       {label && (
         <label
           htmlFor={label.id.toLocaleLowerCase()}

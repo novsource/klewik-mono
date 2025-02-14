@@ -104,9 +104,9 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
   {
     variants: {
       size: {
-        default: "h-10 gap-x-2",
-        sm: "h-9 py-2 gap-x-1",
-        lg: "h-11 py-2 gap-x-3",
+        default: "h-10 gap-x-2 [&>svg]:size-4",
+        sm: "h-9 py-2 gap-x-1.5 [&>svg]:size-3.5",
+        lg: "h-11 py-2 gap-x-3 [&>svg]:size-4.5",
       },
       isError: { true: "ring-red/80 ring-1", false: "ring-gray-light" },
       startContent: {
@@ -125,7 +125,7 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
 
 export const inputVariants = cva<InputVariants>(
   [
-    "flex w-full h-full items-center",
+    "inline-block flex w-full h-full items-center",
     "dark bg-transparent",
     "font-medium text-white",
     "file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
@@ -139,7 +139,7 @@ export const inputVariants = cva<InputVariants>(
       size: {
         default: "py-3 px-4 text-md",
         lg: "text-md px-4",
-        sm: "text-sm px-3",
+        sm: "text-sm px-3 leading-3",
       },
       isError: {
         true: "focus-visible:ring-red",
