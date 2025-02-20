@@ -18,6 +18,7 @@ type SSEClientListeners = {
 }
 
 type SSEClientConnectOptions = FetchEventSourceInit & {
+  lastMessageId?: number
   retry?: {
     counts: number
     delay: number

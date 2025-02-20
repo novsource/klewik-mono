@@ -56,7 +56,10 @@ class AuctionSlotsSSEClient extends SSEClient {
     return this._broadcastChannel.removeListener(event, callback)
   }
 
-  async connectToServer(auctionId: string): Promise<void> {
+  async connectToServer(
+    auctionId: string,
+    lastMessageId?: number
+  ): Promise<void> {
     const listeners: SSEClientListeners = {
       onopen: async (response) => {
         if (response.status === 200) this._emitter.notify('onopen', response)
@@ -90,6 +93,7 @@ class AuctionSlotsSSEClient extends SSEClient {
     }
 
     return this.connect(`${auctionId}/slots-events`, listeners, {
+      lastMessageId,
       retry: { counts: 5, delay: 1000 },
     }).catch((err) => {
       throw err
