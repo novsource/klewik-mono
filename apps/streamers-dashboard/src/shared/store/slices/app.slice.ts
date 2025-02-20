@@ -19,13 +19,10 @@ const initialState: AppStore = {
   auctionId: null,
   auctionUrl: null,
   integrations: {
-    donationAlerts:
-      localStorage.getItem('donationAlerts') === null
-        ? {
-            isConnected: false,
-            isValid: false,
-          }
-        : JSON.parse(localStorage.getItem('donationAlerts')!),
+    donationAlerts: {
+      isConnected: false,
+      isValid: false,
+    },
   },
 }
 
@@ -33,7 +30,7 @@ const connectDonationAlertsSSE = createAsyncThunk(
   'integrations/donAlertsSSE',
   async (auctionId: string) => {
     const response = await baseHttpClient.get<DonationAlertsIntegrationStatus>(
-      `/api/integrations/${auctionId}/donalerts/connectSSE`,
+      `/api/sse/${auctionId}/donalerts/connect`,
       { withCredentials: true }
     )
 

@@ -84,7 +84,7 @@ class DonationsSSEClient extends SSEClient {
       onclose: () => this._emitter.notify('onclose'),
     }
 
-    return this.connect(`auction/${auctionId}/donation-events`, listeners, {
+    return this.connect(`${auctionId}/donations-events`, listeners, {
       retry: { counts: 5, delay: 1000 },
     }).catch((err) => {
       throw err
