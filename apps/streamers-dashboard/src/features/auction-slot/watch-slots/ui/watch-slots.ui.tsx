@@ -1,4 +1,11 @@
-import { ReactNode, memo, useEffect, useMemo, useState } from 'react'
+import {
+  HTMLAttributes,
+  ReactNode,
+  memo,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import { ClassValue } from 'clsx'
 import { motion } from 'framer-motion'
@@ -17,7 +24,8 @@ import { Typography } from '~shared/ui/typograghy'
 import { cn } from '~shared/utils'
 
 type AuctionCardChipProps = {
-  children: ReactNode
+  children?: ReactNode
+  style?: HTMLAttributes<HTMLDivElement>['style']
   startContent?: JSX.Element
   endContent?: JSX.Element
   classNames?: {
@@ -56,7 +64,7 @@ type AuctionSlotCardProps = AuctionSlot & {
 }
 
 const AuctionSlotCard = memo((props: AuctionSlotCardProps) => {
-  const { id, name, points, percent } = props
+  const { id, name, points, percent, color } = props
   return (
     <Card className="flex flex-col justify-between border-1 border-dark gap-y-3 py-2">
       <CardHeader className="flex items-start justify-between h-6">
@@ -90,7 +98,15 @@ const AuctionSlotCard = memo((props: AuctionSlotCardProps) => {
         </div>
       </CardHeader>
       <CardContent className="w-full flex flex-col gap-y-2 pt-0">
-        <div className="w-full flex flex-row gap-x-2 items-center -ml-0.5">
+        <div className="w-full flex flex-row gap-x-2 items-center">
+          <div
+            className="w-8 h-7 rounded-md"
+            style={{
+              backgroundColor: Array.isArray(color)
+                ? `rgb(${color.join(',')})`
+                : color,
+            }}
+          />
           <AuctionCardChip
             startContent={<Icons.Id className="text-gray-light" size="sm" />}
           >
