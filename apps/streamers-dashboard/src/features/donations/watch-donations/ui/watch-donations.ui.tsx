@@ -85,20 +85,24 @@ const DonationCard = (props: DonationCardProps) => {
       <CardHeader className="flex">
         <DonationCardBadge status="error" />
       </CardHeader>
-      <CardContent className="w-full flex flex-col">
-        <div className="flex flex-col gap-y-0.5">
-          <div className="flex flex-row gap-x-1 items-center">
-            <Typography tag="span" className="text-title font-bold">
+      <CardContent className="w-full flex flex-col py-0.5">
+        <div className="flex flex-col gap-y-1.5">
+          <div className="flex flex-row gap-x-1.5 items-center">
+            <Typography tag="span" className="text-title font-semibold">
               {username}
             </Typography>
             <Typography tag="span" className="text-md font-medium">
               отправил
             </Typography>
-            <Typography tag="span" className="font-bold text-green text-title">
+            <Typography
+              tag="span"
+              className="font-semibold text-green text-[17px] font-golos-f"
+            >
               {new Intl.NumberFormat('ru-RU', {
                 currency,
                 currencyDisplay: 'name',
               }).format(amount)}
+              {` ${currency.toUpperCase()}`}
             </Typography>
           </div>
           <Typography tag="p">

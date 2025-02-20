@@ -39,11 +39,11 @@ const WheelTabs = () => {
   }, [])
   return (
     <Tabs defaultValue="control" className="flex h-full flex-col">
-      <TabsList className="dark flex w-full justify-between rounded-large bg-dark">
+      <TabsList className="dark flex w-full justify-between rounded-large bg-dark ">
         {tabsTriggers}
       </TabsList>
       <ControlWheelTab />
-      <SlotsWheelTab slots={[]} />
+      <SlotsWheelTab />
       <AppearanceWheelTab />
     </Tabs>
   )

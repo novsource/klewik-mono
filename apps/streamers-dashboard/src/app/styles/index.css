@@ -14,17 +14,16 @@
 
   --color-black: #000;
 
-  --color-dark: #232323;
-  --color-dark-accent: #393939;
-  --color-dark-foreground: #181818;
-
+  --color-dark: #1f2124;
+  --color-dark-accent: #34373c;
+  --color-dark-foreground: #151618;
   --color-yellow: #cfc56f;
 
   --color-red: #fe7968;
 
-  --color-gray: #5b5b5b;
-  --color-gray-light: #888;
-  --color-gray-accent: #b5b5b5;
+  --color-gray: #5a5d61;
+  --color-gray-light: #818386;
+  --color-gray-accent: #babcbe;
 
   --color-purple: #505285;
 
@@ -67,12 +66,12 @@
   --color-chart-5: hsl(var(--chart-5));
 
   --text-*: initial;
-  --text-xs: 9px;
-  --text-sm: 12px;
-  --text-md: 14px;
-  --text-title: 17px;
-  --text-title-lg: 21px;
-  --text-title-xl: 24px;
+  --text-xs: 0.56rem;
+  --text-sm: 0.75rem;
+  --text-md: 0.875rem;
+  --text-title: 1.05rem;
+  --text-title-lg: 1.3rem;
+  --text-title-xl: 1.5rem;
 
   --radius-*: initial;
   --radius-none: 0px;
