@@ -1,18 +1,15 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
-import { WheelEventsBus } from '../events'
 import { validateSlotsPayload } from '../lib/react-redux'
 import { WheelSlot } from '../model'
 
 export type WheelState = {
   slots: WheelSlot[]
-  emitter: WheelEventsBus
   settings: {}
 }
 
 const initialState: WheelState = {
   slots: [],
-  emitter: new WheelEventsBus(),
   settings: {},
 }
 
@@ -49,9 +46,6 @@ const wheelSlice = createSlice({
     },
     getSettings: (state) => {
       return state.settings
-    },
-    getEventBus: (state) => {
-      return state.emitter
     },
   },
 })

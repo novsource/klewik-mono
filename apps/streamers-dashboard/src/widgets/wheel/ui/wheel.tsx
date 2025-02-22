@@ -1,24 +1,10 @@
-import {
-  RefObject,
-  forwardRef,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { RefObject, forwardRef, useEffect, useRef } from 'react'
 
-import { AuctionSlot } from '~entities/auction-slot/model/@x/auction-slot'
-import { auctionActions } from '~entities/auction/store'
+import { WheelEventsBus } from '~entities/wheel/events'
 import { WheelSlot } from '~entities/wheel/model'
 import { wheelActions } from '~entities/wheel/store'
 
-import { AuctionSlotsSSEClient } from '~shared/api/sse/auction-slots'
-
 import { useStoreDispatch, useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import { Typography } from '~shared/ui/typograghy'
-
-import { getRandomHEXColor } from '~shared/utils/colors'
 
 import { useWheelControl, useWheelInit } from '../utils'
 import {
@@ -45,7 +31,6 @@ const WheelCanvas = forwardRef<HTMLCanvasElement, WheelProps>(
 
 const WheelContainer = () => {
   const storedSlots = useStoreSelector((state) => state.auctionSlots.slots)
-  const wheelEventBus = useStoreSelector((state) => state.wheel.emitter)
   const dispatch = useStoreDispatch()
 
   const lotTextRef = useRef<HTMLSpanElement>(null)
@@ -62,13 +47,6 @@ const WheelContainer = () => {
     items: getItemsWithAngles(storedSlots),
   })
 
-  // const slotsWithActualAngles = useMemo(() => {
-  //   return updateSlotsAnglesByRotateValue(
-  //     getItemsWithAngles(slots),
-  //     wheelRotateCSSValue
-  //   )
-  // }, [wheelRotateCSSValue])
-
   useEffect(() => {
     const slotsWithActualAngles = updateSlotsAnglesByRotateValue(
       getItemsWithAngles(storedSlots),
@@ -83,10 +61,13 @@ const WheelContainer = () => {
       spinWheel(winner, 5)
     }
 
-    wheelEventBus.subscribe('spin', callback)
+    const spinEventUnsubcribe = WheelEventsBus.getInstance().subscribe(
+      'spin',
+      callback
+    )
 
     return () => {
-      wheelEventBus.unsubcribe('spin', callback)
+      spinEventUnsubcribe()
     }
   }, [spinWheel])
 
