@@ -87,18 +87,23 @@ class SSEClient {
       },
     }
 
+    const connectUrl = new URL(
+      `${import.meta.env.VITE_SERVER_URL}/api/sse/${url}`
+    )
+    const params = new URLSearchParams()
+
+    params.set('lastMessageId', String(options?.lastMessageId ?? 0))
+
+    connectUrl.search = params.toString()
+
     if (Reflect.has(options, 'retry')) {
-      return this.retryConnect(url, listeners, options)
+      return this._retryConnect(connectUrl.toString(), listeners, options)
     }
 
-    return this._internalRequest(
-      `${import.meta.env.VITE_SERVER_URL}/api/sse/${url}`,
-      listeners,
-      options
-    )
+    return this._internalRequest(connectUrl.toString(), listeners, options)
   }
 
-  async retryConnect(
+  private async _retryConnect(
     url: string,
     listeners: SSEClientListeners,
     options: Omit<SSEClientConnectOptions, 'retry'> & {
@@ -115,14 +120,10 @@ class SSEClient {
       const wait = () =>
         new Promise((res) => setTimeout(res, options.retry.delay))
 
-      return wait().then(() => this.retryConnect(url, listeners, options))
+      return wait().then(() => this._retryConnect(url, listeners, options))
     }
 
-    return this._internalRequest(
-      `${import.meta.env.VITE_SERVER_URL}/api/sse/${url}`,
-      listeners,
-      options
-    ).catch(reconnect)
+    return this._internalRequest(url, listeners, options).catch(reconnect)
   }
 
   private _internalRequest(

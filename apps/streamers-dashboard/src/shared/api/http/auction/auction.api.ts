@@ -14,7 +14,7 @@ export const createAuction = async (
 ) => {
   return baseHttpClient.post<CreateAuctionResponse>(AUCTION_ENDPOINTS.CREATE, {
     ...fetchOptions,
-    data: { password: key },
+    data: { key },
     headers: {
       'Content-Type': 'multipart/form-data',
     },

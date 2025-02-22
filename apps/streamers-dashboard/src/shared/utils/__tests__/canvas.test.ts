@@ -15,7 +15,7 @@ import {
   resizeCanvas,
 } from '~shared/utils/canvas'
 
-describe('canvas utils', () => {
+describe('#canvas utils', () => {
   beforeEach(() => {
     vi.spyOn(HTMLDivElement.prototype, 'offsetWidth', 'get').mockReturnValue(
       window.innerWidth

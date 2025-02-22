@@ -15,7 +15,7 @@ type SlotsStatisticsCardProps = {
 const SlotsStatisticsCard = memo(
   ({ title, children }: SlotsStatisticsCardProps) => {
     return (
-      <Card size="sm">
+      <Card size="sm" className="rounded-medium">
         <CardHeader>
           <CardTitle className="text-sm text-gray-light">{title}</CardTitle>
         </CardHeader>

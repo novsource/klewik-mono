@@ -10,6 +10,45 @@ export const toastBaseNotification = (
   return toast('Уведомление', { description, ...toastOptions })
 }
 
+export const toastPromiseNotification = (
+  promise: Promise<unknown>,
+  operationName: string,
+  toastOptions?: ExternalToast
+) => {
+  const successDescription = (
+    <div className="w-full flex items-center gap-x-1">
+      <div className="flex items-center justify-center h-5 w-5 bg-green/30 rounded-md">
+        <Icons.Success className="text-green" size="xs" />
+      </div>
+      <Typography className="text-sm text-green font-medium" tag="p">
+        Успешно
+      </Typography>
+    </div>
+  )
+
+  return toast.promise(promise, {
+    loading: operationName,
+    success: () => {
+      return successDescription
+    },
+    error: () => {
+      return (
+        <div className="w-full flex items-center gap-x-1">
+          <div className="flex items-center justify-center h-5 w-5 bg-green/30 rounded-md">
+            <Icons.Close className="text-green" size="xs" />
+          </div>
+          <Typography className="text-sm text-green font-medium" tag="p">
+            Ошибка
+          </Typography>
+        </div>
+      )
+    },
+    description: successDescription,
+    classNames: { content: 'gap-y-3' },
+    ...toastOptions,
+  })
+}
+
 export const toastSuccessNotification = (
   operationName: string,
   toastOptions?: ExternalToast

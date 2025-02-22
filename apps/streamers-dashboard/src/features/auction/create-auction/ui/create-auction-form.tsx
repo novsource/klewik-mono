@@ -41,22 +41,20 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
     formState: { errors },
   } = useForm<CreateAuctionFormData>({
     defaultValues: {
-      password: '',
+      key: '',
     },
     mode: 'onChange',
     resolver: zodResolver(CreateAuctionSchema),
   })
 
-  const onSubmit: SubmitHandler<CreateAuctionFormData> = async ({
-    password,
-  }) => {
+  const onSubmit: SubmitHandler<CreateAuctionFormData> = async ({ key }) => {
     try {
       setIsPending(true)
-      const response = await createAuction(password, {
+      const response = await createAuction(key, {
         signal: abortController.signal,
       })
 
-      await loginInAuction(response.data.auctionId, password, {
+      await loginInAuction(response.data.auctionId, key, {
         signal: abortController.signal,
       })
 
@@ -105,7 +103,7 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
     >
       <Controller
         control={control}
-        name="password"
+        name="key"
         render={({ field }) => (
           <Input
             type={isPasswordHidden ? 'password' : 'text'}
@@ -113,7 +111,7 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
               id: 'password',
               value: 'Мастер-ключ',
             }}
-            errorMessage={errors.password?.message}
+            errorMessage={errors.key?.message}
             placeholder="••••••••"
             endContent={
               isPasswordHidden ? (
