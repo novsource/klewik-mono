@@ -6,12 +6,22 @@ import { WheelSlot } from '~entities/wheel/model/@x'
 import { Auction } from '../model'
 
 type AuctionSliceState = {
-  auctionInfo: Partial<Auction>
+  auctionInfo: Auction
   wheelSlotsData: WheelSlot[]
 }
 
 const initialState: AuctionSliceState = {
-  auctionInfo: {},
+  auctionInfo: {
+    id: '',
+    ownerId: '',
+    url: '',
+    slots: [],
+    dropoutSlots: [],
+    createAt: 0,
+    endedAt: 0,
+    isEnded: false,
+    wheelMode: 'classic',
+  },
   wheelSlotsData: [],
 }
 
@@ -22,7 +32,7 @@ const auctionSlice = createSlice({
     setAuction(state, action: PayloadAction<Partial<Auction>>) {
       const auctionData = action.payload
 
-      state.auctionInfo = { ...auctionData }
+      state.auctionInfo = { ...state.auctionInfo, ...auctionData }
     },
     setWheelSlots(state, action: PayloadAction<WheelSlot[]>) {
       const slots = action.payload
