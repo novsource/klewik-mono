@@ -13,7 +13,7 @@ const SpinWheelButton = () => {
   const wheelSlots = useStoreSelector((state) => state.wheel.slots)
 
   const handleOnClick = useCallback(() => {
-    if (wheelSlots.length === 0) return
+    if (wheelSlots.length < 2) return
 
     const winner = generateWinner(wheelSlots)
     WheelEventsBus.getInstance().notify('spin', winner)
@@ -24,7 +24,7 @@ const SpinWheelButton = () => {
       variant="action"
       startContent={<Icons.Refresh size="lg" />}
       onClick={handleOnClick}
-      disabled={wheelSlots.length === 0}
+      disabled={wheelSlots.length < 2}
     >
       Прокрутить
     </Button>
