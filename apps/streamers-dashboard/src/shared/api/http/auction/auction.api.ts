@@ -20,3 +20,14 @@ export const createAuction = async (
     },
   })
 }
+
+export const getAuctionInfo = async <T>(
+  auctionId: string,
+  fetchOptions?: HttpClientRequestOptions
+) => {
+  return baseHttpClient.get<T>(`/api/auction/${auctionId}/info`, {
+    ...fetchOptions,
+    headers: { 'Content-Type': 'multipart/form-data' },
+    withCredentials: true,
+  })
+}

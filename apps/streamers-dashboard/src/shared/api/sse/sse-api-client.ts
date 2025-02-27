@@ -7,6 +7,11 @@ import {
   SSEApiEventSourceMessage,
 } from './sse-api-channel'
 
+type SSEApiClientConnectOptions = {
+  slotsLastMessageId?: number
+  donationsLastMessageId?: number
+}
+
 class SSEApiClient {
   private static _instance: SSEApiClient
 
@@ -21,9 +26,10 @@ class SSEApiClient {
       { auctionId: this._auctionId }
     )
 
-    const checkStatus = async (message: SSEApiEventSourceMessage) => {
-      const isHasLeader = await this._broadcastChannel.hasLeader
-      if (message.event === 'manager/status' && isHasLeader) {
+    const checkStatus = (message: SSEApiEventSourceMessage) => {
+      const isLeader = this._broadcastChannel.isLeader
+      // const isHasLeader = await this._broadcastChannel.hasLeader
+      if (message.event === 'manager/status' && !isLeader) {
         const data = JSON.parse(message.data)
 
         if (data.auctionId !== this._auctionId) {
@@ -96,27 +102,15 @@ class SSEApiClient {
     this._broadcastChannel.postMessage(message)
   }
 
-  async connectToAllEvents() {
-    const connectToSlots = this.auctionSlots().connectToServer(this._auctionId)
-    const connectToDonations = this.donations().connectToServer(this._auctionId)
-
-    this.auctionSlots().on('onopen', () => {
-      this._connectedClients.push('auctionSlots')
+  async connectToAllEvents(options?: SSEApiClientConnectOptions) {
+    const onOpenEventHandler = (clientName: string) => () => {
+      this._connectedClients.push(clientName)
 
       if (this._connectedClients.length === 2) {
         this._onConnectListeners.forEach((cb) => cb())
         this._isConnectedToSSE = true
       }
-    })
-
-    this.donations().on('onopen', () => {
-      this._connectedClients.push('donations')
-
-      if (this._connectedClients.length === 2) {
-        this._onConnectListeners.forEach((cb) => cb())
-        this._isConnectedToSSE = true
-      }
-    })
+    }
 
     this.onLeadership(() => {
       this.onConnect(() => {
@@ -132,7 +126,25 @@ class SSEApiClient {
       })
     })
 
-    return Promise.all([connectToSlots, connectToDonations])
+    this.auctionSlots().on('onopen', onOpenEventHandler('auctionSlots'))
+    this.donations().on('onopen', onOpenEventHandler('donations'))
+
+    this.auctionSlots().connectToServer(
+      this._auctionId,
+      options?.slotsLastMessageId
+    )
+
+    this.donations().connectToServer(
+      this._auctionId,
+      options?.donationsLastMessageId
+    )
+
+    return new Promise<void>((resolve, reject) => {
+      this.onConnect(resolve)
+
+      this.auctionSlots().on('onerror', reject)
+      this.donations().on('onerror', reject)
+    })
   }
 }
 
