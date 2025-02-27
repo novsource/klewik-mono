@@ -30,7 +30,7 @@ const SliderCreateContent = () => {
           использоваться вами для входа в аукцион в роли администратора. После
           ввода нажмите кнопку "Создать"
         </Typography>
-        <CreateAuctionForm onSuccess={() => setSelectedKey('successCreate')} />
+        <CreateAuctionForm onSuccess={() => setSelectedKey('parameters')} />
       </div>
     </SliderContent>
   )

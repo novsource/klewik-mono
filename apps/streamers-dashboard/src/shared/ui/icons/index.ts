@@ -38,7 +38,9 @@ import { default as Success } from './Success';
 import { default as Telegram } from './Telegram';
 import { default as Timer } from './Timer';
 import { default as Tuning } from './Tuning';
+import { default as TwitchLogo } from './TwitchLogo';
 import { default as Warning } from './Warning';
+import { default as YoutubeLogo } from './YoutubeLogo';
 
     export const Icons = {
       Bill,
@@ -81,6 +83,8 @@ import { default as Warning } from './Warning';
   Telegram,
   Timer,
   Tuning,
-  Warning
+  TwitchLogo,
+  Warning,
+  YoutubeLogo
     };
   
