@@ -59,7 +59,7 @@ const DonationAlertsRedirectDisplay = memo(() => {
   useEffect(() => {
     if (isConnected) {
       setTimeout(() => {
-        navigate(-1)
+        navigate(`/dashboard/${auctionId}/settings`)
       }, 5000)
     }
   }, [isConnected])
