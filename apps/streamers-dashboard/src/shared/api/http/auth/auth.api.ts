@@ -1,6 +1,8 @@
+import { HttpClientRequestOptions } from '~shared/lib/axios'
+
 import { AUTH_ENDPOINTS } from '~shared/constants/api/http'
 
-import { HttpClientRequestOptions, baseHttpClient } from '../instance'
+import { baseHttpClient } from '../base-api'
 
 export const loginInAuction = async (
   auctionId: string,
