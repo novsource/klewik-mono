@@ -1,10 +1,9 @@
-import { HTMLAttributes, useCallback, useMemo } from 'react'
+import { HTMLAttributes, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { AxiosError } from 'axios'
 import { motion } from 'framer-motion'
-
-import { AuctionSlotService } from '~entities/auction-slot/api'
 
 import { appSelectors } from '~shared/store/slices'
 
@@ -14,10 +13,11 @@ import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
 import { NumberInput } from '~shared/ui/number-input'
+import { toastErrorNotification } from '~shared/ui/toaster/lib'
 
-import { deleteAllSpacesFromString } from '~shared/utils/string-format'
-
-import { CreateSlotForm, FormArrayData, createSlotSchema } from '../model'
+import { useCreateSlotsMutation } from '../api'
+import { transformCreateSlotsFormData } from '../lib'
+import { CreateSlotForm, FormArrayData } from '../model'
 
 type CreateSlotsFormProps = HTMLAttributes<HTMLFormElement> & {
   multiplySlots?: boolean
@@ -27,9 +27,7 @@ export const CreateSlotsForm = ({
   multiplySlots,
   ...formProps
 }: CreateSlotsFormProps) => {
-  const auctionId = useStoreSelector((state) =>
-    appSelectors.getAuctionId(state)
-  ) as string
+  const auctionId = useStoreSelector(appSelectors.getAuctionId)
 
   const {
     control,
@@ -37,14 +35,7 @@ export const CreateSlotsForm = ({
     formState: { errors },
     trigger,
   } = useForm<CreateSlotForm>({
-    resolver: zodResolver(
-      createSlotSchema.transform((val) => {
-        return val['slots'].map((item) => ({
-          ...item,
-          points: Number(deleteAllSpacesFromString(item.points)),
-        }))
-      })
-    ),
+    resolver: zodResolver(transformCreateSlotsFormData()),
     mode: 'all',
     reValidateMode: 'onChange',
   })
@@ -54,11 +45,26 @@ export const CreateSlotsForm = ({
     name: 'slots',
   })
 
+  const [createSlotsMutation, { isLoading }] = useCreateSlotsMutation()
+
+  const requestCtrl = useRef(new AbortController())
+
+  useEffect(() => {
+    return () => {
+      if (isLoading) requestCtrl.current.abort()
+    }
+  }, [])
+
   const onSubmit = async (formData: FormArrayData) => {
-    const response = await AuctionSlotService.getInstance().createSlot(
-      auctionId,
-      formData
-    )
+    if (isLoading) return
+
+    try {
+      await createSlotsMutation({ auctionId, slots: formData })
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        toastErrorNotification('Не удалось добавить слот(-ы)', err.message)
+      }
+    }
   }
 
   const getErrorMessageForField = useCallback(
@@ -99,7 +105,7 @@ export const CreateSlotsForm = ({
           render={({ field }) => (
             <Input
               slotClassNames={{
-                base: 'font-golosF w-full basis-1/2 grow',
+                base: 'font-golos-f w-full basis-1/2 grow',
                 description: 'text-wrap',
               }}
               placeholder="Название слота"
@@ -114,7 +120,7 @@ export const CreateSlotsForm = ({
           render={({ field }) => (
             <NumberInput
               slotClassNames={{
-                base: 'font-golosF w-full basis-1/3 desktopLg:basis-1/4',
+                base: 'font-golos-f w-full basis-1/3 desktopLg:basis-1/4',
                 description: 'text-wrap',
               }}
               placeholder="Очки"
@@ -166,7 +172,12 @@ export const CreateSlotsForm = ({
         </ul>
       </div>
 
-      <Button type="submit" variant={'action'} className="w-full">
+      <Button
+        type="submit"
+        variant={'action'}
+        className="w-full"
+        disabled={isLoading}
+      >
         Добавить в аукцион
       </Button>
     </form>

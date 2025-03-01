@@ -65,6 +65,8 @@ class DonationsSSEClient extends SSEClient {
         }
       },
       onmessage: (message) => {
+        if (message.event === 'connected') return
+
         const parsedMessage =
           DonationsEventSourceMessageSchema.safeParse(message)
 

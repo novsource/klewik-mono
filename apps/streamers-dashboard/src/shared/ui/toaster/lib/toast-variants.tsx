@@ -10,41 +10,65 @@ export const toastBaseNotification = (
   return toast('Уведомление', { description, ...toastOptions })
 }
 
-export const toastPromiseNotification = (
-  promise: Promise<unknown>,
+export const toastPromiseNotification = <T extends unknown = unknown>(
+  promise: Promise<T>,
   operationName: string,
-  toastOptions?: ExternalToast
+  toastOptions?: ExternalToast & {
+    successText: string
+    errorText: string
+    onSuccess?: (value: T) => void
+    onError?: () => void
+  }
 ) => {
   const successDescription = (
-    <div className="w-full flex items-center gap-x-1">
-      <div className="flex items-center justify-center h-5 w-5 bg-green/30 rounded-md">
-        <Icons.Success className="text-green" size="xs" />
-      </div>
-      <Typography className="text-sm text-green font-medium" tag="p">
-        Успешно
+    <div className="w-full flex flex-col items-start gap-y-2">
+      <Typography className="text-sm" tag="span">
+        {toastOptions?.successText}
       </Typography>
+      <div className="flex w-full items-center gap-x-1">
+        <div className="flex items-center justify-center h-5 w-5 bg-green/30 rounded-md">
+          <Icons.Success className="text-green" size="xs" />
+        </div>
+        <Typography className="text-sm text-green font-medium" tag="p">
+          Успешно
+        </Typography>
+      </div>
     </div>
   )
 
-  return toast.promise(promise, {
+  const errorDescription = (
+    <div className="w-full flex flex-col items-start gap-y-2">
+      <Typography className="text-sm" tag="span">
+        {toastOptions?.errorText}
+      </Typography>
+      <div className="flex w-full items-center gap-x-1">
+        <div className="flex items-center justify-center h-5 w-5 bg-red/30 rounded-md">
+          <Icons.Close className="text-red" size="xs" />
+        </div>
+        <Typography className="text-sm text-red font-medium" tag="p">
+          Ошибка
+        </Typography>
+      </div>
+    </div>
+  )
+
+  return toast.promise<T>(promise, {
     loading: operationName,
-    success: () => {
+    success: (value) => {
+      if (toastOptions?.onSuccess) {
+        toastOptions.onSuccess(value)
+      }
       return successDescription
     },
     error: () => {
-      return (
-        <div className="w-full flex items-center gap-x-1">
-          <div className="flex items-center justify-center h-5 w-5 bg-green/30 rounded-md">
-            <Icons.Close className="text-green" size="xs" />
-          </div>
-          <Typography className="text-sm text-green font-medium" tag="p">
-            Ошибка
-          </Typography>
-        </div>
-      )
+      if (toastOptions?.onError) {
+        toastOptions.onError()
+      }
+      return errorDescription
     },
-    description: successDescription,
-    classNames: { content: 'gap-y-3' },
+    classNames: {
+      toast: 'flex flex-row rounded-sm gap-x-1 group-[.toaster]:rounded-medium',
+    },
     ...toastOptions,
   })
 }

@@ -71,6 +71,8 @@ class AuctionSlotsSSEClient extends SSEClient {
         }
       },
       onmessage: (message) => {
+        if (message.event === 'connected') return
+
         const parsedMessage = AuctionSlotsEventsMessageSchema.safeParse(message)
 
         if (

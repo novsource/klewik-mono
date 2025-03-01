@@ -13,6 +13,7 @@ import {
   SliderSuccessContent,
   SliderWelcomeContent,
 } from './slider-content'
+import { SliderAuctionParametersContent } from './slider-content/slider-parameters-content'
 
 const WelcomePage = () => {
   return (
@@ -47,6 +48,7 @@ const WelcomePage = () => {
                 <SliderAdminContent />
                 <SliderCreateContent />
                 <SliderSuccessContent />
+                <SliderAuctionParametersContent />
                 <SliderGuestContent />
               </Slider>
 
@@ -55,10 +57,13 @@ const WelcomePage = () => {
                 target="_blank"
                 className="mb-5 flex w-fit items-center gap-x-2 text-gray-accent transition-all hover:text-white"
               >
-                <Icons.Github size="lg" />
+                <Icons.Github
+                  size="sm"
+                  className="text-gray-light hover:text-gray-accent transition-colors"
+                />
                 <Typography
                   tag="span"
-                  className="hidden desktop-lg:inline-block desktop-lg:text-md desktop-lg:font-medium"
+                  className="hidden desktop-lg:inline-block desktop-lg:text-md desktop-lg:font-medium font-golos-f"
                 >
                   Github
                 </Typography>

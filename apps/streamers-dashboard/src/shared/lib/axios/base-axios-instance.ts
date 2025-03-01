@@ -2,6 +2,7 @@ import axios, {
   AxiosRequestConfig,
   AxiosResponse,
   CreateAxiosDefaults,
+  InternalAxiosRequestConfig,
 } from 'axios'
 import axiosRateLimit, {
   rateLimitOptions as AxiosRateLimitOptions,
@@ -40,6 +41,36 @@ export class BaseHttpClient implements BaseHttpClientMethods {
       }),
       { maxRPS: this._defaultMaxRPS, ...options?.rateLimiterOptions }
     )
+  }
+
+  addRequestInterceptor(
+    configHandler: <T extends InternalAxiosRequestConfig<unknown>>(
+      config: T
+    ) => T | Promise<T>,
+    errorHandler?: <T extends unknown>(error: T) => Promise<T>
+  ) {
+    const interceptorId = this._axiosInstance.interceptors.request.use(
+      configHandler,
+      errorHandler
+    )
+
+    return () => {
+      this._axiosInstance.interceptors.request.eject(interceptorId)
+    }
+  }
+
+  addResponseInterceptor<V extends unknown, T extends unknown>(
+    responseCb: (response: AxiosResponse<V, T>) => AxiosResponse<V, T>,
+    errorHandler?: <T extends unknown>(error: T) => Promise<T>
+  ) {
+    const interceptorId = this._axiosInstance.interceptors.response.use(
+      responseCb,
+      errorHandler
+    )
+
+    return () => {
+      this._axiosInstance.interceptors.response.eject(interceptorId)
+    }
   }
 
   request<T>(url: string, options?: HttpClientRequestOptions) {
@@ -128,7 +159,3 @@ export class BaseHttpClient implements BaseHttpClientMethods {
     return request
   }
 }
-
-const baseHttpClient = new BaseHttpClient()
-
-export { baseHttpClient }

@@ -1,6 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-import { baseHttpClient } from '~shared/api/http/instance'
+import { authHttpClient } from '~shared/api/http'
 
 type DonationAlertsIntegrationStatus = {
   isConnected: boolean
@@ -8,16 +8,16 @@ type DonationAlertsIntegrationStatus = {
 }
 
 type AppStore = {
-  auctionId: NullablePossible<string>
-  auctionUrl: NullablePossible<string>
+  auctionId: string
+  auctionUrl: string
   integrations: {
     donationAlerts: DonationAlertsIntegrationStatus
   }
 }
 
 const initialState: AppStore = {
-  auctionId: null,
-  auctionUrl: null,
+  auctionId: '',
+  auctionUrl: '',
   integrations: {
     donationAlerts: {
       isConnected: false,
@@ -29,9 +29,8 @@ const initialState: AppStore = {
 const connectDonationAlertsSSE = createAsyncThunk(
   'integrations/donAlertsSSE',
   async (auctionId: string) => {
-    const response = await baseHttpClient.get<DonationAlertsIntegrationStatus>(
-      `/api/sse/${auctionId}/donalerts/connect`,
-      { withCredentials: true }
+    const response = await authHttpClient.get<DonationAlertsIntegrationStatus>(
+      `/api/sse/${auctionId}/donalerts/connect`
     )
 
     return response.data
@@ -42,18 +41,18 @@ export const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-    setAuctionId: (state, payload: PayloadAction<string>) => {
-      state.auctionId = payload.payload
-      state.auctionUrl = `https://auctions.klewik.ru/${payload.payload}`
+    setAuctionId: (state, action: PayloadAction<string>) => {
+      state.auctionId = action.payload
+      state.auctionUrl = `https://auctions.klewik.ru/${action.payload}`
     },
-    setAuctionUrl: (state, payload: PayloadAction<string>) => {
-      state.auctionUrl = payload.payload
+    setAuctionUrl: (state, action: PayloadAction<string>) => {
+      state.auctionUrl = action.payload
     },
     setDonationAlertsStatus: (
       state,
-      payload: PayloadAction<DonationAlertsIntegrationStatus>
+      action: PayloadAction<DonationAlertsIntegrationStatus>
     ) => {
-      const data = payload.payload
+      const data = action.payload
       state.integrations.donationAlerts = {
         ...state.integrations.donationAlerts,
         ...data,

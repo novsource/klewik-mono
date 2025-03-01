@@ -1,17 +1,18 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import axios from 'axios'
 
-import { auctionActions } from '~entities/auction/store'
+import { auctionActions as storeAuctionActions } from '~entities/auction/store'
 
-import { createAuction } from '~shared/api/http/auction/auction.api'
-import { loginInAuction } from '~shared/api/http/auth/auth.api'
+import { loginInAuction } from '~shared/api/http/auth'
 
-import { appActions } from '~shared/store/slices'
+import { appActions as storeAppActions } from '~shared/store/slices'
 
-import { useStoreDispatch } from '~shared/lib/redux-toolkit'
+import {
+  AxiosBaseQueryError,
+  useActionCreators,
+} from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
@@ -20,6 +21,7 @@ import { toastErrorNotification } from '~shared/ui/toaster/lib'
 
 import { cn } from '~shared/utils'
 
+import { useCreateAuctionMutation } from '../api'
 import { CreateAuctionFormData, CreateAuctionSchema } from '../model'
 
 type CreateAuctionFormProps = Partial<{
@@ -28,12 +30,12 @@ type CreateAuctionFormProps = Partial<{
 }>
 
 export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
-  const dispatch = useStoreDispatch()
+  const auctionActions = useActionCreators(storeAuctionActions)
+  const appActions = useActionCreators(storeAppActions)
 
-  const [isPending, setIsPending] = useState(false)
+  const [createAuctionMutation, { isLoading }] = useCreateAuctionMutation()
+
   const [isPasswordHidden, setIsPasswordHidden] = useState<boolean>(true)
-
-  const abortController = useMemo(() => new AbortController(), [])
 
   const {
     control,
@@ -47,54 +49,30 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
     resolver: zodResolver(CreateAuctionSchema),
   })
 
-  const onSubmit: SubmitHandler<CreateAuctionFormData> = async ({ key }) => {
-    try {
-      setIsPending(true)
-      const response = await createAuction(key, {
-        signal: abortController.signal,
-      })
+  const onSubmit: SubmitHandler<CreateAuctionFormData> = async (formData) => {
+    const createAuctionResponse = await createAuctionMutation(formData)
 
-      await loginInAuction(response.data.auctionId, key, {
-        signal: abortController.signal,
-      })
+    if (createAuctionResponse.error) {
+      const error = createAuctionResponse.error as AxiosBaseQueryError
 
-      dispatch(
-        auctionActions.setAuction({
-          id: response.data.auctionId,
-          url: response.data.url,
-          createAt: Date.now(),
-        })
-      )
-
-      dispatch(appActions.setAuctionId(response.data.auctionId))
-      dispatch(appActions.setAuctionUrl(response.data.url))
-
-      setIsPending(false)
-
-      props.onSuccess && props.onSuccess()
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const errorMessage = err.response?.data
-        toastErrorNotification(
-          'Не удалось создать аукцион',
-          typeof errorMessage !== 'string'
-            ? JSON.stringify(errorMessage)
-            : errorMessage
-        )
-      }
-      setIsPending(false)
+      toastErrorNotification('Не удалось создать аукцион', error.reason)
       props.onError && props.onError()
-    }
-  }
 
-  useEffect(() => {
-    return () => {
-      if (isPending) {
-        abortController.abort()
-        setIsPending(false)
-      }
+      return
     }
-  }, [])
+
+    await loginInAuction(createAuctionResponse.data.auctionId, formData.key)
+
+    auctionActions.setAuction({
+      id: createAuctionResponse.data.auctionId,
+      url: createAuctionResponse.data.url,
+    })
+
+    appActions.setAuctionId(createAuctionResponse.data.auctionId)
+    appActions.setAuctionUrl(createAuctionResponse.data.url)
+
+    props.onSuccess && props.onSuccess()
+  }
 
   return (
     <form
@@ -134,12 +112,12 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
       />
 
       <Button
-        className={cn(isPending && 'opacity-70 hover:bg-opacity-100')}
+        className={cn(isLoading && 'opacity-70 hover:bg-opacity-100')}
         variant="action"
-        type={isPending ? 'button' : 'submit'}
-        disabled={isPending}
+        type={isLoading ? 'button' : 'submit'}
+        disabled={isLoading}
       >
-        {isPending ? 'Создаем аукцион...' : 'Создать'}
+        {isLoading ? 'Создаем аукцион...' : 'Создать'}
       </Button>
     </form>
   )
