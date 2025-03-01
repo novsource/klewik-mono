@@ -71,12 +71,12 @@ const axiosAuthBaseQuery =
   async (args, api, extraOptions) => {
     const baseQuery = axiosBaseQuery({
       ...options,
-      baseUrl: import.meta.env.VITE_SERVER_URL + '/api',
+      baseUrl: import.meta.env.VITE_SERVER_URL + '/api' + options.baseUrl,
       axiosOptions: { withCredentials: true },
       rateLimiterOptions: { maxRPS: 3 },
     })
 
-    let result = await baseQuery({ url: args.url }, api, extraOptions)
+    let result = await baseQuery(args, api, extraOptions)
 
     if (result.error && result.error.status === 401) {
       const refreshResult = await baseQuery(

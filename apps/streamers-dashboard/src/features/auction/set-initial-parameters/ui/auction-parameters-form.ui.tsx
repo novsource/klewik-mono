@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -12,7 +12,7 @@ import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
 import { toastErrorNotification } from '~shared/ui/toaster/lib'
 
-import { setAuctionViewParameters } from '../api'
+import { useSetAuctionViewParametersMutation } from '../api'
 import {
   AuctionViewParametersFormSchema,
   SetAuctionViewParametersFormData,
@@ -27,6 +27,8 @@ type AuctionInitialParametersFormProps = {
 const AuctionInitialParametersForm = (
   props: AuctionInitialParametersFormProps
 ) => {
+  const auctionId = useStoreSelector(appSelectors.getAuctionId)
+
   const { control, handleSubmit } = useForm<SetAuctionViewParametersFormData>({
     defaultValues: {
       title: '',
@@ -39,90 +41,75 @@ const AuctionInitialParametersForm = (
     resolver: zodResolver(AuctionViewParametersFormSchema),
   })
 
-  const auctionId = useStoreSelector(appSelectors.getAuctionId)
-  const [isPending, setIsPending] = useState(false)
-
-  const requestCtrlRef = useRef(new AbortController())
-
-  useEffect(() => {
-    return () => {
-      if (isPending) requestCtrlRef.current.abort()
-    }
-  }, [])
+  const [setAuctionViewParametersMutation, { isLoading }] =
+    useSetAuctionViewParametersMutation()
 
   const onSubmit = useCallback(
     async (formData: SetAuctionViewParametersFormData) => {
-      if (isPending) return
+      if (isLoading) return
 
       try {
-        setIsPending(true)
-
-        const request = await setAuctionViewParameters(
+        await setAuctionViewParametersMutation({
           auctionId,
-          formData,
-          requestCtrlRef.current.signal
+          parameters: formData,
+        })
+
+        props.onSuccess && props.onSuccess()
+      } catch (err) {
+        props.onError && props.onError()
+
+        toastErrorNotification(
+          'Не удалось добавить параметры для страницы аукциона'
         )
-
-        if (request.status === 200) {
-          setIsPending(false)
-
-          props.onSuccess && props.onSuccess()
-        }
-
-        if (request.status !== 200) {
-          setIsPending(false)
-
-          props.onError && props.onError()
-
-          toastErrorNotification(
-            'Не удалось добавить параметры для страницы аукциона'
-          )
-        }
-      } catch (err) {}
+      }
     },
-    [isPending]
+    [isLoading]
   )
 
-  const linksFormControllers = auctionLinks.map((link) => {
-    const linkInputLogoIcon = {
-      twitch: <Icons.TwitchLogo size="sm" />,
-      youtube: <Icons.YoutubeLogo size="sm" />,
-      donationAlerts: <Icons.DonationAlerts size="sm" />,
-    }[link]
+  const linksFormControllers = useMemo(
+    () =>
+      auctionLinks.map((link) => {
+        const linkInputLogoIcon = {
+          twitch: <Icons.TwitchLogo size="sm" />,
+          youtube: <Icons.YoutubeLogo size="sm" />,
+          donationAlerts: <Icons.DonationAlerts size="sm" />,
+        }[link]
 
-    const linkInputPlaceholder = {
-      twitch: 'twitch.tv/<ваш_канал>',
-      youtube: 'youtube.com/<ваш_канал>',
-      donationAlerts: 'donationalerts.com/r/<ваша_страница>',
-    }[link]
+        const linkInputPlaceholder = {
+          twitch: 'twitch.tv/<ваш_канал>',
+          youtube: 'youtube.com/<ваш_канал>',
+          donationAlerts: 'donationalerts.com/r/<ваша_страница>',
+        }[link]
 
-    const linkLabelValue = {
-      twitch: 'Twitch',
-      youtube: 'Youtube',
-      donationAlerts: 'Donation Alerts',
-    }[link]
+        const linkLabelValue = {
+          twitch: 'Twitch',
+          youtube: 'Youtube',
+          donationAlerts: 'Donation Alerts',
+        }[link]
 
-    return (
-      <Controller
-        key={`links.${link}`}
-        control={control}
-        name={`links.${link}`}
-        render={({ field }) => {
-          return (
-            <Input
-              label={{
-                id: link,
-                value: `Ссылка на ${linkLabelValue}`,
-              }}
-              placeholder={linkInputPlaceholder}
-              startContent={linkInputLogoIcon}
-              {...field}
-            />
-          )
-        }}
-      />
-    )
-  })
+        return (
+          <Controller
+            key={`links.${link}`}
+            control={control}
+            name={`links.${link}`}
+            render={({ field }) => {
+              return (
+                <Input
+                  label={{
+                    id: link,
+                    value: `Ссылка на ${linkLabelValue}`,
+                  }}
+                  placeholder={linkInputPlaceholder}
+                  startContent={linkInputLogoIcon}
+                  {...field}
+                />
+              )
+            }}
+          />
+        )
+      }),
+    [auctionLinks]
+  )
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -145,7 +132,7 @@ const AuctionInitialParametersForm = (
           className="w-full"
           type="submit"
           variant={'action'}
-          disabled={isPending}
+          disabled={isLoading}
         >
           Сохранить и создать аукцион
         </Button>

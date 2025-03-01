@@ -1,6 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-import { baseHttpClient } from '~shared/api/http/instance'
+import { authHttpClient } from '~shared/api/http'
 
 type DonationAlertsIntegrationStatus = {
   isConnected: boolean
@@ -29,9 +29,8 @@ const initialState: AppStore = {
 const connectDonationAlertsSSE = createAsyncThunk(
   'integrations/donAlertsSSE',
   async (auctionId: string) => {
-    const response = await baseHttpClient.get<DonationAlertsIntegrationStatus>(
-      `/api/sse/${auctionId}/donalerts/connect`,
-      { withCredentials: true }
+    const response = await authHttpClient.get<DonationAlertsIntegrationStatus>(
+      `/api/sse/${auctionId}/donalerts/connect`
     )
 
     return response.data

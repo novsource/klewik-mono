@@ -1,22 +1,29 @@
+import { splittedAuctionApi } from '~entities/auction/api'
 import { Auction } from '~entities/auction/model'
-
-import { baseHttpClient } from '~shared/api/http/instance'
 
 import { SetAuctionViewParametersFormData } from '../model'
 
-const setAuctionViewParameters = (
-  auctionId: Auction['id'],
-  payload: SetAuctionViewParametersFormData,
-  signal: AbortSignal
-) => {
-  return baseHttpClient.post(`/api/auction/${auctionId}/view/parameters`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: payload,
-    signal,
-    withCredentials: true,
-  })
+type SetAuctionViewParametersQueryArgs = {
+  auctionId: Auction['id']
+  parameters: SetAuctionViewParametersFormData
 }
 
-export { setAuctionViewParameters }
+const setAuctionViewParametersApi = splittedAuctionApi.injectEndpoints({
+  endpoints: (builder) => ({
+    setAuctionViewParameters: builder.mutation<
+      void,
+      SetAuctionViewParametersQueryArgs
+    >({
+      query: ({ auctionId, parameters }) => ({
+        url: `/${auctionId}/view/parameters`,
+        data: parameters,
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+      }),
+    }),
+  }),
+  overrideExisting: false,
+})
+
+export const { useSetAuctionViewParametersMutation } =
+  setAuctionViewParametersApi

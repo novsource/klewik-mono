@@ -1,3 +1,3 @@
-import { setAuctionViewParameters } from './set-auction-view-parameters.api'
+import { useSetAuctionViewParametersMutation } from './set-auction-view-parameters.api'
 
-export { setAuctionViewParameters }
+export { useSetAuctionViewParametersMutation }
