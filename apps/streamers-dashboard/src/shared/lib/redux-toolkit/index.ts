@@ -1,5 +1,5 @@
-import { axiosBaseQuery } from './api'
-import { useStoreDispatch, useStoreSelector } from './hooks'
+import { axiosAuthBaseQuery, axiosBaseQuery } from './api'
+import { useActionCreators, useStoreDispatch, useStoreSelector } from './hooks'
 
-export { useStoreDispatch, useStoreSelector }
-export { axiosBaseQuery }
+export { useStoreDispatch, useStoreSelector, useActionCreators }
+export { axiosBaseQuery, axiosAuthBaseQuery }
