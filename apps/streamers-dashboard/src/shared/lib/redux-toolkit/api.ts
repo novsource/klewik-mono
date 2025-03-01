@@ -25,9 +25,17 @@ type AxiosBaseQueryArgs = {
 
 type AxiosBaseQueryResult = AxiosResponse<unknown, unknown>['data']
 
+type ServerErrorData = {
+  message: string
+  hint?: string
+  reason?: string
+}
+
 type AxiosBaseQueryError = {
   status: AxiosError['status']
-  data: AxiosError['response']
+  message: AxiosError['message']
+  reason?: string
+  hint?: string
 }
 
 type AxiosQueryFn = BaseQueryFn<
@@ -55,12 +63,14 @@ const axiosBaseQuery =
 
       return { data: result.data }
     } catch (axiosError) {
-      const err = axiosError as AxiosError
+      const err = axiosError as AxiosError<ServerErrorData>
 
       return {
         error: {
           status: err.response?.status || 400,
-          data: err.response?.data || err.message,
+          message: err.response?.data.message,
+          reason: err.response?.data?.reason || '',
+          hint: err.response?.data.hint || '',
         },
       }
     }
@@ -95,3 +105,4 @@ const axiosAuthBaseQuery =
   }
 
 export { axiosBaseQuery, axiosAuthBaseQuery }
+export type { AxiosBaseQueryError }
