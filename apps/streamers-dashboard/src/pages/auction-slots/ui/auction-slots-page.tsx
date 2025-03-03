@@ -1,6 +1,6 @@
+import { AuctionSlotsList } from '~widgets/auction-slots-list/ui/auction-slots-list.ui'
 import { CreateSlotsDialog } from '~widgets/create-slots-dialog/ui'
 
-import { AuctionSlotsList } from '~features/auction-slot/watch-slots/ui'
 import { SlotsStatistics } from '~features/auction-slot/watch-statistics/ui'
 
 import { useMediaQuery } from '~shared/hooks/use-media-query'

@@ -42,6 +42,11 @@ const slice = createSlice({
 
       state.slots = [...filtredSlots, payload]
     },
+    deleteSlot(state, action: PayloadAction<{ id: AuctionSlot['id'] }>) {
+      const payload = action.payload
+
+      state.slots = state.slots.filter((slot) => slot.id !== payload.id)
+    },
   },
   selectors: {
     getSlots(state) {

@@ -1,3 +1,3 @@
-import { AuctionSlotsList } from './watch-slots.ui'
+import { VirtualizedSlotsList } from './watch-slots.ui'
 
-export { AuctionSlotsList }
+export { VirtualizedSlotsList }
