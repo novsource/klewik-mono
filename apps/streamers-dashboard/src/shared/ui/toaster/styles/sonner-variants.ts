@@ -3,7 +3,7 @@ import { cva } from 'class-variance-authority'
 export const baseSonnerVariants = cva('toaster group')
 
 export const toastSonnerVariants = cva(
-  'group toast group-[.toaster]:bg-[#222224] w-full group-[.toaster]:text-white group-[.toaster]:border-1 group-[.toaster]:border-gray/70 group-[.toaster]:shadow-lg group-[.toaster]:rounded-large group-[.toaster]:text-lg px-4 py-3'
+  'group toast group-[.toaster]:bg-dark-foreground w-full group-[.toaster]:text-white group-[.toaster]:border-1 group-[.toaster]:border-gray/70 group-[.toaster]:shadow-lg group-[.toaster]:rounded-large group-[.toaster]:text-lg px-4 py-3'
 )
 
 export const contentToastSonnerVariants = cva('gap-y-4')
