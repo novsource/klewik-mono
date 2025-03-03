@@ -1,32 +1,48 @@
-import { HTMLAttributes, useCallback, useEffect, useMemo, useRef } from 'react'
+import { HTMLAttributes, useMemo } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { AxiosError } from 'axios'
 import { motion } from 'framer-motion'
+
+import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { appSelectors } from '~shared/store/slices'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import {
+  AxiosBaseQueryError,
+  useStoreSelector,
+} from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
 import { NumberInput } from '~shared/ui/number-input'
-import { toastErrorNotification } from '~shared/ui/toaster/lib'
+import {
+  toastErrorNotification,
+  toastSuccessNotification,
+} from '~shared/ui/toaster/lib'
 
 import { useCreateSlotsMutation } from '../api'
-import { transformCreateSlotsFormData } from '../lib'
+import { TransformedCreateSlotsFormData, createSlotsFormResolver } from '../lib'
 import { CreateSlotForm, FormArrayData } from '../model'
 
-type CreateSlotsFormProps = HTMLAttributes<HTMLFormElement> & {
+type CreateSlotsFormProps = Omit<
+  HTMLAttributes<HTMLFormElement>,
+  'onSubmit'
+> & {
   multiplySlots?: boolean
+  checkIsSlotsExists?: boolean
+  onSuccess?: (formData: FormArrayData[]) => void
+  onError?: () => void
 }
 
 export const CreateSlotsForm = ({
   multiplySlots,
-  ...formProps
+  checkIsSlotsExists = true,
+  onError,
+  onSuccess,
+  ...props
 }: CreateSlotsFormProps) => {
+  const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const auctionId = useStoreSelector(appSelectors.getAuctionId)
 
   const {
@@ -34,8 +50,8 @@ export const CreateSlotsForm = ({
     handleSubmit,
     formState: { errors },
     trigger,
-  } = useForm<CreateSlotForm>({
-    resolver: zodResolver(transformCreateSlotsFormData()),
+  } = useForm<CreateSlotForm, unknown, TransformedCreateSlotsFormData>({
+    resolver: createSlotsFormResolver(auctionSlots),
     mode: 'all',
     reValidateMode: 'onChange',
   })
@@ -47,46 +63,41 @@ export const CreateSlotsForm = ({
 
   const [createSlotsMutation, { isLoading }] = useCreateSlotsMutation()
 
-  const requestCtrl = useRef(new AbortController())
+  const submitForm = async (formData: TransformedCreateSlotsFormData) => {
+    const response = await createSlotsMutation({
+      auctionId,
+      slots: formData,
+    })
 
-  useEffect(() => {
-    return () => {
-      if (isLoading) requestCtrl.current.abort()
+    if (response.error) {
+      const error = response.error as AxiosBaseQueryError
+
+      toastErrorNotification(
+        'Не удалось добавить слот(-ы)',
+        error.reason || error.message,
+        { position: 'bottom-left' }
+      )
+
+      return onError && onError()
     }
-  }, [])
 
-  const onSubmit = async (formData: FormArrayData) => {
-    if (isLoading) return
+    toastSuccessNotification('Слот(-ы) успешно добавлен(-ы) в аукцион!')
 
-    try {
-      await createSlotsMutation({ auctionId, slots: formData })
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        toastErrorNotification('Не удалось добавить слот(-ы)', err.message)
-      }
-    }
+    onSuccess && onSuccess(formData)
   }
 
-  const getErrorMessageForField = useCallback(
-    (
-      fieldName: keyof CreateSlotForm['slots'][number],
-      fieldIndex: number
-    ): string | undefined => {
-      if (!('slots' in errors)) return undefined
+  const getErrorMessageForField = (
+    fieldName: keyof CreateSlotForm['slots'][number],
+    fieldIndex: number
+  ): string | undefined => {
+    if (!('slots' in errors)) return undefined
 
-      if (errors.slots === undefined) return undefined
+    if (errors.slots === undefined) return undefined
 
-      if (Array.isArray(errors['slots'])) {
-        if (
-          errors['slots'][fieldIndex] &&
-          errors['slots'][fieldIndex][fieldName]
-        ) {
-          return errors['slots'][fieldIndex][fieldName].message
-        }
-      }
-    },
-    [errors]
-  )
+    if (errors['slots'][fieldIndex] && errors['slots'][fieldIndex][fieldName]) {
+      return errors['slots'][fieldIndex][fieldName].message
+    }
+  }
 
   const formFields = useMemo(() => {
     if (fields.length === 0) {
@@ -147,8 +158,8 @@ export const CreateSlotsForm = ({
   return (
     <form
       className="flex flex-col w-full h-full justify-between"
-      onSubmit={handleSubmit(onSubmit)}
-      {...formProps}
+      onSubmit={handleSubmit(submitForm)}
+      {...props}
     >
       <div className="flex w-full flex-col gap-y-6 items-stretch">
         <ul className="flex flex-col w-full">

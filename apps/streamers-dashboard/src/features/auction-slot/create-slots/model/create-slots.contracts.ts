@@ -25,13 +25,6 @@ export const createSlotSchema = z.object({
         .string()
         .min(1, 'Поле не может быть пустым')
         .max(20, 'Слишком большое количество очков'),
-      // .refine((check) => {
-      //   const strWithoutSpaces = deleteAllSpacesFromString(check)
-
-      //   if (Number(strWithoutSpaces) === 0) return false
-
-      //   return true
-      // }, 'Количество очков должно быть больше нуля'),
     })
     .array()
     .min(1),
