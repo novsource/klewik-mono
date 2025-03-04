@@ -5,12 +5,10 @@ import { Icons } from '~shared/ui/icons'
 
 import { IntegrationCard } from '../connect-integration.ui'
 
-const DonatePayRedirectDisplay = memo(() => {})
-
 const DonatePayIntegrationCard = memo(() => {
   return (
     <IntegrationCard
-      integrationSystem="DonatePay"
+      integrationSystem="donate-pay"
       description="Использование пожертвований для создания слотов"
     />
   )

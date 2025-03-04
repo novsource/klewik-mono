@@ -8,7 +8,7 @@ const Header = ({ children, ...otherProps }: ComponentProps<'header'>) => {
     <header className="h-16 w-full" {...otherProps}>
       <div className="flex h-full w-full items-center justify-between gap-x-4 px-4">
         <NavLink to={'/'}>
-          <Icons.Logo className="text-green-accent" width={32} height={32} />
+          <Icons.Logo className="text-green-accent" width={28} height={28} />
         </NavLink>
         {children}
       </div>

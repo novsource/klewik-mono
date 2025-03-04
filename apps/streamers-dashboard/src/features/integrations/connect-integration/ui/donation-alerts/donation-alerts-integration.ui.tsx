@@ -2,14 +2,11 @@ import { memo, useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { sha256 } from 'js-sha256'
+import { integrationsSelectors } from '~entities/integrations/store'
 
-import {
-  appActions,
-  appSelectors,
-  connectDonationAlertsSSE,
-} from '~shared/store/slices'
+import { appSelectors } from '~shared/store/slices'
 
-import { useStoreDispatch, useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { useLocalStorage } from '~shared/hooks/use-local-storage'
 
@@ -21,12 +18,14 @@ import { DONATION_ALERTS_ENDPOINTS } from '~shared/constants/integrations'
 
 import { cn } from '~shared/utils'
 
+import { useLazyConnectSSEDonationAlertsQuery } from '../../api/donation-alerts'
 import { IntegrationCard } from '../connect-integration.ui'
 
 const DonationAlertsRedirectDisplay = memo(() => {
   const auctionId = useStoreSelector(appSelectors.getAuctionId)
-  const { isConnected } = useStoreSelector(appSelectors.getDonationAlertsStatus)
-  const dispatch = useStoreDispatch()
+
+  const [connectSSEDonationAlerts, { isSuccess }] =
+    useLazyConnectSSEDonationAlertsQuery()
 
   const [connectionText, setConnectionText] = useState(
     'Подключаем Donation Alerts... Пожалуйста подождите'
@@ -57,30 +56,22 @@ const DonationAlertsRedirectDisplay = memo(() => {
   }, [])
 
   useEffect(() => {
-    if (isConnected) {
+    if (isSuccess) {
       setTimeout(() => {
         navigate(`/dashboard/${auctionId}/settings`)
       }, 5000)
     }
-  }, [isConnected])
+  }, [isSuccess])
 
   useEffect(() => {
     const connect = async () => {
-      const response = await dispatch(connectDonationAlertsSSE(auctionId!))
+      const response = await connectSSEDonationAlerts({ auctionId })
 
-      if (response.meta.requestStatus === 'fulfilled') {
+      if (response.isSuccess) {
         remove()
-
-        set({ [auctionId!]: response.payload })
+        set({ [auctionId]: response.data })
 
         setConnectionText('DonationAlerts успешно подключен!')
-
-        dispatch(
-          appActions.setDonationAlertsStatus({
-            isConnected: true,
-            isValid: true,
-          })
-        )
       }
     }
 
@@ -96,15 +87,15 @@ const DonationAlertsRedirectDisplay = memo(() => {
           <div
             className={cn(
               'w-full h-full rounded-b-lg border-l-4 border-r-4 border-b-4 transition-colors',
-              !isConnected && 'animate-pulse border-gray/80 duration-[3s]',
-              isConnected && 'border-green-accent/80 duration-1000'
+              !isSuccess && 'animate-pulse border-gray/80 duration-[3s]',
+              isSuccess && 'border-green-accent/80 duration-1000'
             )}
           ></div>
           <Typography
             tag="span"
             className={cn(
               'absolute -translate-x-1/2 left-1/2 top-6 text-md text-nowrap text-gray-accent font-medium',
-              isConnected &&
+              isSuccess &&
                 'text-green-accent/80 animate-fadeIn duration-[3s] font-medium'
             )}
           >
@@ -118,7 +109,9 @@ const DonationAlertsRedirectDisplay = memo(() => {
 
 const DonationAlertsIntegrationButton = () => {
   const auctionId = useStoreSelector(appSelectors.getAuctionId)
-  const { isConnected } = useStoreSelector(appSelectors.getDonationAlertsStatus)
+  const { isConnected } = useStoreSelector(
+    integrationsSelectors.getDonationAlertsStatus
+  )
   const [isPressed, setIsPressed] = useState(false)
 
   const { set } = useLocalStorage('redirect:donalerts')
@@ -173,7 +166,7 @@ const DonationAlertsIntegrationButton = () => {
 const DonationAlertsIntegrationCard = memo(() => {
   return (
     <IntegrationCard
-      integrationSystem="DonationAlerts"
+      integrationSystem="donation-alerts"
       description="Использование пожертвований для создания слотов"
     />
   )

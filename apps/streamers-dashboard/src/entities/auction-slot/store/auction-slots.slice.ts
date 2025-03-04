@@ -25,14 +25,6 @@ const slice = createSlice({
         (slot) => !payload.find((item) => slot.id === item.id)
       )
 
-      if (filtredSlots.length === state.slots.length) {
-        state.slotsPointsSum += payload.reduce((a, slot) => a + slot.points, 0)
-      } else {
-        state.slotsPointsSum =
-          filtredSlots.reduce((a, b) => a + b.points, 0) +
-          payload.reduce((a, b) => a + b.points, 0)
-      }
-
       state.slots = [...filtredSlots, ...payload]
     },
     updateSlot(
@@ -57,6 +49,24 @@ const slice = createSlice({
       const payload = action.payload
 
       state.slots = state.slots.filter((slot) => slot.id !== payload.id)
+    },
+    updateSlotsPointsSum(
+      state,
+      action: PayloadAction<Omit<AuctionSlot, 'color' | 'name'>[]>
+    ) {
+      const payload = action.payload
+
+      const filtredSlots = state.slots.filter(
+        (slot) => !payload.find((item) => slot.id === item.id)
+      )
+
+      if (filtredSlots.length === state.slots.length) {
+        state.slotsPointsSum += payload.reduce((a, slot) => a + slot.points, 0)
+      } else {
+        state.slotsPointsSum =
+          filtredSlots.reduce((a, b) => a + b.points, 0) +
+          payload.reduce((a, b) => a + b.points, 0)
+      }
     },
   },
   selectors: {

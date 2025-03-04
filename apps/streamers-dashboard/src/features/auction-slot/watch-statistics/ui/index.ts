@@ -1,3 +1,6 @@
-import { SlotsStatistics } from './watch-statistics'
+import {
+  SlotsCountStatisticCard,
+  SlotsPointsSumStatisticCard,
+} from './watch-statistics'
 
-export { SlotsStatistics }
+export { SlotsCountStatisticCard, SlotsPointsSumStatisticCard }
