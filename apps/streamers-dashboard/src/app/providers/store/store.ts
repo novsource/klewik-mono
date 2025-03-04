@@ -15,6 +15,7 @@ import { donationsReducer } from '~entities/donation/store'
 
 import { wheelReducer } from '~entities/wheel/store'
 
+import { splittedSSEApi as sseApi } from '~shared/store/api'
 import { appReducer } from '~shared/store/slices'
 
 export const store = configureStore({
@@ -28,6 +29,7 @@ export const store = configureStore({
     [auctionApi.reducerPath]: auctionApi.reducer,
     [auctionSlotsApi.reducerPath]: auctionSlotsApi.reducer,
     [integrationsApi.reducerPath]: integrationsApi.reducer,
+    [sseApi.reducerPath]: sseApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -35,7 +37,8 @@ export const store = configureStore({
       .concat(
         auctionApi.middleware,
         auctionSlotsApi.middleware,
-        integrationsApi.middleware
+        integrationsApi.middleware,
+        sseApi.middleware
       ),
 })
 
