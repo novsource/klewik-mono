@@ -1,14 +1,19 @@
+import { AuctionSlot } from '~entities/auction-slot/model'
+
 import { deleteAllSpacesFromString } from '~shared/utils/string-format'
 
-import { FormArrayData, createSlotSchema } from '../model'
+import { createSlotSchema } from '../model'
+
+type TransformedCreateSlotsFormData = Array<Omit<AuctionSlot, 'id' | 'color'>>
 
 const transformCreateSlotsFormData = () => {
-  return createSlotSchema.transform<FormArrayData[]>((val) => {
-    return val['slots'].map((item) => ({
-      ...item,
-      points: Number(deleteAllSpacesFromString(item.points)),
+  return createSlotSchema.transform<TransformedCreateSlotsFormData>((val) => {
+    return val['slots'].map((slot) => ({
+      ...slot,
+      points: Number(deleteAllSpacesFromString(slot.points)),
     }))
   })
 }
 
 export { transformCreateSlotsFormData }
+export type { TransformedCreateSlotsFormData }

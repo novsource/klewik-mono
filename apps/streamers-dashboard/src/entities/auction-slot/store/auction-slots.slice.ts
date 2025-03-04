@@ -35,12 +35,28 @@ const slice = createSlice({
 
       state.slots = [...filtredSlots, ...payload]
     },
-    updateSlot(state, action: PayloadAction<AuctionSlot>) {
+    updateSlot(
+      state,
+      action: PayloadAction<{
+        id: AuctionSlot['id']
+        data: Partial<Omit<AuctionSlot, 'id'>>
+      }>
+    ) {
+      const id = action.payload.id
+      const data = action.payload.data
+
+      const updatedSlot = state.slots.find((slot) => id === slot.id)
+
+      if (!updatedSlot) return
+
+      updatedSlot.name = data.name ?? updatedSlot.name
+      updatedSlot.color = data.color ?? updatedSlot.color
+      updatedSlot.points = data.points ?? updatedSlot.points
+    },
+    deleteSlot(state, action: PayloadAction<{ id: AuctionSlot['id'] }>) {
       const payload = action.payload
 
-      const filtredSlots = state.slots.filter((slot) => payload.id !== slot.id)
-
-      state.slots = [...filtredSlots, payload]
+      state.slots = state.slots.filter((slot) => slot.id !== payload.id)
     },
   },
   selectors: {

@@ -21,6 +21,7 @@ type AxiosBaseQueryArgs = {
   data?: AxiosRequestConfig['data']
   params?: AxiosRequestConfig['params']
   headers?: AxiosRequestConfig['headers']
+  withCredentials?: AxiosRequestConfig['withCredentials']
 }
 
 type AxiosBaseQueryResult = AxiosResponse<unknown, unknown>['data']
@@ -79,14 +80,20 @@ const axiosBaseQuery =
 const axiosAuthBaseQuery =
   (options: AxiosBaseQueryOptions): AxiosQueryFn =>
   async (args, api, extraOptions) => {
+    const initBaseUrl = import.meta.env.VITE_SERVER_URL + '/api'
+
     const baseQuery = axiosBaseQuery({
       ...options,
-      baseUrl: import.meta.env.VITE_SERVER_URL + '/api' + options.baseUrl,
+      baseUrl: initBaseUrl,
       axiosOptions: { withCredentials: true },
       rateLimiterOptions: { maxRPS: 3 },
     })
 
-    let result = await baseQuery(args, api, extraOptions)
+    let result = await baseQuery(
+      { ...args, url: options.baseUrl + args.url },
+      api,
+      extraOptions
+    )
 
     if (result.error && result.error.status === 401) {
       const refreshResult = await baseQuery(
@@ -96,7 +103,11 @@ const axiosAuthBaseQuery =
       )
 
       if (refreshResult.data) {
-        result = await baseQuery(args, api, extraOptions)
+        result = await baseQuery(
+          { ...args, url: options.baseUrl + args.url, method: 'POST' },
+          api,
+          extraOptions
+        )
       } else {
         //TODO: Add method for logout user
       }

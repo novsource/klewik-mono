@@ -5,7 +5,7 @@ import { AuctionSlot } from '~entities/auction-slot/model'
 
 type CreateSlotsQueryArgs = {
   auctionId: Auction['id']
-  slots: Omit<AuctionSlot, 'id' | 'color'>
+  slots: Array<Omit<AuctionSlot, 'id' | 'color'>>
 }
 
 const createSlotsApi = splittedAuctionSlotsApi.injectEndpoints({
@@ -20,6 +20,7 @@ const createSlotsApi = splittedAuctionSlotsApi.injectEndpoints({
           'Content-Type': 'application/json',
         },
         method: 'POST',
+        withCredentials: false,
       }),
     }),
   }),
