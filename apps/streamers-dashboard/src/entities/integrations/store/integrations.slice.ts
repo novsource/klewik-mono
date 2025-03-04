@@ -41,6 +41,9 @@ const integrationsSlice = createSlice({
     getDonatePayStatus(state) {
       return state['donate-pay']
     },
+    getAllIntegrationsStatuses(state) {
+      return state
+    },
   },
 })
 
