@@ -49,8 +49,8 @@ const SlotsStatistics = memo((props: SlotsStatisticsProps) => {
       <SlotsStatisticsCard title={'Общая сумма очков слотов'}>
         {new Intl.NumberFormat('ru-RU').format(storedSlotsPointsSum)}
       </SlotsStatisticsCard>
-      <SlotsStatisticsCard title={'Свободные очки'}>0</SlotsStatisticsCard>
-      <SlotsStatisticsCard title={'Очки стримера'}>0</SlotsStatisticsCard>
+      {/* <SlotsStatisticsCard title={'Свободные очки'}>0</SlotsStatisticsCard> */}
+      {/* <SlotsStatisticsCard title={'Очки стримера'}>0</SlotsStatisticsCard> */}
     </div>
   )
 })

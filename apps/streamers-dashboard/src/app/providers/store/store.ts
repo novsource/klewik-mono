@@ -1,4 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
+import { splittedIntegrationsApi as integrationsApi } from '~entities/integrations/api'
+import { integrationsReducer } from '~entities/integrations/store'
 
 import { splittedAuctionApi as auctionApi } from '~entities/auction/api'
 import { auctionReducer } from '~entities/auction/store'
@@ -21,14 +23,20 @@ export const store = configureStore({
     auction: auctionReducer,
     auctionSlots: auctionSlotsReducer,
     donations: donationsReducer,
+    integrations: integrationsReducer,
     wheel: wheelReducer,
     [auctionApi.reducerPath]: auctionApi.reducer,
     [auctionSlotsApi.reducerPath]: auctionSlotsApi.reducer,
+    [integrationsApi.reducerPath]: integrationsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .prepend(...auctionSlotsListenersMiddlewares)
-      .concat(auctionApi.middleware, auctionSlotsApi.middleware),
+      .concat(
+        auctionApi.middleware,
+        auctionSlotsApi.middleware,
+        integrationsApi.middleware
+      ),
 })
 
 export type RootState = ReturnType<typeof store.getState>
