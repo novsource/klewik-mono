@@ -4,7 +4,10 @@ import { splittedAuctionApi as auctionApi } from '~entities/auction/api'
 import { auctionReducer } from '~entities/auction/store'
 
 import { splittedAuctionSlotsApi as auctionSlotsApi } from '~entities/auction-slot/api'
-import { auctionSlotsReducer } from '~entities/auction-slot/store'
+import {
+  auctionSlotsListenersMiddlewares,
+  auctionSlotsReducer,
+} from '~entities/auction-slot/store'
 
 import { donationsReducer } from '~entities/donation/store'
 
@@ -23,10 +26,9 @@ export const store = configureStore({
     [auctionSlotsApi.reducerPath]: auctionSlotsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(
-      auctionApi.middleware,
-      auctionSlotsApi.middleware
-    ),
+    getDefaultMiddleware()
+      .prepend(...auctionSlotsListenersMiddlewares)
+      .concat(auctionApi.middleware, auctionSlotsApi.middleware),
 })
 
 export type RootState = ReturnType<typeof store.getState>

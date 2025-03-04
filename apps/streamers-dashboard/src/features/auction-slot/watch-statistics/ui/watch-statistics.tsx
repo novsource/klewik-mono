@@ -31,7 +31,7 @@ type SlotsStatisticsProps = ComponentProps<'div'>
 
 const SlotsStatistics = memo((props: SlotsStatisticsProps) => {
   const storedSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-  const storedPointsSum = useStoreSelector(
+  const storedSlotsPointsSum = useStoreSelector(
     auctionSlotsSelectors.getSlotsPointsSum
   )
 
@@ -47,7 +47,7 @@ const SlotsStatistics = memo((props: SlotsStatisticsProps) => {
         {storedSlots.length}
       </SlotsStatisticsCard>
       <SlotsStatisticsCard title={'Общая сумма очков слотов'}>
-        {new Intl.NumberFormat('ru-RU').format(storedPointsSum)}
+        {new Intl.NumberFormat('ru-RU').format(storedSlotsPointsSum)}
       </SlotsStatisticsCard>
       <SlotsStatisticsCard title={'Свободные очки'}>0</SlotsStatisticsCard>
       <SlotsStatisticsCard title={'Очки стримера'}>0</SlotsStatisticsCard>
