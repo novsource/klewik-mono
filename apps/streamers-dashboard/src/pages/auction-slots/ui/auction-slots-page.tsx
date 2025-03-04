@@ -1,9 +1,12 @@
-import { AuctionSlotsList } from '~widgets/auction-slots-list/ui/auction-slots-list.ui'
+import { AuctionSlotsList } from '~widgets/auction-slots-list/ui'
 import { CreateSlotsDialog } from '~widgets/create-slots-dialog/ui'
 
 import { SlotsStatistics } from '~features/auction-slot/watch-statistics/ui'
 
 import { useMediaQuery } from '~shared/hooks/use-media-query'
+
+import { Button } from '~shared/ui/button'
+import { Icons } from '~shared/ui/icons'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
@@ -25,7 +28,18 @@ const AuctionSlotsPage = () => {
       <div className="flex flex-nowrap items-center justify-between gap-x-4 pt-1">
         <SearchInput size={!isMediaLargeThenTablet ? 'lg' : 'default'} />
         <div className="flex items-center gap-x-2">
-          <CreateSlotsDialog multiplySlots />
+          <CreateSlotsDialog
+            multiplySlots
+            trigger={
+              <Button
+                size={!isMediaLargeThenTablet ? 'lg' : 'default'}
+                variant={'action'}
+                startContent={<Icons.Plus size="xs" />}
+              >
+                {isMediaLargeThenTablet && 'Добавить слот'}
+              </Button>
+            }
+          />
         </div>
       </div>
 
