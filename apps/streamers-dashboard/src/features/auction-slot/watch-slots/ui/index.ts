@@ -1,3 +1,7 @@
-import { VirtualizedSlotsList } from './watch-slots.ui'
+import {
+  AuctionCardChip,
+  AuctionSlotCard,
+  VirtualizedSlotsList,
+} from './watch-slots.ui'
 
-export { VirtualizedSlotsList }
+export { VirtualizedSlotsList, AuctionCardChip, AuctionSlotCard }
