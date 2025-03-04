@@ -8,6 +8,7 @@ import { EditSlotSheet } from '~widgets/edit-slot-dialog/ui'
 import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
 import {
   AuctionCardChip,
+  AuctionSlotCard,
   VirtualizedSlotsList,
 } from '~features/auction-slot/watch-slots/ui'
 
@@ -93,9 +94,15 @@ const AuctionSlotCardWithControls = memo(
 
 type AuctionSlotsListProps = {
   className?: ClassValue
+  withControls?: boolean
+  disableAnimation?: boolean
 }
 
-const AuctionSlotsList = (props: AuctionSlotsListProps) => {
+const AuctionSlotsList = ({
+  withControls = true,
+  disableAnimation = false,
+  ...otherProps
+}: AuctionSlotsListProps) => {
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
   const slotsWinPercents = useMemo(() => {
@@ -112,6 +119,19 @@ const AuctionSlotsList = (props: AuctionSlotsListProps) => {
 
   const renderAuctionCard = useCallback(
     (slot: AuctionSlot, index: number) => {
+      const card = withControls ? (
+        <AuctionSlotCardWithControls
+          {...slot}
+          percent={slotsWinPercents[index]}
+        />
+      ) : (
+        <AuctionSlotCard {...slot} percent={slotsWinPercents[index]} />
+      )
+
+      if (disableAnimation) {
+        return card
+      }
+
       return (
         <motion.li
           key={slot.id}
@@ -120,21 +140,18 @@ const AuctionSlotsList = (props: AuctionSlotsListProps) => {
           exit={{ opacity: 0 }}
           style={{ marginTop: index > 0 ? '8px' : '0' }}
         >
-          <AuctionSlotCardWithControls
-            {...slot}
-            percent={slotsWinPercents[index]}
-          />
+          {card}
         </motion.li>
       )
     },
-    [slotsWinPercents]
+    [slotsWinPercents, withControls, disableAnimation]
   )
 
   return (
     <VirtualizedSlotsList
-      className={props.className}
       data={auctionSlots}
       renderCard={renderAuctionCard}
+      {...otherProps}
     />
   )
 }
