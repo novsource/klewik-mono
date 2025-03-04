@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { AuctionSlotsList } from '~widgets/auction-slots-list/ui'
 import { CreateSlotsDialog } from '~widgets/create-slots-dialog/ui'
+import { SearchInput } from '~widgets/search-input/ui'
 
 import { useSearchAuctionSlots } from '~features/auction-slot/search-slots/hooks'
 import {
@@ -20,8 +21,6 @@ import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
-
-import SearchInput from './search-input/search-input'
 
 const AuctionSlotsPage = () => {
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)

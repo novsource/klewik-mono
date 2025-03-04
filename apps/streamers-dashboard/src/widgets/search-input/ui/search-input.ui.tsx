@@ -1,10 +1,12 @@
+import { ComponentProps, memo } from 'react'
+
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
 import { InputProps } from '~shared/ui/input/ui/input'
 
-type SearchInputProps = {} & InputProps
+type SearchInputProps = Omit<ComponentProps<'input'>, 'size'> & InputProps
 
-const SearchInput = (props: SearchInputProps) => {
+const SearchInput = memo((props: SearchInputProps) => {
   return (
     <Input
       slotClassNames={{ base: 'w-full', input: 'px-1' }}
@@ -15,10 +17,10 @@ const SearchInput = (props: SearchInputProps) => {
           size="default"
         />
       }
-      {...props}
       placeholder="Поиск по названию слота..."
+      {...props}
     />
   )
-}
+})
 
-export default SearchInput
+export { SearchInput }

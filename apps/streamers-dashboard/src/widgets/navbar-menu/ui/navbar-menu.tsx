@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from 'react'
+import { ReactNode, memo, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { useMediaQuery } from '~shared/hooks/use-media-query'
@@ -12,7 +12,7 @@ import { cn } from '~shared/utils'
 
 type NavbarMenuProps = NavbarProps
 
-export const NavbarMenu = (props: NavbarMenuProps) => {
+export const NavbarMenu = memo((props: NavbarMenuProps) => {
   const { pathname } = useLocation()
   const isLargeThenTablet = useMediaQuery(
     `(min-width:${tailwindScreens.tablet})`
@@ -60,4 +60,4 @@ export const NavbarMenu = (props: NavbarMenuProps) => {
   }, [pathname])
 
   return <Navbar {...props}>{menuItems}</Navbar>
-}
+})

@@ -1,4 +1,4 @@
-import SearchInput from '~pages/auction-slots/ui/search-input/search-input'
+import { SearchInput } from '~widgets/search-input/ui'
 
 import { DonationsList } from '~features/donations/watch-donations/ui'
 
