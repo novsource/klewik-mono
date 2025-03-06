@@ -26,44 +26,39 @@ class SSEApiClient {
       { auctionId: this._auctionId }
     )
 
-    const checkStatus = (message: SSEApiEventSourceMessage) => {
-      const isLeader = this._broadcastChannel.isLeader
-      // const isHasLeader = await this._broadcastChannel.hasLeader
-      if (message.event === 'manager/status' && !isLeader) {
-        const data = JSON.parse(message.data)
+    this._broadcastChannel.on('manager/leader-changed', () => {
+      this._isConnectedToSSE = false
+    })
 
-        if (data.auctionId !== this._auctionId) {
-          return
-        }
-
-        this._isConnectedToSSE = data.isConnected
-
-        if (data.status) {
-          this._onConnectListeners.forEach((cb) => cb())
-        }
-      }
-    }
-
-    // Notify the new sse manager about currentlly connection status
     this.onLeadership(() => {
-      this._broadcastChannel.removeOnMessageCallback(checkStatus)
-
-      this._broadcastChannel.onMessage((message) => {
-        if (message.event === 'manager/new') {
-          this._broadcastChannel.postMessage({
-            id: '',
-            event: 'manager/status',
-            data: JSON.stringify({
-              auctionId: this._auctionId,
-              isConnected: this._isConnectedToSSE,
-            }),
-          })
-        }
+      this.postMessage({
+        id: '',
+        event: 'manager/leader-changed',
+        data: '',
       })
     })
 
-    // Read message when create a new tab
-    this._broadcastChannel.onMessage(checkStatus)
+    // Notify the new SSE manager (not a leader tab) about currently connection status
+    this.onLeadership(() => {
+      this._broadcastChannel.on('manager/get-status', () => {
+        this.postMessage({
+          id: '',
+          event: 'manager/status',
+          data: JSON.stringify({
+            auctionId: this._auctionId,
+            isConnected: this._isConnectedToSSE,
+          }),
+        })
+      })
+    })
+
+    this.postMessage({
+      id: '',
+      event: 'manager/new',
+      data: JSON.stringify({
+        auctionId: this._auctionId,
+      }),
+    })
   }
 
   static init(auctionId: string) {
@@ -112,39 +107,71 @@ class SSEApiClient {
       }
     }
 
-    this.onLeadership(() => {
-      this.onConnect(() => {
-        this.postMessage({
-          id: '',
-          data: JSON.stringify({
-            auctionId: this._auctionId,
-            isConnected: true,
-          }),
-          event: 'manager/status',
-          retry: undefined,
-        })
+    const connectPromise = new Promise<void>((resolve, reject) => {
+      this._broadcastChannel.on('manager/status', (data) => {
+        if (data.isConnected && !this._broadcastChannel.isLeader) {
+          resolve()
+        }
       })
-    })
-
-    this.auctionSlots().on('onopen', onOpenEventHandler('auctionSlots'))
-    this.donations().on('onopen', onOpenEventHandler('donations'))
-
-    this.auctionSlots().connectToServer(
-      this._auctionId,
-      options?.slotsLastMessageId
-    )
-
-    this.donations().connectToServer(
-      this._auctionId,
-      options?.donationsLastMessageId
-    )
-
-    return new Promise<void>((resolve, reject) => {
-      this.onConnect(resolve)
 
       this.auctionSlots().on('onerror', reject)
       this.donations().on('onerror', reject)
+
+      this.onLeadership(() => {
+        console.log('leader')
+        this.onConnect(() => {
+          this.postMessage({
+            id: '',
+            event: 'manager/status',
+            data: JSON.stringify({
+              auctionId: this._auctionId,
+              isConnected: true,
+            }),
+            retry: undefined,
+          })
+
+          resolve()
+        })
+      })
+
+      this.postMessage({
+        id: '',
+        data: JSON.stringify({
+          auctionId: this._auctionId,
+        }),
+        event: 'manager/get-status',
+      })
     })
+
+    // When leader changed we should connect again with elector
+    // So, firstly we should set connect status to false
+    // because when manager leader changing connect with server is aborting
+    this.onLeadership(() => {
+      this._isConnectedToSSE = false
+
+      this.auctionSlots().on('onopen', onOpenEventHandler('auctionSlots'))
+      this.donations().on('onopen', onOpenEventHandler('donations'))
+
+      this.auctionSlots().connectToServer(
+        this._auctionId,
+        options?.slotsLastMessageId
+      )
+
+      this.donations().connectToServer(
+        this._auctionId,
+        options?.donationsLastMessageId
+      )
+    })
+
+    this.postMessage({
+      id: '',
+      data: JSON.stringify({
+        auctionId: this._auctionId,
+      }),
+      event: 'manager/get-status',
+    })
+
+    return connectPromise
   }
 }
 

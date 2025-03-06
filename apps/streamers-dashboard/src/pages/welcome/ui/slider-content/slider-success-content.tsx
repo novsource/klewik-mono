@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { Link } from 'react-router-dom'
 
 import { auctionSelectors } from '~entities/auction/store'
 
@@ -75,7 +76,7 @@ const SliderSuccessContent = () => {
           </Button>
         </div>
       </div>
-      <a href={`/dashboard/${auctionInfo.url?.split('/').at(-1)}`}>
+      <Link to={`/dashboard/${auctionInfo.url?.split('/').at(-1)}`}>
         <Button
           className="w-full"
           variant={'action'}
@@ -83,7 +84,7 @@ const SliderSuccessContent = () => {
         >
           Перейти в панель управления
         </Button>
-      </a>
+      </Link>
     </SliderContent>
   )
 }
