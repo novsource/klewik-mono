@@ -1,11 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
 import {
   Link,
   Outlet,
   RouteObject,
   isRouteErrorResponse,
   json,
-  useLoaderData,
   useRouteError,
 } from 'react-router-dom'
 
@@ -14,131 +12,16 @@ import { z } from 'zod'
 
 import { store } from '~app/providers/store/store'
 
-import { AuctionSlot } from '~entities/auction-slot/model'
-import { auctionSlotsActions } from '~entities/auction-slot/store'
 import { Auction } from '~entities/auction/model'
-import { auctionActions } from '~entities/auction/store'
-import { Donation } from '~entities/donation/model'
-import { donationsActions } from '~entities/donation/store'
+import { auctionActions as storeAuctionActions } from '~entities/auction/store'
 
 import { getAuctionInfo } from '~shared/api/http/auction/auction.api'
-import { SSEApiClient } from '~shared/api/sse'
 
-import { appActions, appSelectors } from '~shared/store/slices'
-
-import { useStoreDispatch, useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import { useLocalStorage } from '~shared/hooks/use-local-storage'
-import { useMediaQuery } from '~shared/hooks/use-media-query'
+import { appActions } from '~shared/store/slices'
 
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
-import { toastPromiseNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
-
-import { tailwindScreens } from '~shared/constants/tailwindcss'
-
-const AuctionPrepare = () => {
-  const auctionId = useStoreSelector(appSelectors.getAuctionId)
-  const dispatch = useStoreDispatch()
-
-  const loaderData = useLoaderData() as Auction
-
-  const slotsLastMessageId = useLocalStorage('slots:last-message-id')
-  const donationsLastMessageId = useLocalStorage('donations:last-message-id')
-
-  const [isConnected, setIsConnected] = useState(false)
-
-  const isLargeThenTablet = useMediaQuery(
-    `(min-width: ${tailwindScreens.tablet}px)`
-  )
-
-  const connectToSSE = useCallback(() => {
-    return new Promise<void>((resolve, reject) => {
-      SSEApiClient.init(loaderData.id).connectToAllEvents({
-        slotsLastMessageId: slotsLastMessageId.value,
-        donationsLastMessageId: donationsLastMessageId.value,
-      })
-
-      SSEApiClient.getInstance().onConnect(() => {
-        console.log('here')
-        resolve()
-      })
-    })
-  }, [])
-
-  useEffect(() => {
-    if (slotsLastMessageId.value === undefined) {
-      slotsLastMessageId.set(0)
-    }
-
-    if (donationsLastMessageId.value === undefined) {
-      donationsLastMessageId.set(0)
-    }
-  }, [])
-
-  useEffect(() => {
-    const request = connectToSSE()
-
-    if (request === undefined) return
-
-    toastPromiseNotification(
-      request.catch(console.log),
-      'Подключение к серверу...',
-      {
-        successText: 'Подключение к серверу',
-        errorText: 'Не удалось подключиться к серверу',
-        onSuccess: () => {
-          setIsConnected(true)
-        },
-      }
-    )
-  }, [connectToSSE])
-
-  useEffect(() => {
-    const dispatchSlots = (slots: AuctionSlot[]) =>
-      dispatch(auctionSlotsActions.addSlots(slots))
-    const dispatchDonation = (donation: Donation) =>
-      dispatch(donationsActions.addDonation(donation))
-
-    SSEApiClient.getInstance()
-      .auctionSlots()
-      .on('onmessage', ({ id }) => {
-        slotsLastMessageId.set(Number(id))
-      })
-
-    SSEApiClient.getInstance()
-      .donations()
-      .on('onmessage', ({ id }) => {
-        slotsLastMessageId.set(Number(id))
-      })
-
-    SSEApiClient.getInstance().auctionSlots().onAddingSlots(dispatchSlots)
-    SSEApiClient.getInstance().donations().onNewDonation(dispatchDonation)
-
-    return () => {
-      SSEApiClient.getInstance()
-        .auctionSlots()
-        .removeListener('auction-slots/add', dispatchSlots)
-
-      SSEApiClient.getInstance()
-        .donations()
-        .removeListener('donations/add', dispatchDonation)
-    }
-  }, [auctionId])
-
-  return !isConnected ? (
-    <div className="flex w-full h-full items-center justify-center animate-fade-in duration-[3s]">
-      <Icons.Logo
-        className="animate-bounce duration-1000 text-green-accent"
-        width={isLargeThenTablet ? 58 : 36}
-        height={isLargeThenTablet ? 58 : 36}
-      />
-    </div>
-  ) : (
-    <Outlet />
-  )
-}
 
 const PrepareRouteErrorBoundary = () => {
   let error = useRouteError()
@@ -176,7 +59,7 @@ const PrepareRouteErrorBoundary = () => {
 
 const auctionPrepareRoute = (childrens: RouteObject[]): RouteObject => {
   return {
-    element: <AuctionPrepare />,
+    element: <Outlet />,
     loader: async ({ params }) => {
       const validatedParams = z
         .object({ auctionId: z.string().uuid() })
@@ -199,7 +82,7 @@ const auctionPrepareRoute = (childrens: RouteObject[]): RouteObject => {
           validatedParams.data.auctionId
         )
 
-        dispatch(auctionActions.setAuction(response.data))
+        dispatch(storeAuctionActions.setAuction(response.data))
         dispatch(appActions.setAuctionId(response.data.id))
 
         return response.data
@@ -211,7 +94,7 @@ const auctionPrepareRoute = (childrens: RouteObject[]): RouteObject => {
                 'Аукциона с таким номером не существует или у вас нет к нему доступа',
             },
             {
-              status: 404,
+              status: err.status,
             }
           )
         }

@@ -97,7 +97,7 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
       size: {
         default: 'h-10 px-4 gap-x-2',
         sm: 'h-9 px-3 py-2 gap-x-1',
-        lg: 'h-11 px-4 py-4 gap-x-3',
+        lg: 'h-11 px-4 gap-x-3',
       },
       isError: { true: 'ring-red/80 ring-1', false: 'ring-gray-light' },
     },

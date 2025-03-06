@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from 'react'
+import { ReactNode, memo, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { useMediaQuery } from '~shared/hooks/use-media-query'
@@ -8,11 +8,9 @@ import { Navbar, NavbarItem, NavbarProps } from '~shared/ui/navbar'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
-import { cn } from '~shared/utils'
-
 type NavbarMenuProps = NavbarProps
 
-export const NavbarMenu = (props: NavbarMenuProps) => {
+export const NavbarMenu = memo((props: NavbarMenuProps) => {
   const { pathname } = useLocation()
   const isLargeThenTablet = useMediaQuery(
     `(min-width:${tailwindScreens.tablet})`
@@ -37,18 +35,11 @@ export const NavbarMenu = (props: NavbarMenuProps) => {
         '/slots': <Icons.Slots size={isLargeThenTablet ? 'sm' : 'default'} />,
       }[curr.path]
 
-      const isCurrentItemInPathname = pathname.includes(curr.path)
       const routerLink = curr.path.replace('/', '')
 
       acc.push(
         <NavbarItem
           key={curr.path}
-          htmlProps={{
-            className: cn(
-              'cursor-pointer text-gray transition-all hover:text-gray-accent',
-              isCurrentItemInPathname && 'text-gray-accent'
-            ),
-          }}
           linkProps={{ to: routerLink, relative: 'path' }}
         >
           {menuIcon}
@@ -60,4 +51,4 @@ export const NavbarMenu = (props: NavbarMenuProps) => {
   }, [pathname])
 
   return <Navbar {...props}>{menuItems}</Navbar>
-}
+})

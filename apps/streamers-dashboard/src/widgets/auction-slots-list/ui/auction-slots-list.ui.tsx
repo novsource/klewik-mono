@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { ClassValue } from 'clsx'
 import { motion } from 'framer-motion'
@@ -93,29 +93,42 @@ const AuctionSlotCardWithControls = memo(
 )
 
 type AuctionSlotsListProps = {
+  data?: AuctionSlot[]
   className?: ClassValue
   withControls?: boolean
   disableAnimation?: boolean
 }
 
 const AuctionSlotsList = ({
+  data,
   withControls = true,
   disableAnimation = false,
   ...otherProps
 }: AuctionSlotsListProps) => {
-  const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+  const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+  const [showedSlots, setShowedSlots] = useState(
+    () => data ?? storedAuctionSlots
+  )
+
+  useEffect(() => {
+    if (data === undefined) {
+      setShowedSlots(storedAuctionSlots)
+    } else {
+      setShowedSlots(data)
+    }
+  }, [storedAuctionSlots, data])
 
   const slotsWinPercents = useMemo(() => {
-    const slotsPointSum = auctionSlots.reduce(
+    const slotsPointSum = storedAuctionSlots.reduce(
       (sum, slot) => sum + slot.points,
       0
     )
 
-    return auctionSlots.reduce<string[]>((acc, slot) => {
+    return storedAuctionSlots.reduce<string[]>((acc, slot) => {
       acc.push(((slot.points / slotsPointSum) * 100).toFixed(1))
       return acc
     }, [])
-  }, [auctionSlots])
+  }, [storedAuctionSlots])
 
   const renderAuctionCard = useCallback(
     (slot: AuctionSlot, index: number) => {
@@ -149,7 +162,7 @@ const AuctionSlotsList = ({
 
   return (
     <VirtualizedSlotsList
-      data={auctionSlots}
+      data={showedSlots}
       renderCard={renderAuctionCard}
       {...otherProps}
     />

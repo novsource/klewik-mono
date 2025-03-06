@@ -12,10 +12,20 @@ type SSEApiEventsMap = {
     auctionId: string
     isConnected: boolean
   }
+  'manager/leader-changed': {
+    auctionId: string
+  }
+  'manager/get-status': {
+    auctionId: string
+  }
 }
 
 export type SSEApiEventSourceMessage = EventSourceMessage & {
-  event: 'manager/new' | 'manager/status'
+  event:
+    | 'manager/new'
+    | 'manager/status'
+    | 'manager/leader-changed'
+    | 'manager/get-status'
   data: string
 }
 
@@ -37,28 +47,28 @@ export class SSEApiBroadcastChannel extends BroadcastLeaderChannel<SSEApiEventSo
 
     this._auctionId = auctionId
 
-    this.postMessage({
-      id: '',
-      data: JSON.stringify({ auctionId }),
-      event: 'manager/new',
-      retry: undefined,
-    })
-
     this.onMessage((message) => this._dispatchEvent(message))
   }
 
   on<K extends keyof SSEApiEventsMap>(
     event: K,
-    callback: (data: SSEApiEventsMap[K]) => void
+    callback: (args: SSEApiEventsMap[K]) => void
   ) {
     const listeners = this._subscriptions.get(event)
 
     if (!listeners) {
       this._subscriptions.set(event, [callback])
-      return
+    } else {
+      this._subscriptions.set(event, [...listeners, callback])
     }
 
-    this._subscriptions.set(event, [...listeners, callback])
+    return () => {
+      const filtredListeners = this._subscriptions
+        .get(event)
+        ?.filter((cb) => cb !== callback)
+
+      this._subscriptions.set(event, filtredListeners)
+    }
   }
 
   private _dispatchEvent(message: SSEApiEventSourceMessage) {
@@ -70,11 +80,19 @@ export class SSEApiBroadcastChannel extends BroadcastLeaderChannel<SSEApiEventSo
 
     switch (message.event) {
       case 'manager/new': {
-        this._onNewChannel()
+        this._onNewChannel(messageData)
+        break
+      }
+      case 'manager/get-status': {
+        this._getStatus(messageData)
         break
       }
       case 'manager/status': {
-        this._onStatus(message)
+        this._onStatus(messageData)
+        break
+      }
+      case 'manager/leader-changed': {
+        this._onLeaderChanged()
         break
       }
       default: {
@@ -83,9 +101,9 @@ export class SSEApiBroadcastChannel extends BroadcastLeaderChannel<SSEApiEventSo
     }
   }
 
-  private _onNewChannel() {
+  private _onNewChannel(message: SSEApiEventSourceMessage) {
     try {
-      this._subscriptions.get('manager/new')?.forEach((cb) => cb())
+      this._subscriptions.get('manager/new')?.forEach((cb) => cb(message))
     } catch (err) {
       if (err instanceof Error) {
         throw err
@@ -97,14 +115,8 @@ export class SSEApiBroadcastChannel extends BroadcastLeaderChannel<SSEApiEventSo
     }
   }
 
-  private _onStatus(message: SSEApiEventSourceMessage) {
+  private _onStatus(messageData: SSEApiEventsMap['manager/status']) {
     try {
-      const messageData = JSON.parse(message.data)
-
-      console.log('MESSAGE: ', message)
-      console.log('DATA: ', messageData)
-      console.log(this.isLeader)
-
       const status = z
         .object({ auctionId: z.string(), isConnected: z.boolean() })
         .parse(messageData)
@@ -119,5 +131,15 @@ export class SSEApiBroadcastChannel extends BroadcastLeaderChannel<SSEApiEventSo
         throw new Error(err.message)
       }
     }
+  }
+
+  private _onLeaderChanged() {
+    this._subscriptions.get('manager/leader-changed')?.forEach((cb) => cb())
+  }
+
+  private _getStatus(messageData: SSEApiEventsMap['manager/get-status']) {
+    this._subscriptions
+      .get('manager/get-status')
+      ?.forEach((cb) => cb(messageData))
   }
 }
