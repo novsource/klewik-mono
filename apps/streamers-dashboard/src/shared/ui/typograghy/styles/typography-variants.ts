@@ -17,8 +17,8 @@ export const typographyVariants = cva<TypographyVariants>('', {
       h2: 'text-title-lg font-bold',
       h3: 'text-title font-semibold',
       h4: 'text-md font-semibold',
-      span: 'text-md font-medium',
-      p: 'text-md font-regular',
+      span: 'text-md font-medium leading-5',
+      p: 'text-md font-regular leading-5',
     },
   },
 })
