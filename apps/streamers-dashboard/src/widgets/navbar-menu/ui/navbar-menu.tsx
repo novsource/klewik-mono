@@ -8,8 +8,6 @@ import { Navbar, NavbarItem, NavbarProps } from '~shared/ui/navbar'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
-import { cn } from '~shared/utils'
-
 type NavbarMenuProps = NavbarProps
 
 export const NavbarMenu = memo((props: NavbarMenuProps) => {
@@ -37,18 +35,11 @@ export const NavbarMenu = memo((props: NavbarMenuProps) => {
         '/slots': <Icons.Slots size={isLargeThenTablet ? 'sm' : 'default'} />,
       }[curr.path]
 
-      const isCurrentItemInPathname = pathname.includes(curr.path)
       const routerLink = curr.path.replace('/', '')
 
       acc.push(
         <NavbarItem
           key={curr.path}
-          htmlProps={{
-            className: cn(
-              'cursor-pointer text-gray transition-all hover:text-gray-accent',
-              isCurrentItemInPathname && 'text-gray-accent'
-            ),
-          }}
           linkProps={{ to: routerLink, relative: 'path' }}
         >
           {menuIcon}

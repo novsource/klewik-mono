@@ -5,7 +5,7 @@ import { cn } from '~shared/utils'
 
 export type NavbarProps = ComponentProps<'nav'>
 type NavbarItemProps = {
-  htmlProps: ComponentProps<'li'>
+  htmlProps?: ComponentProps<'li'>
   linkProps: LinkProps
   children: ReactNode
 }
@@ -16,11 +16,19 @@ export const NavbarItem = ({
   children,
 }: NavbarItemProps) => {
   return (
-    <li
-      className="cursor-pointer text-gray transition-all hover:text-gray-accent"
-      {...htmlProps}
-    >
-      <NavLink {...linkProps}> {children}</NavLink>
+    <li className="cursor-pointer" {...htmlProps}>
+      <NavLink
+        className={({ isActive }) =>
+          cn(
+            'text-gray transition-all',
+            isActive && 'text-gray-accent',
+            !isActive && 'hover:text-gray-accent'
+          )
+        }
+        {...linkProps}
+      >
+        {children}
+      </NavLink>
     </li>
   )
 }
