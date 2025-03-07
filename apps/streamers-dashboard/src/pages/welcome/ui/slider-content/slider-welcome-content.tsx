@@ -9,8 +9,8 @@ const SliderWelcomeContent = () => {
       <div className="flex flex-col gap-y-2">
         <Icons.Logo
           className="absolute -top-16 left-0 text-green-accent"
-          width={46}
-          height={46}
+          width={42}
+          height={42}
         />
         <Typography tag="h1">Добро пожаловать в поинтовый аукцион!</Typography>
         <Typography tag="p" className="text-gray">
