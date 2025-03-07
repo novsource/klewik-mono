@@ -18,9 +18,17 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
 import { Button } from '~shared/ui/button'
+import { Combobox } from '~shared/ui/combobox'
 import { Icons } from '~shared/ui/icons'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
+
+const comboboxData = [
+  { value: 'titleAscendant', label: 'По названию (возрастание)' },
+  { value: 'titleDescendant', label: 'По названию (убывание)' },
+  { value: 'pointsAscendant', label: 'По количеству очков (возрастание)' },
+  { value: 'pointsDescendant', label: 'По количеству очков (убывание)' },
+]
 
 const AuctionSlotsPage = () => {
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
@@ -63,11 +71,15 @@ const AuctionSlotsPage = () => {
         </div>
       </div>
 
-      <div className="h-full w-full overflow-scroll">
-        <AuctionSlotsList
-          className="flex h-full w-full flex-col gap-y-2"
-          data={searchedSlots}
-        />
+      <div className="flex flex-col w-full h-full gap-y-3">
+        <Combobox data={comboboxData} placeholder="По умолчанию" />
+
+        <div className="h-full w-full overflow-scroll">
+          <AuctionSlotsList
+            className="flex h-full w-full flex-col gap-y-2"
+            data={searchedSlots}
+          />
+        </div>
       </div>
     </div>
   )
