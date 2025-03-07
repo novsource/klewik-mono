@@ -34,6 +34,7 @@ import { default as Refresh } from './Refresh';
 import { default as ReturnArrow } from './ReturnArrow';
 import { default as Settings } from './Settings';
 import { default as Slots } from './Slots';
+import { default as Sort } from './Sort';
 import { default as Success } from './Success';
 import { default as Telegram } from './Telegram';
 import { default as Timer } from './Timer';
@@ -79,6 +80,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   ReturnArrow,
   Settings,
   Slots,
+  Sort,
   Success,
   Telegram,
   Timer,
