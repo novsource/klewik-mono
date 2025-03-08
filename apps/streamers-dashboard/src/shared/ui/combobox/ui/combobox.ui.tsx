@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 import { Check } from 'lucide-react'
 
@@ -16,10 +16,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '~shared/ui/popover'
 
 import { cn } from '~shared/utils'
 
-type ComboboxData = Array<
+export type ComboboxData = Array<
   {
     label: string
     value: string
+    icon?: ReactNode
   } & Partial<{ [key: string]: any }>
 >
 
@@ -41,7 +42,7 @@ export function Combobox(props: ComboboxProps) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          className="w-fit max-w-[400px] justify-start items-center gap-x-1.5 font-medium hover:text-white/80"
+          className="w-fit max-w-[400px] border-dark-accent/60 hover:border-dark-accent border-1 justify-start items-center gap-x-1.5 font-medium hover:text-white/80"
           startContent={<Icons.Sort />}
           variant="outline"
           role="combobox"
@@ -70,6 +71,7 @@ export function Combobox(props: ComboboxProps) {
                     props.onValueChanged && props.onValueChanged(currentValue)
                   }}
                 >
+                  {item.icon}
                   {item.label}
                   <Check
                     className={cn(

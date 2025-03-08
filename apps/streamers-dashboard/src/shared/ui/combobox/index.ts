@@ -1,3 +1,3 @@
-import { Combobox } from './ui/combobox.ui'
+import { Combobox, ComboboxData } from './ui/combobox.ui'
 
-export { Combobox }
+export { Combobox, type ComboboxData }
