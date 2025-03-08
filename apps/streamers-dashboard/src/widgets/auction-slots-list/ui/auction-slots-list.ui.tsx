@@ -94,9 +94,14 @@ const AuctionSlotCardWithControls = memo(
 
 type AuctionSlotsListProps = {
   data?: AuctionSlot[]
+
   className?: ClassValue
   withControls?: boolean
   disableAnimation?: boolean
+}
+
+type AuctionSlotWithPercents = AuctionSlot & {
+  percent: string | number
 }
 
 const AuctionSlotsList = ({
@@ -106,6 +111,10 @@ const AuctionSlotsList = ({
   ...otherProps
 }: AuctionSlotsListProps) => {
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+  const storedSlotsPointsSum = useStoreSelector(
+    auctionSlotsSelectors.getSlotsPointsSum
+  )
+
   const [showedSlots, setShowedSlots] = useState(
     () => data ?? storedAuctionSlots
   )
@@ -119,16 +128,18 @@ const AuctionSlotsList = ({
   }, [storedAuctionSlots, data])
 
   const slotsWinPercents = useMemo(() => {
-    const slotsPointSum = storedAuctionSlots.reduce(
-      (sum, slot) => sum + slot.points,
-      0
+    const percentsArr = [...storedAuctionSlots].map<AuctionSlotWithPercents>(
+      (slot) => {
+        const percent = ((slot.points / storedSlotsPointsSum) * 100).toFixed(2)
+
+        return { ...slot, percent }
+      }
     )
 
-    return storedAuctionSlots.reduce<string[]>((acc, slot) => {
-      acc.push(((slot.points / slotsPointSum) * 100).toFixed(1))
-      return acc
-    }, [])
-  }, [storedAuctionSlots])
+    return showedSlots.map(
+      (slot) => percentsArr.find((item) => item.id === slot.id)?.percent ?? 0
+    )
+  }, [storedAuctionSlots, storedSlotsPointsSum, showedSlots])
 
   const renderAuctionCard = useCallback(
     (slot: AuctionSlot, index: number) => {
