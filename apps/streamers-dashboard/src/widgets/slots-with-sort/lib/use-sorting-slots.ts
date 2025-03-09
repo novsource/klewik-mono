@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
@@ -50,7 +50,7 @@ const useSortingSlots = (
 ) => {
   const [sortedSlots, setSortedSlots] = useState(() => slots)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setSortedSlots(() =>
       [...slots].sort((itemOne, itemTwo) =>
         compareSlotsFields(itemOne, itemTwo, options)

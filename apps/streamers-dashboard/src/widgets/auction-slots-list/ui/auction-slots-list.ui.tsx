@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useLayoutEffect, useMemo, useState } from 'react'
 
 import { ClassValue } from 'clsx'
 import { motion } from 'framer-motion'
@@ -119,7 +119,7 @@ const AuctionSlotsList = ({
     () => data ?? storedAuctionSlots
   )
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (data === undefined) {
       setShowedSlots(storedAuctionSlots)
     } else {
@@ -153,7 +153,11 @@ const AuctionSlotsList = ({
       )
 
       if (disableAnimation) {
-        return card
+        return (
+          <li key={slot.id} style={{ marginTop: index > 0 ? '8px' : '0' }}>
+            {card}
+          </li>
+        )
       }
 
       return (
