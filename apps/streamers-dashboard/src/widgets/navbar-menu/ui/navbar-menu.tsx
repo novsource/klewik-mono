@@ -25,7 +25,7 @@ export const NavbarMenu = memo((props: NavbarMenuProps) => {
     ]
     return paths.reduce<ReactNode[]>((acc, curr: (typeof paths)[number]) => {
       const menuIcon = {
-        '/wheel': <Icons.Home size={isLargeThenTablet ? 'sm' : 'default'} />,
+        '/wheel': <Icons.Wheel size={isLargeThenTablet ? 'sm' : 'default'} />,
         '/donations': (
           <Icons.DonateMessage size={isLargeThenTablet ? 'sm' : 'default'} />
         ),

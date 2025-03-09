@@ -43,6 +43,7 @@ import { default as Timer } from './Timer';
 import { default as Tuning } from './Tuning';
 import { default as TwitchLogo } from './TwitchLogo';
 import { default as Warning } from './Warning';
+import { default as Wheel } from './Wheel';
 import { default as YoutubeLogo } from './YoutubeLogo';
 
     export const Icons = {
@@ -91,6 +92,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Tuning,
   TwitchLogo,
   Warning,
+  Wheel,
   YoutubeLogo
     };
   
