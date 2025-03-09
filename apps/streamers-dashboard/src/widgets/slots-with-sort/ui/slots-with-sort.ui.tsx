@@ -1,4 +1,5 @@
 import { useLayoutEffect, useState } from 'react'
+import { shallowEqual } from 'react-redux'
 
 import { AuctionSlotsList } from '~widgets/auction-slots-list/ui'
 
@@ -83,17 +84,21 @@ const SlotsListWithSorting = ({
       <Combobox
         data={sortingSlotsVariants}
         placeholder="По умолчанию"
-        defaultValue={{
-          value: sortingSlotsVariants.find(
-            (sort) =>
-              sort.sortingOptions.field === sortingOptions.field &&
-              sort.sortingOptions.type === sortingOptions.type
-          ),
-        }}
+        defaultValue={
+          sortingSlotsVariants.find((sort) =>
+            shallowEqual(sort.sortingOptions, sortingOptions)
+          )?.value
+        }
         onValueChanged={(sortValue) => {
           const sortOptions = sortingSlotsVariants.find(
             (sort) => sort.value === sortValue
           )?.sortingOptions
+
+          console.log(
+            sortingSlotsVariants.find((sort) =>
+              shallowEqual(sort.sortingOptions, sortingOptions)
+            )?.value
+          )
 
           setSortingOptions(sortOptions ?? defaultSortOptions)
           onSortingChange && onSortingChange(sortOptions ?? defaultSortOptions)

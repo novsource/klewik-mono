@@ -26,7 +26,7 @@ export type ComboboxData = Array<
 
 type ComboboxProps<T extends ComboboxData = ComboboxData> = {
   data: T
-  defaultValue?: Pick<T[number], 'value'>
+  defaultValue?: T[number]['value']
   placeholder?: string
   enableSearchField?: boolean
   onValueChanged?: (label: T[number]['label']) => void
