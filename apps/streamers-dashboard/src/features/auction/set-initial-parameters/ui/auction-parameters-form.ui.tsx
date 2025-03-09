@@ -3,7 +3,7 @@ import { Controller, useForm } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { appSelectors } from '~shared/store/slices'
+import { auctionSelectors } from '~entities/auction/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -27,7 +27,7 @@ type AuctionInitialParametersFormProps = {
 const AuctionInitialParametersForm = (
   props: AuctionInitialParametersFormProps
 ) => {
-  const auctionId = useStoreSelector(appSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
 
   const { control, handleSubmit } = useForm<SetAuctionViewParametersFormData>({
     defaultValues: {

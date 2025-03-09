@@ -3,9 +3,9 @@ import { Controller, useForm } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { AuctionSlot } from '~entities/auction-slot/model'
+import { auctionSelectors } from '~entities/auction/store'
 
-import { appSelectors } from '~shared/store/slices'
+import { AuctionSlot } from '~entities/auction-slot/model'
 
 import {
   AxiosBaseQueryError,
@@ -36,7 +36,7 @@ export const EditSlotForm = ({
   onSuccess,
   ...props
 }: EditSlotsFormProps) => {
-  const auctionId = useStoreSelector(appSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
 
   const {
     control,

@@ -1,3 +1,3 @@
-import { SortingSlotsOptions, useSortingSlots } from './use-sorting-slots'
+import { useSortingSlots } from './use-sorting-slots'
 
-export { useSortingSlots, type SortingSlotsOptions }
+export { useSortingSlots }

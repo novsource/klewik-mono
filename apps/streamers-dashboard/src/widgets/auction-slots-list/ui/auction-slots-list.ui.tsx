@@ -12,6 +12,9 @@ import {
   VirtualizedSlotsList,
 } from '~features/auction-slot/watch-slots/ui'
 
+import { Auction } from '~entities/auction/model'
+import { auctionSelectors } from '~entities/auction/store'
+
 import { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
@@ -23,12 +26,13 @@ import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
 
 type AuctionSlotCardWithControlsProps = AuctionSlot & {
+  auctionId: Auction['id']
   percent: string | number
 }
 
 const AuctionSlotCardWithControls = memo(
   (props: AuctionSlotCardWithControlsProps) => {
-    const { percent, ...slot } = props
+    const { percent, auctionId, ...slot } = props
     return (
       <Card className="flex flex-col justify-between border-1 border-dark gap-y-3 py-2">
         <CardHeader className="flex items-start justify-between h-6">
@@ -55,7 +59,7 @@ const AuctionSlotCardWithControls = memo(
                 </Button>
               }
             />
-            <DeleteSlotButton slotId={slot.id} />
+            <DeleteSlotButton auctionId={auctionId} slotId={slot.id} />
           </div>
         </CardHeader>
         <CardContent className="w-full flex flex-col gap-y-2 pt-0">
@@ -110,6 +114,7 @@ const AuctionSlotsList = ({
   disableAnimation = false,
   ...otherProps
 }: AuctionSlotsListProps) => {
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const storedSlotsPointsSum = useStoreSelector(
     auctionSlotsSelectors.getSlotsPointsSum
@@ -146,6 +151,7 @@ const AuctionSlotsList = ({
       const card = withControls ? (
         <AuctionSlotCardWithControls
           {...slot}
+          auctionId={auctionId}
           percent={slotsWinPercents[index]}
         />
       ) : (

@@ -7,8 +7,6 @@ import { auctionActions as storeAuctionActions } from '~entities/auction/store'
 
 import { loginInAuction } from '~shared/api/http/auth'
 
-import { appActions as storeAppActions } from '~shared/store/slices'
-
 import {
   AxiosBaseQueryError,
   useActionCreators,
@@ -31,7 +29,6 @@ type CreateAuctionFormProps = Partial<{
 
 export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
   const auctionActions = useActionCreators(storeAuctionActions)
-  const appActions = useActionCreators(storeAppActions)
 
   const [createAuctionMutation, { isLoading }] = useCreateAuctionMutation()
 
@@ -67,9 +64,6 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
       id: createAuctionResponse.data.auctionId,
       url: createAuctionResponse.data.url,
     })
-
-    appActions.setAuctionId(createAuctionResponse.data.auctionId)
-    appActions.setAuctionUrl(createAuctionResponse.data.url)
 
     props.onSuccess && props.onSuccess()
   }

@@ -5,21 +5,24 @@ import { AuctionSlotsList } from '~widgets/auction-slots-list/ui'
 import { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
+import { SlotsSortingOptions } from '~shared/store/model'
+
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Combobox, ComboboxData } from '~shared/ui/combobox'
 import { Icons } from '~shared/ui/icons'
 import { ScrollArea } from '~shared/ui/scroll-area'
 
-import { SortingSlotsOptions, useSortingSlots } from '../lib'
+import { useSortingSlots } from '../lib'
 
 type SlotsListWithSortingProps = {
   data?: AuctionSlot[]
-  defaultSortingOptions?: SortingSlotsOptions
+  defaultSortingOptions?: SlotsSortingOptions
+  onSortingChange?: (sortOptions: SlotsSortingOptions) => void
 }
 
 const sortingSlotsVariants: Array<
-  ComboboxData[number] & { sortingOptions: SortingSlotsOptions }
+  ComboboxData[number] & { sortingOptions: SlotsSortingOptions }
 > = [
   {
     value: 'nameAscending',
@@ -47,7 +50,7 @@ const sortingSlotsVariants: Array<
   },
 ]
 
-const defaultSortOptions: SortingSlotsOptions = {
+const defaultSortOptions: SlotsSortingOptions = {
   field: 'points',
   type: 'descending',
 }
@@ -55,10 +58,12 @@ const defaultSortOptions: SortingSlotsOptions = {
 const SlotsListWithSorting = ({
   data,
   defaultSortingOptions: inputDefaultSortingOptions,
+  onSortingChange,
 }: SlotsListWithSortingProps) => {
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+
   const [slots, setSlots] = useState(() => data ?? storedAuctionSlots)
-  const [sortingOptions, setSortingOptions] = useState<SortingSlotsOptions>(
+  const [sortingOptions, setSortingOptions] = useState<SlotsSortingOptions>(
     () => inputDefaultSortingOptions ?? defaultSortOptions
   )
 
@@ -78,11 +83,20 @@ const SlotsListWithSorting = ({
       <Combobox
         data={sortingSlotsVariants}
         placeholder="По умолчанию"
+        defaultValue={{
+          value: sortingSlotsVariants.find(
+            (sort) =>
+              sort.sortingOptions.field === sortingOptions.field &&
+              sort.sortingOptions.type === sortingOptions.type
+          ),
+        }}
         onValueChanged={(sortValue) => {
-          setSortingOptions(
-            sortingSlotsVariants.find((sort) => sort.value === sortValue)
-              ?.sortingOptions ?? defaultSortOptions
-          )
+          const sortOptions = sortingSlotsVariants.find(
+            (sort) => sort.value === sortValue
+          )?.sortingOptions
+
+          setSortingOptions(sortOptions ?? defaultSortOptions)
+          onSortingChange && onSortingChange(sortOptions ?? defaultSortOptions)
         }}
       />
 

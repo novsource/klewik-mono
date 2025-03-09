@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { sha256 } from 'js-sha256'
 import { integrationsSelectors } from '~entities/integrations/store'
 
-import { appSelectors } from '~shared/store/slices'
+import { auctionSelectors } from '~entities/auction/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -22,7 +22,7 @@ import { useLazyConnectSSEDonationAlertsQuery } from '../../api/donation-alerts'
 import { IntegrationCard } from '../connect-integration.ui'
 
 const DonationAlertsRedirectDisplay = memo(() => {
-  const auctionId = useStoreSelector(appSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
 
   const [connectSSEDonationAlerts, { isSuccess }] =
     useLazyConnectSSEDonationAlertsQuery()
@@ -108,7 +108,7 @@ const DonationAlertsRedirectDisplay = memo(() => {
 })
 
 const DonationAlertsIntegrationButton = () => {
-  const auctionId = useStoreSelector(appSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
   const { isConnected } = useStoreSelector(
     integrationsSelectors.getDonationAlertsStatus
   )
@@ -132,7 +132,7 @@ const DonationAlertsIntegrationButton = () => {
 
     if (!isConnected) {
       set({
-        [auctionId!]: {
+        [auctionId]: {
           time: Date.now(),
           key: sha256.hmac(
             import.meta.env.VITE_REDIRECT_KEY,

@@ -2,19 +2,14 @@ import { useLayoutEffect, useState } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
+import { SlotsSortingOptions } from '~shared/store/model'
+
 import { deleteAllSpacesFromString } from '~shared/utils/string-format'
-
-type SortingTypes = 'ascending' | 'descending'
-
-export type SortingSlotsOptions = {
-  field: keyof AuctionSlot
-  type: SortingTypes
-}
 
 const compareSlotsFields = (
   slotOne: AuctionSlot,
   slotTwo: AuctionSlot,
-  options: SortingSlotsOptions
+  options: SlotsSortingOptions
 ) => {
   const field = options.field as keyof AuctionSlot
   const type = options.type
@@ -46,7 +41,7 @@ const compareSlotsFields = (
 
 const useSortingSlots = (
   slots: AuctionSlot[],
-  options: SortingSlotsOptions
+  options: SlotsSortingOptions
 ) => {
   const [sortedSlots, setSortedSlots] = useState(() => slots)
 

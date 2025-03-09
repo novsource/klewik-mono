@@ -1,11 +1,11 @@
 import { ComponentPropsWithoutRef } from 'react'
 
+import { Auction } from '~entities/auction/model'
+
 import { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions } from '~entities/auction-slot/store'
 
-import { appSelectors } from '~shared/store/slices'
-
-import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
 import { ButtonProps } from '~shared/ui/button/ui/Button'
@@ -17,14 +17,13 @@ import { useDeleteSlotMutation } from '../api'
 type DeleteSlotButtonProps = ComponentPropsWithoutRef<'button'> &
   ButtonProps & {
     slotId: AuctionSlot['id']
+    auctionId: Auction['id']
   }
 
 const DeleteSlotButton = (props: DeleteSlotButtonProps) => {
-  const auctionId = useStoreSelector(appSelectors.getAuctionId)
+  const { slotId, auctionId, ...buttonProps } = props
 
   const { deleteSlot } = useActionCreators(auctionSlotsActions)
-
-  const { slotId, ...buttonProps } = props
 
   const [deleteSlotMutation, { isLoading }] = useDeleteSlotMutation()
 
