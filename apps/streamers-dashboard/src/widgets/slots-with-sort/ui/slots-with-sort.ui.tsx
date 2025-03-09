@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
 import { AuctionSlotsList } from '~widgets/auction-slots-list/ui'
 
@@ -9,6 +9,7 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Combobox, ComboboxData } from '~shared/ui/combobox'
 import { Icons } from '~shared/ui/icons'
+import { ScrollArea } from '~shared/ui/scroll-area'
 
 import { SortingSlotsOptions, useSortingSlots } from '../lib'
 
@@ -63,7 +64,7 @@ const SlotsListWithSorting = ({
 
   const sortedSlots = useSortingSlots(slots, sortingOptions)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (data === undefined) {
       setSlots(storedAuctionSlots)
       return
@@ -85,12 +86,12 @@ const SlotsListWithSorting = ({
         }}
       />
 
-      <div className="h-full w-full overflow-scroll tablet:pb-4">
+      <ScrollArea className="h-full w-full overflow-scroll">
         <AuctionSlotsList
           className="flex h-full w-full flex-col gap-y-2"
           data={sortedSlots}
         />
-      </div>
+      </ScrollArea>
     </div>
   )
 }
