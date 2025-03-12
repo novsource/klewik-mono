@@ -1,9 +1,13 @@
+import { useRef } from 'react'
+
 import { CloverAnimation } from '~widgets/big-clover-animation/ui'
 
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Slider } from '~shared/ui/slider'
 import { Typography } from '~shared/ui/typograghy'
+
+import { cn } from '~shared/utils'
 
 import {
   SliderAdminContent,
@@ -16,10 +20,22 @@ import {
 import { SliderAuctionParametersContent } from './slider-content/slider-parameters-content'
 
 const WelcomePage = () => {
+  const isCloverCanBeSafefullyRendering = useRef(
+    !!HTMLCanvasElement.prototype.transferControlToOffscreen &&
+      !navigator.userAgent.includes('Firefox')
+  )
+
   return (
     <main className="h-full w-full">
       <div className="flex h-full w-full flex-row">
-        <div className="mx-auto h-full grow basis-1/4 landtop:min-w-[450px] landtop:basis-1/5 container max-w-[650px]">
+        <div
+          className={cn(
+            'mx-auto h-full grow landtop:min-w-[450px] container',
+            isCloverCanBeSafefullyRendering.current &&
+              'landtop:basis-1/5 basis-1/4 max-w-[650px]',
+            !isCloverCanBeSafefullyRendering.current && 'max-w-[1200px]'
+          )}
+        >
           <div className="h-full w-full px-5 desktop:px-8 desktop-lg:px-10">
             <div className="relative flex h-full w-full flex-col justify-between">
               <div className="mt-5">
@@ -71,9 +87,11 @@ const WelcomePage = () => {
             </div>
           </div>
         </div>
-        <div className="hidden h-full w-full flex-shrink-2 grow basis-2/3 border-l-[1px] border-dark bg-[#111] landtop:block">
-          <CloverAnimation />
-        </div>
+        {isCloverCanBeSafefullyRendering.current && (
+          <div className="hidden h-full w-full flex-shrink-2 grow basis-2/3 border-l-[1px] border-dark bg-[#111] landtop:block">
+            <CloverAnimation />
+          </div>
+        )}
       </div>
     </main>
   )
