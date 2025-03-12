@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
-import { AuctionSlotsList } from '~widgets/auction-slots-list/ui'
 import { CreateSlotsDialog } from '~widgets/create-slots-dialog/ui'
 import { SearchInput } from '~widgets/search-input/ui'
+import { SlotsListWithSorting } from '~widgets/slots-with-sort/ui'
 
 import { useSearchAuctionSlots } from '~features/auction-slot/search-slots/hooks'
 import {
@@ -11,37 +11,50 @@ import {
 } from '~features/auction-slot/watch-statistics/ui'
 import { ConnectedIntegrationsStatisticCard } from '~features/integrations/show-connected-integrations/ui'
 
+import { auctionSelectors } from '~entities/auction/store'
+
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import {
+  appSelectors,
+  appActions as storeAppActions,
+} from '~shared/store/slices'
 
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import { useLocalStorage } from '~shared/hooks/use-local-storage'
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
 import { Button } from '~shared/ui/button'
-import { Combobox } from '~shared/ui/combobox'
 import { Icons } from '~shared/ui/icons'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
-const comboboxData = [
-  { value: 'titleAscendant', label: 'По названию (возрастание)' },
-  { value: 'titleDescendant', label: 'По названию (убывание)' },
-  { value: 'pointsAscendant', label: 'По количеству очков (возрастание)' },
-  { value: 'pointsDescendant', label: 'По количеству очков (убывание)' },
-]
-
 const AuctionSlotsPage = () => {
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+  const slotsSortOptions = useStoreSelector(appSelectors.getSlotsSortOptions)
 
   const [searchValue, setSearchValue] = useState<string>('')
+
+  const appActions = useActionCreators(storeAppActions)
+
+  const searchedSlots = useSearchAuctionSlots(searchValue, auctionSlots)
+
+  const { set, value } = useLocalStorage('slots-sorting-options')
+
   const isMediaLargeThenTablet = useMediaQuery(
     `(min-width: ${tailwindScreens.tablet})`
   )
 
-  const searchedSlots = useSearchAuctionSlots(searchValue, auctionSlots)
+  useLayoutEffect(() => {
+    if (value[auctionId]) {
+      appActions.setSlotsSortOptions(value[auctionId])
+    }
+  }, [])
 
   return (
-    <div className="mb-4 grid grid-rows-slots-table gap-y-3 mobile:gap-y-5 tablet:grid-rows-slots-desktop tablet:max-w-[1100px] landtop:max-w-[1300px] tablet:gap-y-7 tablet:pb-4 tablet:px-2 desktop:max-w-[1800px] desktop-lg:max-w-[2100px] mx-auto w-full h-full">
+    <div className="mb-4 grid grid-rows-slots-table gap-y-3 mobile:gap-y-5 tablet:grid-rows-slots-desktop tablet:max-w-[1100px] landtop:max-w-[1300px] tablet:gap-y-7 tablet:px-2 desktop:max-w-[1800px] desktop-lg:max-w-[2100px] mx-auto w-full h-full">
       {isMediaLargeThenTablet && (
         <div className="w-full overflow-x-scroll flex flex-nowrap gap-x-2 [&>section]:rounded-medium">
           <ConnectedIntegrationsStatisticCard />
@@ -70,17 +83,11 @@ const AuctionSlotsPage = () => {
           />
         </div>
       </div>
-
-      <div className="flex flex-col w-full h-full gap-y-3">
-        <Combobox data={comboboxData} placeholder="По умолчанию" />
-
-        <div className="h-full w-full overflow-scroll">
-          <AuctionSlotsList
-            className="flex h-full w-full flex-col gap-y-2"
-            data={searchedSlots}
-          />
-        </div>
-      </div>
+      <SlotsListWithSorting
+        data={searchedSlots}
+        defaultSortingOptions={value[auctionId] ?? slotsSortOptions}
+        onSortingChange={(sortOptions) => set({ [auctionId]: sortOptions })}
+      />
     </div>
   )
 }

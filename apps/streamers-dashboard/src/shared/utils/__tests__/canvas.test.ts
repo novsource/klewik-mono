@@ -12,7 +12,7 @@ import {
   getDegreeByArcLength,
   getMaxCircleLength,
   getMaxSizeCanvas,
-  resizeCanvas,
+  resizeCanvasWithRatio,
 } from '~shared/utils/canvas'
 
 describe('#canvas utils', () => {
@@ -71,11 +71,7 @@ describe('#canvas utils', () => {
     const wrapper = screen.getByTestId<HTMLDivElement>('wrapper')
     const canvasElement = screen.getByTestId<HTMLCanvasElement>('canvas')
 
-    resizeCanvas({
-      canvas: canvasElement,
-      wheelSelector: canvasElement,
-      wrapper,
-    })
+    resizeCanvasWithRatio(canvasElement, wrapper)
 
     expect(`${canvasElement.width}px`).toBe(canvasElement.style.width)
     expect(`${canvasElement.height}px`).toBe(canvasElement.style.height)
@@ -86,11 +82,7 @@ describe('#canvas utils', () => {
     // Change window device pixel ratio for check canvas sizes
     window.devicePixelRatio = 2
 
-    resizeCanvas({
-      canvas: canvasElement,
-      wheelSelector: canvasElement,
-      wrapper,
-    })
+    resizeCanvasWithRatio(canvasElement, wrapper)
 
     expect(`${canvasElement.width / 2}px`).toBe(canvasElement.style.width)
     expect(`${canvasElement.height / 2}px`).toBe(canvasElement.style.height)

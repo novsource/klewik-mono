@@ -1,38 +1,18 @@
-import { AuctionSlot } from '~entities/auction-slot/model'
-import { WheelSlot } from '~entities/wheel/model'
+import { AuctionSlotsList } from '~widgets/auction-slots-list/ui'
 
-import { AnimatedTruncText } from '~shared/ui/animated-trunc-text'
+import { ScrollArea } from '~shared/ui/scroll-area'
 import { TabsContent } from '~shared/ui/tabs'
 
-const SlotCard = (props: AuctionSlot) => {
-  const { color } = props
-
-  return (
-    <div className="flex h-10 w-full items-center justify-between gap-x-2 rounded-small bg-dark px-3 py-2">
-      <div
-        style={{ backgroundColor: `${color}` }}
-        className="h-3 w-3 rounded-pill"
-      />
-      <AnimatedTruncText className="text-[15px] font-medium">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab deleniti
-        repellat, commodi aliquid,
-      </AnimatedTruncText>
-    </div>
-  )
-}
-
-type SlotsWheelTabProps = {
-  slots: WheelSlot[]
-}
-
-const SlotsWheelTab = ({ slots }: SlotsWheelTabProps) => {
+const SlotsWheelTab = () => {
   return (
     <TabsContent value="lots" className="data-[state=active]:h-full">
-      <div className="flex h-full flex-col gap-y-2">
-        {slots.map((item) => (
-          <SlotCard key={item.name} {...item} />
-        ))}
-      </div>
+      <ScrollArea className="h-full">
+        <AuctionSlotsList
+          className={'flex '}
+          withControls={false}
+          disableAnimation
+        />
+      </ScrollArea>
     </TabsContent>
   )
 }
