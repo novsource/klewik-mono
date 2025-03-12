@@ -1,4 +1,9 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import { z } from 'zod'
+
+import { HexColorSchema } from '~shared/lib/zod'
+
+import { getHEXColor } from '~shared/utils/colors'
 
 import { AuctionSlot } from '../model'
 
@@ -8,10 +13,24 @@ type AuctionSlotsState = {
   slotsPointsSum: number
 }
 
+const mockedAuctionSlots = Array(30)
+  .fill(null)
+  .map((_, index) => ({
+    id: index + 1,
+    name: `Бэтмен ${index}`,
+    points: Math.floor(Math.random() * 10000),
+    color: getHEXColor() as z.infer<typeof HexColorSchema>,
+  }))
+
+const slotsPointsSum = mockedAuctionSlots.reduce(
+  (sum, slot) => sum + slot.points,
+  0
+)
+
 const initialState: AuctionSlotsState = {
-  slots: [],
-  dropoutSlots: [],
-  slotsPointsSum: 0,
+  slots: mockedAuctionSlots,
+  dropoutSlots: import.meta.env.VITE_DEV ? mockedAuctionSlots : [],
+  slotsPointsSum: import.meta.env.VITE_DEV ? slotsPointsSum : 0,
 }
 
 const slice = createSlice({
