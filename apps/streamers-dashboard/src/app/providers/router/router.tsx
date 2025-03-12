@@ -37,7 +37,7 @@ const browserRouter = createBrowserRouter([
             children: [
               auctionPrepareRoute([
                 RedirectRouteObject,
-                { index: true, element: <Navigate to={'wheel'} /> },
+                { index: true, element: <Navigate to={'slots'} /> },
                 {
                   element: <AuctionDashboardLayout />,
                   children: [
@@ -45,7 +45,7 @@ const browserRouter = createBrowserRouter([
                     AuctionWheelRouteObject,
                     AuctionSettingsRouteObject,
                     AuctionDonationsRouteObject,
-                    { path: '*', element: <Navigate to={'wheel'} /> },
+                    { path: '*', element: <Navigate to={'slots'} /> },
                   ],
                 },
               ]),
