@@ -14,19 +14,17 @@ type WheelControlCallbacks = {
   onSpinComplete: (winnerLot: WheelSlot) => void
 }
 
-type WheelControl = Partial<WheelControlCallbacks> & {
+type WheelControlOptions = Partial<WheelControlCallbacks> & {
   wheelRef: RefObject<HTMLCanvasElement>
-  lotTextRef: RefObject<HTMLSpanElement>
-  items: WheelSlot[]
 }
 
-export const useWheelControl = ({
-  wheelRef,
-  lotTextRef,
-  items,
-  onSpinStart,
-  onSpinComplete,
-}: WheelControl) => {
+export const useWheelControl = (
+  wheelSlots: WheelSlot[],
+  { wheelRef, onSpinStart, onSpinComplete }: WheelControlOptions
+) => {
+  const [selectorTargetTitle, setSelectorTargetTitle] = useState<string | null>(
+    null
+  )
   const [isWheelSpinning, setIsWheelSpinning] = useState(false)
   const framerMotionAnimationValue = useMotionValue(0)
 
@@ -36,16 +34,17 @@ export const useWheelControl = ({
 
   const rotateWheelAnimation = useCallback(
     (winner: WheelSlot, spinTime: number) => {
-      if (wheelRef.current && lotTextRef.current) {
+      if (wheelRef.current) {
         const wheel = wheelRef.current
-        const slotNameTextField = lotTextRef.current
 
         const targetRotateCSSValue =
           wheelRotateCSSValue + calculateRotateWheelCSSValue(winner)
 
         animate(framerMotionAnimationValue, targetRotateCSSValue, {
+          visualDuration: spinTime,
           duration: spinTime,
-          ease: [0.62, 0.67, 0, 0.99],
+          type: 'tween',
+          ease: [0.8, 0, 0.2, 1],
           onPlay: () => {
             setIsWheelSpinning(true)
 
@@ -58,9 +57,9 @@ export const useWheelControl = ({
             onSpinComplete && onSpinComplete(winner)
           },
           onUpdate(currentDegree) {
-            const slotName = getSlotNameOnSelector(currentDegree, items)
+            const slotName = getSlotNameOnSelector(currentDegree, wheelSlots)
 
-            slotNameTextField.innerText = slotName
+            setSelectorTargetTitle(slotName)
 
             wheel.style.transform = `rotate(${currentDegree}deg)`
           },
@@ -69,13 +68,12 @@ export const useWheelControl = ({
     },
     [
       setIsWheelSpinning,
-      lotTextRef,
       wheelRef,
       onSpinComplete,
       onSpinStart,
       framerMotionAnimationValue,
       wheelRotateCSSValue,
-      items,
+      wheelSlots,
     ]
   )
 
@@ -84,7 +82,7 @@ export const useWheelControl = ({
   }
 
   return {
-    state: { wheelRotateCSSValue, isWheelSpinning },
+    state: { wheelRotateCSSValue, isWheelSpinning, selectorTargetTitle },
     functions: { spinWheel },
   }
 }

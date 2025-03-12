@@ -1,3 +1,5 @@
+import { AuctionSlot } from '~entities/auction-slot/model'
+
 type ResizeCanvasProperties = {
   canvas: HTMLCanvasElement
   wheelSelector: HTMLCanvasElement
@@ -8,7 +10,7 @@ type ResizeCanvas = (property: ResizeCanvasProperties) => void
 
 type DrawSliceOptions = {
   text?: string
-  color?: string
+  color?: AuctionSlot['color']
   textAngle?: number
   disableText?: boolean
 }
