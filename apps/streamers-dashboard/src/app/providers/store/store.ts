@@ -16,7 +16,7 @@ import { donationsReducer } from '~entities/donation/store'
 import { wheelReducer } from '~entities/wheel/store'
 
 import { splittedSSEApi as sseApi } from '~shared/store/api'
-import { appReducer } from '~shared/store/slices'
+import { appReducer, sseReducer } from '~shared/store/slices'
 
 export const store = configureStore({
   reducer: {
@@ -25,6 +25,7 @@ export const store = configureStore({
     auctionSlots: auctionSlotsReducer,
     donations: donationsReducer,
     integrations: integrationsReducer,
+    sse: sseReducer,
     wheel: wheelReducer,
     [auctionApi.reducerPath]: auctionApi.reducer,
     [auctionSlotsApi.reducerPath]: auctionSlotsApi.reducer,
