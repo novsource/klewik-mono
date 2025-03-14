@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
-import { NavbarMenu } from '~widgets/navbar-menu'
+import { DesktopNavbarMenu } from '~widgets/navbar-menu/desktop-navbar-menu/ui'
+import { MobileNavbarMenu } from '~widgets/navbar-menu/mobile-navbar-menu/ui'
 
 import { auctionSelectors } from '~entities/auction/store'
 
@@ -27,7 +28,7 @@ import { tailwindScreens } from '~shared/constants/tailwindcss'
 const AuctionDashboardLayout = () => {
   const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
   const isLargeThenTablet = useMediaQuery(
-    `(min-width:${tailwindScreens.landtop})`
+    `(min-width:${tailwindScreens.tablet})`
   )
 
   const auctionSlotsActions = useActionCreators(storeAuctionSlotsActions)
@@ -105,24 +106,15 @@ const AuctionDashboardLayout = () => {
     </div>
   ) : (
     <>
-      <Header />
+      <Header>{!isLargeThenTablet && <MobileNavbarMenu />}</Header>
       <main className="main--dashboard">
         <div className="h-full w-full px-4">
           <div className="flex h-full w-full">
-            {isLargeThenTablet && (
-              <aside className="h-full w-13 flex-none">
-                <NavbarMenu className="fixed left-3 top-1/2 -translate-y-1/2" />
-              </aside>
-            )}
+            {isLargeThenTablet && <DesktopNavbarMenu />}
             <Outlet />
           </div>
         </div>
       </main>
-      {!isLargeThenTablet && (
-        <footer className="fixed bottom-0 w-full">
-          <NavbarMenu className="h-full w-full" />
-        </footer>
-      )}
     </>
   )
 }
