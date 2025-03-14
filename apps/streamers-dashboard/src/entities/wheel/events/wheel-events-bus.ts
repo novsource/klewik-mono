@@ -57,7 +57,7 @@ class WheelEventsBus extends EventBus<WheelEventsMap> {
   ): void {
     if (data) this._validateEventData(eventName, data)
 
-    this._subscriptions.get(eventName)?.forEach((cb) => cb(data))
+    this._subscriptions.get(eventName)?.forEach((cb) => cb(...data))
   }
 
   private _validateEventData<
@@ -66,7 +66,7 @@ class WheelEventsBus extends EventBus<WheelEventsMap> {
     try {
       switch (eventName) {
         case 'spin': {
-          WheelSlotSchema.parse(data)
+          for (const item of data) WheelSlotSchema.parse(item)
           break
         }
         case 'spinEnded': {

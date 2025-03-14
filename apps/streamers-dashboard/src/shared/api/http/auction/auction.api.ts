@@ -30,6 +30,5 @@ export const getAuctionInfo = async <T>(
 ) => {
   return authHttpClient.get<T>(`/api/auction/${auctionId}/info`, {
     ...fetchOptions,
-    headers: { 'Content-Type': 'multipart/form-data' },
   })
 }

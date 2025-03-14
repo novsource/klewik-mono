@@ -44,22 +44,19 @@ export const getCenterCanvas = (
  * @param {ResizeCanvasProperties} {canvas, wheelSelector, wrapper}
  */
 
-export const resizeCanvas: ResizeCanvas = ({
-  canvas,
-  wheelSelector,
-  wrapper,
-}) => {
-  const size = wrapper.getBoundingClientRect().width
+export const resizeCanvasWithRatio = (
+  canvas: HTMLCanvasElement,
+  wrapper?: HTMLElement
+) => {
+  const size = wrapper
+    ? wrapper.getBoundingClientRect().width
+    : window.innerWidth
   const ratio = window.devicePixelRatio || 1
 
-  canvas.width =
-    canvas.height =
-    wheelSelector.width =
-    wheelSelector.height =
-      Math.floor(size * ratio)
+  canvas.width = canvas.height = Math.floor(size * ratio)
 
-  canvas.style.width = wheelSelector.style.width = `${size}px`
-  canvas.style.height = wheelSelector.style.height = `${size}px`
+  canvas.style.width = `${size}px`
+  canvas.style.height = `${size}px`
 }
 
 /**
@@ -99,7 +96,7 @@ export const drawSlice: DrawSlice = ({
   ctx.arc(x, y, sliceHeight, 0, 2 * Math.PI)
   ctx.closePath()
 
-  ctx.fillStyle = '#1F1F22'
+  ctx.fillStyle = '#151515'
   ctx.fill()
 
   ctx.save()

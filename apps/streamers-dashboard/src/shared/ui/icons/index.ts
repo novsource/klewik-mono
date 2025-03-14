@@ -34,12 +34,16 @@ import { default as Refresh } from './Refresh';
 import { default as ReturnArrow } from './ReturnArrow';
 import { default as Settings } from './Settings';
 import { default as Slots } from './Slots';
+import { default as Sort } from './Sort';
+import { default as SortAlphabetAsc } from './SortAlphabetAsc';
+import { default as SortAlphabetDes } from './SortAlphabetDes';
 import { default as Success } from './Success';
 import { default as Telegram } from './Telegram';
 import { default as Timer } from './Timer';
 import { default as Tuning } from './Tuning';
 import { default as TwitchLogo } from './TwitchLogo';
 import { default as Warning } from './Warning';
+import { default as Wheel } from './Wheel';
 import { default as YoutubeLogo } from './YoutubeLogo';
 
     export const Icons = {
@@ -79,12 +83,16 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   ReturnArrow,
   Settings,
   Slots,
+  Sort,
+  SortAlphabetAsc,
+  SortAlphabetDes,
   Success,
   Telegram,
   Timer,
   Tuning,
   TwitchLogo,
   Warning,
+  Wheel,
   YoutubeLogo
     };
   

@@ -8,61 +8,69 @@ import {
 
 import { AuctionSlot } from '~entities/auction-slot/model'
 
-import { getMaxSizeCanvas, resizeCanvas } from '~shared/utils/canvas'
+import { WheelSlot } from '~entities/wheel/model'
 
-import { drawEmptyWheel, drawSelector, drawSlicesItems } from './wheel-canvas'
+import { getMaxSizeCanvas, resizeCanvasWithRatio } from '~shared/utils/canvas'
+import { getHEXColor } from '~shared/utils/colors'
 
-type WheelInitHookProps = {
-  items: AuctionSlot[] | AuctionSlotWithAngles[] | null
+import { useWheelSelector } from './use-wheel-selector'
+import { drawEmptyWheel, drawSlicesItems } from './wheel-canvas'
+
+type WheelInitOptions = {
   isFullScreen?: boolean
-  wheelImageSize?: number
 }
 
 type WheelInit = {
   refs: {
     wheelRef: RefObject<HTMLCanvasElement>
-    wheelSelectorRef: RefObject<HTMLCanvasElement>
+    innerRef: RefObject<HTMLCanvasElement>
   }
   functions: {
-    draw(): void
+    drawWheel(): void
+    drawInner(): void
+    resizeWheel(): () => void
+    resizeInnerBackground(): void
   }
   properties: {
     wheelSize: number
   }
 }
 
-export const useWheelInit = ({
-  items,
-  isFullScreen = false,
-  wheelImageSize,
-}: WheelInitHookProps): WheelInit => {
-  const wheelCanvasRef = useRef<HTMLCanvasElement>(null)
-  const wheelSelectorCanvasRef = useRef<HTMLCanvasElement>(null)
-
+export const useWheelInit = (
+  items: AuctionSlot[] | WheelSlot[],
+  { isFullScreen = false }: WheelInitOptions
+): WheelInit => {
   const [wheelSize, setWheelSize] = useState(0)
+
+  const wheelCanvasRef = useRef<HTMLCanvasElement>(null)
+  const innerWheelCanvasRef = useRef<HTMLCanvasElement>(null)
+
+  const defaultWheelColor = useRef(getHEXColor())
+
+  const { drawBackground, resizeBackground } =
+    useWheelSelector(innerWheelCanvasRef)
 
   const draw = useCallback(() => {
     const wheelCanvas = wheelCanvasRef.current
-    const wheelSelectorCanvas = wheelSelectorCanvasRef.current
 
-    if (wheelCanvas && wheelSelectorCanvas) {
+    if (wheelCanvas) {
       if (items && !!items.length) {
         drawSlicesItems(wheelCanvas, items)
       } else {
-        drawEmptyWheel(wheelSelectorCanvas)
+        drawEmptyWheel(wheelCanvas, {
+          color: defaultWheelColor.current,
+        })
       }
-
-      drawSelector(wheelSelectorCanvas, wheelImageSize)
     }
-  }, [wheelCanvasRef, wheelSelectorCanvasRef, items, wheelImageSize])
+  }, [wheelCanvasRef, items])
 
-  useLayoutEffect(() => {
+  const resizeWheel = useCallback(() => {
     const wheelCanvas = wheelCanvasRef.current
-    const wheelSelectorCanvas = wheelSelectorCanvasRef.current
+    const innerCanvas = innerWheelCanvasRef.current
 
-    if (wheelCanvas && wheelSelectorCanvas) {
-      const wrapper = wheelCanvas?.parentElement as HTMLDivElement
-      const wrapperParent = wrapper?.parentElement as HTMLDivElement
+    if (wheelCanvas && innerCanvas) {
+      const wrapper = wheelCanvas.parentElement as HTMLDivElement
+      const wrapperParent = wrapper.parentElement as HTMLDivElement
 
       const resize = () => {
         if (getMaxSizeCanvas(wrapperParent) > 300) {
@@ -73,11 +81,8 @@ export const useWheelInit = ({
           wrapper.style.width = wrapper.style.height = `${300}px`
         }
 
-        resizeCanvas({
-          canvas: wheelCanvas,
-          wheelSelector: wheelSelectorCanvas,
-          wrapper,
-        })
+        resizeCanvasWithRatio(wheelCanvas, wrapper)
+        resizeCanvasWithRatio(innerCanvas, wrapper)
 
         setWheelSize(wheelCanvas.clientWidth)
         draw()
@@ -86,25 +91,34 @@ export const useWheelInit = ({
       resize()
 
       window.removeEventListener('resize', resize)
-
       window.addEventListener('resize', resize)
 
       return () => {
         window.removeEventListener('resize', resize)
       }
     }
-  }, [wheelCanvasRef, wheelSelectorCanvasRef, draw, isFullScreen])
+
+    return () => {}
+  }, [wheelCanvasRef, innerWheelCanvasRef, draw, isFullScreen])
+
+  useLayoutEffect(() => {
+    drawBackground()
+    resizeBackground()
+  }, [drawBackground, resizeBackground])
 
   return {
     refs: {
       wheelRef: wheelCanvasRef,
-      wheelSelectorRef: wheelSelectorCanvasRef,
+      innerRef: innerWheelCanvasRef,
     },
     properties: {
       wheelSize,
     },
     functions: {
-      draw,
+      drawWheel: draw,
+      resizeWheel,
+      resizeInnerBackground: resizeBackground,
+      drawInner: drawBackground,
     },
   }
 }

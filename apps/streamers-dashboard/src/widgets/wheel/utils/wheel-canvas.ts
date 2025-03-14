@@ -1,29 +1,35 @@
 import { AuctionSlot } from '~entities/auction-slot/model'
+
 import { WheelMode, WheelSlot } from '~entities/wheel/model'
 
 import {
   clearCanvas,
   convertDegreesToRadians,
-  convertRadiansToDegrees,
   drawSlice,
   getDegreeByArcLength,
   getMaxCircleLength,
   getPercentValue,
 } from '~shared/utils/canvas'
-import { getRandomHSLColor } from '~shared/utils/colors'
+import { getHEXColor } from '~shared/utils/colors'
 
-export const drawEmptyWheel = (canvas: HTMLCanvasElement) => {
+type DrawEmptyWheelOptions = {
+  color: string
+}
+
+export const drawEmptyWheel = (
+  canvas: HTMLCanvasElement,
+  options?: DrawEmptyWheelOptions
+) => {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
   const radius = canvas.width / 2
 
   const center = radius
 
-  ctx.fillStyle = getRandomHSLColor()
+  ctx.fillStyle = options?.color ?? getHEXColor()
 
   ctx.save()
 
   ctx.beginPath()
-  // ctx.moveTo(center, center);
   ctx.arc(center, center, radius, 0, 2 * Math.PI)
   ctx.closePath()
   ctx.clip()
@@ -66,78 +72,6 @@ export const drawSlicesItems = (
 
     startAngle = endAngle
   }
-}
-
-export const drawSelector = (
-  selectorCanvas: HTMLCanvasElement,
-  wheelImageSize: number = 0.2
-) => {
-  const ctx = selectorCanvas.getContext('2d') as CanvasRenderingContext2D
-
-  const center = selectorCanvas.width / 2
-  const radius = selectorCanvas.width / 2
-
-  ctx.save()
-
-  // Draw circle those wrapping image in wheel center
-
-  // ctx.beginPath()
-  // ctx.arc(center, center, radius * wheelImageSize, 0, 2 * Math.PI)
-  // ctx.closePath()
-
-  // ctx.fill()
-
-  ctx.restore()
-
-  ctx.save()
-
-  // Draw selector
-
-  const selectorWidth = Math.max(55, selectorCanvas.clientWidth * 0.045)
-  const selectorHeight = Math.max(25, selectorCanvas.clientHeight * 0.03)
-
-  const selectorX = center
-  const selectorY = radius * 0.1 + selectorHeight
-  // const selectorY = center - (selectorCanvas.width * wheelImageSize) / 2
-
-  const strokeGradient = ctx.createLinearGradient(
-    selectorX,
-    selectorY - selectorHeight,
-    selectorX,
-    selectorY
-  )
-
-  strokeGradient.addColorStop(0.075, '#6FCF97')
-  strokeGradient.addColorStop(0.925, '#6FCF97')
-
-  ctx.strokeStyle = strokeGradient
-  ctx.fillStyle = '#3E4145'
-  ctx.lineWidth = 4
-
-  ctx.beginPath()
-  ctx.moveTo(selectorX, selectorY)
-
-  ctx.arcTo(
-    selectorX - selectorWidth / 2,
-    selectorY,
-    selectorX - selectorWidth / 4,
-    selectorY - selectorHeight / 2,
-    4
-  )
-  ctx.arcTo(
-    selectorX,
-    selectorY - selectorHeight,
-    selectorX + selectorWidth / 4,
-    selectorY - selectorHeight / 2,
-    4
-  )
-  ctx.arcTo(selectorX + selectorWidth / 2, selectorY, selectorX, selectorY, 4)
-  ctx.closePath()
-
-  ctx.fill()
-  ctx.stroke()
-
-  ctx.restore()
 }
 
 export const drawWheelOverlay = (canvas: HTMLCanvasElement) => {
@@ -263,7 +197,7 @@ export const getSliceInfo = (
         text: item.name,
         color: item.color,
       },
-      onDraw: (slice) => {
+      onDraw: (slice: Path2D) => {
         if (ctx.isPointInPath(slice, mouse.x, mouse.y)) console.log(item)
       },
     })
@@ -343,10 +277,7 @@ export const getSlotNameOnSelector = (
 export const generateWinner = (slots: WheelSlot[]): WheelSlot => {
   const winnerRadians = 2 * Math.PI * Math.random()
 
-  console.log(convertRadiansToDegrees(winnerRadians))
-
   for (const slot of slots) {
-    console.log(slot)
     const { startAngle, endAngle } = slot
 
     const startAngleInRadians = convertDegreesToRadians(startAngle)
@@ -359,6 +290,8 @@ export const generateWinner = (slots: WheelSlot[]): WheelSlot => {
       return slot
     }
   }
+
+  return slots[0]
 }
 
 export const calculateRotateWheelCSSValue = (

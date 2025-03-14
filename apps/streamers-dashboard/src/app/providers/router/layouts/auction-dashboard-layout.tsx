@@ -3,6 +3,8 @@ import { Outlet } from 'react-router-dom'
 
 import { NavbarMenu } from '~widgets/navbar-menu'
 
+import { auctionSelectors } from '~entities/auction/store'
+
 import { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions as storeAuctionSlotsActions } from '~entities/auction-slot/store'
 
@@ -10,8 +12,6 @@ import { Donation } from '~entities/donation/model'
 import { donationsActions as storeDonationsActions } from '~entities/donation/store'
 
 import { SSEApiClient } from '~shared/api/sse'
-
-import { appSelectors } from '~shared/store/slices'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -25,7 +25,7 @@ import { toastPromiseNotification } from '~shared/ui/toaster/lib'
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
 const AuctionDashboardLayout = () => {
-  const auctionId = useStoreSelector(appSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
   const isLargeThenTablet = useMediaQuery(
     `(min-width:${tailwindScreens.landtop})`
   )

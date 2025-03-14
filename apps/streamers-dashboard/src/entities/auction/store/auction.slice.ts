@@ -1,6 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
-import { AuctionSlot } from '~entities/auction-slot/model'
 import { WheelSlot } from '~entities/wheel/model/@x'
 
 import { Auction } from '../model'
@@ -15,10 +14,9 @@ const initialState: AuctionSliceState = {
     id: '',
     ownerId: '',
     url: '',
-    slots: [],
-    dropoutSlots: [],
     createAt: 0,
     endedAt: 0,
+    isBetsClosed: false,
     isEnded: false,
     wheelMode: 'classic',
   },
@@ -39,23 +37,11 @@ const auctionSlice = createSlice({
 
       state.wheelSlotsData = [...slots]
     },
-    setAuctionSlots(state, action: PayloadAction<AuctionSlot[]>) {
-      const payloadSlots = action.payload
-
-      const auctionSlots = state.auctionInfo.slots
-
-      if (!auctionSlots) {
-        state.auctionInfo.slots = payloadSlots
-        return
-      }
-
-      state.auctionInfo.slots = [...auctionSlots, ...payloadSlots]
-    },
   },
   selectors: {
+    getAuctionId: (state) => state.auctionInfo.id,
     getAuctionUrl: (state) => state.auctionInfo.url,
     getAuctionInfo: (state) => state.auctionInfo,
-    getAuctionSlots: (state) => state.auctionInfo.slots,
     getWheelSlots: (state) => state.wheelSlotsData,
   },
 })

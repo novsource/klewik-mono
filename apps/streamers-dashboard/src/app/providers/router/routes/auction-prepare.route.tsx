@@ -13,11 +13,9 @@ import { z } from 'zod'
 import { store } from '~app/providers/store/store'
 
 import { Auction } from '~entities/auction/model'
-import { auctionActions as storeAuctionActions } from '~entities/auction/store'
+import { auctionActions } from '~entities/auction/store'
 
 import { getAuctionInfo } from '~shared/api/http/auction/auction.api'
-
-import { appActions } from '~shared/store/slices'
 
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
@@ -82,8 +80,7 @@ const auctionPrepareRoute = (childrens: RouteObject[]): RouteObject => {
           validatedParams.data.auctionId
         )
 
-        dispatch(storeAuctionActions.setAuction(response.data))
-        dispatch(appActions.setAuctionId(response.data.id))
+        dispatch(auctionActions.setAuction(response.data))
 
         return response.data
       } catch (err) {

@@ -1,7 +1,23 @@
-import { HTMLAttributes, ReactNode, memo, useEffect, useState } from 'react'
+import {
+  ComponentPropsWithoutRef,
+  HTMLAttributes,
+  ReactNode,
+  forwardRef,
+  memo,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import AutoSizer from 'react-virtualized-auto-sizer'
+import {
+  ListChildComponentProps as ListRenderProps,
+  FixedSizeList as VirtualList,
+} from 'react-window'
 
 import { ClassValue } from 'clsx'
-import VirtualList from 'rc-virtual-list'
+import { useMotionValueEvent, useScroll } from 'framer-motion'
 
 import { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -14,13 +30,67 @@ import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
+const SlotsShadowScrollArea = forwardRef<
+  HTMLDivElement,
+  ComponentPropsWithoutRef<'div'>
+>(({ style, ...otherProps }, forwardRef) => {
+  const containerRef = useRef<HTMLDivElement | null>(null)
+
+  const [scrollYProgress, setScrollYProgress] = useState(0)
+
+  const { scrollYProgress: motionScrollYProgress } = useScroll({
+    container: containerRef,
+  })
+
+  useLayoutEffect(() => {
+    if (!forwardRef) return
+
+    if (typeof forwardRef === 'function') {
+      return
+    } else {
+      containerRef.current = forwardRef.current
+    }
+  }, [forwardRef])
+
+  useMotionValueEvent(motionScrollYProgress, 'change', (value) => {
+    setScrollYProgress(value)
+  })
+
+  const shadowScrollAreaStyle = useMemo(() => {
+    const isEndOfContainer = scrollYProgress === 1
+    const isStartOfContainer = scrollYProgress === 0
+
+    const topGradientValue = isStartOfContainer ? 0 : 100
+    const bottomGradientValue = isEndOfContainer ? 0 : 100
+
+    return `linear-gradient(#000, #000,transparent 0,#000 ${topGradientValue}px,#000 calc(100% - ${bottomGradientValue}px),transparent)`
+  }, [scrollYProgress])
+
+  return (
+    <div
+      data-slot="scrolling-shadow"
+      ref={containerRef}
+      style={{
+        ...style,
+        maskImage: shadowScrollAreaStyle,
+      }}
+      {...otherProps}
+    />
+  )
+})
+
 type AuctionSlotsListProps = {
   data?: AuctionSlot[]
-  className?: ClassValue
-  renderCard: (slot: AuctionSlot, index: number) => ReactNode
+  className?: string
+  renderCard: (props: ListRenderProps<AuctionSlot[]>) => ReactNode
+  shadowScroll?: boolean
 }
 
-const VirtualizedSlotsList = ({ data, renderCard }: AuctionSlotsListProps) => {
+const VirtualizedSlotsList = ({
+  data,
+  renderCard,
+  shadowScroll = false,
+}: AuctionSlotsListProps) => {
   const storedSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const [slots, setSlots] = useState(() => data ?? storedSlots)
 
@@ -33,15 +103,23 @@ const VirtualizedSlotsList = ({ data, renderCard }: AuctionSlotsListProps) => {
   }, [data, storedSlots])
 
   return slots.length > 0 ? (
-    <VirtualList
-      component={'ul'}
-      data={slots}
-      itemKey={'id'}
-      itemHeight={91}
-      fullHeight
-    >
-      {renderCard}
-    </VirtualList>
+    <AutoSizer>
+      {({ height, width }) => {
+        return (
+          <VirtualList
+            overscanCount={2}
+            itemSize={91}
+            itemData={slots}
+            itemCount={slots.length}
+            height={height}
+            width={width}
+            outerElementType={shadowScroll ? SlotsShadowScrollArea : undefined}
+          >
+            {renderCard}
+          </VirtualList>
+        )
+      }}
+    </AutoSizer>
   ) : (
     <div className="flex flex-col gap-y-2 justify-center items-center h-full">
       <Icons.Logo className="text-gray" width={32} height={32} />
@@ -94,51 +172,58 @@ type AuctionSlotCardProps = AuctionSlot & {
   percent?: string | number
 }
 
-const AuctionSlotCard = memo((props: AuctionSlotCardProps) => {
-  const { percent, ...slot } = props
-  return (
-    <Card className="flex flex-col justify-between border-1 border-dark gap-y-3 py-2">
-      <CardHeader className="flex items-start justify-between h-6">
-        <CardTitle className="w-full">
-          <Typography
-            tag="span"
-            className="font-golos-f text-title font-semibold"
-          >
-            {slot.name}
-          </Typography>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="w-full flex flex-col gap-y-2 pt-0">
-        <div className="w-full flex flex-row gap-x-2 items-center">
-          <div
-            className="w-8 h-7 rounded-md"
-            style={{
-              backgroundColor: Array.isArray(slot.color)
-                ? `rgb(${slot.color.join(',')})`
-                : slot.color,
-            }}
-          />
-          <AuctionCardChip
-            startContent={<Icons.Id className="text-gray-light" size="sm" />}
-          >
-            {slot.id}
-          </AuctionCardChip>
-          <AuctionCardChip
-            startContent={<Icons.Coin className="text-gray-light" size="sm" />}
-          >
-            {Intl.NumberFormat('ru-Ru').format(slot.points).toString()}
-          </AuctionCardChip>
-          {percent && (
-            <AuctionCardChip
-              classNames={{ base: 'bg-green/20', text: 'text-green' }}
+const AuctionSlotCard = memo(
+  forwardRef<HTMLDivElement, AuctionSlotCardProps>((props, forwardRef) => {
+    const { percent, ...slot } = props
+    return (
+      <Card
+        ref={forwardRef}
+        className="flex flex-col justify-between border-1 border-dark gap-y-3 py-2"
+      >
+        <CardHeader className="flex items-start justify-between h-6">
+          <CardTitle className="w-full">
+            <Typography
+              tag="span"
+              className="font-golos-f text-title font-semibold"
             >
-              {percent}%
+              {slot.name}
+            </Typography>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="w-full flex flex-col gap-y-2 pt-0">
+          <div className="w-full flex flex-row gap-x-2 items-center">
+            <div
+              className="w-8 h-7 rounded-md"
+              style={{
+                backgroundColor: Array.isArray(slot.color)
+                  ? `rgb(${slot.color.join(',')})`
+                  : slot.color,
+              }}
+            />
+            <AuctionCardChip
+              startContent={<Icons.Id className="text-gray-light" size="sm" />}
+            >
+              {slot.id}
             </AuctionCardChip>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  )
-})
+            <AuctionCardChip
+              startContent={
+                <Icons.Coin className="text-gray-light" size="sm" />
+              }
+            >
+              {Intl.NumberFormat('ru-Ru').format(slot.points).toString()}
+            </AuctionCardChip>
+            {percent && (
+              <AuctionCardChip
+                classNames={{ base: 'bg-green/20', text: 'text-green' }}
+              >
+                {percent}%
+              </AuctionCardChip>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    )
+  })
+)
 
 export { AuctionSlotCard, AuctionCardChip }

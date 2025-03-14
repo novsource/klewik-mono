@@ -4,11 +4,13 @@ import { validateSlotsPayload } from '../lib/react-redux'
 import { WheelSlot } from '../model'
 
 export type WheelState = {
+  selectorTargetTitle: string
   slots: WheelSlot[]
   settings: {}
 }
 
 const initialState: WheelState = {
+  selectorTargetTitle: 'Ожидание прокрутки колеса...',
   slots: [],
   settings: {},
 }
@@ -39,6 +41,9 @@ const wheelSlice = createSlice({
         payload: validateSlotsPayload(payload),
       }),
     },
+    setSelectorTitleName: (state, action: PayloadAction<string>) => {
+      state.selectorTargetTitle = action.payload
+    },
   },
   selectors: {
     getSlots: (state) => {
@@ -46,6 +51,9 @@ const wheelSlice = createSlice({
     },
     getSettings: (state) => {
       return state.settings
+    },
+    getSelectorTargetTitle: (state) => {
+      return state.selectorTargetTitle
     },
   },
 })

@@ -3,9 +3,9 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form'
 
 import { motion } from 'framer-motion'
 
-import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+import { auctionSelectors } from '~entities/auction/store'
 
-import { appSelectors } from '~shared/store/slices'
+import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import {
   AxiosBaseQueryError,
@@ -43,7 +43,7 @@ export const CreateSlotsForm = ({
   ...props
 }: CreateSlotsFormProps) => {
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-  const auctionId = useStoreSelector(appSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
 
   const {
     control,
