@@ -12,11 +12,12 @@ export interface ButtonProps
   asChild?: boolean
   startContent?: React.ReactNode
   endContent?: React.ReactNode
+  icon?: React.ReactNode
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, isIconOnly, variant, size, asChild = false, ...props },
+    { className, isIconOnly, variant, size, icon, asChild = false, ...props },
     ref
   ) => {
     const { children, startContent, endContent, ...otherProps } = props
@@ -39,9 +40,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     )
 
     return (
-      <Comp className={style} ref={ref} {...otherProps}>
+      <Comp
+        className={style}
+        ref={ref}
+        data-icon-only={isIconOnly}
+        {...otherProps}
+      >
         {startContent}
         {!isIconOnly && children}
+        {isIconOnly && icon}
         {endContent}
       </Comp>
     )

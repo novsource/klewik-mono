@@ -13,6 +13,7 @@ import { default as EyeOpen } from './EyeOpen';
 import { default as Face } from './Face';
 import { default as Gamepad } from './Gamepad';
 import { default as Github } from './Github';
+import { default as Hamburger } from './Hamburger';
 import { default as Home } from './Home';
 import { default as Id } from './Id';
 import { default as Key } from './Key';
@@ -62,6 +63,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Face,
   Gamepad,
   Github,
+  Hamburger,
   Home,
   Id,
   Key,

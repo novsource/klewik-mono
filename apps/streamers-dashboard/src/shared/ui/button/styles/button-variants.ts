@@ -49,7 +49,7 @@ export const buttonVariants = cva<ButtonVariants>(
         outline: 'bg-dark text-gray-accent hover:bg-dark/80 hover:text-white',
         secondary:
           'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'bg-transparent',
+        ghost: 'bg-transparent border-transparent',
         link: 'text-primary underline-offset-4 hover:underline',
       },
       isIconOnly: {
@@ -58,9 +58,9 @@ export const buttonVariants = cva<ButtonVariants>(
       },
       size: {
         default:
-          'h-10 px-3 py-1 text-md leading-6 rounded-md font-medium [&_svg]:size-4.5',
-        sm: 'h-9 rounded-md px-2 text-sm leading-6 font-regular [&_svg]:size-4',
-        lg: 'h-11 rounded-md px-3 font-medium [&_svg]:size-5',
+          'h-10 px-3 py-1 text-md leading-6 rounded-md font-medium data-[icon-only=false]:[&_svg]:size-4.5',
+        sm: 'h-9 rounded-md px-2 text-sm leading-6 font-regular data-[icon-only=false]:[&_svg]:size-4',
+        lg: 'h-11 rounded-md px-3 font-medium data-[icon-only=false]:[&_svg]:size-5',
       },
       startContent: {
         true: 'flex items-center justify-center gap-x-1',

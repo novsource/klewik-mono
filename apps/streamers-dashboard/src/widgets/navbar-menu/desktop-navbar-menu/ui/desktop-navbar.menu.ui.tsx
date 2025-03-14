@@ -1,16 +1,15 @@
 import { ReactNode, useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
 import { Icons } from '~shared/ui/icons'
-import { Navbar, NavbarItem, NavbarProps } from '~shared/ui/navbar'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
-type NavbarMenuProps = NavbarProps
+import { cn } from '~shared/utils'
 
-export const NavbarMenu = (props: NavbarMenuProps) => {
+const NavbarMenu = () => {
   const { pathname } = useLocation()
   const isLargeThenTablet = useMediaQuery(
     `(min-width:${tailwindScreens.tablet})`
@@ -38,17 +37,40 @@ export const NavbarMenu = (props: NavbarMenuProps) => {
       const routerLink = curr.path.replace('/', '')
 
       acc.push(
-        <NavbarItem
-          key={curr.path}
-          linkProps={{ to: routerLink, relative: 'path' }}
-        >
-          {menuIcon}
-        </NavbarItem>
+        <li key={curr.path} className="cursor-pointer">
+          <NavLink
+            to={routerLink}
+            className={({ isActive }) =>
+              cn(
+                isActive && 'text-white',
+                !isActive && 'hover:text-gray-accent text-gray-light'
+              )
+            }
+          >
+            {menuIcon}
+          </NavLink>
+        </li>
       )
 
       return acc
     }, [])
   }, [pathname])
 
-  return <Navbar {...props}>{menuItems}</Navbar>
+  return (
+    <nav data-slot="navbar" className="fixed left-3 top-1/2 -translate-y-1/2">
+      <ul className="flex flex-col w-full justify-between gap-y-5 py-4 bg-dark/60 px-4 rounded-lg">
+        {menuItems}
+      </ul>
+    </nav>
+  )
 }
+
+const DesktopNavbarMenu = () => {
+  return (
+    <aside className="h-full w-13 flex-none">
+      <NavbarMenu />
+    </aside>
+  )
+}
+
+export { DesktopNavbarMenu }
