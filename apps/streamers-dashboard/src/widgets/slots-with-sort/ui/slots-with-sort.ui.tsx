@@ -12,7 +12,6 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Combobox, ComboboxData } from '~shared/ui/combobox'
 import { Icons } from '~shared/ui/icons'
-import { ScrollArea } from '~shared/ui/scroll-area'
 
 import { useSortingSlots } from '../lib'
 
@@ -94,23 +93,17 @@ const SlotsListWithSorting = ({
             (sort) => sort.value === sortValue
           )?.sortingOptions
 
-          console.log(
-            sortingSlotsVariants.find((sort) =>
-              shallowEqual(sort.sortingOptions, sortingOptions)
-            )?.value
-          )
-
           setSortingOptions(sortOptions ?? defaultSortOptions)
           onSortingChange && onSortingChange(sortOptions ?? defaultSortOptions)
         }}
       />
 
-      <ScrollArea className="h-full w-full overflow-scroll">
+      <div className="h-full w-full overflow-scroll pb-4">
         <AuctionSlotsList
           className="flex h-full w-full flex-col gap-y-2"
           data={sortedSlots}
         />
-      </ScrollArea>
+      </div>
     </div>
   )
 }

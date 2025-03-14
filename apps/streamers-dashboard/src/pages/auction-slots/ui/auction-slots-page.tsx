@@ -1,5 +1,6 @@
 import { useLayoutEffect, useState } from 'react'
 
+import { AuctionSlotsList } from '~widgets/auction-slots-list/ui'
 import { CreateSlotsDialog } from '~widgets/create-slots-dialog/ui'
 import { SearchInput } from '~widgets/search-input/ui'
 import { SlotsListWithSorting } from '~widgets/slots-with-sort/ui'
@@ -83,6 +84,10 @@ const AuctionSlotsPage = () => {
           />
         </div>
       </div>
+      {/* <div className="h-full w-full">
+        <AuctionSlotsList data={searchedSlots} />
+      </div> */}
+
       <SlotsListWithSorting
         data={searchedSlots}
         defaultSortingOptions={value[auctionId] ?? slotsSortOptions}

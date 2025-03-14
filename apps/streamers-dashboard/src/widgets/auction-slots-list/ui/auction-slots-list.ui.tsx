@@ -1,18 +1,13 @@
-import { memo, useCallback, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { ListChildComponentProps as ListRenderProps } from 'react-window'
 
-import { ClassValue } from 'clsx'
 import { motion } from 'framer-motion'
 
-import { EditSlotSheet } from '~widgets/edit-slot-dialog/ui'
-
-import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
 import {
-  AuctionCardChip,
   AuctionSlotCard,
   VirtualizedSlotsList,
 } from '~features/auction-slot/watch-slots/ui'
 
-import { Auction } from '~entities/auction/model'
 import { auctionSelectors } from '~entities/auction/store'
 
 import { AuctionSlot } from '~entities/auction-slot/model'
@@ -20,86 +15,13 @@ import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Button } from '~shared/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '~shared/ui/card'
-import { Icons } from '~shared/ui/icons'
-import { Typography } from '~shared/ui/typograghy'
+import { useIntersection } from '~shared/hooks/use-intersection'
 
-type AuctionSlotCardWithControlsProps = AuctionSlot & {
-  auctionId: Auction['id']
-  percent: string | number
-}
-
-const AuctionSlotCardWithControls = memo(
-  (props: AuctionSlotCardWithControlsProps) => {
-    const { percent, auctionId, ...slot } = props
-    return (
-      <Card className="flex flex-col justify-between border-1 border-dark gap-y-3 py-2">
-        <CardHeader className="flex items-start justify-between h-6">
-          <CardTitle className="w-full">
-            <Typography
-              tag="span"
-              className="font-golos-f text-title font-semibold"
-            >
-              {slot.name}
-            </Typography>
-          </CardTitle>
-          <div className="flex flex-row gap-x-1 h-6">
-            <EditSlotSheet
-              slot={slot}
-              trigger={
-                <Button
-                  variant={'ghost'}
-                  isIconOnly
-                  className="text-gray-accent transition-colors hover:text-white h-full px-1 py-1"
-                  startContent={<Icons.Pencil />}
-                  size={'sm'}
-                >
-                  Изменить
-                </Button>
-              }
-            />
-            <DeleteSlotButton auctionId={auctionId} slotId={slot.id} />
-          </div>
-        </CardHeader>
-        <CardContent className="w-full flex flex-col gap-y-2 pt-0">
-          <div className="w-full flex flex-row gap-x-2 items-center">
-            <div
-              className="w-8 h-7 rounded-md"
-              style={{
-                backgroundColor: Array.isArray(slot.color)
-                  ? `rgb(${slot.color.join(',')})`
-                  : slot.color,
-              }}
-            />
-            <AuctionCardChip
-              startContent={<Icons.Id className="text-gray-light" size="sm" />}
-            >
-              {slot.id}
-            </AuctionCardChip>
-            <AuctionCardChip
-              startContent={
-                <Icons.Coin className="text-gray-light" size="sm" />
-              }
-            >
-              {Intl.NumberFormat('ru-Ru').format(slot.points).toString()}
-            </AuctionCardChip>
-            <AuctionCardChip
-              classNames={{ base: 'bg-green/20', text: 'text-green' }}
-            >
-              {percent}%
-            </AuctionCardChip>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-)
+import { AuctionSlotCardWithControls } from './list-card'
 
 type AuctionSlotsListProps = {
   data?: AuctionSlot[]
-
-  className?: ClassValue
+  className?: string
   withControls?: boolean
   disableAnimation?: boolean
 }
@@ -112,6 +34,7 @@ const AuctionSlotsList = ({
   data,
   withControls = true,
   disableAnimation = false,
+  className,
   ...otherProps
 }: AuctionSlotsListProps) => {
   const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
@@ -124,13 +47,11 @@ const AuctionSlotsList = ({
     () => data ?? storedAuctionSlots
   )
 
-  useLayoutEffect(() => {
-    if (data === undefined) {
-      setShowedSlots(storedAuctionSlots)
-    } else {
-      setShowedSlots(data)
-    }
-  }, [storedAuctionSlots, data])
+  const firstCardRef = useRef<HTMLDivElement>(null)
+  const lastCardRef = useRef<HTMLDivElement>(null)
+
+  const { inView: isFirstCardInView } = useIntersection(firstCardRef)
+  const { inView: isLastCardInView } = useIntersection(lastCardRef)
 
   const slotsWinPercents = useMemo(() => {
     const percentsArr = [...storedAuctionSlots].map<AuctionSlotWithPercents>(
@@ -147,44 +68,71 @@ const AuctionSlotsList = ({
   }, [storedAuctionSlots, storedSlotsPointsSum, showedSlots])
 
   const renderAuctionCard = useCallback(
-    (slot: AuctionSlot, index: number) => {
+    ({ data: slots, index, style }: ListRenderProps<AuctionSlot[]>) => {
+      const slot = slots[index]
+
+      const refProp =
+        index === 0
+          ? firstCardRef
+          : index === showedSlots.length - 1
+            ? lastCardRef
+            : undefined
+
       const card = withControls ? (
         <AuctionSlotCardWithControls
-          {...slot}
+          ref={refProp}
           auctionId={auctionId}
           percent={slotsWinPercents[index]}
+          {...slot}
         />
       ) : (
-        <AuctionSlotCard {...slot} percent={slotsWinPercents[index]} />
+        <AuctionSlotCard
+          ref={refProp}
+          percent={slotsWinPercents[index]}
+          {...slot}
+        />
       )
 
       if (disableAnimation) {
         return (
-          <li key={slot.id} style={{ marginTop: index > 0 ? '8px' : '0' }}>
+          <div
+            key={slot.id}
+            style={{ ...style, marginTop: index > 0 ? `${8 * index}px` : '0' }}
+          >
             {card}
-          </li>
+          </div>
         )
       }
 
       return (
-        <motion.li
+        <motion.div
           key={slot.id}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          style={{ marginTop: index > 0 ? '8px' : '0' }}
+          style={{ ...style, marginTop: index > 0 ? `${8 * index}px` : '0' }}
         >
           {card}
-        </motion.li>
+        </motion.div>
       )
     },
     [slotsWinPercents, withControls, disableAnimation]
   )
 
+  useLayoutEffect(() => {
+    if (data === undefined) {
+      setShowedSlots(storedAuctionSlots)
+    } else {
+      setShowedSlots(data)
+    }
+  }, [storedAuctionSlots, data])
+
   return (
     <VirtualizedSlotsList
       data={showedSlots}
       renderCard={renderAuctionCard}
+      className={className}
+      shadowScroll
       {...otherProps}
     />
   )
