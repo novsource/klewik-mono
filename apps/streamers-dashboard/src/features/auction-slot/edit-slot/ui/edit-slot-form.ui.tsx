@@ -1,5 +1,12 @@
-import { HTMLAttributes, useMemo } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { HTMLAttributes, useEffect, useMemo } from 'react'
+import {
+  Control,
+  Controller,
+  DefaultValues,
+  FormState,
+  useForm,
+  useWatch,
+} from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -24,28 +31,53 @@ import { useEditSlotMutation } from '../api'
 import { TransformedEditSlotFormData, transformEditSlotFormData } from '../lib'
 import type { EditSlotFormData } from '../model'
 
+type EditSlotFormWatchingProps<
+  T extends Partial<Record<keyof EditSlotFormData, boolean>> = Partial<
+    Record<keyof EditSlotFormData, boolean>
+  >,
+  Return extends Extract<keyof T, keyof EditSlotFormData> = Extract<
+    keyof T,
+    keyof EditSlotFormData
+  >,
+> = {
+  watchingFields?: T
+  onFieldValueChange?: (
+    data: Partial<Record<Return, EditSlotFormData[Return]>>
+  ) => void
+}
+
+type EditSlotsFormStateProps = {
+  defaultValues?: DefaultValues<EditSlotFormData>
+}
+
 type EditSlotsFormProps = Omit<HTMLAttributes<HTMLFormElement>, 'onSubmit'> & {
   targetSlot: AuctionSlot
   onSuccess?: (formData: TransformedEditSlotFormData) => void
   onError?: () => void
-}
+} & EditSlotFormWatchingProps &
+  EditSlotsFormStateProps
 
 export const EditSlotForm = ({
   targetSlot,
   onError,
   onSuccess,
+  defaultValues,
+  watchingFields,
+  onFieldValueChange,
   ...props
 }: EditSlotsFormProps) => {
   const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<EditSlotFormData, unknown, TransformedEditSlotFormData>({
+  const { control, handleSubmit, formState } = useForm<
+    EditSlotFormData,
+    unknown,
+    TransformedEditSlotFormData
+  >({
     defaultValues: {
-      name: targetSlot.name,
-      points: Intl.NumberFormat('ru-RU').format(targetSlot.points).toString(),
+      name: defaultValues?.name ?? targetSlot.name,
+      points: Intl.NumberFormat('ru-RU')
+        .format(Number(defaultValues?.points) || targetSlot.points)
+        .toString(),
     },
     resolver: zodResolver(transformEditSlotFormData()),
     mode: 'all',
@@ -77,57 +109,6 @@ export const EditSlotForm = ({
     onSuccess && onSuccess(formData)
   }
 
-  const getErrorMessageForField = (
-    fieldName: keyof EditSlotFormData
-  ): string | undefined => {
-    if (errors[fieldName]) {
-      return errors[fieldName].message
-    }
-  }
-
-  const formFields = useMemo(() => {
-    return (
-      <div className="flex flex-col gap-y-4">
-        <Controller
-          render={({ field }) => (
-            <Input
-              slotClassNames={{
-                base: 'font-golos-f w-full basis-1/2 grow',
-                description: 'text-wrap',
-              }}
-              label={{ id: 'slotTitle', value: 'Новое название' }}
-              placeholder="Название слота"
-              errorMessage={getErrorMessageForField('name')}
-              {...field}
-            />
-          )}
-          control={control}
-          name={'name'}
-        />
-        <Controller
-          render={({ field }) => (
-            <NumberInput
-              slotClassNames={{
-                base: 'font-golos-f basis-1/3 desktop-lg:basis-1/4',
-                description: 'text-wrap',
-              }}
-              label={{
-                id: 'slotPoints',
-                value: 'Новое количество очков',
-              }}
-              placeholder="Очки"
-              maxValue={1000000}
-              errorMessage={getErrorMessageForField('points')}
-              {...field}
-            />
-          )}
-          control={control}
-          name={'points'}
-        />
-      </div>
-    )
-  }, [getErrorMessageForField])
-
   return (
     <form
       className="flex flex-col w-full h-full justify-between"
@@ -137,7 +118,12 @@ export const EditSlotForm = ({
       <div className="flex w-full flex-col gap-y-6 items-stretch">
         <ul className="flex flex-col w-full">
           <div className="flex w-full flex-col gap-y-3 h-full overflow-y-scroll p-1">
-            {formFields}
+            <EditSlotFormFields
+              control={control}
+              formState={formState}
+              watchingFields={watchingFields}
+              onFieldValueChange={onFieldValueChange}
+            />
           </div>
         </ul>
       </div>
@@ -151,5 +137,102 @@ export const EditSlotForm = ({
         Изменить слот
       </Button>
     </form>
+  )
+}
+
+type EditSlotFormFieldsProps = {
+  formState: FormState<EditSlotFormData>
+  control: Control<EditSlotFormData>
+} & EditSlotFormWatchingProps
+
+const EditSlotFormFields = ({
+  control,
+  formState,
+  watchingFields,
+  onFieldValueChange,
+}: EditSlotFormFieldsProps) => {
+  const watchedFieldsNames = useMemo(() => {
+    if (!watchingFields || Object.keys(watchingFields).length === 0) return []
+
+    const fields = Object.keys(watchingFields) as Array<keyof EditSlotFormData>
+
+    return fields.reduce<Array<keyof EditSlotFormData>>((acc, name) => {
+      const isWatching = watchingFields[name]
+
+      if (isWatching) {
+        acc.push(name)
+      }
+
+      return acc
+    }, [])
+  }, [watchingFields])
+
+  const fieldsValues = useWatch({ control, name: watchedFieldsNames })
+
+  useEffect(() => {
+    if (!watchingFields || Object.keys(watchedFieldsNames).length === 0) return
+
+    let counter = 0
+
+    const transformedData = fieldsValues.reduce<{
+      [P in keyof EditSlotFormData]?: EditSlotFormData[P]
+    }>((acc, value) => {
+      const fieldName = watchedFieldsNames[counter]
+      acc[fieldName] = value
+      counter++
+
+      return acc
+    }, {})
+
+    onFieldValueChange && onFieldValueChange(transformedData)
+  }, [fieldsValues, watchedFieldsNames])
+
+  const getErrorMessageForField = (
+    fieldName: keyof EditSlotFormData
+  ): string | undefined => {
+    if (formState.errors[fieldName]) {
+      return formState.errors[fieldName].message
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-y-4">
+      <Controller
+        render={({ field }) => (
+          <Input
+            slotClassNames={{
+              base: 'font-golos-f w-full basis-1/2 grow',
+              description: 'text-wrap',
+            }}
+            label={{ id: 'slotTitle', value: 'Новое название' }}
+            placeholder="Название слота"
+            errorMessage={getErrorMessageForField('name')}
+            {...field}
+          />
+        )}
+        control={control}
+        name={'name'}
+      />
+      <Controller
+        render={({ field }) => (
+          <NumberInput
+            slotClassNames={{
+              base: 'font-golos-f basis-1/3 desktop-lg:basis-1/4',
+              description: 'text-wrap',
+            }}
+            label={{
+              id: 'slotPoints',
+              value: 'Новое количество очков',
+            }}
+            placeholder="Очки"
+            maxValue={1000000}
+            errorMessage={getErrorMessageForField('points')}
+            {...field}
+          />
+        )}
+        control={control}
+        name={'points'}
+      />
+    </div>
   )
 }

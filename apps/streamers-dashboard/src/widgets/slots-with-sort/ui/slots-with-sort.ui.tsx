@@ -98,7 +98,7 @@ const SlotsListWithSorting = ({
         }}
       />
 
-      <div className="h-full w-full overflow-scroll pb-4">
+      <div className="h-full w-full overflow-scroll">
         <AuctionSlotsList
           className="flex h-full w-full flex-col gap-y-2"
           data={sortedSlots}

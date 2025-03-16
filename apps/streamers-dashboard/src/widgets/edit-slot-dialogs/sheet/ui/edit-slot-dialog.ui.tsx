@@ -3,7 +3,7 @@ import { ReactNode, useState } from 'react'
 import { EditSlotForm } from '~features/auction-slot/edit-slot/ui'
 import { AuctionSlotCard } from '~features/auction-slot/watch-slots/ui'
 
-import { AuctionSlot } from '~entities/auction-slot/model'
+import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions } from '~entities/auction-slot/store'
 
 import { useActionCreators } from '~shared/lib/redux-toolkit'
@@ -20,13 +20,18 @@ import {
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
-type EditSlotSheetProps = {
+export type EditSlotSheetProps = {
   slot: AuctionSlot
   trigger: ReactNode
+  isOpen?: boolean
 }
 
-const EditSlotSheet = ({ slot: inputSlot, trigger }: EditSlotSheetProps) => {
-  const [isOpen, setIsOpen] = useState(false)
+const EditSlotSheet = ({
+  slot: inputSlot,
+  trigger,
+  ...props
+}: EditSlotSheetProps) => {
+  const [isOpen, setIsOpen] = useState(props.isOpen ?? false)
 
   const { updateSlot } = useActionCreators(auctionSlotsActions)
 
@@ -42,12 +47,13 @@ const EditSlotSheet = ({ slot: inputSlot, trigger }: EditSlotSheetProps) => {
           <SheetTitle>Изменение слота</SheetTitle>
         </SheetHeader>
         <div className="h-full flex flex-col gap-y-6">
-          <div className="flex flex-col gap-y-2">
-            <AuctionSlotCard {...inputSlot} />
-          </div>
-
+          <AuctionSlotCard {...inputSlot} />
           <EditSlotForm
             targetSlot={inputSlot}
+            watchingFields={{ points: true, name: true }}
+            onFieldValueChange={(fields) => {
+              console.log(fields.points)
+            }}
             onSuccess={(slot) => {
               updateSlot({ id: inputSlot.id, data: slot })
               setIsOpen(false)

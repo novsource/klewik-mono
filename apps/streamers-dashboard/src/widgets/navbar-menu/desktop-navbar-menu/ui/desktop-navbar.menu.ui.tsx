@@ -42,8 +42,8 @@ const NavbarMenu = () => {
             to={routerLink}
             className={({ isActive }) =>
               cn(
-                isActive && 'text-white',
-                !isActive && 'hover:text-gray-accent text-gray-light'
+                'transition-all hover:text-gray-accent text-gray/70',
+                isActive && 'text-gray-accent'
               )
             }
           >

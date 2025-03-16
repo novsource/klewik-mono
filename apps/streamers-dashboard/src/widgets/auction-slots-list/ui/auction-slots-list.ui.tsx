@@ -1,5 +1,4 @@
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { ListChildComponentProps as ListRenderProps } from 'react-window'
+import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
 
 import { motion } from 'framer-motion'
 
@@ -14,8 +13,6 @@ import { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import { useIntersection } from '~shared/hooks/use-intersection'
 
 import { AuctionSlotCardWithControls } from './list-card'
 
@@ -47,12 +44,6 @@ const AuctionSlotsList = ({
     () => data ?? storedAuctionSlots
   )
 
-  const firstCardRef = useRef<HTMLDivElement>(null)
-  const lastCardRef = useRef<HTMLDivElement>(null)
-
-  const { inView: isFirstCardInView } = useIntersection(firstCardRef)
-  const { inView: isLastCardInView } = useIntersection(lastCardRef)
-
   const slotsWinPercents = useMemo(() => {
     const percentsArr = [...storedAuctionSlots].map<AuctionSlotWithPercents>(
       (slot) => {
@@ -68,36 +59,24 @@ const AuctionSlotsList = ({
   }, [storedAuctionSlots, storedSlotsPointsSum, showedSlots])
 
   const renderAuctionCard = useCallback(
-    ({ data: slots, index, style }: ListRenderProps<AuctionSlot[]>) => {
-      const slot = slots[index]
-
-      const refProp =
-        index === 0
-          ? firstCardRef
-          : index === showedSlots.length - 1
-            ? lastCardRef
-            : undefined
-
+    (item: AuctionSlot, index: number) => {
       const card = withControls ? (
         <AuctionSlotCardWithControls
-          ref={refProp}
           auctionId={auctionId}
           percent={slotsWinPercents[index]}
-          {...slot}
+          {...item}
         />
       ) : (
-        <AuctionSlotCard
-          ref={refProp}
-          percent={slotsWinPercents[index]}
-          {...slot}
-        />
+        <AuctionSlotCard percent={slotsWinPercents[index]} {...item} />
       )
 
       if (disableAnimation) {
         return (
           <div
-            key={slot.id}
-            style={{ ...style, marginTop: index > 0 ? `${8 * index}px` : '0' }}
+            key={item.id}
+            style={{
+              marginTop: index > 0 ? `8px` : '0',
+            }}
           >
             {card}
           </div>
@@ -106,11 +85,13 @@ const AuctionSlotsList = ({
 
       return (
         <motion.div
-          key={slot.id}
+          key={item.id}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          style={{ ...style, marginTop: index > 0 ? `${8 * index}px` : '0' }}
+          style={{
+            marginTop: index > 0 ? `8px` : '0',
+          }}
         >
           {card}
         </motion.div>
