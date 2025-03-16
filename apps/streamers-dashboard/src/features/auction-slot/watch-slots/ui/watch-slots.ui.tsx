@@ -1,5 +1,5 @@
 import {
-  ComponentPropsWithoutRef,
+  ComponentProps,
   HTMLAttributes,
   ReactNode,
   forwardRef,
@@ -11,13 +11,10 @@ import {
   useState,
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import {
-  ListChildComponentProps as ListRenderProps,
-  FixedSizeList as VirtualList,
-} from 'react-window'
 
 import { ClassValue } from 'clsx'
 import { useMotionValueEvent, useScroll } from 'framer-motion'
+import { VList } from 'virtua'
 
 import { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -30,10 +27,11 @@ import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
-const SlotsShadowScrollArea = forwardRef<
-  HTMLDivElement,
-  ComponentPropsWithoutRef<'div'>
->(({ style, ...otherProps }, forwardRef) => {
+const SlotsShadowScrollArea = ({
+  style,
+  ref: forwardRef,
+  ...otherProps
+}: ComponentProps<'div'>) => {
   const containerRef = useRef<HTMLDivElement | null>(null)
 
   const [scrollYProgress, setScrollYProgress] = useState(0)
@@ -45,7 +43,7 @@ const SlotsShadowScrollArea = forwardRef<
   useLayoutEffect(() => {
     if (!forwardRef) return
 
-    if (typeof forwardRef === 'function') {
+    if (typeof forwardRef === 'function' || typeof forwardRef === 'string') {
       return
     } else {
       containerRef.current = forwardRef.current
@@ -77,12 +75,12 @@ const SlotsShadowScrollArea = forwardRef<
       {...otherProps}
     />
   )
-})
+}
 
 type AuctionSlotsListProps = {
   data?: AuctionSlot[]
   className?: string
-  renderCard: (props: ListRenderProps<AuctionSlot[]>) => ReactNode
+  renderCard?: (item: AuctionSlot, index: number) => ReactNode
   shadowScroll?: boolean
 }
 
@@ -102,31 +100,38 @@ const VirtualizedSlotsList = ({
     setSlots(data)
   }, [data, storedSlots])
 
-  return slots.length > 0 ? (
-    <AutoSizer>
-      {({ height, width }) => {
+  if (slots.length === 0) {
+    return (
+      <div className="flex flex-col gap-y-2 justify-center items-center h-full">
+        <Icons.Logo className="text-gray" width={32} height={32} />
+        <Typography
+          tag="p"
+          className="text-gray-light font-medium font-golos-f"
+        >
+          Slots not found
+        </Typography>
+      </div>
+    )
+  }
+
+  const defaultSlotsCardList = useMemo(() => {
+    if (renderCard) return
+
+    return slots.map((slot) => {
+      return <AuctionSlotCard {...slot} />
+    })
+  }, [slots, renderCard])
+
+  return (
+    <AutoSizer disableWidth>
+      {({ height }) => {
         return (
-          <VirtualList
-            overscanCount={2}
-            itemSize={91}
-            itemData={slots}
-            itemCount={slots.length}
-            height={height}
-            width={width}
-            outerElementType={shadowScroll ? SlotsShadowScrollArea : undefined}
-          >
-            {renderCard}
-          </VirtualList>
+          <VList style={{ height }}>
+            {renderCard ? slots.map(renderCard) : defaultSlotsCardList}
+          </VList>
         )
       }}
     </AutoSizer>
-  ) : (
-    <div className="flex flex-col gap-y-2 justify-center items-center h-full">
-      <Icons.Logo className="text-gray" width={32} height={32} />
-      <Typography tag="p" className="text-gray-light font-medium font-golos-f">
-        Slots not found
-      </Typography>
-    </div>
   )
 }
 

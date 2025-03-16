@@ -1,6 +1,6 @@
-import { RefObject, forwardRef, memo } from 'react'
+import { RefObject, forwardRef, memo, useMemo } from 'react'
 
-import { EditSlotSheet } from '~widgets/edit-slot-dialog/ui'
+import { ResponsiveEditSlotDialogue } from '~widgets/edit-slot-dialogs/responsive-dialog/ui/'
 
 import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
 import { AuctionCardChip } from '~features/auction-slot/watch-slots/ui'
@@ -9,10 +9,14 @@ import { Auction } from '~entities/auction/model'
 
 import { AuctionSlot } from '~entities/auction-slot/model'
 
+import { useMediaQuery } from '~shared/hooks/use-media-query'
+
 import { Button } from '~shared/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~shared/ui/card'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
+
+import { tailwindScreens } from '~shared/constants/tailwindcss'
 
 type AuctionSlotCardWithControlsProps = AuctionSlot & {
   auctionId: Auction['id']
@@ -24,6 +28,11 @@ const AuctionSlotCardWithControls = memo(
   forwardRef<HTMLDivElement, AuctionSlotCardWithControlsProps>(
     (props, forwardRef) => {
       const { percent, auctionId, ...slot } = props
+
+      const isMediaLargeThenTablet = useMediaQuery(
+        `(min-width: ${tailwindScreens.tablet})`
+      )
+
       return (
         <Card
           ref={forwardRef}
@@ -39,7 +48,7 @@ const AuctionSlotCardWithControls = memo(
               </Typography>
             </CardTitle>
             <div className="flex flex-row gap-x-1 h-6">
-              <EditSlotSheet
+              <ResponsiveEditSlotDialogue
                 slot={slot}
                 trigger={
                   <Button
@@ -52,6 +61,7 @@ const AuctionSlotCardWithControls = memo(
                     Изменить
                   </Button>
                 }
+                isFullPageHeight
               />
               <DeleteSlotButton auctionId={auctionId} slotId={slot.id} />
             </div>

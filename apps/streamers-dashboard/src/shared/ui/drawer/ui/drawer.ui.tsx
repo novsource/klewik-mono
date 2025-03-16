@@ -5,6 +5,7 @@ import { Drawer as DrawerPrimitive } from 'vaul'
 import { cn } from '~shared/utils'
 
 import {
+  DrawerContentVariantsProps,
   drawerContentVariants,
   drawerDescriptionVariants,
   drawerFooterVariants,
@@ -54,14 +55,16 @@ function DrawerOverlay({
 function DrawerContent({
   className,
   children,
+  isFullPageHeight,
   ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Content>) {
+}: React.ComponentProps<typeof DrawerPrimitive.Content> &
+  DrawerContentVariantsProps) {
   return (
     <DrawerPortal data-slot="drawer-portal">
       <DrawerOverlay />
       <DrawerPrimitive.Content
         data-slot="drawer-content"
-        className={cn(drawerContentVariants(), className)}
+        className={cn(drawerContentVariants({ isFullPageHeight }), className)}
         {...props}
       >
         <div className={drawerPillVariants()} />
