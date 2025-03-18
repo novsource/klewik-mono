@@ -96,7 +96,7 @@ const SlotsPointsSumStatisticCard = memo(() => {
   const sum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
 
   return (
-    <Tooltip>
+    <Tooltip delayDuration={500}>
       <TooltipTrigger>
         <StatisticCard>
           <Icons.PointsSum width={20} height={20} />
@@ -143,7 +143,7 @@ const IntegrationsStatisticCard = memo(() => {
   }, [integrations])
 
   return (
-    <Tooltip>
+    <Tooltip delayDuration={500}>
       <TooltipTrigger>
         <StatisticCard className={cn(!isEmptyIntegrations && 'gap-x-3')}>
           <Icons.Integrations width={18} height={18} />

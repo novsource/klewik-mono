@@ -189,7 +189,7 @@ const AuctionSlotCard = memo(
           <CardTitle className="w-full">
             <Typography
               tag="span"
-              className="font-golos-f font-semibold clamp-title-h1"
+              className="font-golos-f font-semibold text-title"
             >
               {slot.name}
             </Typography>
