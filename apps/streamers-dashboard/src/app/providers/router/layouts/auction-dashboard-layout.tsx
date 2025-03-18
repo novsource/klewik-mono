@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
+import { DashboardHeader } from '~widgets/dashboard-header/ui'
 import { DesktopNavbarMenu } from '~widgets/navbar-menu/desktop-navbar-menu/ui'
 import { MobileNavbarMenu } from '~widgets/navbar-menu/mobile-navbar-menu/ui'
 
@@ -19,7 +20,6 @@ import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 import { useLocalStorage } from '~shared/hooks/use-local-storage'
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
-import { Header } from '~shared/ui/header'
 import { Icons } from '~shared/ui/icons'
 import { toastPromiseNotification } from '~shared/ui/toaster/lib'
 
@@ -106,7 +106,9 @@ const AuctionDashboardLayout = () => {
     </div>
   ) : (
     <>
-      <Header>{!isLargeThenTablet && <MobileNavbarMenu />}</Header>
+      <DashboardHeader>
+        {!isLargeThenTablet && <MobileNavbarMenu />}
+      </DashboardHeader>
       <main className="main--dashboard">
         <div className="h-full w-full px-4">
           <div className="flex h-full w-full">

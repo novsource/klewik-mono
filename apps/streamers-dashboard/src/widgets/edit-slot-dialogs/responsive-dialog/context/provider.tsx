@@ -50,7 +50,6 @@ const ResponsiveEditSlotDialogProvider = ({
     useState<NullablePossible<EditSlotFormData>>(null)
 
   const contextState = useMemo<ResponsiveEditSlotDialogContextState>(() => {
-    console.log('here', isOpen)
     return {
       state: {
         isDialogOpen: isOpen,

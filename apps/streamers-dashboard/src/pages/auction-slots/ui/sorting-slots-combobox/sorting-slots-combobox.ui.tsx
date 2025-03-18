@@ -39,17 +39,12 @@ const SortingSlotsCombobox = memo(
     }, [])
 
     const defaultSortValue = useMemo(() => {
-      console.log(slotsSortOptions)
       const value = sortingSlotsVariants.find((variant) =>
         shallowEqual(variant.sortingOptions, slotsSortOptions)
       )?.value
 
-      console.log(value)
-
       return value
     }, [slotsSortOptions])
-
-    console.log(defaultSortValue)
 
     return (
       <Combobox
