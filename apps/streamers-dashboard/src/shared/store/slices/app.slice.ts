@@ -4,7 +4,7 @@ import { AppStoreState, SlotsSortingOptions } from '../model'
 
 const initialState: AppStoreState = {
   slotsSortOptions: {
-    field: '',
+    field: 'points',
     type: 'descending',
   },
 }

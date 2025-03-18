@@ -1,7 +1,9 @@
 type SortingTypes = 'ascending' | 'descending'
 
-type SlotsSortingOptions = {
-  field: string
+type SlotsSortingOptions<
+  T extends Record<string, unknown> = Record<string, unknown>,
+> = {
+  field: keyof T
   type: SortingTypes
 }
 

@@ -44,6 +44,14 @@ const AuctionSlotsList = ({
     () => data ?? storedAuctionSlots
   )
 
+  useLayoutEffect(() => {
+    if (data === undefined) {
+      setShowedSlots(storedAuctionSlots)
+    } else {
+      setShowedSlots(data)
+    }
+  }, [storedAuctionSlots, data])
+
   const slotsWinPercents = useMemo(() => {
     const percentsArr = [...storedAuctionSlots].map<AuctionSlotWithPercents>(
       (slot) => {
@@ -99,14 +107,6 @@ const AuctionSlotsList = ({
     },
     [slotsWinPercents, withControls, disableAnimation]
   )
-
-  useLayoutEffect(() => {
-    if (data === undefined) {
-      setShowedSlots(storedAuctionSlots)
-    } else {
-      setShowedSlots(data)
-    }
-  }, [storedAuctionSlots, data])
 
   return (
     <VirtualizedSlotsList

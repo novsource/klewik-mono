@@ -16,6 +16,7 @@ import { default as Github } from './Github';
 import { default as Hamburger } from './Hamburger';
 import { default as Home } from './Home';
 import { default as Id } from './Id';
+import { default as Integrations } from './Integrations';
 import { default as Key } from './Key';
 import { default as LinkArrow } from './LinkArrow';
 import { default as List } from './List';
@@ -29,6 +30,7 @@ import { default as MoneyBag } from './MoneyBag';
 import { default as Palette } from './Palette';
 import { default as Pencil } from './Pencil';
 import { default as Plus } from './Plus';
+import { default as PointsSum } from './PointsSum';
 import { default as Preferences } from './Preferences';
 import { default as Programming } from './Programming';
 import { default as Refresh } from './Refresh';
@@ -66,6 +68,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Hamburger,
   Home,
   Id,
+  Integrations,
   Key,
   LinkArrow,
   List,
@@ -79,6 +82,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Palette,
   Pencil,
   Plus,
+  PointsSum,
   Preferences,
   Programming,
   Refresh,

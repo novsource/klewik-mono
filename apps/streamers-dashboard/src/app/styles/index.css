@@ -102,7 +102,7 @@
 
   --height-sheet: var(--sheet-height);
 
-  --grid-template-rows-slots-desktop: max(62px) minmax(40px, 42px) 1fr;
+  --grid-template-rows-slots-desktop: max(40px) 1fr;
   --grid-template-rows-slots-table: minmax(40px, 42px) 1fr;
 
   --spacing-4xl: 1.5rem;
