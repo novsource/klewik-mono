@@ -12,6 +12,8 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
 import { Icons } from '~shared/ui/icons'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~shared/ui/tooltip'
+import { Typography } from '~shared/ui/typograghy'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
@@ -61,7 +63,7 @@ const StatisticCard = ({
   return (
     <div
       className={cn(
-        'flex items-center justify-center gap-x-2 py-2 px-3 bg-dark rounded-md font-golos-f text-md font-medium leading-5 text-gray-accent',
+        'flex items-center justify-center gap-x-1.5 py-2 px-3 bg-dark rounded-md font-golos-f text-md font-medium leading-5 text-gray-accent',
         className
       )}
     >
@@ -74,10 +76,19 @@ const SlotsStatisticCard = memo(() => {
   const slots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
   return (
-    <StatisticCard>
-      <Icons.Slots width={18} height={18} />
-      {slots.length}
-    </StatisticCard>
+    <Tooltip delayDuration={500}>
+      <TooltipTrigger>
+        <StatisticCard>
+          <Icons.Slots width={18} height={18} />
+          {slots.length}
+        </StatisticCard>
+      </TooltipTrigger>
+      <TooltipContent>
+        <Typography tag="span" className="text-gray-accent">
+          Количество слотов, участвующих в аукционе
+        </Typography>
+      </TooltipContent>
+    </Tooltip>
   )
 })
 
@@ -85,10 +96,19 @@ const SlotsPointsSumStatisticCard = memo(() => {
   const sum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
 
   return (
-    <StatisticCard>
-      <Icons.PointsSum width={20} height={20} />
-      {Intl.NumberFormat('ru-RU').format(sum)}
-    </StatisticCard>
+    <Tooltip>
+      <TooltipTrigger>
+        <StatisticCard>
+          <Icons.PointsSum width={20} height={20} />
+          {Intl.NumberFormat('ru-RU').format(sum)}
+        </StatisticCard>
+      </TooltipTrigger>
+      <TooltipContent>
+        <Typography tag="span" className="text-gray-accent">
+          Общее количество очков всех слотов
+        </Typography>
+      </TooltipContent>
+    </Tooltip>
   )
 })
 
@@ -123,9 +143,18 @@ const IntegrationsStatisticCard = memo(() => {
   }, [integrations])
 
   return (
-    <StatisticCard className={cn(!isEmptyIntegrations && 'gap-x-3')}>
-      <Icons.Integrations width={18} height={18} />
-      {isEmptyIntegrations ? 'Нет подключений' : connectedIntegrationsLogos}
-    </StatisticCard>
+    <Tooltip>
+      <TooltipTrigger>
+        <StatisticCard className={cn(!isEmptyIntegrations && 'gap-x-3')}>
+          <Icons.Integrations width={18} height={18} />
+          {isEmptyIntegrations ? 'Нет подключений' : connectedIntegrationsLogos}
+        </StatisticCard>
+      </TooltipTrigger>
+      <TooltipContent>
+        <Typography tag="span" className="text-gray-accent">
+          Подключенные к аукциону интеграции
+        </Typography>
+      </TooltipContent>
+    </Tooltip>
   )
 })
