@@ -1,4 +1,4 @@
-import { RefObject, forwardRef, memo, useMemo } from 'react'
+import { RefObject, forwardRef, memo } from 'react'
 
 import { ResponsiveEditSlotDialogue } from '~widgets/edit-slot-dialogs/responsive-dialog/ui/'
 
@@ -9,14 +9,10 @@ import { Auction } from '~entities/auction/model'
 
 import { AuctionSlot } from '~entities/auction-slot/model'
 
-import { useMediaQuery } from '~shared/hooks/use-media-query'
-
 import { Button } from '~shared/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~shared/ui/card'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
-
-import { tailwindScreens } from '~shared/constants/tailwindcss'
 
 type AuctionSlotCardWithControlsProps = AuctionSlot & {
   auctionId: Auction['id']
@@ -28,10 +24,6 @@ const AuctionSlotCardWithControls = memo(
   forwardRef<HTMLDivElement, AuctionSlotCardWithControlsProps>(
     (props, forwardRef) => {
       const { percent, auctionId, ...slot } = props
-
-      const isMediaLargeThenTablet = useMediaQuery(
-        `(min-width: ${tailwindScreens.tablet})`
-      )
 
       return (
         <Card
@@ -54,8 +46,8 @@ const AuctionSlotCardWithControls = memo(
                   <Button
                     variant={'ghost'}
                     isIconOnly
+                    icon={<Icons.Pencil size="xs" />}
                     className="text-gray-accent transition-colors hover:text-white h-full px-1 py-1"
-                    startContent={<Icons.Pencil />}
                     size={'sm'}
                   >
                     Изменить
@@ -63,7 +55,11 @@ const AuctionSlotCardWithControls = memo(
                 }
                 isFullPageHeight
               />
-              <DeleteSlotButton auctionId={auctionId} slotId={slot.id} />
+              <DeleteSlotButton
+                icon={<Icons.Bin size="xs" />}
+                auctionId={auctionId}
+                slotId={slot.id}
+              />
             </div>
           </CardHeader>
           <CardContent className="w-full flex flex-col gap-y-2 pt-0">

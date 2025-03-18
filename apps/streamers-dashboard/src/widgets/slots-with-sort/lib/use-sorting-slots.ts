@@ -9,7 +9,7 @@ import { deleteAllSpacesFromString } from '~shared/utils/string-format'
 const compareSlotsFields = (
   slotOne: AuctionSlot,
   slotTwo: AuctionSlot,
-  options: SlotsSortingOptions
+  options: SlotsSortingOptions<AuctionSlot>
 ) => {
   const field = options.field as keyof AuctionSlot
   const type = options.type
@@ -41,7 +41,7 @@ const compareSlotsFields = (
 
 const useSortingSlots = (
   slots: AuctionSlot[],
-  options: SlotsSortingOptions
+  options: SlotsSortingOptions<AuctionSlot>
 ) => {
   const [sortedSlots, setSortedSlots] = useState(() => slots)
 

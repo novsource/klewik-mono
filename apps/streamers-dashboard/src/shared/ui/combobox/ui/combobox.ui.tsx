@@ -1,8 +1,11 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 
 import { Check } from 'lucide-react'
 
+import { SlotsSortingOptions } from '~shared/store/model'
+
 import { Button } from '~shared/ui/button'
+import { ButtonProps } from '~shared/ui/button/ui/Button'
 import {
   Command,
   CommandEmpty,
@@ -26,26 +29,40 @@ export type ComboboxData = Array<
 
 type ComboboxProps<T extends ComboboxData = ComboboxData> = {
   data: T
-  defaultValue?: T[number]['value']
+  defaultValue?: SlotsSortingOptions
   placeholder?: string
   enableSearchField?: boolean
   onValueChanged?: (label: T[number]['label']) => void
+  size?: ButtonProps['size']
 }
 
 export function Combobox(props: ComboboxProps) {
-  const { enableSearchField = false, placeholder, data } = props
+  const { enableSearchField = false, placeholder, data, size } = props
 
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState(() => props.defaultValue ?? '')
+
+  /*
+    This flag required for checking opportunity for setting a new default value
+    If flag true that's means a value was changed and new default value can't be setted;
+  */
+  const isValueChangeOnce = useRef(false)
+
+  useEffect(() => {
+    if (!isValueChangeOnce.current && props.defaultValue) {
+      setValue(props.defaultValue)
+    }
+  }, [props.defaultValue])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          className="w-fit max-w-[400px] border-dark-accent/60 hover:border-dark-accent border-1 justify-start items-center gap-x-1.5 font-medium hover:text-white/80"
-          startContent={<Icons.Sort />}
           variant="outline"
+          className="w-fit max-w-[400px] border-dark-accent/60 hover:border-dark-accent border-1 justify-start items-center gap-x-1.5 font-medium hover:text-white/80"
           role="combobox"
+          startContent={<Icons.Sort size="sm" />}
+          size={size}
           aria-expanded={open}
         >
           {value
@@ -69,6 +86,8 @@ export function Combobox(props: ComboboxProps) {
                     setOpen(false)
 
                     props.onValueChanged && props.onValueChanged(currentValue)
+
+                    isValueChangeOnce.current = true
                   }}
                 >
                   {item.icon}

@@ -16,6 +16,10 @@ import {
   labelVariants,
 } from '../styles/input-variants'
 
+export type InputSlotsClassnames = {
+  [Slot in InputSlots]?: CvaClassValue
+}
+
 export type InputProps = Omit<ComponentProps<'input'>, 'size' | 'className'> &
   Omit<
     InputVariantsProps,
@@ -29,9 +33,7 @@ export type InputProps = Omit<ComponentProps<'input'>, 'size' | 'className'> &
     endContent?: JSX.Element
     description?: string
     errorMessage?: string
-    slotClassNames?: {
-      [Slot in InputSlots]?: CvaClassValue
-    }
+    slotClassNames?: InputSlotsClassnames
   }
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {

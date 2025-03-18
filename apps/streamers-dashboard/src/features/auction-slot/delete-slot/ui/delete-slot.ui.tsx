@@ -50,12 +50,11 @@ const DeleteSlotButton = (props: DeleteSlotButtonProps) => {
     <Button
       variant={'ghost'}
       isIconOnly
+      icon={<Icons.Bin />}
       className="text-gray-accent transition-colors hover:text-red h-full px-1 py-1"
-      startContent={<Icons.Bin />}
-      size={'sm'}
       disabled={isLoading}
-      {...buttonProps}
       onClick={handleOnClick}
+      {...buttonProps}
     >
       Удалить
     </Button>
