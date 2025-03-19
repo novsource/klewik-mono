@@ -5,6 +5,8 @@ import { NavLink } from 'react-router-dom'
 import { IntegrationsPlatforms } from '~entities/integrations/model'
 import { integrationsSelectors } from '~entities/integrations/store'
 
+import { UpdateBetsStatusButton } from '~features/auction/update-bets-status/ui'
+
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -27,16 +29,19 @@ export const DashboardHeader = memo(({ children }: { children: ReactNode }) => {
 
   return (
     <Header>
-      <Flex className="gap-x-1.5" align="center" justify="center">
-        {isLargeThenTablet && (
-          <>
-            <SlotsStatisticCard />
-            <SlotsPointsSumStatisticCard />
-            <IntegrationsStatisticCard />
-          </>
-        )}
-      </Flex>
-
+      {isLargeThenTablet && (
+        <Flex className="gap-x-4 h-full" align="center">
+          <Flex className="h-9 gap-x-4" align="center">
+            <Flex className="gap-x-1.5" align="center" justify="center">
+              <SlotsStatisticCard />
+              <SlotsPointsSumStatisticCard />
+              <IntegrationsStatisticCard />
+            </Flex>
+            <div className="h-2/3 w-0.5 bg-dark-accent/80" />
+            <UpdateBetsStatusButton />
+          </Flex>
+        </Flex>
+      )}
       {children}
     </Header>
   )
@@ -69,7 +74,7 @@ const StatisticCard = ({
   return (
     <Flex
       className={cn(
-        'gap-x-1.5 py-2 px-3 bg-dark rounded-md font-golos-f text-md font-medium leading-5 text-gray-accent',
+        'gap-x-1.5 py-2 px-3 bg-dark rounded-small font-golos-f text-md font-medium leading-5 text-gray-accent',
         className
       )}
       align="center"

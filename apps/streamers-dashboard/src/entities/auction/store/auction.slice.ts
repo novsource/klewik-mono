@@ -43,6 +43,7 @@ const auctionSlice = createSlice({
     getAuctionUrl: (state) => state.auctionInfo.url,
     getAuctionInfo: (state) => state.auctionInfo,
     getWheelSlots: (state) => state.wheelSlotsData,
+    getBetsStatus: (state) => state.auctionInfo.isBetsClosed,
   },
 })
 
