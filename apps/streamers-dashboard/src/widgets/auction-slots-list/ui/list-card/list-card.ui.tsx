@@ -1,6 +1,6 @@
 import { RefObject, forwardRef, memo } from 'react'
 
-import { ResponsiveEditSlotDialogue } from '~widgets/edit-slot-dialogs/responsive-dialog/ui/'
+import { ResponsiveEditSlotDialogue } from '~widgets/edit-slot-dialogs/responsive-dialog/ui'
 
 import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
 import { AuctionCardChip } from '~features/auction-slot/watch-slots/ui'
@@ -11,6 +11,7 @@ import { AuctionSlot } from '~entities/auction-slot/model'
 
 import { Button } from '~shared/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~shared/ui/card'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
 
@@ -39,7 +40,7 @@ const AuctionSlotCardWithControls = memo(
                 {slot.name}
               </Typography>
             </CardTitle>
-            <div className="flex flex-row gap-x-1 h-6">
+            <Flex className="gap-x-1 h-6" direction="row">
               <ResponsiveEditSlotDialogue
                 slot={slot}
                 trigger={
@@ -60,10 +61,10 @@ const AuctionSlotCardWithControls = memo(
                 auctionId={auctionId}
                 slotId={slot.id}
               />
-            </div>
+            </Flex>
           </CardHeader>
           <CardContent className="w-full flex flex-col gap-y-2 pt-0">
-            <div className="w-full flex flex-row gap-x-2 items-center">
+            <Flex className="w-full gap-x-2" direction="row" align="center">
               <div
                 className="w-8 h-7 rounded-md"
                 style={{
@@ -91,7 +92,7 @@ const AuctionSlotCardWithControls = memo(
               >
                 {percent}%
               </AuctionCardChip>
-            </div>
+            </Flex>
           </CardContent>
         </Card>
       )

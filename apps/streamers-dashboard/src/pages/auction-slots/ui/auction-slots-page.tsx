@@ -14,6 +14,7 @@ import { appSelectors } from '~shared/store/slices'
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 
 import { cn } from '~shared/utils'
@@ -39,14 +40,19 @@ const AuctionSlotsPage = () => {
         'landtop:max-w-[1600px]',
       ])}
     >
-      <div className="flex flex-nowrap items-center justify-between gap-x-4 pt-1">
+      <Flex
+        className="gap-x-4 pt-1"
+        wrap="nowrap"
+        align="center"
+        justify="between"
+      >
         <SearchInput
           slotClassNames={{
             base: 'w-full tablet:max-w-[400px] landtop:max-w-[450px] desktop:max-w-[500px]',
           }}
           onChange={(e) => setSearchValue(e.target.value)}
         />
-        <div className="flex items-center gap-x-2">
+        <Flex className="gap-x-2" align="center">
           <SortingSlotsCombobox />
           <CreateSlotsDialog
             multiplySlots
@@ -59,8 +65,8 @@ const AuctionSlotsPage = () => {
               </Button>
             }
           />
-        </div>
-      </div>
+        </Flex>
+      </Flex>
       <div className="h-full w-full">
         <AuctionSlotsList data={sortedSlots} />
       </div>

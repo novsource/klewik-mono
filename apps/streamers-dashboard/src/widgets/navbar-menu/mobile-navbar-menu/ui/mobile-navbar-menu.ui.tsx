@@ -8,6 +8,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '~shared/ui/drawer'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 
 import { cn } from '~shared/utils'
@@ -64,9 +65,9 @@ const NavbarMenu = (props: { onClick: () => void }) => {
 
   return (
     <nav data-slot="mobile-navbar">
-      <ul className="flex flex-col w-full justify-between gap-y-4 py-4 bg-">
+      <Flex className="w-full gap-y-4 py-4" component="ul" justify="between">
         {menuItems}
-      </ul>
+      </Flex>
     </nav>
   )
 }

@@ -1,4 +1,5 @@
 import { Button } from '~shared/ui/button'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { SliderContent, SliderTrigger } from '~shared/ui/slider'
 import { Typography } from '~shared/ui/typograghy'
@@ -12,15 +13,15 @@ const SliderRolesContent = () => {
         </Button>
       </SliderTrigger>
 
-      <div className="flex flex-col gap-y-2">
+      <Flex className="gap-y-2" direction="column">
         <Typography tag="h1">
           Вы хотите войти в аукцион как гость или как администратор аукциона?
         </Typography>
         <Typography tag="p" className="text-gray">
           Для продолжения выберите роль
         </Typography>
-      </div>
-      <div className="flex w-full flex-col gap-y-3">
+      </Flex>
+      <Flex className="w-full gap-y-3" direction="column">
         <SliderTrigger className="w-full" value="guest">
           <Button
             className="w-full"
@@ -38,7 +39,7 @@ const SliderRolesContent = () => {
             Я администратор
           </Button>
         </SliderTrigger>
-      </div>
+      </Flex>
     </SliderContent>
   )
 }

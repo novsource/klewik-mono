@@ -11,6 +11,7 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~shared/ui/tooltip'
 import { Typography } from '~shared/ui/typograghy'
@@ -26,7 +27,7 @@ export const DashboardHeader = memo(({ children }: { children: ReactNode }) => {
 
   return (
     <Header>
-      <div className="flex gap-x-1.5 items-center justify-center">
+      <Flex className="gap-x-1.5" align="center" justify="center">
         {isLargeThenTablet && (
           <>
             <SlotsStatisticCard />
@@ -34,7 +35,8 @@ export const DashboardHeader = memo(({ children }: { children: ReactNode }) => {
             <IntegrationsStatisticCard />
           </>
         )}
-      </div>
+      </Flex>
+
       {children}
     </Header>
   )
@@ -43,12 +45,16 @@ export const DashboardHeader = memo(({ children }: { children: ReactNode }) => {
 const Header = ({ children, ...otherProps }: ComponentProps<'header'>) => {
   return (
     <header className="h-16 w-full" {...otherProps}>
-      <div className="flex h-full w-full items-center justify-between gap-x-4 px-4">
+      <Flex
+        className="h-full w-full gap-x-4 px-4"
+        align="center"
+        justify="between"
+      >
         <NavLink to={'/'}>
           <Icons.Logo className="text-green-accent" width={28} height={28} />
         </NavLink>
         {children}
-      </div>
+      </Flex>
     </header>
   )
 }
@@ -61,14 +67,16 @@ const StatisticCard = ({
   children: ReactNode
 }) => {
   return (
-    <div
+    <Flex
       className={cn(
-        'flex items-center justify-center gap-x-1.5 py-2 px-3 bg-dark rounded-md font-golos-f text-md font-medium leading-5 text-gray-accent',
+        'gap-x-1.5 py-2 px-3 bg-dark rounded-md font-golos-f text-md font-medium leading-5 text-gray-accent',
         className
       )}
+      align="center"
+      justify="center"
     >
       {children}
-    </div>
+    </Flex>
   )
 }
 
@@ -130,7 +138,7 @@ const IntegrationsStatisticCard = memo(() => {
 
   const connectedIntegrationsLogos = useMemo(() => {
     return (
-      <div className="flex flex-row gap-x-2 items-center justify-start">
+      <Flex className="gap-x-2" direction="row" align="center" justify="start">
         {(Object.keys(integrations) as Array<IntegrationsPlatforms>).reduce<
           ReactNode[]
         >((acc, key) => {
@@ -138,7 +146,7 @@ const IntegrationsStatisticCard = memo(() => {
 
           return acc
         }, [])}
-      </div>
+      </Flex>
     )
   }, [integrations])
 

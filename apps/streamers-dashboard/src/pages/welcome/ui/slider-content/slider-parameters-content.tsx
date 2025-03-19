@@ -1,6 +1,7 @@
 import { AuctionInitialParametersForm } from '~features/auction/set-initial-parameters/ui'
 
 import { Button } from '~shared/ui/button'
+import { Flex } from '~shared/ui/flex'
 import {
   SliderContent,
   SliderTrigger,
@@ -18,7 +19,7 @@ export const SliderAuctionParametersContent = () => {
       <SliderTrigger value="successCreate">
         <Button>Пропустить этот шаг</Button>
       </SliderTrigger>
-      <div className="flex flex-col gap-y-2">
+      <Flex className="gap-y-2" direction="column">
         <Typography tag="h1">
           Настройки данных страницы аукциона для гостей
         </Typography>
@@ -31,7 +32,8 @@ export const SliderAuctionParametersContent = () => {
           проводиться трансляция аукциона (на данный момент доступен Twitch и
           Youtube)
         </Typography>
-      </div>
+      </Flex>
+
       <AuctionInitialParametersForm
         onSuccess={() => setSelectedKey('successCreate')}
       />

@@ -4,6 +4,8 @@ import { wheelSelectors } from '~entities/wheel/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
+import { Flex } from '~shared/ui/flex'
+
 import { WheelCanvas } from './wheel-canvas.ui'
 
 const WheelContainer = () => {
@@ -14,7 +16,7 @@ const WheelContainer = () => {
   const slotTextRef = useRef<HTMLSpanElement>(null)
 
   return (
-    <div className="flex h-full w-full flex-shrink-2 flex-col gap-y-2">
+    <Flex className="h-full w-full shrink-[2] gap-y-2" direction="column">
       <span
         ref={slotTextRef}
         className="text-center text-title desktop:text-title-lg font-semibold"
@@ -22,7 +24,7 @@ const WheelContainer = () => {
         {selectorTargetTitle}
       </span>
       <WheelCanvas />
-    </div>
+    </Flex>
   )
 }
 

@@ -10,6 +10,7 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Badge, BadgeProps } from '~shared/ui/badge'
 import { Card, CardContent, CardFooter, CardHeader } from '~shared/ui/card'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
 
@@ -49,11 +50,13 @@ const DonationCardChip = (props: DonationCardChipProps) => {
   const { children, startContent, endContent, classNames } = props
 
   return (
-    <div
+    <Flex
       className={cn(
-        'px-1.5 py-1 bg-gray/30 flex flex-row gap-x-0.5 items-center rounded-md',
+        'px-1.5 py-1 bg-gray/30 gap-x-0.5 rounded-md',
         classNames?.base
       )}
+      direction="row"
+      align="center"
     >
       {startContent}
       <Typography
@@ -66,7 +69,7 @@ const DonationCardChip = (props: DonationCardChipProps) => {
         {children}
       </Typography>
       {endContent}
-    </div>
+    </Flex>
   )
 }
 
@@ -86,8 +89,8 @@ const DonationCard = (props: DonationCardProps) => {
         <DonationCardBadge status="error" />
       </CardHeader>
       <CardContent className="w-full flex flex-col py-0.5">
-        <div className="flex flex-col gap-y-1.5">
-          <div className="flex flex-row gap-x-1.5 items-center">
+        <Flex className="gap-y-1.5" direction="column">
+          <Flex direction="row" align="center">
             <Typography tag="span" className="text-title font-semibold">
               {username}
             </Typography>
@@ -104,13 +107,13 @@ const DonationCard = (props: DonationCardProps) => {
               }).format(amount)}
               {` ${currency.toUpperCase()}`}
             </Typography>
-          </div>
-          <Typography tag="p">
-            {message_type === 'audio'
-              ? 'Аудио-формат не поддерживается'
-              : message}
-          </Typography>
-        </div>
+          </Flex>
+        </Flex>
+        <Typography tag="p">
+          {message_type === 'audio'
+            ? 'Аудио-формат не поддерживается'
+            : message}
+        </Typography>
       </CardContent>
       <CardFooter className="flex flex-row gap-x-1 mt-2">
         <DonationCardChip
@@ -140,7 +143,11 @@ const DonationsList = memo((props: DonationListProps) => {
   )
 
   return (
-    <ul className={cn('flex flex-col gap-y-2', className)}>
+    <Flex
+      className={cn('gap-y-2', className)}
+      component="ul"
+      direction="column"
+    >
       {donations.map((donation) => (
         <motion.li
           key={donation.id}
@@ -151,7 +158,7 @@ const DonationsList = memo((props: DonationListProps) => {
           <DonationCard {...donation} />
         </motion.li>
       ))}
-    </ul>
+    </Flex>
   )
 })
 

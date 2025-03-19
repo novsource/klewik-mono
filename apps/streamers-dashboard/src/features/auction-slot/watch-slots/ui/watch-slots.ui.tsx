@@ -22,6 +22,7 @@ import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Card, CardContent, CardHeader, CardTitle } from '~shared/ui/card'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
 
@@ -102,7 +103,12 @@ const VirtualizedSlotsList = ({
 
   if (slots.length === 0) {
     return (
-      <div className="flex flex-col gap-y-2 justify-center items-center h-full">
+      <Flex
+        className="h-full gap-y-2"
+        direction="column"
+        justify="center"
+        align="center"
+      >
         <Icons.Logo className="text-gray" width={32} height={32} />
         <Typography
           tag="p"
@@ -110,7 +116,7 @@ const VirtualizedSlotsList = ({
         >
           Slots not found
         </Typography>
-      </div>
+      </Flex>
     )
   }
 
@@ -152,11 +158,13 @@ const AuctionCardChip = (props: AuctionCardChipProps) => {
   const { children, startContent, endContent, classNames } = props
 
   return (
-    <div
+    <Flex
       className={cn(
-        'px-2 py-1 bg-gray/30 flex flex-row gap-x-1.5 items-center rounded-md',
+        'px-2 py-1 bg-gray/30 gap-x-1.5 rounded-md',
         classNames?.base
       )}
+      direction="row"
+      align="center"
     >
       {startContent}
       <Typography
@@ -169,7 +177,7 @@ const AuctionCardChip = (props: AuctionCardChipProps) => {
         {children}
       </Typography>
       {endContent}
-    </div>
+    </Flex>
   )
 }
 
@@ -196,7 +204,7 @@ const AuctionSlotCard = memo(
           </CardTitle>
         </CardHeader>
         <CardContent className="w-full flex flex-col gap-y-2 pt-0">
-          <div className="w-full flex flex-row gap-x-2 items-center">
+          <Flex className="w-full gap-x-2" direction="row" align="center">
             <div
               className="w-8 h-7 rounded-md"
               style={{
@@ -224,7 +232,7 @@ const AuctionSlotCard = memo(
                 {percent}%
               </AuctionCardChip>
             )}
-          </div>
+          </Flex>
         </CardContent>
       </Card>
     )

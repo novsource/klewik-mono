@@ -15,6 +15,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '~shared/ui/drawer'
+import { Flex } from '~shared/ui/flex'
 
 import { cn } from '~shared/utils'
 
@@ -40,10 +41,10 @@ const EditSlotDrawer = ({
         <DrawerHeader>
           <DrawerTitle className="text-white">Изменение слота</DrawerTitle>
         </DrawerHeader>
-        <div className={cn('h-full flex flex-col gap-y-6 pb-6')}>
-          <div className="flex flex-col gap-y-2">
+        <Flex className="h-full gap-y-6 pb-6" direction="column">
+          <Flex className="gap-y-2" direction="column">
             <AuctionSlotCard {...inputSlot} />
-          </div>
+          </Flex>
 
           <EditSlotForm
             className={cn(
@@ -56,7 +57,7 @@ const EditSlotDrawer = ({
               setIsOpen(false)
             }}
           />
-        </div>
+        </Flex>
       </DrawerContent>
     </Drawer>
   )

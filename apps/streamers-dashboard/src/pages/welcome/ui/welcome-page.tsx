@@ -3,6 +3,7 @@ import { useRef } from 'react'
 import { CloverAnimation } from '~widgets/big-clover-animation/ui'
 
 import { Button } from '~shared/ui/button'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Slider } from '~shared/ui/slider'
 import { Typography } from '~shared/ui/typograghy'
@@ -27,7 +28,7 @@ const WelcomePage = () => {
 
   return (
     <main className="h-full w-full">
-      <div className="flex h-full w-full flex-row">
+      <Flex className="h-full w-full" direction="row">
         <div
           className={cn(
             'mx-auto h-full grow landtop:min-w-[450px] container',
@@ -71,10 +72,11 @@ const WelcomePage = () => {
               </div>
 
               <div className="py-4">
-                <a
+                <Flex
+                  className="w-fit items-center gap-x-2 text-gray-accent transition-all hover:text-white"
+                  component="a"
                   href="https://www.github.com"
                   target="_blank"
-                  className="flex w-fit items-center gap-x-2 text-gray-accent transition-all hover:text-white"
                 >
                   <Icons.Github
                     size="sm"
@@ -86,17 +88,17 @@ const WelcomePage = () => {
                   >
                     Github
                   </Typography>
-                </a>
+                </Flex>
               </div>
             </div>
           </div>
         </div>
         {isCloverCanBeSafefullyRendering.current && (
-          <div className="hidden h-full w-full flex-shrink-2 grow basis-2/3 border-l-[1px] border-dark bg-[#111] landtop:block">
+          <Flex className="hidden h-full w-full shrink-[2] grow basis-2/3 border-l-[1px] border-dark bg-[#111] landtop:block">
             <CloverAnimation />
-          </div>
+          </Flex>
         )}
-      </div>
+      </Flex>
     </main>
   )
 }

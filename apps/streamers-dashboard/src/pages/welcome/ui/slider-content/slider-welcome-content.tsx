@@ -1,4 +1,5 @@
 import { Button } from '~shared/ui/button'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { SliderContent, SliderTrigger } from '~shared/ui/slider'
 import { Typography } from '~shared/ui/typograghy'
@@ -6,14 +7,14 @@ import { Typography } from '~shared/ui/typograghy'
 const SliderWelcomeContent = () => {
   return (
     <SliderContent className="slider-content" value="welcome">
-      <div className="relative flex flex-col gap-y-2">
+      <Flex className="relative gap-y-2" direction="column">
         <Icons.Logo className="text-green-accent" width={42} height={42} />
         <Typography tag="h1">Добро пожаловать в поинтовый аукцион!</Typography>
         <Typography tag="p" className="text-gray">
           Для продолжения выберите действие
         </Typography>
-      </div>
-      <div className="flex w-full flex-col gap-y-3">
+      </Flex>
+      <Flex className="w-full gap-y-3" direction="column">
         <SliderTrigger className="w-full" value="roles">
           <Button
             className="w-full"
@@ -31,7 +32,7 @@ const SliderWelcomeContent = () => {
             Создать аукцион
           </Button>
         </SliderTrigger>
-      </div>
+      </Flex>
     </SliderContent>
   )
 }

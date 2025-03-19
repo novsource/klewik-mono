@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 import { Button } from '~shared/ui/button'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
 import { SliderContent, SliderTrigger } from '~shared/ui/slider'
@@ -31,19 +32,21 @@ const SliderAdminContent = () => {
         </Button>
       </SliderTrigger>
 
-      <div className="flex flex-col gap-y-2">
+      <Flex className="gap-y-2" direction="column">
         <Typography tag="h1">Вход в аукцион в роли администратора</Typography>
         <Typography tag="p" className="text-gray">
           Для продолжения введите номер аукциона, а также пароль. После нажмите
           кнопку "Войти"
         </Typography>
-      </div>
+      </Flex>
 
-      <form
-        className="flex w-full flex-col gap-y-6"
+      <Flex
+        className="w-full gap-y-6"
+        component="form"
+        direction="column"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="flex flex-col gap-y-4">
+        <Flex className="gap-y-4" direction="column">
           <Controller
             name="auctionId"
             control={control}
@@ -90,11 +93,11 @@ const SliderAdminContent = () => {
               />
             )}
           />
-        </div>
+        </Flex>
         <Button variant={'action'} type="submit">
           Войти
         </Button>
-      </form>
+      </Flex>
     </SliderContent>
   )
 }

@@ -6,6 +6,7 @@ import { integrationsSelectors } from '~entities/integrations/store'
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Card, CardContent, CardHeader, CardTitle } from '~shared/ui/card'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 
 type IntegrationsStatisticsCardProps = {
@@ -53,7 +54,7 @@ const ConnectedIntegrationsStatisticCard = memo(() => {
 
   const connectedIntegrationsLogos = useMemo(() => {
     return (
-      <div className="flex flex-row gap-x-2 items-center justify-start">
+      <Flex className="gap-x-2" direction="row" justify="start" align="center">
         {(
           Object.keys(integrationsStatuses) as Array<IntegrationsPlatforms>
         ).reduce<ReactNode[]>((acc, key) => {
@@ -62,7 +63,7 @@ const ConnectedIntegrationsStatisticCard = memo(() => {
 
           return acc
         }, [])}
-      </div>
+      </Flex>
     )
   }, [integrationsStatuses])
 

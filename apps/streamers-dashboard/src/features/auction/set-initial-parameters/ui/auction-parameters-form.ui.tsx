@@ -8,6 +8,7 @@ import { auctionSelectors } from '~entities/auction/store'
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
 import { toastErrorNotification } from '~shared/ui/toaster/lib'
@@ -113,7 +114,7 @@ const AuctionInitialParametersForm = (
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col w-full h-full gap-y-6">
+      <Flex className="w-full h-full gap-y-6" direction={'column'}>
         <Controller
           control={control}
           name="title"
@@ -127,7 +128,9 @@ const AuctionInitialParametersForm = (
             )
           }}
         />
-        <div className="flex flex-col gap-y-4">{linksFormControllers}</div>
+        <Flex className="gap-y-4" direction={'column'}>
+          {linksFormControllers}
+        </Flex>
         <Button
           className="w-full"
           type="submit"
@@ -136,7 +139,7 @@ const AuctionInitialParametersForm = (
         >
           Сохранить и создать аукцион
         </Button>
-      </div>
+      </Flex>
     </form>
   )
 }

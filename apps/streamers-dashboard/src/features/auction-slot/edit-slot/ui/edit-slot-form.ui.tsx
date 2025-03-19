@@ -20,6 +20,7 @@ import {
 } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
+import { Flex } from '~shared/ui/flex'
 import { Input } from '~shared/ui/input'
 import { NumberInput } from '~shared/ui/number-input'
 import {
@@ -110,24 +111,29 @@ export const EditSlotForm = ({
   }
 
   return (
-    <form
-      className="flex flex-col w-full h-full justify-between"
+    <Flex
+      className="w-full h-full"
+      component="form"
+      direction="column"
+      justify="between"
       onSubmit={handleSubmit(submitForm)}
       {...props}
     >
-      <div className="flex w-full flex-col gap-y-6 items-stretch">
-        <ul className="flex flex-col w-full">
-          <div className="flex w-full flex-col gap-y-3 h-full overflow-y-scroll p-1">
+      <Flex className="w-full gap-y-6" direction="column" align="stretch">
+        <Flex className="w-full" component={'ul'} direction={'column'}>
+          <Flex
+            className="w-full h-full overflow-y-scroll p-1 gap-y-3"
+            direction="column"
+          >
             <EditSlotFormFields
               control={control}
               formState={formState}
               watchingFields={watchingFields}
               onFieldValueChange={onFieldValueChange}
             />
-          </div>
-        </ul>
-      </div>
-
+          </Flex>
+        </Flex>
+      </Flex>
       <Button
         type="submit"
         variant={'action'}
@@ -136,7 +142,7 @@ export const EditSlotForm = ({
       >
         Изменить слот
       </Button>
-    </form>
+    </Flex>
   )
 }
 
