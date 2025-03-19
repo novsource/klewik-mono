@@ -27,6 +27,7 @@ import { default as Magnifier } from './Magnifier';
 import { default as Minus } from './Minus';
 import { default as Money } from './Money';
 import { default as MoneyBag } from './MoneyBag';
+import { default as OpenBets } from './OpenBets';
 import { default as Palette } from './Palette';
 import { default as Pencil } from './Pencil';
 import { default as Plus } from './Plus';
@@ -79,6 +80,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Minus,
   Money,
   MoneyBag,
+  OpenBets,
   Palette,
   Pencil,
   Plus,
