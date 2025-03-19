@@ -15,12 +15,9 @@ const SliderCreateContent = () => {
   } = useSliderContext()
 
   return (
-    <SliderContent
-      className="relative flex h-full w-full flex-col gap-y-6"
-      value="create"
-    >
-      <SliderTrigger className="absolute -top-16 left-0" value="welcome">
-        <Button startContent={<Icons.ReturnArrow size="lg" />}>Назад</Button>
+    <SliderContent className="slider-content" value="create">
+      <SliderTrigger className="" value="welcome">
+        <Button startContent={<Icons.ReturnArrow />}>Назад</Button>
       </SliderTrigger>
 
       <div className="flex flex-col gap-y-2">

@@ -5,11 +5,8 @@ import { Typography } from '~shared/ui/typograghy'
 
 const SliderRolesContent = () => {
   return (
-    <SliderContent
-      className="relative flex h-full w-full flex-col gap-y-6"
-      value="roles"
-    >
-      <SliderTrigger className="absolute -top-16 left-0" value="welcome">
+    <SliderContent className="slider-content" value="roles">
+      <SliderTrigger value="welcome">
         <Button startContent={<Icons.ReturnArrow size="default" />}>
           Назад
         </Button>

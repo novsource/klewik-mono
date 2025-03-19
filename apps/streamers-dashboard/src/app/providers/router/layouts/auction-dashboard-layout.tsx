@@ -110,11 +110,9 @@ const AuctionDashboardLayout = () => {
         {!isLargeThenTablet && <MobileNavbarMenu />}
       </DashboardHeader>
       <main className="main--dashboard">
-        <div className="h-full w-full px-4">
-          <div className="flex h-full w-full">
-            {isLargeThenTablet && <DesktopNavbarMenu />}
-            <Outlet />
-          </div>
+        <div className="h-full w-full px-4 flex">
+          {isLargeThenTablet && <DesktopNavbarMenu />}
+          <Outlet />
         </div>
       </main>
     </>

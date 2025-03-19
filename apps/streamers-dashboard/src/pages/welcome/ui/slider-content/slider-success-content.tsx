@@ -23,10 +23,7 @@ const SliderSuccessContent = () => {
   const { copyToClipboard } = useCopyToClipboard()
 
   return (
-    <SliderContent
-      className="relative flex h-full w-full flex-col gap-y-6"
-      value="successCreate"
-    >
+    <SliderContent className="slider-content" value="successCreate">
       <div className="flex flex-col gap-y-2">
         <Typography tag="h1">Аукцион успешно создан!</Typography>
         <Typography tag="p" className="text-gray">

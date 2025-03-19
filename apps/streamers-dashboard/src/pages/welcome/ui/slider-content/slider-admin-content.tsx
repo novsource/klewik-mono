@@ -24,11 +24,8 @@ const SliderAdminContent = () => {
   const onSubmit: SubmitHandler<LoginAuction> = async (formData) => {}
 
   return (
-    <SliderContent
-      className="relative flex h-full w-full flex-col gap-y-6"
-      value="admin"
-    >
-      <SliderTrigger className="absolute -top-16 left-0" value="roles">
+    <SliderContent className="slider-content" value="admin">
+      <SliderTrigger value="roles">
         <Button startContent={<Icons.ReturnArrow size="default" />}>
           Назад
         </Button>

@@ -5,13 +5,9 @@ import { Typography } from '~shared/ui/typograghy'
 
 const SliderWelcomeContent = () => {
   return (
-    <SliderContent className="relative flex flex-col gap-y-6" value="welcome">
-      <div className="flex flex-col gap-y-2">
-        <Icons.Logo
-          className="absolute -top-16 left-0 text-green-accent"
-          width={42}
-          height={42}
-        />
+    <SliderContent className="slider-content" value="welcome">
+      <div className="relative flex flex-col gap-y-2">
+        <Icons.Logo className="text-green-accent" width={42} height={42} />
         <Typography tag="h1">Добро пожаловать в поинтовый аукцион!</Typography>
         <Typography tag="p" className="text-gray">
           Для продолжения выберите действие
