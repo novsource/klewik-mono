@@ -20,6 +20,7 @@ import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 import { useLocalStorage } from '~shared/hooks/use-local-storage'
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { toastPromiseNotification } from '~shared/ui/toaster/lib'
 
@@ -97,25 +98,27 @@ const AuctionDashboardLayout = () => {
   }, [])
 
   return !isConnected ? (
-    <div className="flex w-full h-full items-center justify-center animate-fade-in duration-[3s]">
+    <Flex
+      className="w-full h-full animate-fade-in duration-[3s]"
+      justify={'center'}
+      align={'center'}
+    >
       <Icons.Logo
         className="animate-bounce duration-1000 text-green-accent"
         width={isLargeThenTablet ? 42 : 36}
         height={isLargeThenTablet ? 42 : 36}
       />
-    </div>
+    </Flex>
   ) : (
     <>
       <DashboardHeader>
         {!isLargeThenTablet && <MobileNavbarMenu />}
       </DashboardHeader>
       <main className="main--dashboard">
-        <div className="h-full w-full px-4">
-          <div className="flex h-full w-full">
-            {isLargeThenTablet && <DesktopNavbarMenu />}
-            <Outlet />
-          </div>
-        </div>
+        <Flex className="h-full w-full px-4">
+          {isLargeThenTablet && <DesktopNavbarMenu />}
+          <Outlet />
+        </Flex>
       </main>
     </>
   )

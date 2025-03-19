@@ -11,6 +11,7 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { useLocalStorage } from '~shared/hooks/use-local-storage'
 
 import { Button } from '~shared/ui/button'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
 
@@ -79,7 +80,10 @@ const DonationAlertsRedirectDisplay = memo(() => {
   }, [auctionId])
 
   return (
-    <div className="relative flex w-full h-full gap-x-16 tablet:gap-x-36 items-center pb-8">
+    <Flex
+      className="relative w-full h-full gap-x-16 tablet:gap-x-36 pb-8"
+      align="center"
+    >
       <Icons.Logo className="text-green-accent" width={54} height={54} />
       <Icons.DonationAlerts width={54} height={54} />
       <div className="absolute w-full h-4 bottom-2 px-7">
@@ -103,7 +107,7 @@ const DonationAlertsRedirectDisplay = memo(() => {
           </Typography>
         </div>
       </div>
-    </div>
+    </Flex>
   )
 })
 

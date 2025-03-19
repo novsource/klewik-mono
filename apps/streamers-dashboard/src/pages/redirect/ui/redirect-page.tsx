@@ -3,6 +3,8 @@ import { useSearchParams } from 'react-router-dom'
 
 import { RedirectDisplay } from '~features/integrations/connect-integration/ui'
 
+import { Flex } from '~shared/ui/flex'
+
 const RedirectPage = () => {
   const params = useSearchParams()
 
@@ -17,11 +19,11 @@ const RedirectPage = () => {
   }, [])
 
   return (
-    <div className="flex w-full h-full items-center justify-center">
-      <div className="relative flex gap-x-16 tablet:gap-x-36 items-center pb-8">
+    <Flex className="w-full h-full" align="center" justify="center">
+      <Flex className="relative gap-x-16 pb-8 tablet:gap-x-36" align="center">
         <RedirectDisplay provider={params[0].get('provider') || 'donalerts'} />
-      </div>
-    </div>
+      </Flex>
+    </Flex>
   )
 }
 

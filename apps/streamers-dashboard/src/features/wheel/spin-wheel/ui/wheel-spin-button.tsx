@@ -18,15 +18,13 @@ const SpinWheelButton = () => {
 
     const winner = generateWinner(wheelSlots)
 
-    console.log(winner)
-
     WheelEventsBus.getInstance().notify('spin', winner)
   }, [wheelSlots])
 
   return (
     <Button
       variant="action"
-      startContent={<Icons.Refresh size="lg" />}
+      startContent={<Icons.Refresh size="sm" />}
       onClick={handleOnClick}
       disabled={wheelSlots.length < 2}
     >

@@ -20,6 +20,95 @@ import { wheelActions as storeWheelActions } from '~entities/wheel/store'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
+import { Flex } from '~shared/ui/flex'
+
+type WheelCanvasProps = Omit<ComponentPropsWithoutRef<'canvas'>, 'children'>
+
+const WheelCanvas = (props: WheelCanvasProps) => {
+  const storedSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+  const wheelActions = useActionCreators(storeWheelActions)
+
+  const wheelWrapperRef = useRef<HTMLDivElement>(null)
+
+  const {
+    refs: { wheelRef, innerRef },
+    functions: { drawWheel, drawInner, resizeInnerBackground, resizeWheel },
+  } = useWheelInit(storedSlots, { isFullScreen: false })
+
+  const {
+    state: { wheelRotateCSSValue, selectorTargetTitle },
+    functions: { spinWheel },
+  } = useWheelControl(getItemsWithAngles(storedSlots), {
+    wheelRef,
+  })
+
+  useLayoutEffect(() => {
+    drawWheel()
+
+    const resizeWheelCb = resizeWheel()
+
+    return () => {
+      resizeWheelCb()
+    }
+  }, [drawWheel, resizeWheel])
+
+  useLayoutEffect(() => {
+    drawInner()
+    resizeInnerBackground()
+  }, [drawInner, resizeInnerBackground])
+
+  useEffect(() => {
+    wheelActions.setSelectorTitleName(
+      selectorTargetTitle || 'Ожидание прокрутки колеса...'
+    )
+  }, [selectorTargetTitle])
+
+  useEffect(() => {
+    const slotsWithActualAngles = updateSlotsAnglesByRotateValue(
+      getItemsWithAngles(storedSlots),
+      wheelRotateCSSValue
+    )
+
+    wheelActions.setSlots(slotsWithActualAngles)
+  }, [wheelRotateCSSValue])
+
+  useEffect(() => {
+    const callback = (winner: WheelSlot) => {
+      spinWheel(winner, 5)
+    }
+
+    const spinEventUnsubcribe = WheelEventsBus.getInstance().subscribe(
+      'spin',
+      callback
+    )
+
+    return () => {
+      spinEventUnsubcribe()
+    }
+  }, [spinWheel])
+
+  return (
+    <Flex className="shrink h-full w-full" align="center" justify="center">
+      <Flex
+        className="relative w-full h-full"
+        ref={wheelWrapperRef}
+        align="start"
+        justify="center"
+      >
+        <WheelSelector className="absolute -top-3.5 landtop:-top-1.5 z-10 shadow-dark drop-shadow-md" />
+        <canvas ref={wheelRef} {...props} />
+        <canvas
+          ref={innerRef}
+          className="absolute top-0"
+          style={{ clipPath: 'circle(46%)' }}
+        />
+      </Flex>
+    </Flex>
+  )
+}
+
+export { WheelCanvas }
+
 type WheelSelectorProps = {
   className?: string
   style?: CSSProperties
@@ -107,88 +196,3 @@ const WheelSelector = (props: WheelSelectorProps) => {
     </svg>
   )
 }
-
-type WheelCanvasProps = Omit<ComponentPropsWithoutRef<'canvas'>, 'children'>
-
-const WheelCanvas = (props: WheelCanvasProps) => {
-  const storedSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-  const wheelActions = useActionCreators(storeWheelActions)
-
-  const wheelWrapperRef = useRef<HTMLDivElement>(null)
-
-  const {
-    refs: { wheelRef, innerRef },
-    functions: { drawWheel, drawInner, resizeInnerBackground, resizeWheel },
-  } = useWheelInit(storedSlots, { isFullScreen: false })
-
-  const {
-    state: { wheelRotateCSSValue, selectorTargetTitle },
-    functions: { spinWheel },
-  } = useWheelControl(getItemsWithAngles(storedSlots), {
-    wheelRef,
-  })
-
-  useLayoutEffect(() => {
-    drawWheel()
-
-    const resizeWheelCb = resizeWheel()
-
-    return () => {
-      resizeWheelCb()
-    }
-  }, [drawWheel, resizeWheel])
-
-  useLayoutEffect(() => {
-    drawInner()
-    resizeInnerBackground()
-  }, [drawInner, resizeInnerBackground])
-
-  useEffect(() => {
-    wheelActions.setSelectorTitleName(
-      selectorTargetTitle || 'Ожидание прокрутки колеса...'
-    )
-  }, [selectorTargetTitle])
-
-  useEffect(() => {
-    const slotsWithActualAngles = updateSlotsAnglesByRotateValue(
-      getItemsWithAngles(storedSlots),
-      wheelRotateCSSValue
-    )
-
-    wheelActions.setSlots(slotsWithActualAngles)
-  }, [wheelRotateCSSValue])
-
-  useEffect(() => {
-    const callback = (winner: WheelSlot) => {
-      spinWheel(winner, 5)
-    }
-
-    const spinEventUnsubcribe = WheelEventsBus.getInstance().subscribe(
-      'spin',
-      callback
-    )
-
-    return () => {
-      spinEventUnsubcribe()
-    }
-  }, [spinWheel])
-
-  return (
-    <div className="flex-shrink-1 flex h-full w-full items-center justify-center">
-      <div
-        ref={wheelWrapperRef}
-        className="relative flex h-full w-full items-start justify-center"
-      >
-        <WheelSelector className="absolute -top-3.5 landtop:-top-1.5 z-10 shadow-dark drop-shadow-md" />
-        <canvas ref={wheelRef} {...props} />
-        <canvas
-          ref={innerRef}
-          className="absolute top-0"
-          style={{ clipPath: 'circle(46%)' }}
-        />
-      </div>
-    </div>
-  )
-}
-
-export { WheelCanvas }

@@ -10,6 +10,7 @@ import { useActionCreators } from '~shared/lib/redux-toolkit'
 
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
+import { Flex } from '~shared/ui/flex'
 import {
   Sheet,
   SheetContent,
@@ -46,7 +47,7 @@ const EditSlotSheet = ({
         <SheetHeader className="mb-4">
           <SheetTitle>Изменение слота</SheetTitle>
         </SheetHeader>
-        <div className="h-full flex flex-col gap-y-6">
+        <Flex className="h-full gap-y-6" direction="column">
           <AuctionSlotCard {...inputSlot} />
           <EditSlotForm
             targetSlot={inputSlot}
@@ -59,7 +60,7 @@ const EditSlotSheet = ({
               setIsOpen(false)
             }}
           />
-        </div>
+        </Flex>
       </SheetContent>
     </Sheet>
   )

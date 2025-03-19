@@ -16,6 +16,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '~shared/ui/drawer'
+import { Flex } from '~shared/ui/flex'
 import {
   Sheet,
   SheetContent,
@@ -63,7 +64,7 @@ const EditSlotDialogue = ({
 
   const dialogContent = useMemo(() => {
     return (
-      <div className="h-full flex flex-col gap-y-6">
+      <Flex className="h-full gap-y-6" direction="column">
         <AuctionSlotCard {...inputSlot} />
         <EditSlotForm
           defaultValues={
@@ -88,7 +89,7 @@ const EditSlotDialogue = ({
             setFormInputState(null)
           }}
         />
-      </div>
+      </Flex>
     )
   }, [setIsDialogOpen, setFormInputState, inputSlot])
 

@@ -13,6 +13,7 @@ import {
 } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
 import { NumberInput } from '~shared/ui/number-input'
@@ -156,14 +157,20 @@ export const CreateSlotsForm = ({
   }, [fields, getErrorMessageForField, multiplySlots])
 
   return (
-    <form
-      className="flex flex-col w-full h-full justify-between"
+    <Flex
+      className="w-full h-full"
+      component="form"
+      justify="between"
+      direction="column"
       onSubmit={handleSubmit(submitForm)}
       {...props}
     >
-      <div className="flex w-full flex-col gap-y-6 items-stretch">
-        <ul className="flex flex-col w-full">
-          <div className="flex w-full flex-col gap-y-3 h-full overflow-y-scroll p-1">
+      <Flex className="w-full gap-y-6" direction="column" align="stretch">
+        <Flex className="w-full" component="ul" direction="column">
+          <Flex
+            className="w-full h-full gap-y-3 overflow-y-scroll p-1"
+            direction={'column'}
+          >
             {formFields}
             {multiplySlots && (
               <Button
@@ -179,18 +186,17 @@ export const CreateSlotsForm = ({
                 Создать слот
               </Button>
             )}
-          </div>
-        </ul>
-      </div>
-
+          </Flex>
+        </Flex>
+      </Flex>
       <Button
         type="submit"
-        variant={'action'}
+        variant="action"
         className="w-full"
         disabled={isLoading}
       >
         Добавить в аукцион
       </Button>
-    </form>
+    </Flex>
   )
 }

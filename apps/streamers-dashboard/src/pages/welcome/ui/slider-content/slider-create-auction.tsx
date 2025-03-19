@@ -1,6 +1,7 @@
 import { CreateAuctionForm } from '~features/auction/create-auction/ui/create-auction-form'
 
 import { Button } from '~shared/ui/button'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import {
   SliderContent,
@@ -15,15 +16,12 @@ const SliderCreateContent = () => {
   } = useSliderContext()
 
   return (
-    <SliderContent
-      className="relative flex h-full w-full flex-col gap-y-6"
-      value="create"
-    >
-      <SliderTrigger className="absolute -top-16 left-0" value="welcome">
-        <Button startContent={<Icons.ReturnArrow size="lg" />}>Назад</Button>
+    <SliderContent className="slider-content" value="create">
+      <SliderTrigger className="" value="welcome">
+        <Button startContent={<Icons.ReturnArrow />}>Назад</Button>
       </SliderTrigger>
 
-      <div className="flex flex-col gap-y-2">
+      <Flex className="gap-y-2" direction="column">
         <Typography tag="h1">Создание нового аукциона</Typography>
         <Typography tag="p" className="text-gray font-golosF">
           Для продолжения введите выданный вам мастер-ключ. Позже он также будет
@@ -31,7 +29,7 @@ const SliderCreateContent = () => {
           ввода нажмите кнопку "Создать"
         </Typography>
         <CreateAuctionForm onSuccess={() => setSelectedKey('parameters')} />
-      </div>
+      </Flex>
     </SliderContent>
   )
 }

@@ -1,18 +1,28 @@
 import { AuctionSlotsList } from '~widgets/auction-slots-list/ui'
+import { useSortingSlots } from '~widgets/slots-with-sort/lib'
 
-import { ScrollArea } from '~shared/ui/scroll-area'
+import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { TabsContent } from '~shared/ui/tabs'
 
 const SlotsWheelTab = () => {
+  const slots = useStoreSelector(auctionSlotsSelectors.getSlots)
+
+  const sortedSlots = useSortingSlots(slots, {
+    type: 'descending',
+    field: 'points',
+  })
+
   return (
     <TabsContent value="lots" className="data-[state=active]:h-full">
-      <ScrollArea className="h-full">
-        <AuctionSlotsList
-          className={'flex '}
-          withControls={false}
-          disableAnimation
-        />
-      </ScrollArea>
+      <AuctionSlotsList
+        className={'flex pb-4'}
+        data={sortedSlots}
+        withControls={false}
+        disableAnimation
+      />
     </TabsContent>
   )
 }

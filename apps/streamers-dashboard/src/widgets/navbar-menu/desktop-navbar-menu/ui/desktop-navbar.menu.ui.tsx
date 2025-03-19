@@ -3,6 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
@@ -58,9 +59,14 @@ const NavbarMenu = () => {
 
   return (
     <nav data-slot="navbar" className="fixed left-3 top-1/2 -translate-y-1/2">
-      <ul className="flex flex-col w-full justify-between gap-y-5 py-4 bg-dark/60 px-4 rounded-lg">
+      <Flex
+        className="w-full gap-y-5 py-4 bg-dark/60 px-4 rounded-lg"
+        component="ul"
+        direction="column"
+        justify="between"
+      >
         {menuItems}
-      </ul>
+      </Flex>
     </nav>
   )
 }

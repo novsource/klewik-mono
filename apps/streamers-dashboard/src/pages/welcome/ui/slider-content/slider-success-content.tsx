@@ -8,6 +8,7 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { useCopyToClipboard } from '~shared/hooks/use-copy-to-clipboard'
 
 import { Button } from '~shared/ui/button'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
 import { SliderContent } from '~shared/ui/slider'
@@ -23,20 +24,17 @@ const SliderSuccessContent = () => {
   const { copyToClipboard } = useCopyToClipboard()
 
   return (
-    <SliderContent
-      className="relative flex h-full w-full flex-col gap-y-6"
-      value="successCreate"
-    >
-      <div className="flex flex-col gap-y-2">
+    <SliderContent className="slider-content" value="successCreate">
+      <Flex className="gap-y-2" direction="column">
         <Typography tag="h1">Аукцион успешно создан!</Typography>
         <Typography tag="p" className="text-gray">
           Скопируйте и сохраните себе номер аукциона, а также запомните пароль.
           Эти данные понадобятся вам в дальнейшем для входа в аукцион в роли
           администратора
         </Typography>
-      </div>
-      <div className="flex flex-col gap-y-4">
-        <div className="flex items-end justify-center gap-x-2">
+      </Flex>
+      <Flex className="gap-y-4" direction="column">
+        <Flex className="gap-x-2" align="end" justify="center">
           <Input
             ref={inputNumberRef}
             disabled
@@ -53,8 +51,8 @@ const SliderSuccessContent = () => {
           >
             Скопировать
           </Button>
-        </div>
-        <div className="flex items-end justify-center gap-x-2">
+        </Flex>
+        <Flex className="gap-x-2" align="end" justify="end">
           <Input
             ref={inputURLRef}
             disabled
@@ -74,8 +72,8 @@ const SliderSuccessContent = () => {
           >
             Скопировать
           </Button>
-        </div>
-      </div>
+        </Flex>
+      </Flex>
       <Link to={`/dashboard/${auctionInfo.url?.split('/').at(-1)}`}>
         <Button
           className="w-full"
