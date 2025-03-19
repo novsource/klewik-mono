@@ -55,7 +55,19 @@ const AuctionSlotsList = ({
   const slotsWinPercents = useMemo(() => {
     const percentsArr = [...storedAuctionSlots].map<AuctionSlotWithPercents>(
       (slot) => {
-        const percent = ((slot.points / storedSlotsPointsSum) * 100).toFixed(2)
+        let percent = ((slot.points / storedSlotsPointsSum) * 100).toFixed(2)
+
+        if (percent[percent.length - 1] === '0') {
+          let countOfZeroes = 2
+
+          while (percent[percent.length - 1] === '0' || countOfZeroes !== 5) {
+            percent = ((slot.points / storedSlotsPointsSum) * 100).toFixed(
+              countOfZeroes
+            )
+
+            countOfZeroes++
+          }
+        }
 
         return { ...slot, percent }
       }

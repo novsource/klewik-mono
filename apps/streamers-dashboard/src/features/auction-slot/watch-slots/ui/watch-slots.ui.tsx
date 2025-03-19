@@ -101,6 +101,14 @@ const VirtualizedSlotsList = ({
     setSlots(data)
   }, [data, storedSlots])
 
+  const defaultSlotsCardList = useMemo(() => {
+    if (renderCard) return
+
+    return slots.map((slot) => {
+      return <AuctionSlotCard {...slot} />
+    })
+  }, [slots, renderCard])
+
   if (slots.length === 0) {
     return (
       <Flex
@@ -119,14 +127,6 @@ const VirtualizedSlotsList = ({
       </Flex>
     )
   }
-
-  const defaultSlotsCardList = useMemo(() => {
-    if (renderCard) return
-
-    return slots.map((slot) => {
-      return <AuctionSlotCard {...slot} />
-    })
-  }, [slots, renderCard])
 
   return (
     <AutoSizer disableWidth>
