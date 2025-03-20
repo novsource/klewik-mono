@@ -57,10 +57,13 @@ const AuctionSlotsList = ({
       (slot) => {
         let percent = ((slot.points / storedSlotsPointsSum) * 100).toFixed(2)
 
-        if (percent[percent.length - 1] === '0') {
+        if (percent[-1] === '0' && percent[-2] === '0') {
           let countOfZeroes = 2
 
-          while (percent[percent.length - 1] === '0' || countOfZeroes !== 5) {
+          while (
+            (percent[-1] === '0' && percent[-2] === '0') ||
+            countOfZeroes !== 5
+          ) {
             percent = ((slot.points / storedSlotsPointsSum) * 100).toFixed(
               countOfZeroes
             )
