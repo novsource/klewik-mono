@@ -10,7 +10,7 @@ import {
 } from './wheel-canvas'
 
 type WheelControlCallbacks = {
-  onSpinStart: () => void
+  onSpinStart: (winner: WheelSlot) => void
   onSpinComplete: (winnerLot: WheelSlot) => void
 }
 
@@ -48,7 +48,7 @@ export const useWheelControl = (
           onPlay: () => {
             setIsWheelSpinning(true)
 
-            onSpinStart && onSpinStart()
+            onSpinStart && onSpinStart(winner)
           },
           onComplete: () => {
             setIsWheelSpinning(false)

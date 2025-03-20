@@ -68,7 +68,7 @@ const AuctionSlotsPage = () => {
         </Flex>
       </Flex>
       <div className="h-full w-full">
-        <AuctionSlotsList data={sortedSlots} />
+        <AuctionSlotsList data={sortedSlots} disableAnimation />
       </div>
     </div>
   )

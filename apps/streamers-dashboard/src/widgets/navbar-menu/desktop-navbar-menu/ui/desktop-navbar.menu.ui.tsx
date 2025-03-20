@@ -5,6 +5,8 @@ import { useMediaQuery } from '~shared/hooks/use-media-query'
 
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~shared/ui/tooltip'
+import { Typography } from '~shared/ui/typograghy'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
@@ -37,8 +39,8 @@ const NavbarMenu = () => {
 
       const routerLink = curr.path.replace('/', '')
 
-      acc.push(
-        <li key={curr.path} className="cursor-pointer">
+      const link = (
+        <li className="cursor-pointer">
           <NavLink
             to={routerLink}
             className={({ isActive }) =>
@@ -51,6 +53,24 @@ const NavbarMenu = () => {
             {menuIcon}
           </NavLink>
         </li>
+      )
+
+      const tooltipContent = {
+        wheel: 'Событие аукциона',
+        donations: 'Донаты',
+        settings: 'Настройки',
+        slots: 'Слоты аукциона',
+      }[routerLink]
+
+      acc.push(
+        <Tooltip key={curr.path} delayDuration={500}>
+          <TooltipTrigger asChild>{link}</TooltipTrigger>
+          <TooltipContent side="right">
+            <Typography className="text-sm" tag="span">
+              {tooltipContent}
+            </Typography>
+          </TooltipContent>
+        </Tooltip>
       )
 
       return acc

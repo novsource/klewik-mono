@@ -3,16 +3,24 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { validateSlotsPayload } from '../lib/react-redux'
 import { WheelSlot } from '../model'
 
+type WheelSettings = {
+  spinTime: number
+}
+
 export type WheelState = {
   selectorTargetTitle: string
   slots: WheelSlot[]
-  settings: {}
+  settings: WheelSettings
+  isWheelSpinning: boolean
 }
 
 const initialState: WheelState = {
   selectorTargetTitle: 'Ожидание прокрутки колеса...',
   slots: [],
-  settings: {},
+  settings: {
+    spinTime: 2,
+  },
+  isWheelSpinning: false,
 }
 
 const wheelSlice = createSlice({
@@ -44,6 +52,12 @@ const wheelSlice = createSlice({
     setSelectorTitleName: (state, action: PayloadAction<string>) => {
       state.selectorTargetTitle = action.payload
     },
+    setIsWheelSpinning: (state, action: PayloadAction<boolean>) => {
+      state.isWheelSpinning = action.payload
+    },
+    setSettings: (state, action: PayloadAction<Partial<WheelSettings>>) => {
+      state.settings = { ...state.settings, ...action.payload }
+    },
   },
   selectors: {
     getSlots: (state) => {
@@ -54,6 +68,9 @@ const wheelSlice = createSlice({
     },
     getSelectorTargetTitle: (state) => {
       return state.selectorTargetTitle
+    },
+    getIsWheelSpinning: (state) => {
+      return state.isWheelSpinning
     },
   },
 })

@@ -1,3 +1,3 @@
-import NumberInput from './ui/number-input'
+import NumberInput, { NumberInputProps } from './ui/number-input'
 
-export { NumberInput }
+export { NumberInput, type NumberInputProps }
