@@ -21,6 +21,7 @@ export type NumberInputProps = InputProps & {
   minValue?: number
   maxValue?: number
   allowDeleteMinValue?: boolean
+  onNumberChanges?: (formattedNumber: number | undefined) => void
 }
 
 const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
@@ -31,6 +32,7 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       minValue,
       maxValue,
       allowDeleteMinValue = true,
+      onNumberChanges,
       defaultValue,
       numberFormat,
       locales,
@@ -66,8 +68,10 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
 
           if (value > max) {
             formatedValue = new Intl.NumberFormat('ru-RU').format(max)
+            onNumberChanges && onNumberChanges(max)
           } else {
             formatedValue = new Intl.NumberFormat('ru-RU').format(value)
+            onNumberChanges && onNumberChanges(value)
           }
 
           inputValue.current = formatedValue
@@ -75,6 +79,7 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
 
         if (stringWithoutSpaces.length === 0) {
           inputValue.current = ''
+          onNumberChanges && onNumberChanges(undefined)
         }
 
         if (
@@ -86,6 +91,7 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
             locales ?? 'ru-RU',
             numberFormat
           ).format(Number(minValue))
+          onNumberChanges && onNumberChanges(minValue)
         }
 
         return inputValue.current
@@ -118,13 +124,23 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           Number.isInteger(min)
         ) {
           innerRef.current.value = min.toString()
+          onNumberChanges && onNumberChanges(min)
         } else if (stringWithoutSpaces.length !== 0 && minValue) {
-          innerRef.current.value =
+          const value =
             Number(stringWithoutSpaces) < min
               ? Intl.NumberFormat(locales ?? 'ru-RU', numberFormat).format(
                   Number(min)
                 )
               : inputValue.current
+
+          innerRef.current.value = value
+
+          onNumberChanges &&
+            onNumberChanges(
+              Number(stringWithoutSpaces) < min
+                ? min
+                : Number(stringWithoutSpaces)
+            )
         }
 
         onBlur && onBlur(e)

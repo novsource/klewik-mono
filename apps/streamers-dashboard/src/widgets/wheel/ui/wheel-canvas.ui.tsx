@@ -16,7 +16,10 @@ import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { WheelEventsBus } from '~entities/wheel/events'
 import { WheelSlot } from '~entities/wheel/model'
-import { wheelActions as storeWheelActions } from '~entities/wheel/store'
+import {
+  wheelActions as storeWheelActions,
+  wheelSelectors,
+} from '~entities/wheel/store'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -25,6 +28,7 @@ import { Flex } from '~shared/ui/flex'
 type WheelCanvasProps = Omit<ComponentPropsWithoutRef<'canvas'>, 'children'>
 
 const WheelCanvas = (props: WheelCanvasProps) => {
+  const { spinTime } = useStoreSelector(wheelSelectors.getSettings)
   const storedSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const wheelActions = useActionCreators(storeWheelActions)
 
@@ -36,7 +40,7 @@ const WheelCanvas = (props: WheelCanvasProps) => {
   } = useWheelInit(storedSlots, { isFullScreen: false })
 
   const {
-    state: { wheelRotateCSSValue, selectorTargetTitle },
+    state: { wheelRotateCSSValue, selectorTargetTitle, isWheelSpinning },
     functions: { spinWheel },
   } = useWheelControl(getItemsWithAngles(storedSlots), {
     wheelRef,
@@ -74,7 +78,7 @@ const WheelCanvas = (props: WheelCanvasProps) => {
 
   useEffect(() => {
     const callback = (winner: WheelSlot) => {
-      spinWheel(winner, 5)
+      spinWheel(winner, spinTime)
     }
 
     const spinEventUnsubcribe = WheelEventsBus.getInstance().subscribe(
@@ -86,6 +90,10 @@ const WheelCanvas = (props: WheelCanvasProps) => {
       spinEventUnsubcribe()
     }
   }, [spinWheel])
+
+  useEffect(() => {
+    wheelActions.setIsWheelSpinning(isWheelSpinning)
+  }, [isWheelSpinning])
 
   return (
     <Flex className="shrink h-full w-full" align="center" justify="center">

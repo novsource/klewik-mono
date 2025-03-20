@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { ComponentProps, useCallback, useMemo } from 'react'
 
 import { generateWinner } from '~widgets/wheel/utils/wheel-canvas'
 
@@ -10,11 +10,19 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 
-const SpinWheelButton = () => {
+type SpinWheelButtonProps = ComponentProps<'button'>
+
+const SpinWheelButton = ({ className, ...props }: SpinWheelButtonProps) => {
+  const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
   const wheelSlots = useStoreSelector(wheelSelectors.getSlots)
 
+  const isButtonShouldBeDisabled = useMemo(
+    () => wheelSlots.length < 2 || isWheelSpinning,
+    [isWheelSpinning, wheelSlots]
+  )
+
   const handleOnClick = useCallback(() => {
-    if (wheelSlots.length < 2) return
+    if (isButtonShouldBeDisabled) return
 
     const winner = generateWinner(wheelSlots)
 
@@ -23,10 +31,12 @@ const SpinWheelButton = () => {
 
   return (
     <Button
+      className={className}
       variant="action"
       startContent={<Icons.Refresh size="sm" />}
       onClick={handleOnClick}
-      disabled={wheelSlots.length < 2}
+      disabled={isButtonShouldBeDisabled}
+      {...props}
     >
       Прокрутить
     </Button>
