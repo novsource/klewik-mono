@@ -1,4 +1,12 @@
-import { ChangeEvent, forwardRef, useCallback, useRef } from 'react'
+import {
+  ChangeEvent,
+  FocusEvent,
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from 'react'
 
 import { Input, InputProps } from '~shared/ui/input'
 
@@ -7,18 +15,40 @@ import {
   isStringContainNotOnlyNumbers,
 } from '~shared/utils/string-format'
 
-type NumberInputProps = InputProps & {
+export type NumberInputProps = InputProps & {
   locales?: Intl.LocalesArgument
-  numberFormat?: Intl.NumberFormat
+  numberFormat?: Intl.NumberFormatOptions
   minValue?: number
   maxValue?: number
+  allowDeleteMinValue?: boolean
 }
 
 const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
-  (props, ref) => {
-    const { onChange, minValue, maxValue, ...otherProps } = props
+  (props, forwardRef) => {
+    const {
+      onChange,
+      onBlur,
+      minValue,
+      maxValue,
+      allowDeleteMinValue = true,
+      defaultValue,
+      numberFormat,
+      locales,
+      ...otherProps
+    } = props
 
+    const innerRef = useRef<HTMLInputElement>(null)
     const inputValue = useRef<string>('')
+
+    const defaultInputValue = useMemo(() => {
+      if (!Number.isInteger(minValue)) return ''
+
+      return Intl.NumberFormat(locales ?? 'ru-RU', numberFormat).format(
+        Number(minValue)
+      )
+    }, [defaultValue, minValue])
+
+    useImperativeHandle(forwardRef, () => innerRef.current as HTMLInputElement)
 
     const formatValue = useCallback(
       (str: string) => {
@@ -32,17 +62,11 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
 
           let formatedValue = ''
 
-          const min = minValue ?? Number.MIN_SAFE_INTEGER
           const max = maxValue ?? Number.MAX_SAFE_INTEGER
 
-          if (value < min) {
-            formatedValue = new Intl.NumberFormat('ru-RU').format(min)
-          }
           if (value > max) {
             formatedValue = new Intl.NumberFormat('ru-RU').format(max)
-          }
-
-          if (value >= min && value <= max) {
+          } else {
             formatedValue = new Intl.NumberFormat('ru-RU').format(value)
           }
 
@@ -53,10 +77,15 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           inputValue.current = ''
         }
 
-        if (stringWithoutSpaces.length === 0 && minValue) {
-          inputValue.current = new Intl.NumberFormat('ru-RU').format(
-            Number(minValue)
-          )
+        if (
+          stringWithoutSpaces.length === 0 &&
+          minValue &&
+          !allowDeleteMinValue
+        ) {
+          inputValue.current = new Intl.NumberFormat(
+            locales ?? 'ru-RU',
+            numberFormat
+          ).format(Number(minValue))
         }
 
         return inputValue.current
@@ -73,8 +102,45 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       [onChange]
     )
 
+    const onBlurHandler = useCallback(
+      (e: FocusEvent<HTMLInputElement>) => {
+        if (!innerRef.current) return
+
+        const stringWithoutSpaces = deleteAllSpacesFromString(
+          inputValue.current
+        )
+
+        const min = minValue ?? Number.MIN_SAFE_INTEGER
+
+        if (
+          stringWithoutSpaces.length === 0 &&
+          minValue &&
+          Number.isInteger(min)
+        ) {
+          innerRef.current.value = min.toString()
+        } else if (stringWithoutSpaces.length !== 0 && minValue) {
+          innerRef.current.value =
+            Number(stringWithoutSpaces) < min
+              ? Intl.NumberFormat(locales ?? 'ru-RU', numberFormat).format(
+                  Number(min)
+                )
+              : inputValue.current
+        }
+
+        onBlur && onBlur(e)
+      },
+      [onBlur, inputValue.current, innerRef.current]
+    )
+
     return (
-      <Input ref={ref} type="text" onChange={onChangeHandler} {...otherProps} />
+      <Input
+        ref={innerRef}
+        type="text"
+        defaultValue={minValue ?? ''}
+        onChange={onChangeHandler}
+        onBlur={onBlurHandler}
+        {...otherProps}
+      />
     )
   }
 )
