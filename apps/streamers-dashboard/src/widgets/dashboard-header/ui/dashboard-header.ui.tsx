@@ -5,6 +5,7 @@ import { NavLink } from 'react-router-dom'
 import { IntegrationsPlatforms } from '~entities/integrations/model'
 import { integrationsSelectors } from '~entities/integrations/store'
 
+import { TimerButton } from '~features/auction/set-timer/ui'
 import { UpdateBetsStatusButton } from '~features/auction/update-bets-status/ui'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -38,7 +39,10 @@ export const DashboardHeader = memo(({ children }: { children: ReactNode }) => {
               <IntegrationsStatisticCard />
             </Flex>
             <div className="h-2/3 w-0.5 bg-dark-accent/80" />
-            <UpdateBetsStatusButton />
+            <Flex className="gap-x-1.5" align="center">
+              <TimerButton />
+              <UpdateBetsStatusButton />
+            </Flex>
           </Flex>
         </Flex>
       )}

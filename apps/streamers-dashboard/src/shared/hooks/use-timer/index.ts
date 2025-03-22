@@ -1,1 +1,1 @@
-export * from './useTimer'
+export * from './use-timer'

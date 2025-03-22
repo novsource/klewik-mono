@@ -4,8 +4,8 @@ type TimerControl = {
   start: () => void
   pause: () => void
   stop: () => void
-  addTime: (event: MouseEvent, value?: number) => void
-  decreaseTime: (event: MouseEvent, value?: number) => void
+  addTime: (value?: number) => void
+  decreaseTime: (value?: number) => void
 }
 
 type TimerHookCallbacks = Partial<{
@@ -13,11 +13,12 @@ type TimerHookCallbacks = Partial<{
   onInitStart(time: string): void
   onStartAfterPause(time: string): void
   onPause(time: string): void
+  onStop(time: string): void
   onEnd(): void
 }>
 
 type TimerHookProperties = Partial<{
-  initTimeUTC: number
+  startTimeMs: number
 }>
 
 type TimerHookProps = TimerHookCallbacks & TimerHookProperties
@@ -28,8 +29,6 @@ type TimerHookReturn = {
     time: string
   }
 }
-
-const DEFAULT_TARGET_TIME = 10000
 
 const convertDiffToTimerValue = (diff: number) => {
   let diffAsSeconds = diff / 1000
@@ -52,9 +51,21 @@ const convertDiffToTimerValue = (diff: number) => {
 }
 
 const useTimer = (props: TimerHookProps): TimerHookReturn => {
-  const { onTick, onStartAfterPause, onEnd, onInitStart, onPause } = props
+  const {
+    onTick,
+    onStartAfterPause,
+    onEnd,
+    onInitStart,
+    onStop,
+    onPause,
+    startTimeMs,
+  } = props
 
-  const [time, setTime] = useState<string>('Timer')
+  const defaultTimerValueRef = useRef<number>(startTimeMs ?? 10000)
+
+  const [time, setTime] = useState<string>(() => {
+    return convertDiffToTimerValue(Date.now() + defaultTimerValueRef.current)
+  })
 
   const isStarted = useRef<boolean>(false)
   const isOnPause = useRef<boolean>(false)
@@ -62,7 +73,9 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
   const currentTickID = useRef<number>(0)
 
   const initTimeRef = useRef<number>(Date.now())
-  const targetTimeRef = useRef<number>(Date.now() + DEFAULT_TARGET_TIME)
+  const targetTimeRef = useRef<number>(
+    Date.now() + defaultTimerValueRef.current
+  )
   const stoppedTimeRef = useRef<number>(0)
 
   const tick = useCallback(() => {
@@ -73,11 +86,9 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
 
       isStarted.current = false
       initTimeRef.current = Date.now()
-      targetTimeRef.current = Date.now() + DEFAULT_TARGET_TIME
+      targetTimeRef.current = Date.now() + defaultTimerValueRef.current
 
-      setTime(
-        convertDiffToTimerValue(targetTimeRef.current - initTimeRef.current)
-      )
+      setTime(convertDiffToTimerValue(defaultTimerValueRef.current))
 
       onEnd && onEnd()
 
@@ -89,8 +100,8 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
 
     setTime(convertDiffToTimerValue(currTime))
 
-    onTick && onTick(time)
-  }, [])
+    onTick && onTick(convertDiffToTimerValue(currTime))
+  }, [defaultTimerValueRef.current])
 
   const start = useCallback(() => {
     if (isOnPause.current) {
@@ -109,11 +120,12 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
 
       isStarted.current = true
 
-      targetTimeRef.current += Date.now() - initTimeRef.current
+      // Time changed immedetiatly so we need to add 1 second to prevent it
+      targetTimeRef.current = Date.now() + defaultTimerValueRef.current + 1000
 
       tick()
     }
-  }, [])
+  }, [defaultTimerValueRef.current])
 
   const pause = useCallback(() => {
     if (!isOnPause.current) {
@@ -133,25 +145,54 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
 
     stoppedTimeRef.current = 0
     currentTickID.current = 0
-  }, [])
 
-  const addTime = useCallback((_: MouseEvent, value: number = 1000) => {
-    targetTimeRef.current += value
+    isStarted.current = false
+    isOnPause.current = false
 
-    setTime(
-      convertDiffToTimerValue(targetTimeRef.current - initTimeRef.current)
-    )
-  }, [])
+    const initTime = convertDiffToTimerValue(defaultTimerValueRef.current)
 
-  const decreaseTime = useCallback((_: MouseEvent, value: number = 1000) => {
-    if (targetTimeRef.current - value - initTimeRef.current >= 0) {
-      targetTimeRef.current -= value
+    setTime(initTime)
+
+    onStop && onStop(initTime)
+  }, [defaultTimerValueRef.current])
+
+  const addTime = useCallback(
+    (value: number = 1000) => {
+      const tickId = currentTickID.current
+      cancelAnimationFrame(tickId)
+
+      currentTickID.current = 0
+
+      targetTimeRef.current += value
 
       setTime(
         convertDiffToTimerValue(targetTimeRef.current - initTimeRef.current)
       )
-    }
-  }, [])
+
+      if (!isOnPause.current) tick()
+    },
+    [targetTimeRef.current]
+  )
+
+  const decreaseTime = useCallback(
+    (value: number = 1000) => {
+      if (targetTimeRef.current - value - initTimeRef.current >= 0) {
+        const tickId = currentTickID.current
+        cancelAnimationFrame(tickId)
+
+        currentTickID.current = 0
+
+        targetTimeRef.current -= value
+
+        setTime(
+          convertDiffToTimerValue(targetTimeRef.current - initTimeRef.current)
+        )
+      }
+
+      if (!isOnPause.current) tick()
+    },
+    [targetTimeRef.current]
+  )
 
   return {
     control: {
