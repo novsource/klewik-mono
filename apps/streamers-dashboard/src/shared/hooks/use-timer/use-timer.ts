@@ -17,9 +17,10 @@ type TimerHookCallbacks = Partial<{
   onEnd(): void
 }>
 
-type TimerHookProperties = Partial<{
-  startTimeMs: number
-}>
+type TimerHookProperties = {
+  startTimeSec?: number
+  startTimeMin?: number
+}
 
 type TimerHookProps = TimerHookCallbacks & TimerHookProperties
 
@@ -58,10 +59,20 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
     onInitStart,
     onStop,
     onPause,
-    startTimeMs,
+    startTimeSec,
+    startTimeMin,
   } = props
 
-  const defaultTimerValueRef = useRef<number>(startTimeMs ?? 10000)
+  const defaultTimerValueRef = useRef<number>(
+    (() => {
+      const secondsInMs =
+        startTimeSec && startTimeSec >= 0 ? startTimeSec * 1000 : 10000
+      const minutesInMs =
+        startTimeMin && startTimeMin >= 0 ? startTimeMin * 60 * 1000 : 0
+
+      return secondsInMs + minutesInMs
+    })()
+  )
 
   const [time, setTime] = useState<string>(() => {
     return convertDiffToTimerValue(Date.now() + defaultTimerValueRef.current)

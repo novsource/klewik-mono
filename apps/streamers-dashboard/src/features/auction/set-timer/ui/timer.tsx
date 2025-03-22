@@ -26,7 +26,8 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
     },
     state: { time },
   } = useTimer({
-    startTimeMs: 20000,
+    startTimeMin: 10,
+    startTimeSec: 60,
     onInitStart() {
       setTimerStatus('ticking')
     },
@@ -88,7 +89,7 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
               variant="ghost"
               size="sm"
               isIconOnly
-              icon={<Icons.Plus />}
+              icon={<Icons.Plus strokeWidth={1} />}
               onClick={() => addTime()}
             />
             <Button
@@ -97,7 +98,7 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
               size="sm"
               isIconOnly
               onClick={() => decreaseTime()}
-              icon={<Icons.Minus />}
+              icon={<Icons.Minus strokeWidth={1} />}
             />
           </>
         )}
