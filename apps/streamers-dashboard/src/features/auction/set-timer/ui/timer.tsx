@@ -3,12 +3,15 @@ import { ComponentProps, useState } from 'react'
 import NumberFlow, { NumberFlowGroup } from '@number-flow/react'
 import { motion } from 'framer-motion'
 
+import { appSelectors } from '~shared/store/slices'
+
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { useTimer } from '~shared/hooks/use-timer'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
@@ -19,6 +22,10 @@ type TimerButtonProps = ComponentProps<'div'> & {
 type TimerStatus = 'stopped' | 'paused' | 'ticking' | 'ended'
 
 const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
+  const { initial, addedTimeValue, decreaseTimeValue } = useStoreSelector(
+    appSelectors.getTimerSettings
+  )
+
   const [timerStatus, setTimerStatus] = useState<TimerStatus>('stopped')
 
   const {
@@ -33,8 +40,8 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
       timeValues: { hours, minutes, seconds },
     },
   } = useTimer({
-    startTimeMin: 10,
-    startTimeSec: 60,
+    startTimeMin: initial.minutes,
+    startTimeSec: initial.seconds,
     onInitStart() {
       setTimerStatus('ticking')
     },
@@ -81,17 +88,23 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
               }}
             >
               <NumberFlow
+                willChange
+                trend={0}
                 value={hours}
                 digits={{ 1: { max: 5 } }}
                 format={{ minimumIntegerDigits: 2 }}
               />
               <NumberFlow
+                willChange
+                trend={0}
                 prefix=":"
                 value={minutes}
                 digits={{ 1: { max: 5 } }}
                 format={{ minimumIntegerDigits: 2 }}
               />
               <NumberFlow
+                willChange
+                trend={0}
                 prefix=":"
                 value={seconds}
                 digits={{ 1: { max: 5 } }}
@@ -136,14 +149,14 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
               size="sm"
               isIconOnly
               icon={<Icons.Plus strokeWidth={1} />}
-              onClick={() => addTime()}
+              onClick={() => addTime(addedTimeValue * 1000)}
             />
             <Button
               className="hover:text-gray-accent px-0.5"
               variant="ghost"
               size="sm"
               isIconOnly
-              onClick={() => decreaseTime()}
+              onClick={() => decreaseTime(decreaseTimeValue * 1000)}
               icon={<Icons.Minus strokeWidth={1} />}
             />
           </motion.div>

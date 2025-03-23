@@ -84,12 +84,14 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
 
   const defaultTimerValueRef = useRef<number>(
     (() => {
+      const hoursInMs =
+        startTimeHours && startTimeHours >= 0 ? startTimeHours * 1000 * 3600 : 0
       const secondsInMs =
         startTimeSec && startTimeSec >= 0 ? startTimeSec * 1000 : 10000
       const minutesInMs =
         startTimeMin && startTimeMin >= 0 ? startTimeMin * 60 * 1000 : 0
 
-      return secondsInMs + minutesInMs
+      return hoursInMs + minutesInMs + secondsInMs
     })()
   )
 
@@ -98,9 +100,9 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
   })
 
   const [timeValues, setTimeValues] = useState<TimerNumberValues>(() => ({
-    hours: startTimeHours ?? 0,
-    minutes: startTimeMin ?? 0,
     seconds: startTimeSec ?? 0,
+    minutes: startTimeMin ?? 0,
+    hours: startTimeHours ?? 0,
   }))
 
   const isStarted = useRef<boolean>(false)
@@ -172,7 +174,7 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
       isStarted.current = true
 
       // Time changed immedetiatly so we need to add 1 second to prevent it
-      targetTimeRef.current = Date.now() + defaultTimerValueRef.current
+      targetTimeRef.current = Date.now() + defaultTimerValueRef.current + 1000
 
       tick()
     }
