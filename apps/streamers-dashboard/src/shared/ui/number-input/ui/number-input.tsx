@@ -42,15 +42,15 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     const innerRef = useRef<HTMLInputElement>(null)
     const inputValue = useRef<string>('')
 
+    useImperativeHandle(forwardRef, () => innerRef.current as HTMLInputElement)
+
     const defaultInputValue = useMemo(() => {
       if (!Number.isInteger(minValue)) return ''
 
       return Intl.NumberFormat(locales ?? 'ru-RU', numberFormat).format(
-        Number(minValue)
+        Number(defaultValue ?? minValue)
       )
     }, [defaultValue, minValue])
-
-    useImperativeHandle(forwardRef, () => innerRef.current as HTMLInputElement)
 
     const formatValue = useCallback(
       (str: string) => {
@@ -152,7 +152,7 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       <Input
         ref={innerRef}
         type="text"
-        defaultValue={minValue ?? ''}
+        defaultValue={defaultInputValue}
         onChange={onChangeHandler}
         onBlur={onBlurHandler}
         {...otherProps}

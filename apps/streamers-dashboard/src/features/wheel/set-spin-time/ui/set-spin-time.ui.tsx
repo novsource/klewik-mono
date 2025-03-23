@@ -11,7 +11,6 @@ import { Typography } from '~shared/ui/typograghy'
 type SpinTimeInputProps = NumberInputProps
 
 const SpinTimeInput = ({ onNumberChanges, ...props }: SpinTimeInputProps) => {
-  const { spinTime } = useStoreSelector(wheelSelectors.getSettings)
   const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
 
   const { setSettings } = useActionCreators(wheelActions)
@@ -25,19 +24,17 @@ const SpinTimeInput = ({ onNumberChanges, ...props }: SpinTimeInputProps) => {
     [onNumberChanges]
   )
 
-  console.log(spinTime)
-
   return (
     <NumberInput
       slotClassNames={{
-        base: 'max-w-[200px]',
-        input: 'font-golos-f text-title',
+        base: 'max-w-[140px]',
+        input: 'font-golos-f text-title placeholder:text-md',
       }}
       disabled={isWheelSpinning}
       minValue={2}
       maxValue={120}
       startContent={
-        <Icons.Timer width={28} height={28} className="text-gray-light" />
+        <Icons.Timer size="sm" className="text-gray-light shrink-0" />
       }
       endContent={
         <Typography className="text-gray-light" tag="span">

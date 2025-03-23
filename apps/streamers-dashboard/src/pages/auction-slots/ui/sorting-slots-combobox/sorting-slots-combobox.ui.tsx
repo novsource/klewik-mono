@@ -51,6 +51,7 @@ const SortingSlotsCombobox = memo(
         data={sortingSlotsVariants}
         placeholder="По умолчанию"
         defaultValue={defaultSortValue}
+        icon={<Icons.Sort size="sm" />}
         onValueChanged={(sortValue) => {
           const sortOptions =
             sortingSlotsVariants.find((sort) => sort.value === sortValue)

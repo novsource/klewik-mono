@@ -13,6 +13,8 @@ import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
 import { toastErrorNotification } from '~shared/ui/toaster/lib'
 
+import { cn } from '~shared/utils'
+
 import { useSetAuctionViewParametersMutation } from '../api'
 import {
   AuctionViewParametersFormSchema,
@@ -21,13 +23,15 @@ import {
 } from '../model'
 
 type AuctionInitialParametersFormProps = {
+  className?: string
   onSuccess?: () => void
   onError?: () => void
 }
 
-const AuctionInitialParametersForm = (
-  props: AuctionInitialParametersFormProps
-) => {
+const AuctionInitialParametersForm = ({
+  className,
+  ...props
+}: AuctionInitialParametersFormProps) => {
   const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
 
   const { control, handleSubmit } = useForm<SetAuctionViewParametersFormData>({
@@ -113,33 +117,34 @@ const AuctionInitialParametersForm = (
   )
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Flex className="w-full h-full gap-y-6" direction={'column'}>
-        <Controller
-          control={control}
-          name="title"
-          render={({ field }) => {
-            return (
-              <Input
-                label={{ id: 'title', value: 'Название аукциона' }}
-                placeholder="Например, Мистер Бомбастик"
-                {...field}
-              />
-            )
-          }}
-        />
-        <Flex className="gap-y-4" direction={'column'}>
-          {linksFormControllers}
-        </Flex>
-        <Button
-          className="w-full"
-          type="submit"
-          variant={'action'}
-          disabled={isLoading}
-        >
-          Сохранить и создать аукцион
-        </Button>
+    <form
+      className={cn('flex w-full h-full gap-y-6 flex-col', className)}
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <Controller
+        control={control}
+        name="title"
+        render={({ field }) => {
+          return (
+            <Input
+              label={{ id: 'title', value: 'Название аукциона' }}
+              placeholder="Например, Мистер Бомбастик"
+              {...field}
+            />
+          )
+        }}
+      />
+      <Flex className="gap-y-4" direction={'column'}>
+        {linksFormControllers}
       </Flex>
+      <Button
+        className="w-full"
+        type="submit"
+        variant={'action'}
+        disabled={isLoading}
+      >
+        Сохранить и создать аукцион
+      </Button>
     </form>
   )
 }

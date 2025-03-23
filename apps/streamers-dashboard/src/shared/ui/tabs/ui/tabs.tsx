@@ -2,6 +2,8 @@ import * as React from 'react'
 
 import * as TabsPrimitive from '@radix-ui/react-tabs'
 
+import { useIsFirstRender } from '~shared/hooks/use-is-first-render'
+
 import { cn } from '~shared/utils/cn'
 
 import { TabsContextProvider, useTabContext } from '../context/tabs-context'
@@ -32,9 +34,14 @@ const TabsTriggerRunner = () => {
     state: { selectedKey, triggersData },
   } = useTabContext()
 
-  const styles = React.useMemo(() => cn(tabsTriggerRunnerVariants()), [])
+  const isFirstRender = useIsFirstRender()
 
-  React.useEffect(() => {
+  const styles = React.useMemo(
+    () => cn(tabsTriggerRunnerVariants(), isFirstRender && 'transition-none'),
+    [isFirstRender]
+  )
+
+  React.useLayoutEffect(() => {
     if (triggersData.length !== 0 && selectedKey.length !== 0) {
       const { startX, width } = triggersData?.filter(
         (item) => item.value === selectedKey
@@ -48,7 +55,10 @@ const TabsTriggerRunner = () => {
   return (
     <div
       className={styles}
-      style={{ width, transform: `translateX(${x - 4}px)` }}
+      style={{
+        width,
+        transform: `translateX(${x - 4}px)`,
+      }}
     />
   )
 }

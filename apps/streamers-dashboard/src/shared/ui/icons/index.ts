@@ -29,7 +29,9 @@ import { default as Money } from './Money';
 import { default as MoneyBag } from './MoneyBag';
 import { default as OpenBets } from './OpenBets';
 import { default as Palette } from './Palette';
+import { default as Pause } from './Pause';
 import { default as Pencil } from './Pencil';
+import { default as Play } from './Play';
 import { default as Plus } from './Plus';
 import { default as PointsSum } from './PointsSum';
 import { default as Preferences } from './Preferences';
@@ -41,6 +43,7 @@ import { default as Slots } from './Slots';
 import { default as Sort } from './Sort';
 import { default as SortAlphabetAsc } from './SortAlphabetAsc';
 import { default as SortAlphabetDes } from './SortAlphabetDes';
+import { default as Stop } from './Stop';
 import { default as Success } from './Success';
 import { default as Telegram } from './Telegram';
 import { default as Timer } from './Timer';
@@ -82,7 +85,9 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   MoneyBag,
   OpenBets,
   Palette,
+  Pause,
   Pencil,
+  Play,
   Plus,
   PointsSum,
   Preferences,
@@ -94,6 +99,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Sort,
   SortAlphabetAsc,
   SortAlphabetDes,
+  Stop,
   Success,
   Telegram,
   Timer,
