@@ -10,15 +10,12 @@ import { SlotsWheelTab } from './wheel-tab-slots'
 const triggersWithIcons = {
   control: {
     title: 'Управление',
-    icon: <Icons.Gamepad size="sm" />,
   },
   lots: {
     title: 'Слоты',
-    icon: <Icons.Slots size="sm" />,
   },
   appearance: {
     title: 'Внешний вид',
-    icon: <Icons.Palette size="sm" />,
   },
 }
 
@@ -32,7 +29,6 @@ const WheelTabs = () => {
         value={item.toLowerCase()}
         className="flex grow gap-x-2 text-md font-medium data-[state=active]:rounded-[8px] cursor-pointer text-gray-light/70 hover:text-gray-light"
       >
-        {triggersWithIcons[item].icon}
         {triggersWithIcons[item].title}
       </TabsTrigger>
     ))
