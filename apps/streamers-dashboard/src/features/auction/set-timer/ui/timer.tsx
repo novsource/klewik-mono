@@ -83,8 +83,11 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
         ) : (
           <NumberFlowGroup>
             <Flex
+              className="font-medium font-azeret-mono"
               style={{
                 fontVariantNumeric: 'tabular-nums',
+                letterSpacing: '-0.5px',
+                fontFamily: 'Azeret Mono',
               }}
             >
               <NumberFlow
@@ -128,9 +131,9 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
               isIconOnly
               icon={
                 timerStatus === 'ticking' ? (
-                  <Icons.Pause size="xs" />
+                  <Icons.Pause width={14} height={14} />
                 ) : (
-                  <Icons.Play size="xs" />
+                  <Icons.Play width={14} height={14} />
                 )
               }
               onClick={timerStatus === 'ticking' ? pauseTimer : startTimer}
@@ -141,7 +144,7 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
               size="sm"
               isIconOnly
               onClick={stopTimer}
-              icon={<Icons.Stop size="xs" />}
+              icon={<Icons.Stop width={14} height={14} />}
             />
             <Button
               className="hover:text-gray-accent px-0.5 "

@@ -1,9 +1,7 @@
 import { useMemo } from 'react'
 
-import { Icons } from '~shared/ui/icons'
 import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
 
-import { AppearanceWheelTab } from './wheel-tab-appereance'
 import { ControlWheelTab } from './wheel-tab-control'
 import { SlotsWheelTab } from './wheel-tab-slots'
 
@@ -13,9 +11,6 @@ const triggersWithIcons = {
   },
   lots: {
     title: 'Слоты',
-  },
-  appearance: {
-    title: 'Внешний вид',
   },
 }
 
@@ -40,7 +35,6 @@ const WheelTabs = () => {
       </TabsList>
       <ControlWheelTab />
       <SlotsWheelTab />
-      <AppearanceWheelTab />
     </Tabs>
   )
 }

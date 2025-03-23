@@ -10,6 +10,7 @@ import { AuctionSlot } from '../model'
 type AuctionSlotsState = {
   slots: AuctionSlot[]
   dropoutSlots: AuctionSlot[]
+  sortedSlots: AuctionSlot[]
   slotsPointsSum: number
 }
 
@@ -29,6 +30,7 @@ const slotsPointsSum = mockedAuctionSlots.reduce(
 
 const initialState: AuctionSlotsState = {
   slots: mockedAuctionSlots,
+  sortedSlots: mockedAuctionSlots,
   dropoutSlots: import.meta.env.VITE_DEV ? mockedAuctionSlots : [],
   slotsPointsSum: import.meta.env.VITE_DEV ? slotsPointsSum : 0,
 }
@@ -86,6 +88,11 @@ const slice = createSlice({
           filtredSlots.reduce((a, b) => a + b.points, 0) +
           payload.reduce((a, b) => a + b.points, 0)
       }
+    },
+    setSortedSlots(state, action: PayloadAction<AuctionSlot[]>) {
+      const payload = action.payload
+
+      state.sortedSlots = payload
     },
   },
   selectors: {

@@ -85,11 +85,19 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
   const defaultTimerValueRef = useRef<number>(
     (() => {
       const hoursInMs =
-        startTimeHours && startTimeHours >= 0 ? startTimeHours * 1000 * 3600 : 0
-      const secondsInMs =
-        startTimeSec && startTimeSec >= 0 ? startTimeSec * 1000 : 10000
+        startTimeHours !== undefined && startTimeHours >= 0
+          ? startTimeHours * 1000 * 3600
+          : 0
+
       const minutesInMs =
-        startTimeMin && startTimeMin >= 0 ? startTimeMin * 60 * 1000 : 0
+        startTimeMin !== undefined && startTimeMin >= 0
+          ? startTimeMin * 60 * 1000
+          : 0
+
+      const secondsInMs =
+        startTimeSec !== undefined && startTimeSec >= 0
+          ? startTimeSec * 1000
+          : 10000
 
       return hoursInMs + minutesInMs + secondsInMs
     })()

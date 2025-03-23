@@ -24,7 +24,7 @@ type AuctionSlotsListProps = {
 }
 
 type AuctionSlotWithPercents = AuctionSlot & {
-  percent: string | number
+  percent: number
 }
 
 const AuctionSlotsList = ({
@@ -58,21 +58,21 @@ const AuctionSlotsList = ({
         let percent = ((slot.points / storedSlotsPointsSum) * 100).toFixed(2)
 
         if (percent[-1] === '0' && percent[-2] === '0') {
-          let countOfZeroes = 2
+          let precisionLimit = 2
 
           while (
             (percent[-1] === '0' && percent[-2] === '0') ||
-            countOfZeroes !== 5
+            precisionLimit !== 5
           ) {
             percent = ((slot.points / storedSlotsPointsSum) * 100).toFixed(
-              countOfZeroes
+              precisionLimit
             )
 
-            countOfZeroes++
+            precisionLimit++
           }
         }
 
-        return { ...slot, percent }
+        return { ...slot, percent: Number(parseFloat(percent).toPrecision(4)) }
       }
     )
 
