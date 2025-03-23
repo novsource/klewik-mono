@@ -20,19 +20,27 @@ type TimerHookCallbacks = Partial<{
 type TimerHookProperties = {
   startTimeSec?: number
   startTimeMin?: number
+  startTimeHours?: number
 }
 
 type TimerHookProps = TimerHookCallbacks & TimerHookProperties
 
+type TimerNumberValues = {
+  hours: number
+  seconds: number
+  minutes: number
+}
+
 type TimerHookReturn = {
   control: TimerControl
   state: {
-    time: string
+    formattedTimeString: string
+    timeValues: TimerNumberValues
   }
 }
 
-const convertDiffToTimerValue = (diff: number) => {
-  let diffAsSeconds = diff / 1000
+const getTimeValuesFromMs = (ms: number) => {
+  let diffAsSeconds = ms / 1000
 
   const hours = Math.floor(diffAsSeconds / 3600)
 
@@ -40,6 +48,16 @@ const convertDiffToTimerValue = (diff: number) => {
 
   const minutes = Math.floor(diffAsSeconds / 60)
   const seconds = Math.floor(diffAsSeconds % 60)
+
+  return {
+    hours,
+    minutes,
+    seconds,
+  }
+}
+
+const convertDiffToTimerValue = (diff: number) => {
+  const { hours, minutes, seconds } = getTimeValuesFromMs(diff)
 
   return [hours, minutes, seconds].reduce((timeStr, curr, index) => {
     if (curr >= 10) timeStr += curr
@@ -61,6 +79,7 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
     onPause,
     startTimeSec,
     startTimeMin,
+    startTimeHours,
   } = props
 
   const defaultTimerValueRef = useRef<number>(
@@ -74,9 +93,15 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
     })()
   )
 
-  const [time, setTime] = useState<string>(() => {
+  const [formattedTimeString, setFormattedTimeString] = useState<string>(() => {
     return convertDiffToTimerValue(Date.now() + defaultTimerValueRef.current)
   })
+
+  const [timeValues, setTimeValues] = useState<TimerNumberValues>(() => ({
+    hours: startTimeHours ?? 0,
+    minutes: startTimeMin ?? 0,
+    seconds: startTimeSec ?? 0,
+  }))
 
   const isStarted = useRef<boolean>(false)
   const isOnPause = useRef<boolean>(false)
@@ -99,7 +124,14 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
       initTimeRef.current = Date.now()
       targetTimeRef.current = Date.now() + defaultTimerValueRef.current
 
-      setTime(convertDiffToTimerValue(defaultTimerValueRef.current))
+      setFormattedTimeString(
+        convertDiffToTimerValue(defaultTimerValueRef.current)
+      )
+      setTimeValues({
+        seconds: startTimeSec ?? 0,
+        minutes: startTimeMin ?? 0,
+        hours: startTimeHours ?? 0,
+      })
 
       onEnd && onEnd()
 
@@ -109,7 +141,15 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
     currentTickID.current = requestAnimationFrame(tick)
     initTimeRef.current = Date.now()
 
-    setTime(convertDiffToTimerValue(currTime))
+    const formattedTime = convertDiffToTimerValue(currTime)
+    const { hours, minutes, seconds } = getTimeValuesFromMs(currTime)
+
+    setFormattedTimeString(formattedTime)
+    setTimeValues({
+      seconds,
+      minutes,
+      hours,
+    })
 
     onTick && onTick(convertDiffToTimerValue(currTime))
   }, [defaultTimerValueRef.current])
@@ -121,18 +161,18 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
       stoppedTimeRef.current = 0
       isOnPause.current = false
 
-      onStartAfterPause && onStartAfterPause(time)
+      onStartAfterPause && onStartAfterPause(formattedTimeString)
 
       tick()
     }
 
     if (!isStarted.current) {
-      onInitStart && onInitStart(time)
+      onInitStart && onInitStart(formattedTimeString)
 
       isStarted.current = true
 
       // Time changed immedetiatly so we need to add 1 second to prevent it
-      targetTimeRef.current = Date.now() + defaultTimerValueRef.current + 1000
+      targetTimeRef.current = Date.now() + defaultTimerValueRef.current
 
       tick()
     }
@@ -146,7 +186,7 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
 
       cancelAnimationFrame(currentTickID.current)
 
-      onPause && onPause(time)
+      onPause && onPause(formattedTimeString)
     }
   }, [])
 
@@ -162,7 +202,12 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
 
     const initTime = convertDiffToTimerValue(defaultTimerValueRef.current)
 
-    setTime(initTime)
+    setFormattedTimeString(initTime)
+    setTimeValues({
+      seconds: startTimeSec ?? 0,
+      minutes: startTimeMin ?? 0,
+      hours: startTimeHours ?? 0,
+    })
 
     onStop && onStop(initTime)
   }, [defaultTimerValueRef.current])
@@ -176,9 +221,17 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
 
       targetTimeRef.current += value
 
-      setTime(
-        convertDiffToTimerValue(targetTimeRef.current - initTimeRef.current)
-      )
+      const diff = targetTimeRef.current - initTimeRef.current
+
+      const formattedTime = convertDiffToTimerValue(diff)
+      const { hours, minutes, seconds } = getTimeValuesFromMs(diff)
+
+      setFormattedTimeString(formattedTime)
+      setTimeValues({
+        seconds,
+        minutes,
+        hours,
+      })
 
       if (!isOnPause.current) tick()
     },
@@ -195,9 +248,17 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
 
         targetTimeRef.current -= value
 
-        setTime(
-          convertDiffToTimerValue(targetTimeRef.current - initTimeRef.current)
-        )
+        const diff = targetTimeRef.current - initTimeRef.current
+
+        const formattedTime = convertDiffToTimerValue(diff)
+        const { hours, minutes, seconds } = getTimeValuesFromMs(diff)
+
+        setFormattedTimeString(formattedTime)
+        setTimeValues({
+          seconds,
+          minutes,
+          hours,
+        })
       }
 
       if (!isOnPause.current) tick()
@@ -214,7 +275,8 @@ const useTimer = (props: TimerHookProps): TimerHookReturn => {
       stop,
     },
     state: {
-      time,
+      formattedTimeString,
+      timeValues,
     },
   }
 }

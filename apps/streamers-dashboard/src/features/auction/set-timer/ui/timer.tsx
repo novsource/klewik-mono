@@ -1,11 +1,16 @@
 import { ComponentProps, useState } from 'react'
 
+import NumberFlow, { NumberFlowGroup } from '@number-flow/react'
+import { motion } from 'framer-motion'
+
 import { useTimer } from '~shared/hooks/use-timer'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
+
+import { cn } from '~shared/utils'
 
 type TimerButtonProps = ComponentProps<'div'> & {
   defaultTimerText?: string
@@ -24,7 +29,9 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
       decreaseTime,
       pause: pauseTimer,
     },
-    state: { time },
+    state: {
+      timeValues: { hours, minutes, seconds },
+    },
   } = useTimer({
     startTimeMin: 10,
     startTimeSec: 60,
@@ -47,35 +54,74 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
 
   return (
     <Flex
-      className="transition-all bg-dark w-full px-2 gap-x-2 rounded-md text-gray-accent h-9"
+      className={cn(
+        'w-full h-9 bg-dark rounded-medium',
+        timerStatus !== 'stopped' && 'pr-2'
+      )}
       justify="center"
       align="center"
       {...props}
     >
-      <Icons.Timer className="text-gray-light" size="sm" />
-      <Typography
-        className="text-md leading-5 font-medium font-golos-f"
-        tag="span"
+      <Button
+        className={cn(
+          'text-gray-accent h-full cursor-default space-x-1',
+          timerStatus === 'stopped' &&
+            'hover:text-white/80 hover:bg-dark/80 cursor-pointer'
+        )}
+        startContent={<Icons.Timer className="text-gray-light" size="sm" />}
+        onClick={timerStatus === 'stopped' ? startTimer : undefined}
       >
-        {timerStatus === 'stopped' ? 'Таймер' : time}
-      </Typography>
-      <Flex className="text-gray-light gap-x-0.5" align="center">
-        <Button
-          className="hover:text-gray-accent px-0.5 "
-          variant="ghost"
-          size="sm"
-          isIconOnly
-          icon={
-            timerStatus === 'ticking' ? (
-              <Icons.Pause size="xs" />
-            ) : (
-              <Icons.Play size="xs" />
-            )
-          }
-          onClick={timerStatus === 'ticking' ? pauseTimer : startTimer}
-        />
+        {timerStatus === 'stopped' ? (
+          'Запустить таймер'
+        ) : (
+          <NumberFlowGroup>
+            <Flex
+              style={{
+                fontVariantNumeric: 'tabular-nums',
+              }}
+            >
+              <NumberFlow
+                value={hours}
+                digits={{ 1: { max: 5 } }}
+                format={{ minimumIntegerDigits: 2 }}
+              />
+              <NumberFlow
+                prefix=":"
+                value={minutes}
+                digits={{ 1: { max: 5 } }}
+                format={{ minimumIntegerDigits: 2 }}
+              />
+              <NumberFlow
+                prefix=":"
+                value={seconds}
+                digits={{ 1: { max: 5 } }}
+                format={{ minimumIntegerDigits: 2 }}
+              />
+            </Flex>
+          </NumberFlowGroup>
+        )}
+      </Button>
+      <motion.div className="flex items-center text-gray-light gap-x-0.5">
         {timerStatus !== 'stopped' && (
-          <>
+          <motion.div
+            className="flex items-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <Button
+              className="hover:text-gray-accent px-0.5 "
+              variant="ghost"
+              size="sm"
+              isIconOnly
+              icon={
+                timerStatus === 'ticking' ? (
+                  <Icons.Pause size="xs" />
+                ) : (
+                  <Icons.Play size="xs" />
+                )
+              }
+              onClick={timerStatus === 'ticking' ? pauseTimer : startTimer}
+            />
             <Button
               className="hover:text-gray-accent px-0.5"
               variant="ghost"
@@ -100,9 +146,9 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
               onClick={() => decreaseTime()}
               icon={<Icons.Minus strokeWidth={1} />}
             />
-          </>
+          </motion.div>
         )}
-      </Flex>
+      </motion.div>
     </Flex>
   )
 }
