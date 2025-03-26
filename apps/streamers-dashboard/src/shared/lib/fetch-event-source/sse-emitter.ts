@@ -1,4 +1,4 @@
-import { SSEEvents } from './sse-client.types'
+import { SSEEvents } from './models/base-sse-client.types'
 
 class SSEEmiter {
   private _subscriptions = new Map<

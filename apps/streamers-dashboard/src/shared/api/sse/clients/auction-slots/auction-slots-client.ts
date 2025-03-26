@@ -1,5 +1,6 @@
 import {
-  SSEClient,
+  BaseSSEClient,
+  SSEClientConnectOptions,
   SSEClientListeners,
   SSEEmiter,
   SSEEvents,
@@ -7,26 +8,26 @@ import {
 
 import { BROADCAST_CHANNEL_NAMES as BROADCAST_CHANNELS_NAMES } from '~shared/constants/broadcast-channels'
 
-import { DonationsEventSourceMessageSchema } from './channel.contracts'
-import { DonationsEventsCallbacks, DonationsEventsMap } from './channel.types'
-import { DonationsBroadcastChannel } from './donations-channel'
+import { AuctionSlotsBroadcastChannel } from './auction-slots-channel'
+import { AuctionSlotsEventsMessageSchema } from './channel.contracts'
+import { AuctionSlotsEventsMap } from './channel.types'
 
-class DonationsSSEClient extends SSEClient {
-  private static _instance: DonationsSSEClient
-  private readonly _broadcastChannel: DonationsBroadcastChannel
+class AuctionSlotsSSEClient extends BaseSSEClient {
+  private static _instance: AuctionSlotsSSEClient
+  private readonly _broadcastChannel: AuctionSlotsBroadcastChannel
   private _emitter = new SSEEmiter()
 
   private constructor() {
     super()
 
-    this._broadcastChannel = new DonationsBroadcastChannel(
-      BROADCAST_CHANNELS_NAMES.DONATIONS
+    this._broadcastChannel = new AuctionSlotsBroadcastChannel(
+      BROADCAST_CHANNELS_NAMES.AUCTION_SLOTS
     )
   }
 
   static getInstance() {
     if (!this._instance) {
-      this._instance = new DonationsSSEClient()
+      this._instance = new AuctionSlotsSSEClient()
     }
 
     return this._instance
@@ -39,20 +40,15 @@ class DonationsSSEClient extends SSEClient {
     this._emitter.subscribe(eventName, callback)
   }
 
-  onChannelLeadership(listener: () => void) {
-    this._broadcastChannel.onLeadership(listener)
-  }
-
-  removeListener<K extends keyof DonationsEventsMap>(
-    event: K,
-    callback: (data: DonationsEventsMap[K]) => void
+  onAddingSlots(
+    callback: (data: AuctionSlotsEventsMap['auction-slots/add']) => void
   ) {
-    return this._broadcastChannel.removeListener(event, callback)
+    return this._broadcastChannel.on('auction-slots/add', callback)
   }
 
   async connectToServer(
     auctionId: string,
-    lastMessageId?: number
+    options?: SSEClientConnectOptions & { lastMessageId?: number }
   ): Promise<void> {
     const listeners: SSEClientListeners = {
       onopen: async (response) => {
@@ -67,8 +63,7 @@ class DonationsSSEClient extends SSEClient {
       onmessage: (message) => {
         if (message.event === 'connected') return
 
-        const parsedMessage =
-          DonationsEventSourceMessageSchema.safeParse(message)
+        const parsedMessage = AuctionSlotsEventsMessageSchema.safeParse(message)
 
         if (
           parsedMessage.data === undefined ||
@@ -83,23 +78,19 @@ class DonationsSSEClient extends SSEClient {
         this._broadcastChannel.postMessage(parsedMessage.data)
 
         if (this._broadcastChannel.isLeader) {
-          this._broadcastChannel.emit(parsedMessage.data)
+          this._broadcastChannel.postMessage(parsedMessage.data)
         }
       },
       onclose: () => this._emitter.notify('onclose'),
     }
 
-    return this.connect(`${auctionId}/donations-events`, listeners, {
-      lastMessageId,
+    return this.connect(`${auctionId}/slots-events`, listeners, {
+      ...options,
       retry: { counts: 5, delay: 1000 },
     }).catch((err) => {
       throw err
     })
   }
-
-  onNewDonation(callback: DonationsEventsCallbacks['donations/add']) {
-    return this._broadcastChannel.on('donations/add', callback)
-  }
 }
 
-export { DonationsSSEClient }
+export { AuctionSlotsSSEClient }

@@ -13,7 +13,7 @@ import { auctionSlotsActions as storeAuctionSlotsActions } from '~entities/aucti
 import { Donation } from '~entities/donation/model'
 import { donationsActions as storeDonationsActions } from '~entities/donation/store'
 
-import { SSEApiClient } from '~shared/api/sse'
+import { SSEApiClient } from '~shared/api/sse/clients-manager/sse-clients-manager'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -85,16 +85,6 @@ const AuctionDashboardLayout = () => {
 
     SSEApiClient.getInstance().auctionSlots().onAddingSlots(dispatchSlots)
     SSEApiClient.getInstance().donations().onNewDonation(dispatchDonation)
-
-    return () => {
-      SSEApiClient.getInstance()
-        .auctionSlots()
-        .removeListener('auction-slots/add', dispatchSlots)
-
-      SSEApiClient.getInstance()
-        .donations()
-        .removeListener('donations/add', dispatchDonation)
-    }
   }, [])
 
   return !isConnected ? (

@@ -1,27 +1,27 @@
 import { BROADCAST_CHANNEL_NAMES } from '~shared/constants/broadcast-channels'
 
-import { AuctionSlotsSSEClient } from './auction-slots'
-import { DonationsSSEClient } from './donations'
+import { AuctionSlotsSSEClient } from '../clients/auction-slots'
+import { DonationsSSEClient } from '../clients/donations'
 import {
-  SSEApiBroadcastChannel,
   SSEApiEventSourceMessage,
-} from './sse-api-channel'
+  SSEClientsManagerBroadcastChannel,
+} from './sse-clients-manager-channel'
 
 type SSEApiClientConnectOptions = {
   slotsLastMessageId?: number
   donationsLastMessageId?: number
 }
 
-class SSEApiClient {
-  private static _instance: SSEApiClient
+class SSEClientsManager {
+  private static _instance: SSEClientsManager
 
-  private _broadcastChannel: SSEApiBroadcastChannel
+  private _broadcastChannel: SSEClientsManagerBroadcastChannel
   private _onConnectListeners: Array<() => void> = []
   private _connectedClients: Array<string> = []
   private _isConnectedToSSE: boolean = false
 
   private constructor(private _auctionId: string) {
-    this._broadcastChannel = new SSEApiBroadcastChannel(
+    this._broadcastChannel = new SSEClientsManagerBroadcastChannel(
       BROADCAST_CHANNEL_NAMES.MANAGER,
       { auctionId: this._auctionId }
     )
@@ -32,9 +32,11 @@ class SSEApiClient {
 
     this.onLeadership(() => {
       this.postMessage({
-        id: '',
+        id: '-3000',
         event: 'manager/leader-changed',
-        data: '',
+        data: JSON.stringify({
+          auctionId: this._auctionId,
+        }),
       })
     })
 
@@ -42,7 +44,7 @@ class SSEApiClient {
     this.onLeadership(() => {
       this._broadcastChannel.on('manager/get-status', () => {
         this.postMessage({
-          id: '',
+          id: '-1000',
           event: 'manager/status',
           data: JSON.stringify({
             auctionId: this._auctionId,
@@ -53,7 +55,7 @@ class SSEApiClient {
     })
 
     this.postMessage({
-      id: '',
+      id: '-2000',
       event: 'manager/new',
       data: JSON.stringify({
         auctionId: this._auctionId,
@@ -64,7 +66,7 @@ class SSEApiClient {
   static init(auctionId: string) {
     if (this._instance) return this._instance
 
-    this._instance = new SSEApiClient(auctionId)
+    this._instance = new SSEClientsManager(auctionId)
 
     return this._instance
   }
@@ -90,7 +92,7 @@ class SSEApiClient {
   }
 
   onLeadership(callback: () => void) {
-    this._broadcastChannel.onLeadership(callback)
+    this._broadcastChannel.onChannelLeadership(callback)
   }
 
   postMessage(message: SSEApiEventSourceMessage) {
@@ -108,7 +110,8 @@ class SSEApiClient {
     }
 
     const connectPromise = new Promise<void>((resolve, reject) => {
-      this._broadcastChannel.on('manager/status', (data) => {
+      this._broadcastChannel.on('manager/status', ([data]) => {
+        console.log(data)
         if (data.isConnected && !this._broadcastChannel.isLeader) {
           resolve()
         }
@@ -118,10 +121,9 @@ class SSEApiClient {
       this.donations().on('onerror', reject)
 
       this.onLeadership(() => {
-        console.log('leader')
         this.onConnect(() => {
           this.postMessage({
-            id: '',
+            id: '-1000',
             event: 'manager/status',
             data: JSON.stringify({
               auctionId: this._auctionId,
@@ -135,7 +137,7 @@ class SSEApiClient {
       })
 
       this.postMessage({
-        id: '',
+        id: '-4000',
         data: JSON.stringify({
           auctionId: this._auctionId,
         }),
@@ -164,7 +166,7 @@ class SSEApiClient {
     })
 
     this.postMessage({
-      id: '',
+      id: '-3000',
       data: JSON.stringify({
         auctionId: this._auctionId,
       }),
@@ -175,4 +177,4 @@ class SSEApiClient {
   }
 }
 
-export { SSEApiClient }
+export { SSEClientsManager as SSEApiClient }

@@ -1,14 +1,14 @@
-import { SSEClient } from './sse-client'
-import { EventSourceMessageSchema } from './sse-client.contracts'
+import { BaseSSEClient } from './base-sse-client'
+import { EventSourceMessageSchema } from './models'
 import {
   EventSourceMessage,
   SSEClientConnectOptions,
   SSEClientListeners,
   SSEEvents,
-} from './sse-client.types'
+} from './models/base-sse-client.types'
 import { SSEEmiter } from './sse-emitter'
 
-export { SSEClient, SSEEmiter, EventSourceMessageSchema }
+export { BaseSSEClient, SSEEmiter, EventSourceMessageSchema }
 export type {
   EventSourceMessage,
   SSEClientListeners,
