@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useLayoutEffect, useState } from 'react'
 
 import { motion } from 'framer-motion'
 
@@ -21,10 +21,6 @@ type AuctionSlotsListProps = {
   className?: string
   withControls?: boolean
   disableAnimation?: boolean
-}
-
-type AuctionSlotWithPercents = AuctionSlot & {
-  percent: string | number
 }
 
 const AuctionSlotsList = ({
@@ -52,51 +48,39 @@ const AuctionSlotsList = ({
     }
   }, [storedAuctionSlots, data])
 
-  const slotsWinPercents = useMemo(() => {
-    const percentsArr = [...storedAuctionSlots].map<AuctionSlotWithPercents>(
-      (slot) => {
-        let percent = ((slot.points / storedSlotsPointsSum) * 100).toFixed(2)
-
-        if (percent[-1] === '0' && percent[-2] === '0') {
-          let countOfZeroes = 2
-
-          while (
-            (percent[-1] === '0' && percent[-2] === '0') ||
-            countOfZeroes !== 5
-          ) {
-            percent = ((slot.points / storedSlotsPointsSum) * 100).toFixed(
-              countOfZeroes
-            )
-
-            countOfZeroes++
-          }
-        }
-
-        return { ...slot, percent }
-      }
-    )
-
-    return showedSlots.map(
-      (slot) => percentsArr.find((item) => item.id === slot.id)?.percent ?? 0
-    )
-  }, [storedAuctionSlots, storedSlotsPointsSum, showedSlots])
-
   const renderAuctionCard = useCallback(
     (item: AuctionSlot, index: number) => {
+      let percent = ((item.points / storedSlotsPointsSum) * 100).toFixed(2)
+
+      if (percent[-1] === '0' && percent[-2] === '0') {
+        let precisionLimit = 2
+
+        while (
+          (percent[-1] === '0' && percent[-2] === '0') ||
+          precisionLimit !== 5
+        ) {
+          percent = ((item.points / storedSlotsPointsSum) * 100).toFixed(
+            precisionLimit
+          )
+
+          precisionLimit++
+        }
+      }
+
       const card = withControls ? (
         <AuctionSlotCardWithControls
           auctionId={auctionId}
-          percent={slotsWinPercents[index]}
+          percent={Number(parseFloat(percent).toPrecision(4))}
           {...item}
         />
       ) : (
-        <AuctionSlotCard percent={slotsWinPercents[index]} {...item} />
+        <AuctionSlotCard percent={percent} {...item} />
       )
 
       if (disableAnimation) {
         return (
           <div
-            key={item.id}
+            key={item.name}
             style={{
               marginTop: index > 0 ? `8px` : '0',
             }}
@@ -108,7 +92,7 @@ const AuctionSlotsList = ({
 
       return (
         <motion.div
-          key={item.id}
+          key={item.name}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -120,7 +104,7 @@ const AuctionSlotsList = ({
         </motion.div>
       )
     },
-    [slotsWinPercents, withControls, disableAnimation]
+    [storedSlotsPointsSum, withControls, disableAnimation]
   )
 
   return (

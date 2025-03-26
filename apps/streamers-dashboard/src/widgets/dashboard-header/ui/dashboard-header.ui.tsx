@@ -2,18 +2,23 @@ import { ReactNode, memo, useMemo } from 'react'
 import { ComponentProps } from 'react'
 import { NavLink } from 'react-router-dom'
 
+import NumberFlow from '@number-flow/react'
 import { IntegrationsPlatforms } from '~entities/integrations/model'
 import { integrationsSelectors } from '~entities/integrations/store'
 
 import { TimerButton } from '~features/auction/set-timer/ui'
 import { UpdateBetsStatusButton } from '~features/auction/update-bets-status/ui'
 
-import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+import {
+  auctionSlotsActions,
+  auctionSlotsSelectors,
+} from '~entities/auction-slot/store'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
+import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~shared/ui/tooltip'
@@ -23,10 +28,14 @@ import { tailwindScreens } from '~shared/constants/tailwindcss'
 
 import { cn } from '~shared/utils'
 
+let idTest = 30
+
 export const DashboardHeader = memo(({ children }: { children: ReactNode }) => {
   const isLargeThenTablet = useMediaQuery(
     `(min-width:${tailwindScreens.tablet})`
   )
+
+  const { addSlots } = useActionCreators(auctionSlotsActions)
 
   return (
     <Header>
@@ -37,6 +46,21 @@ export const DashboardHeader = memo(({ children }: { children: ReactNode }) => {
               <SlotsStatisticCard />
               <SlotsPointsSumStatisticCard />
               <IntegrationsStatisticCard />
+              <Button
+                className="h-9"
+                onClick={() => {
+                  addSlots([
+                    {
+                      id: ++idTest,
+                      color: '#FFF',
+                      name: `Test ${idTest}`,
+                      points: 1500,
+                    },
+                  ])
+                }}
+              >
+                Add
+              </Button>
             </Flex>
             <div className="h-2/3 w-0.5 bg-dark-accent/80" />
             <Flex className="gap-x-1.5" align="center">
@@ -97,7 +121,7 @@ const SlotsStatisticCard = memo(() => {
       <TooltipTrigger>
         <StatisticCard>
           <Icons.Slots width={18} height={18} />
-          {slots.length}
+          <NumberFlow willChange value={slots.length} />
         </StatisticCard>
       </TooltipTrigger>
       <TooltipContent>
@@ -117,7 +141,7 @@ const SlotsPointsSumStatisticCard = memo(() => {
       <TooltipTrigger>
         <StatisticCard>
           <Icons.PointsSum width={20} height={20} />
-          {Intl.NumberFormat('ru-RU').format(sum)}
+          <NumberFlow willChange value={sum} locales="ru-RU" />
         </StatisticCard>
       </TooltipTrigger>
       <TooltipContent>

@@ -1,5 +1,7 @@
 import { RefObject, forwardRef, memo } from 'react'
 
+import NumberFlow from '@number-flow/react'
+
 import { ResponsiveEditSlotDialogue } from '~widgets/edit-slot-dialogs/responsive-dialog/ui'
 
 import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
@@ -17,7 +19,7 @@ import { Typography } from '~shared/ui/typograghy'
 
 type AuctionSlotCardWithControlsProps = AuctionSlot & {
   auctionId: Auction['id']
-  percent: string | number
+  percent: number
   ref?: RefObject<HTMLDivElement>
 }
 
@@ -35,7 +37,7 @@ const AuctionSlotCardWithControls = memo(
             <CardTitle className="w-full">
               <Typography
                 tag="span"
-                className="font-golos-f text-title font-semibold"
+                className="text-title font-semibold font-golos-f"
               >
                 {slot.name}
               </Typography>
@@ -85,12 +87,28 @@ const AuctionSlotCardWithControls = memo(
                   <Icons.Coin className="text-gray-light" size="sm" />
                 }
               >
-                {Intl.NumberFormat('ru-Ru').format(slot.points).toString()}
+                <NumberFlow
+                  className="font-golos-f font-medium"
+                  willChange
+                  trend={0}
+                  value={slot.points}
+                  locales={'ru-RU'}
+                />
               </AuctionCardChip>
               <AuctionCardChip
                 classNames={{ base: 'bg-green/20', text: 'text-green' }}
               >
-                {percent}%
+                <NumberFlow
+                  willChange
+                  trend={0}
+                  value={percent}
+                  format={{
+                    notation: 'compact',
+                    compactDisplay: 'short',
+                  }}
+                  locales={'ru-RU'}
+                />
+                %
               </AuctionCardChip>
             </Flex>
           </CardContent>

@@ -6,17 +6,15 @@ import { TabsContent } from '~shared/ui/tabs'
 
 const ControlWheelTab = () => {
   return (
-    <>
-      <TabsContent
-        value="control"
-        className="mt-5 flex flex-col gap-y-3 data-[state=active]:h-full"
-      >
-        <Flex className="w-full gap-x-2">
-          <SpinWheelButton className="w-full" />
-          <SpinTimeInput />
-        </Flex>
-      </TabsContent>
-    </>
+    <TabsContent
+      value="control"
+      className="mt-5 flex flex-col gap-y-3 data-[state=active]:h-full"
+    >
+      <Flex className="w-full gap-x-2">
+        <SpinWheelButton className="w-full" />
+        <SpinTimeInput />
+      </Flex>
+    </TabsContent>
   )
 }
 

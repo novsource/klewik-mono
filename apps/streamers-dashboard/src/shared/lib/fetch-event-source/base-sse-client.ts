@@ -5,18 +5,18 @@ import {
 
 import { refreshTokens } from '~shared/api/http/auth/auth.api'
 
-import { EventSourceMessageSchema } from './sse-client.contracts'
+import { EventSourceMessageSchema } from './models'
 import {
   EventSourceMessage,
   SSEClientConnectOptions,
   SSEClientListeners,
-} from './sse-client.types'
+} from './models/base-sse-client.types'
 
 type AuthorizationError = Error
 
 const AuthorizationError = () => new Error('Authorization error')
 
-class SSEClient {
+class BaseSSEClient {
   async connect(
     url: string,
     inputListeners: SSEClientListeners,
@@ -34,6 +34,7 @@ class SSEClient {
         response.status < 500 &&
         response.status !== 429
       ) {
+        /** @todo Refactor auth error */
         if (response.status === 401) {
           await refreshTokens()
           throw AuthorizationError()
@@ -138,4 +139,4 @@ class SSEClient {
   }
 }
 
-export { SSEClient }
+export { BaseSSEClient }

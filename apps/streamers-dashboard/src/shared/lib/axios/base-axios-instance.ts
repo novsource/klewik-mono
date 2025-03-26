@@ -8,7 +8,7 @@ import axiosRateLimit, {
   rateLimitOptions as AxiosRateLimitOptions,
 } from 'axios-rate-limit'
 
-type BaseApiClientOptions = {
+export type BaseApiClientOptions = {
   axiosOptions?: CreateAxiosDefaults
   rateLimiterOptions?: AxiosRateLimitOptions
 }
@@ -27,11 +27,11 @@ interface BaseHttpClientMethods {
 
 export class BaseHttpClient implements BaseHttpClientMethods {
   private readonly _defaultMaxRPS = 2
-  private readonly _requestPromisesCollection = new Map<
+  protected readonly _requestPromisesCollection = new Map<
     string,
     Promise<unknown>
   >([])
-  private readonly _axiosInstance
+  protected readonly _axiosInstance
 
   constructor(options?: BaseApiClientOptions) {
     this._axiosInstance = axiosRateLimit(
@@ -122,7 +122,7 @@ export class BaseHttpClient implements BaseHttpClientMethods {
     return this.request<T>(url, { ...options, method: 'PATCH' })
   }
 
-  private _retryFetching<T>(
+  protected _retryFetching<T>(
     url: string,
     options?: HttpClientRequestOptions,
     count: number = 3,
@@ -145,11 +145,11 @@ export class BaseHttpClient implements BaseHttpClientMethods {
     )
   }
 
-  private _wait(delay: number = 1000) {
+  protected _wait(delay: number = 1000) {
     return new Promise((resolve) => setTimeout(resolve, delay))
   }
 
-  private _internalRequest<T>(url: string, config: HttpClientRequestOptions) {
+  protected _internalRequest<T>(url: string, config: HttpClientRequestOptions) {
     const request = this._axiosInstance
       .request<T>(config)
       .finally(() => this._requestPromisesCollection.delete(url))

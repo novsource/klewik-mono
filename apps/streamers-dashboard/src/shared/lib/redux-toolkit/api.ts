@@ -97,14 +97,14 @@ const axiosAuthBaseQuery =
 
     if (result.error && result.error.status === 401) {
       const refreshResult = await baseQuery(
-        { url: '/auth/refresh' },
+        { url: '/auth/refresh', method: 'POST' },
         api,
         extraOptions
       )
 
-      if (refreshResult.data) {
+      if (refreshResult.error === undefined) {
         result = await baseQuery(
-          { ...args, url: options.baseUrl + args.url, method: 'POST' },
+          { ...args, url: options.baseUrl + args.url },
           api,
           extraOptions
         )
