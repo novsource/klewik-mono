@@ -92,18 +92,38 @@ const DeleteAuctionSettingsArea = memo(() => {
         >
           <DialogHeader>
             <DialogTitle className="text-start">
-              Вы точно уверены что хотите удалить аукцион?
+              <Flex className="gap-y-4" direction="column">
+                <Flex
+                  className="border-1 border-red/30 rounded-medium w-fit"
+                  align="center"
+                  justify="center"
+                >
+                  <Flex
+                    className="bg-red/10 h-full w-full p-2.5 rounded-medium"
+                    align="center"
+                    justify="center"
+                  >
+                    <Icons.Bin className="text-red" />
+                  </Flex>
+                </Flex>
+                <Flex className="gap-y-1.5" direction="column" align="start">
+                  <Typography tag="h3">Удаление аукциона</Typography>
+                  <Typography className="text-gray-accent font-normal" tag="p">
+                    С глаз долой и из сердца вон
+                  </Typography>
+                </Flex>
+              </Flex>
             </DialogTitle>
           </DialogHeader>
           <DialogDescription></DialogDescription>
           <Flex className="gap-y-2" direction="column">
-            <Typography tag="p">
-              Для подтверждения введите пароль от аукциона
+            <Typography className="font-medium" tag="p">
+              Для подтверждения введите свой мастер-ключ:
             </Typography>
             <Input
               ref={inputRef}
               type="password"
-              placeholder="Введите пароль"
+              placeholder="Введите мастер-ключ"
               startContent={<Icons.Key className="text-gray-accent" />}
               onChange={handleInputOnChange}
             />
@@ -111,7 +131,6 @@ const DeleteAuctionSettingsArea = memo(() => {
           <DialogFooter className="flex flex-row gap-x-2 justify-end pt-2">
             <Button
               variant={'error'}
-              size="sm"
               onClick={deleteAuction}
               disabled={isInputEmpty}
             >
@@ -120,7 +139,6 @@ const DeleteAuctionSettingsArea = memo(() => {
             <Button
               variant={'outline'}
               className="border-1 border-dark-accent hover:border-gray font-medium"
-              size="sm"
               onClick={() => setIsDialogOpen(false)}
             >
               Вернуться

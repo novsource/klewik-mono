@@ -17,6 +17,7 @@ import {
   DrawerTrigger,
 } from '~shared/ui/drawer'
 import { Flex } from '~shared/ui/flex'
+import { Icons } from '~shared/ui/icons'
 import {
   Sheet,
   SheetContent,
@@ -24,6 +25,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '~shared/ui/sheet/ui'
+import { Typography } from '~shared/ui/typograghy'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
@@ -99,9 +101,29 @@ const EditSlotDialogue = ({
         <SheetTrigger>{trigger}</SheetTrigger>
         <SheetContent side={isMediaLargeThenTablet ? 'right' : 'bottom'}>
           <SheetHeader className="mb-4">
-            <SheetTitle>Изменение слота</SheetTitle>
-            {dialogContent}
+            <Flex className="gap-y-4" direction="column">
+              <Flex
+                className="border-1 border-dark-accent rounded-medium w-fit"
+                align="center"
+                justify="center"
+              >
+                <Flex
+                  className="bg-dark h-full w-full p-2.5 rounded-medium"
+                  align="center"
+                  justify="center"
+                >
+                  <Icons.Pencil className="text-gray-accent" size="sm" />
+                </Flex>
+              </Flex>
+              <Flex className="gap-y-1" direction="column" align="start">
+                <Typography tag="h3">Изменение слота</Typography>
+                <Typography className="text-gray-accent font-normal" tag="p">
+                  Здесь вы можете изменить название и количество очков у слота
+                </Typography>
+              </Flex>
+            </Flex>
           </SheetHeader>
+          {dialogContent}
         </SheetContent>
       </Sheet>
     )
