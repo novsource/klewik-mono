@@ -14,9 +14,11 @@
 
   --color-black: #000;
 
-  --color-dark: #1f1f1f;
-  --color-dark-accent: #313131;
-  --color-dark-foreground: #151515;
+  --color-dark: #1f1e20;
+  --color-dark-light: #272729;
+  --color-dark-accent: #302f32;
+  --color-dark-foreground-light: #161617;
+  --color-dark-foreground: #141315;
   --color-yellow: #cfc56f;
 
   --color-red: #fe7968;

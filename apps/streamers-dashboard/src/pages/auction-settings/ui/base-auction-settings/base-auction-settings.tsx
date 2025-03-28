@@ -38,6 +38,8 @@ const BaseAuctionSettingsContent = () => {
   )
 }
 const DeleteAuctionSettingsArea = memo(() => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
   const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -68,11 +70,11 @@ const DeleteAuctionSettingsArea = memo(() => {
       title="Удаление аукциона"
       description="Отправьте аукцион в небытие"
     >
-      <Dialog>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
           <Button
-            className="bg-red/10 text-red/80 transition-all hover:bg-red/20 hover:text-red"
-            startContent={<Icons.Bin size="xs" />}
+            variant={'error'}
+            startContent={<Icons.Bin width={14} height={14} />}
           >
             Удалить аукцион
           </Button>
@@ -83,9 +85,9 @@ const DeleteAuctionSettingsArea = memo(() => {
           }}
           slotsClassNames={{
             close: 'cursor-pointer',
-            overlay: 'backdrop-blur-[2px] bg-dark-foreground/20',
+            overlay: 'backdrop-blur-[1px] bg-black/80',
             content:
-              'w-full max-w-[500px] border-1 border-dark-accent rounded-[12px]',
+              'w-full max-w-[500px] border-0 rounded-[16px] bg-dark-foreground',
           }}
         >
           <DialogHeader>
@@ -106,14 +108,22 @@ const DeleteAuctionSettingsArea = memo(() => {
               onChange={handleInputOnChange}
             />
           </Flex>
-          <DialogFooter className="flex flex-row">
+          <DialogFooter className="flex flex-row gap-x-2 justify-end pt-2">
             <Button
-              className="w-full bg-red/10 text-red/80 transition-all hover:bg-red/20 hover:text-red"
-              startContent={<Icons.Bin size="xs" />}
+              variant={'error'}
+              size="sm"
               onClick={deleteAuction}
               disabled={isInputEmpty}
             >
               {!isLoading ? 'Удалить аукцион' : 'Удаляем аукцион...'}
+            </Button>
+            <Button
+              variant={'outline'}
+              className="border-1 border-dark-accent hover:border-gray font-medium"
+              size="sm"
+              onClick={() => setIsDialogOpen(false)}
+            >
+              Вернуться
             </Button>
           </DialogFooter>
         </DialogContent>

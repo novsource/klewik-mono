@@ -121,7 +121,11 @@ const SlotsStatisticCard = memo(() => {
       <TooltipTrigger>
         <StatisticCard>
           <Icons.Slots width={18} height={18} />
-          <NumberFlow willChange value={slots.length} />
+          <NumberFlow
+            className="font-azeret-mono tracking-tight"
+            willChange
+            value={slots.length}
+          />
         </StatisticCard>
       </TooltipTrigger>
       <TooltipContent>
@@ -141,7 +145,12 @@ const SlotsPointsSumStatisticCard = memo(() => {
       <TooltipTrigger>
         <StatisticCard>
           <Icons.PointsSum width={20} height={20} />
-          <NumberFlow willChange value={sum} locales="ru-RU" />
+          <NumberFlow
+            className="font-azeret-mono tracking-tight"
+            willChange
+            value={sum}
+            locales="ru-RU"
+          />
         </StatisticCard>
       </TooltipTrigger>
       <TooltipContent>

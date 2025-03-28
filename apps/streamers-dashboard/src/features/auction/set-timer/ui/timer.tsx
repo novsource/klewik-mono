@@ -1,4 +1,4 @@
-import { ComponentProps, useLayoutEffect, useRef, useState } from 'react'
+import { ComponentProps, useState } from 'react'
 
 import NumberFlow, { NumberFlowGroup } from '@number-flow/react'
 import { motion } from 'framer-motion'
@@ -29,11 +29,6 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
   )
 
   const [timerStatus, setTimerStatus] = useState<TimerStatus>('stopped')
-  const controlsElRef = useRef<HTMLDivElement>(null)
-
-  useLayoutEffect(() => {
-    console.log(controlsElRef.current?.getBoundingClientRect().width)
-  }, [controlsElRef.current])
 
   const {
     control: {
@@ -77,10 +72,10 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
       {...props}
     >
       <Button
+        variant={timerStatus === 'stopped' ? 'default' : 'ghost'}
         className={cn(
-          'text-gray-accent h-full cursor-default space-x-1',
-          timerStatus === 'stopped' &&
-            'hover:text-white/80 hover:bg-dark/80 cursor-pointer'
+          'h-full text-gray-accent',
+          timerStatus !== 'stopped' && 'cursor-default'
         )}
         startContent={<Icons.Timer className="text-gray-light" size="sm" />}
         onClick={timerStatus === 'stopped' ? startTimer : undefined}
@@ -131,7 +126,7 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <Flex ref={controlsElRef} className="text-gray-light" align="center">
+          <Flex className="text-gray-light" align="center">
             <Button
               className="hover:text-gray-accent px-0.5 "
               variant="ghost"
