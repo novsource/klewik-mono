@@ -1,4 +1,2 @@
-import { DonationsSSEBroadcastChannel } from './donations-channel'
-import { DonationsSSEClient } from './donations-client'
-
-export { DonationsSSEClient, DonationsSSEBroadcastChannel }
+export * from './channel.contracts'
+export * from './channel.types'

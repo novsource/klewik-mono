@@ -1,55 +1,102 @@
-import { BroadcastChannelOptions } from 'broadcast-channel'
 import { ZodSchema } from 'zod'
 
-import { BroadcastLeaderChannel } from '../broadcast-channel'
+import { CommunicableSSEChannel } from '../broadcast-channel'
+import { CommunicableSSEChannelOptions } from '../broadcast-channel/model'
 import { BaseSSEClient } from './base-sse-client'
-import { EventSourceMessage, SSEEvents } from './models/base-sse-client.types'
+import {
+  EventSourceMessage,
+  SSEClientConnectOptions,
+  SSEClientListeners,
+  SSEEvents,
+} from './models/base-sse-client.types'
 import { SSEEmiter } from './sse-emitter'
-
-type SpecializedSSEClientOptions<
-  T extends Record<string, (...args: unknown[]) => void>,
-> = BroadcastChannelOptions & {
-  messageSchema: ZodSchema
-  validationEventMessage?: {
-    [P in keyof T]?: ZodSchema
-  }
-}
 
 class SpecializedSSEClient<
   SourceMessage extends EventSourceMessage,
-  ChannelEvents extends Record<string, (...args: unknown[]) => void>,
+  EventsMap extends Record<string, any> = Record<string, any>,
 > extends BaseSSEClient {
-  private readonly _broadcastChannel: BroadcastLeaderChannel<
+  private readonly _sseEventsEmitter = new SSEEmiter()
+  private readonly _messageSchema: ZodSchema
+
+  public readonly endpoint: string
+  public readonly broadcastChannel: CommunicableSSEChannel<
     SourceMessage,
-    ChannelEvents
+    EventsMap
   >
-  private readonly _emitter = new SSEEmiter()
 
   constructor(
+    endpoint: string,
     channelName: string,
-    {
-      messageSchema,
-      validationEventMessage,
-      ...channelOptions
-    }: SpecializedSSEClientOptions<ChannelEvents>
+    channelOptions: CommunicableSSEChannelOptions<EventsMap>
   ) {
     super()
 
-    this._broadcastChannel = new BroadcastLeaderChannel<
+    this._messageSchema = channelOptions.messageSchema
+
+    this.endpoint = endpoint
+    this.broadcastChannel = new CommunicableSSEChannel<
       SourceMessage,
-      ChannelEvents
+      EventsMap
     >(channelName, channelOptions)
   }
 
-  get channel() {
-    return this._broadcastChannel
+  onSSEEvent<Event extends keyof SSEEvents>(
+    eventName: Event,
+    handler: (data: Parameters<NonNullable<SSEEvents[Event]>>[number]) => void
+  ) {
+    this._sseEventsEmitter.subscribe(eventName, handler)
   }
 
-  on<Event extends keyof SSEEvents>(
+  onEvent<Event extends keyof EventsMap>(
     eventName: Event,
-    callback: (data: Parameters<NonNullable<SSEEvents[Event]>>[number]) => void
+    handler: EventsMap[Event]
   ) {
-    this._emitter.subscribe(eventName, callback)
+    this.broadcastChannel.on(eventName, handler)
+  }
+
+  async connectToServer(
+    options?: SSEClientConnectOptions & { lastMessageId?: number }
+  ): Promise<void> {
+    const listeners: SSEClientListeners = {
+      onopen: async (response) => {
+        if (response.status === 200)
+          this._sseEventsEmitter.notify('onopen', response)
+      },
+      onerror: (err) => {
+        if (err instanceof Error) {
+          this._sseEventsEmitter.notify('onerror', err)
+          throw err
+        }
+      },
+      onmessage: (message) => {
+        if (message.event === 'connected') return
+
+        const parsedMessage = this._messageSchema.safeParse(message)
+
+        if (
+          parsedMessage.data === undefined ||
+          parsedMessage.error ||
+          !parsedMessage.success
+        ) {
+          this._sseEventsEmitter.notify('onerror', parsedMessage.error)
+          return
+        }
+
+        this._sseEventsEmitter.notify('onmessage', parsedMessage.data)
+
+        if (this.broadcastChannel.isLeader) {
+          this.broadcastChannel.postMessage(parsedMessage.data)
+        }
+      },
+      onclose: () => this._sseEventsEmitter.notify('onclose'),
+    }
+
+    return this.connect(`${this.endpoint}`, listeners, {
+      retry: { counts: 5, delay: 1000 },
+      ...options,
+    }).catch((err) => {
+      throw err
+    })
   }
 }
 

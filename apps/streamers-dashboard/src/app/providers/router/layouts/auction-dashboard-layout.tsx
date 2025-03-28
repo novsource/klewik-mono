@@ -71,20 +71,25 @@ const AuctionDashboardLayout = () => {
     const dispatchDonation = (donation: Donation) =>
       donationActions.addDonation(donation)
 
-    SSEApiClient.getInstance()
-      .auctionSlots()
-      .on('onmessage', ({ id }) => {
+    SSEApiClient.getInstance().auctionSlots.onSSEEvent(
+      'onmessage',
+      ({ id }) => {
         slotsLastMessageId.set(Number(id))
-      })
+      }
+    )
 
-    SSEApiClient.getInstance()
-      .donations()
-      .on('onmessage', ({ id }) => {
-        slotsLastMessageId.set(Number(id))
-      })
+    SSEApiClient.getInstance().donations.onSSEEvent('onmessage', ({ id }) => {
+      slotsLastMessageId.set(Number(id))
+    })
 
-    SSEApiClient.getInstance().auctionSlots().onAddingSlots(dispatchSlots)
-    SSEApiClient.getInstance().donations().onNewDonation(dispatchDonation)
+    SSEApiClient.getInstance().auctionSlots.onEvent(
+      'auction-slots/add',
+      dispatchSlots
+    )
+    SSEApiClient.getInstance().donations.onEvent(
+      'donations/add',
+      dispatchDonation
+    )
   }, [])
 
   return !isConnected ? (

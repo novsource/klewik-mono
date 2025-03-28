@@ -16,8 +16,8 @@ type AuthorizationError = Error
 
 const AuthorizationError = () => new Error('Authorization error')
 
-class BaseSSEClient {
-  async connect(
+abstract class BaseSSEClient {
+  protected async connect(
     url: string,
     inputListeners: SSEClientListeners,
     inputOptions?: SSEClientConnectOptions

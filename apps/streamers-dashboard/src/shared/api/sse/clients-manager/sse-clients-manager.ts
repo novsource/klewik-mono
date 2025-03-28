@@ -1,7 +1,20 @@
+import { SpecializedSSEClient } from '~shared/lib/fetch-event-source'
+
 import { BROADCAST_CHANNEL_NAMES } from '~shared/constants/broadcast-channels'
 
-import { AuctionSlotsSSEClient } from '../clients/auction-slots'
-import { DonationsSSEClient } from '../clients/donations'
+import { AuctionSlotDTOSchema } from '../clients/auction-slots/channel.contracts'
+import {
+  AuctionEventSourceMessage,
+  AuctionSlotsEventsCallbacks,
+} from '../clients/auction-slots/channel.types'
+import {
+  DonationDTOSchema,
+  DonationsEventSourceMessageSchema,
+} from '../clients/donations/channel.contracts'
+import {
+  DonationsEventSourceMessage,
+  DonationsEventsCallbacks,
+} from '../clients/donations/channel.types'
 import {
   SSEApiEventSourceMessage,
   SSEClientsManagerBroadcastChannel,
@@ -19,6 +32,25 @@ class SSEClientsManager {
   private _onConnectListeners: Array<() => void> = []
   private _connectedClients: Array<string> = []
   private _isConnectedToSSE: boolean = false
+
+  public donations = new SpecializedSSEClient<
+    DonationsEventSourceMessage,
+    DonationsEventsCallbacks
+  >(`${this._auctionId}/donations-events`, BROADCAST_CHANNEL_NAMES.DONATIONS, {
+    messageSchema: DonationsEventSourceMessageSchema,
+    validationEventMessage: { 'donations/add': DonationDTOSchema },
+  })
+
+  public auctionSlots = new SpecializedSSEClient<
+    AuctionEventSourceMessage,
+    AuctionSlotsEventsCallbacks
+  >(`${this._auctionId}/slots-events`, BROADCAST_CHANNEL_NAMES.AUCTION_SLOTS, {
+    messageSchema: DonationsEventSourceMessageSchema,
+    validationEventMessage: {
+      'auction-slots/add': AuctionSlotDTOSchema,
+      'auction-slots/update': AuctionSlotDTOSchema,
+    },
+  })
 
   private constructor(private _auctionId: string) {
     this._broadcastChannel = new SSEClientsManagerBroadcastChannel(
@@ -79,14 +111,6 @@ class SSEClientsManager {
     return this._instance
   }
 
-  auctionSlots() {
-    return AuctionSlotsSSEClient.getInstance()
-  }
-
-  donations() {
-    return DonationsSSEClient.getInstance()
-  }
-
   onConnect(callback: () => void) {
     this._onConnectListeners.push(callback)
   }
@@ -116,8 +140,8 @@ class SSEClientsManager {
         }
       })
 
-      this.auctionSlots().on('onerror', reject)
-      this.donations().on('onerror', reject)
+      this.auctionSlots.onSSEEvent('onerror', reject)
+      this.donations.onSSEEvent('onerror', reject)
 
       this.onLeadership(() => {
         this.onConnect(() => {
@@ -150,15 +174,15 @@ class SSEClientsManager {
     this.onLeadership(() => {
       this._isConnectedToSSE = false
 
-      this.auctionSlots().on('onopen', onOpenEventHandler('auctionSlots'))
-      this.donations().on('onopen', onOpenEventHandler('donations'))
+      this.auctionSlots.onSSEEvent('onopen', onOpenEventHandler('auctionSlots'))
+      this.donations.onSSEEvent('onopen', onOpenEventHandler('donations'))
 
-      this.auctionSlots().connectToServer(this._auctionId, {
+      this.auctionSlots.connectToServer({
         ...options,
         lastMessageId: options?.slotsLastMessageId,
       })
 
-      this.donations().connectToServer(this._auctionId, {
+      this.donations.connectToServer({
         ...options,
         lastMessageId: options?.donationsLastMessageId,
       })
