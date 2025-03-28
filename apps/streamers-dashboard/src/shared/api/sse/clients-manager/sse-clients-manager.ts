@@ -111,7 +111,6 @@ class SSEClientsManager {
 
     const connectPromise = new Promise<void>((resolve, reject) => {
       this._broadcastChannel.on('manager/status', ([data]) => {
-        console.log(data)
         if (data.isConnected && !this._broadcastChannel.isLeader) {
           resolve()
         }
@@ -154,15 +153,15 @@ class SSEClientsManager {
       this.auctionSlots().on('onopen', onOpenEventHandler('auctionSlots'))
       this.donations().on('onopen', onOpenEventHandler('donations'))
 
-      this.auctionSlots().connectToServer(
-        this._auctionId,
-        options?.slotsLastMessageId
-      )
+      this.auctionSlots().connectToServer(this._auctionId, {
+        ...options,
+        lastMessageId: options?.slotsLastMessageId,
+      })
 
-      this.donations().connectToServer(
-        this._auctionId,
-        options?.donationsLastMessageId
-      )
+      this.donations().connectToServer(this._auctionId, {
+        ...options,
+        lastMessageId: options?.donationsLastMessageId,
+      })
     })
 
     this.postMessage({
