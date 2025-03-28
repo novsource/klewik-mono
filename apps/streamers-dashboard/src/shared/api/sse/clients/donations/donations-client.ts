@@ -1,5 +1,6 @@
 import {
   BaseSSEClient,
+  SSEClientConnectOptions,
   SSEClientListeners,
   SSEEmiter,
   SSEEvents,
@@ -45,7 +46,7 @@ class DonationsSSEClient extends BaseSSEClient {
 
   async connectToServer(
     auctionId: string,
-    lastMessageId?: number
+    options?: SSEClientConnectOptions & { lastMessageId?: number }
   ): Promise<void> {
     const listeners: SSEClientListeners = {
       onopen: async (response) => {
@@ -82,8 +83,8 @@ class DonationsSSEClient extends BaseSSEClient {
     }
 
     return this.connect(`${auctionId}/donations-events`, listeners, {
-      lastMessageId,
       retry: { counts: 5, delay: 1000 },
+      ...options,
     }).catch((err) => {
       throw err
     })
