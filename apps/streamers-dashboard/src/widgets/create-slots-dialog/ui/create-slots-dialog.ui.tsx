@@ -8,6 +8,8 @@ import { useActionCreators } from '~shared/lib/redux-toolkit'
 
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
+import { Flex } from '~shared/ui/flex'
+import { Icons } from '~shared/ui/icons'
 import {
   Sheet,
   SheetContent,
@@ -16,6 +18,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '~shared/ui/sheet/ui/sheet'
+import { Typography } from '~shared/ui/typograghy'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
@@ -41,13 +44,24 @@ const CreateSlotsDialog = ({
       <SheetTrigger>{trigger}</SheetTrigger>
       <SheetContent side={isMediaLargeThenTablet ? 'right' : 'bottom'}>
         <SheetHeader>
-          <SheetTitle>Добавление слота</SheetTitle>
+          <Flex className="gap-y-4" direction="column">
+            <Flex
+              className="bg-dark h-full p-2.5 rounded-medium border-1 border-dark-accent/50 w-fit"
+              align="center"
+              justify="center"
+            >
+              <Icons.Plus className="text-gray-accent" size="sm" />
+            </Flex>
+          </Flex>
+          <Flex className="gap-y-1" direction="column" align="start">
+            <Typography tag="h3">Добавление слота</Typography>
+            <Typography className="text-gray-accent font-normal" tag="p">
+              Здесь вы можете самостоятельно добавить слоты в аукцион. Очки,
+              которые будут указаны в добавленных слотах будут суммированны и
+              вычтены из "очки стримера"
+            </Typography>
+          </Flex>
         </SheetHeader>
-        <SheetDescription className="mb-6 text-sm">
-          Здесь вы можете самостоятельно добавить слоты в аукцион. Очки, которые
-          будут указаны в добавленных слотах будут суммированны и вычтены из
-          "очки стримера"
-        </SheetDescription>
         <CreateSlotsForm
           multiplySlots={multiplySlots}
           onSuccess={(slots) => {

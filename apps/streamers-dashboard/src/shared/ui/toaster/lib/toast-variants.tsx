@@ -1,5 +1,6 @@
 import { ExternalToast, toast } from 'sonner'
 
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
 
@@ -37,19 +38,21 @@ export const toastPromiseNotification = <T extends unknown = unknown>(
   )
 
   const errorDescription = (
-    <div className="w-full flex flex-col items-start gap-y-2">
-      <Typography className="text-sm" tag="span">
-        {toastOptions?.errorText}
-      </Typography>
-      <div className="flex w-full items-center gap-x-1">
-        <div className="flex items-center justify-center h-5 w-5 bg-red/30 rounded-md">
-          <Icons.Close className="text-red" size="xs" />
-        </div>
-        <Typography className="text-sm text-red font-medium" tag="p">
-          Ошибка
+    <Flex className="w-full">
+      <Flex className="w-full gap-y-2" direction="column">
+        <Typography className="text-sm" tag="span">
+          {toastOptions?.errorText}
         </Typography>
-      </div>
-    </div>
+        <div className="flex w-full items-center gap-x-1">
+          <div className="flex items-center justify-center h-5 w-5 bg-red/30 rounded-md">
+            <Icons.Close className="text-red" size="xs" />
+          </div>
+          <Typography className="text-sm text-red font-medium" tag="p">
+            Ошибка
+          </Typography>
+        </div>
+      </Flex>
+    </Flex>
   )
 
   return toast.promise<T>(promise, {
@@ -78,14 +81,16 @@ export const toastSuccessNotification = (
   toastOptions?: ExternalToast
 ) => {
   const successDescription = (
-    <div className="w-full flex items-center gap-x-1">
+    <Flex className="w-full gap-x-1" align="center">
       <div className="flex items-center justify-center h-5 w-5 bg-green/30 rounded-md">
         <Icons.Success className="text-green" size="xs" />
       </div>
-      <Typography className="text-sm text-green font-medium" tag="p">
-        Успешно
-      </Typography>
-    </div>
+      <Flex align="center" justify="center">
+        <Typography className="text-sm text-green font-medium" tag="p">
+          Успешно
+        </Typography>
+      </Flex>
+    </Flex>
   )
   return toast(operationName, {
     description: successDescription,

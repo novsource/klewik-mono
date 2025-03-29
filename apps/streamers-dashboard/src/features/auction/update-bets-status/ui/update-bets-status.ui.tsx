@@ -46,7 +46,7 @@ const UpdateBetsStatusButton = memo(() => {
     <Button
       variant={!isBetsClosed ? 'error' : 'default'}
       size="sm"
-      className={cn('text-md leading-5 px-3')}
+      className={cn('leading-5 px-2')}
       startContent={
         !isBetsClosed ? <Icons.Close size="lg" /> : <Icons.OpenBets size="sm" />
       }

@@ -59,10 +59,10 @@ export const buttonVariants = cva<ButtonVariants>(
       },
       size: {
         default:
-          'h-10 px-3 py-1 text-md leading-6 rounded-md font-medium data-[icon-only=false]:[&_svg]:size-4.5',
+          'h-9.5 px-2.5 py-1 text-md leading-6 rounded-md font-medium data-[icon-only=false]:[&_svg]:size-4.5',
         sm: 'h-9 rounded-md px-2 text-sm leading-6 font-medium data-[icon-only=false]:[&_svg]:size-4',
         xs: 'h-8.5 rounded-md px-1.5 text-sm leading-5 font-regular data-[icon-only=false]:[&_svg]:size-3.5',
-        lg: 'h-11 rounded-md px-3 font-medium data-[icon-only=false]:[&_svg]:size-5',
+        lg: 'h-10 rounded-md px-3 font-medium data-[icon-only=false]:[&_svg]:size-5',
       },
       startContent: {
         true: 'flex items-center justify-center gap-x-1',

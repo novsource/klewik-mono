@@ -3,6 +3,7 @@ import { ComponentProps } from 'react'
 import { NavLink } from 'react-router-dom'
 
 import NumberFlow from '@number-flow/react'
+import { motion } from 'framer-motion'
 import { IntegrationsPlatforms } from '~entities/integrations/model'
 import { integrationsSelectors } from '~entities/integrations/store'
 
@@ -41,7 +42,7 @@ export const DashboardHeader = memo(({ children }: { children: ReactNode }) => {
     <Header>
       {isLargeThenTablet && (
         <Flex className="gap-x-4 h-full" align="center">
-          <Flex className="h-9 gap-x-4" align="center">
+          <Flex className="h-8.5 gap-x-4" align="center">
             <Flex className="gap-x-1.5" align="center" justify="center">
               <SlotsStatisticCard />
               <SlotsPointsSumStatisticCard />
@@ -83,9 +84,15 @@ const Header = ({ children, ...otherProps }: ComponentProps<'header'>) => {
         align="center"
         justify="between"
       >
-        <NavLink to={'/'}>
-          <Icons.Logo className="text-green-accent" width={28} height={28} />
-        </NavLink>
+        <motion.div
+          whileHover={{ rotate: '180deg' }}
+          transition={{ duration: 0.65 }}
+        >
+          <NavLink to={'/'}>
+            <Icons.Logo className="text-green-accent" width={28} height={28} />
+          </NavLink>
+        </motion.div>
+
         {children}
       </Flex>
     </header>
@@ -102,7 +109,7 @@ const StatisticCard = ({
   return (
     <Flex
       className={cn(
-        'gap-x-1.5 py-2 px-3 bg-dark rounded-small font-golos-f text-md font-medium leading-5 text-gray-accent',
+        'gap-x-1.5 py-1.5 px-2.5 h-9 bg-dark rounded-md font-golos-f text-md font-medium leading-5 text-gray-accent',
         className
       )}
       align="center"
@@ -120,7 +127,7 @@ const SlotsStatisticCard = memo(() => {
     <Tooltip delayDuration={500}>
       <TooltipTrigger>
         <StatisticCard>
-          <Icons.Slots width={18} height={18} />
+          <Icons.Slots size="sm" />
           <NumberFlow
             className="font-azeret-mono tracking-tight"
             willChange
@@ -144,7 +151,7 @@ const SlotsPointsSumStatisticCard = memo(() => {
     <Tooltip delayDuration={500}>
       <TooltipTrigger>
         <StatisticCard>
-          <Icons.PointsSum width={20} height={20} />
+          <Icons.PointsSum size="default" />
           <NumberFlow
             className="font-azeret-mono tracking-tight"
             willChange
