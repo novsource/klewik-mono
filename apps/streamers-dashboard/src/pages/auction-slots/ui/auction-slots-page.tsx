@@ -58,7 +58,7 @@ const AuctionSlotsPage = () => {
             multiplySlots
             trigger={
               <Button variant={'action'} startContent={<Icons.Plus />}>
-                {'Добавить слот'}
+                Добавить слоты
               </Button>
             }
           />

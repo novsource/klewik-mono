@@ -109,7 +109,7 @@ const StatisticCard = ({
   return (
     <Flex
       className={cn(
-        'gap-x-1.5 py-1.5 px-2.5 h-9 bg-dark rounded-md font-golos-f text-md font-medium leading-5 text-gray-accent',
+        'gap-x-1.5 py-1.5 px-2.5 h-9 bg-dark rounded-md text-md font-semibold leading-5 text-gray-accent',
         className
       )}
       align="center"
@@ -129,7 +129,7 @@ const SlotsStatisticCard = memo(() => {
         <StatisticCard>
           <Icons.Slots size="sm" />
           <NumberFlow
-            className="font-azeret-mono tracking-tight"
+            className="font-azeret-mono font-medium tracking-tight"
             willChange
             value={slots.length}
           />
@@ -153,7 +153,7 @@ const SlotsPointsSumStatisticCard = memo(() => {
         <StatisticCard>
           <Icons.PointsSum size="default" />
           <NumberFlow
-            className="font-azeret-mono tracking-tight"
+            className="font-azeret-mono font-medium tracking-tight"
             willChange
             value={sum}
             locales="ru-RU"
@@ -181,7 +181,7 @@ const IntegrationsStatisticCard = memo(() => {
   }, [integrations])
 
   const integrationsLogo: Record<IntegrationsPlatforms, ReactNode> = {
-    'donation-alerts': <Icons.DonationAlerts width={14} height={20} />,
+    'donation-alerts': <Icons.DonationAlerts width={12} height={18} />,
     'donate-pay': <Icons.DonatePay />,
   }
 
