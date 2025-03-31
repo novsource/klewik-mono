@@ -8,6 +8,7 @@ import { useActionCreators } from '~shared/lib/redux-toolkit'
 
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
+import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import {
@@ -43,40 +44,57 @@ const CreateSlotsDialog = ({
     <Sheet open={isSheetOpened} onOpenChange={setIsSheetOpened}>
       <SheetTrigger>{trigger}</SheetTrigger>
       <SheetContent side={isMediaLargeThenTablet ? 'right' : 'bottom'}>
-        <SheetHeader>
-          <Flex className="gap-y-4" direction="column">
-            <Flex
-              className="bg-dark h-full p-2.5 rounded-medium border-1 border-dark-accent/50 w-fit"
-              align="center"
-              justify="center"
-            >
-              <Icons.Plus className="text-gray-accent" size="sm" />
+        <Flex
+          className="w-full h-full gap-y-4"
+          direction="column"
+          align="center"
+          justify="between"
+        >
+          <SheetHeader className="flex flex-row gap-x-4 w-full">
+            <CreateSlotDialogIcon />
+            <Flex direction="column" align="start">
+              <SheetTitle>Добавление слота</SheetTitle>
+              <SheetDescription asChild>
+                <Typography
+                  className="text-gray-accent font-normal leading-4"
+                  tag="p"
+                >
+                  Увеличьте количество слотов в аукционе
+                </Typography>
+              </SheetDescription>
             </Flex>
-          </Flex>
-          <Flex className="gap-y-1" direction="column" align="start">
-            <Typography tag="h3">Добавление слота</Typography>
-            <Typography className="text-gray-accent font-normal" tag="p">
-              Здесь вы можете самостоятельно добавить слоты в аукцион. Очки,
-              которые будут указаны в добавленных слотах будут суммированны и
-              вычтены из "очки стримера"
-            </Typography>
-          </Flex>
-        </SheetHeader>
-        <CreateSlotsForm
-          multiplySlots={multiplySlots}
-          onSuccess={(slots) => {
-            auctionSlotsActions.addSlots(
-              slots.map((slot) => ({
-                ...slot,
-                id: 1,
-                color: '#FFF',
-              }))
-            )
-            setIsSheetOpened(false)
-          }}
-        />
+          </SheetHeader>
+          <Divider />
+          <CreateSlotsForm
+            multiplySlots={multiplySlots}
+            onSuccess={(slots) => {
+              auctionSlotsActions.addSlots(
+                slots.map((slot) => ({
+                  ...slot,
+                  id: 1,
+                  color: '#FFF',
+                }))
+              )
+              setIsSheetOpened(false)
+            }}
+          />
+        </Flex>
       </SheetContent>
     </Sheet>
+  )
+}
+
+const CreateSlotDialogIcon = () => {
+  return (
+    <div className="w-fit h-fit bg-gradient-to-r from-[#1D976C]/30 to-[#93F9B9]/30 p-0.5 rounded-small outline-2 outline-[#6FCF97]/10">
+      <Flex
+        className="p-1.25 border-[0.5px] border-[#93F9B9]/30 rounded-small"
+        align="center"
+        justify="center"
+      >
+        <Icons.Slots width="28" height="28" gradient />
+      </Flex>
+    </div>
   )
 }
 

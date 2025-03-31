@@ -9,9 +9,11 @@ import { useActionCreators } from '~shared/lib/redux-toolkit'
 
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
+import { Divider } from '~shared/ui/divider'
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -100,30 +102,29 @@ const EditSlotDialogue = ({
       <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <SheetTrigger>{trigger}</SheetTrigger>
         <SheetContent side={isMediaLargeThenTablet ? 'right' : 'bottom'}>
-          <SheetHeader className="mb-4">
-            <Flex className="gap-y-4" direction="column">
-              <Flex
-                className="border-1 border-dark-accent rounded-medium w-fit"
-                align="center"
-                justify="center"
-              >
+          <Flex className="w-full h-full gap-y-4" direction="column">
+            <SheetHeader>
+              <Flex className="h-full gap-x-4" align="center">
+                <EditSlotDialogsIcon />
                 <Flex
-                  className="bg-dark h-full w-full p-2.5 rounded-medium"
-                  align="center"
-                  justify="center"
+                  className="h-full"
+                  direction="column"
+                  align="start"
+                  justify="start"
                 >
-                  <Icons.Pencil className="text-gray-accent" size="sm" />
+                  <SheetTitle>Редактирование слота</SheetTitle>
+                  <Typography
+                    className="text-gray-accent font-normal leading-4"
+                    tag="p"
+                  >
+                    Измените параметры у слота
+                  </Typography>
                 </Flex>
               </Flex>
-              <Flex className="gap-y-1" direction="column" align="start">
-                <Typography tag="h3">Изменение слота</Typography>
-                <Typography className="text-gray-accent font-normal" tag="p">
-                  Здесь вы можете изменить название и количество очков у слота
-                </Typography>
-              </Flex>
-            </Flex>
-          </SheetHeader>
-          {dialogContent}
+            </SheetHeader>
+            <Divider />
+            {dialogContent}
+          </Flex>
         </SheetContent>
       </Sheet>
     )
@@ -133,11 +134,29 @@ const EditSlotDialogue = ({
     <Drawer noBodyStyles open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DrawerTrigger>{trigger}</DrawerTrigger>
       <DrawerContent className="px-4" isFullPageHeight={isFullPageHeight}>
-        <DrawerHeader>
+        <DrawerHeader className="flex-row gap-x-4">
+          <EditSlotDialogsIcon />
           <DrawerTitle className="text-white">Изменение слота</DrawerTitle>
+          <DrawerDescription asChild>
+            <Typography tag="p">Измените данные слота</Typography>
+          </DrawerDescription>
         </DrawerHeader>
         {dialogContent}
       </DrawerContent>
     </Drawer>
+  )
+}
+
+const EditSlotDialogsIcon = () => {
+  return (
+    <div className="w-fit h-fit pencil-icon-gradient p-0.5 rounded-small outline-2 outline-[#E9E4F0]/10">
+      <Flex
+        className="p-1.75 border-[0.5px] border-[#E9E4F0]/30 rounded-small"
+        align="center"
+        justify="center"
+      >
+        <Icons.Pencil size="lg" gradient />
+      </Flex>
+    </div>
   )
 }
