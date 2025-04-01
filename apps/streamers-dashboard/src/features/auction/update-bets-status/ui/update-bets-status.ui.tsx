@@ -44,19 +44,11 @@ const UpdateBetsStatusButton = memo(() => {
 
   return (
     <Button
-      className={cn(
-        'font-medium text-md leading-5 px-2 rounded-small transition-all gap-x-1',
-        !isBetsClosed &&
-          'bg-red/10 text-red/90 hover:text-red/100 hover:bg-red/15',
-        isBetsClosed && 'text-gray-accent hover:text-white/80'
-      )}
+      variant={!isBetsClosed ? 'error' : 'default'}
       size="sm"
+      className={cn('leading-5 px-2')}
       startContent={
-        !isBetsClosed ? (
-          <Icons.Close width={26} height={26} />
-        ) : (
-          <Icons.OpenBets size="sm" />
-        )
+        !isBetsClosed ? <Icons.Close size="lg" /> : <Icons.OpenBets size="sm" />
       }
       disabled={openBetsQueryLoading || closeBetsQueryLoading}
       onClick={handleClick}

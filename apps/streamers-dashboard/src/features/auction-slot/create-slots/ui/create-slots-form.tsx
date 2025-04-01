@@ -117,8 +117,9 @@ export const CreateSlotsForm = ({
           render={({ field }) => (
             <Input
               slotClassNames={{
-                base: 'font-golos-f w-full basis-1/2 grow',
+                base: 'w-full basis-1/2 grow',
                 description: 'text-wrap',
+                input: 'font-semibold',
               }}
               placeholder="Название слота"
               errorMessage={getErrorMessageForField('name', index)}
@@ -132,8 +133,9 @@ export const CreateSlotsForm = ({
           render={({ field }) => (
             <NumberInput
               slotClassNames={{
-                base: 'font-golos-f w-full basis-1/3 desktopLg:basis-1/4',
+                base: 'w-full basis-1/3 desktop-lg:basis-1/4',
                 description: 'text-wrap',
+                input: 'font-golos-f font-medium',
               }}
               placeholder="Очки"
               maxValue={1000000}

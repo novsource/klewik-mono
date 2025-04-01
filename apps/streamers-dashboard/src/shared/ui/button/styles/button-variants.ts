@@ -6,12 +6,12 @@ type ButtonVariant =
   | 'default'
   | 'action'
   | 'outline'
-  | 'destructive'
-  | 'secondary'
+  | 'error'
+  | 'ghost-outline'
   | 'ghost'
   | 'link'
 
-type ButtonSize = 'sm' | 'default' | 'lg'
+type ButtonSize = 'sm' | 'default' | 'lg' | 'xs'
 
 type ButtonVariants = {
   variant: {
@@ -37,19 +37,20 @@ export const buttonVariants = cva<ButtonVariants>(
     'ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
     'disabled:pointer-events-none disabled:opacity-50',
     '[&_svg]:shrink-0 [&_svg]:pointer-events-none',
-    'whitespace-nowrap rounded-medium transition-colors select-none cursor-pointer',
+    'whitespace-nowrap rounded-small transition-all select-none cursor-pointer',
   ],
   {
     variants: {
       variant: {
-        default: 'bg-dark text-gray-accent hover:bg-dark/80',
+        default:
+          'bg-dark text-gray-accent border-1 border-dark-accent/70 hover:border-gray/55 hover:bg-dark-accent/50 hover:text-white',
         action: 'bg-green text-white hover:bg-green/80',
-        destructive:
-          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline: 'bg-dark text-gray-accent hover:bg-dark/80 hover:text-white',
-        secondary:
-          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        error: 'bg-red/10 text-red hover:bg-red/15 border-1 border-red/20',
+        outline:
+          'bg-dark border-1 border-dark-accent hover:border-gray text-gray-accent hover:bg-dark/80 hover:text-white/80',
         ghost: 'bg-transparent border-transparent',
+        'ghost-outline':
+          'bg-transparent border-1 border-dark-accent/70 hover:border-gray',
         link: 'text-primary underline-offset-4 hover:underline',
       },
       isIconOnly: {
@@ -58,9 +59,10 @@ export const buttonVariants = cva<ButtonVariants>(
       },
       size: {
         default:
-          'h-10 px-3 py-1 text-md leading-6 rounded-md font-medium data-[icon-only=false]:[&_svg]:size-4.5',
-        sm: 'h-9 rounded-md px-2 text-sm leading-6 font-regular data-[icon-only=false]:[&_svg]:size-4',
-        lg: 'h-11 rounded-md px-3 font-medium data-[icon-only=false]:[&_svg]:size-5',
+          'h-9.5 px-2.5 py-1 text-md leading-6 rounded-md font-medium data-[icon-only=false]:[&_svg]:size-4.5',
+        sm: 'h-9 rounded-md px-2 text-sm leading-6 font-medium data-[icon-only=false]:[&_svg]:size-4',
+        xs: 'h-8.5 rounded-md px-1.5 text-sm leading-5 font-regular data-[icon-only=false]:[&_svg]:size-3.5',
+        lg: 'h-10 rounded-md px-3 font-medium data-[icon-only=false]:[&_svg]:size-5',
       },
       startContent: {
         true: 'flex items-center justify-center gap-x-1',

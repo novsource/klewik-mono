@@ -90,7 +90,7 @@ const axiosAuthBaseQuery =
     })
 
     let result = await baseQuery(
-      { ...args, url: options.baseUrl + args.url },
+      { ...args, ...options, url: options.baseUrl + args.url },
       api,
       extraOptions
     )
@@ -104,7 +104,7 @@ const axiosAuthBaseQuery =
 
       if (refreshResult.error === undefined) {
         result = await baseQuery(
-          { ...args, url: options.baseUrl + args.url },
+          { ...args, ...options, url: options.baseUrl + args.url },
           api,
           extraOptions
         )

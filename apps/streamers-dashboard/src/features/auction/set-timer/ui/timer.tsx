@@ -1,4 +1,4 @@
-import { ComponentProps, useLayoutEffect, useRef, useState } from 'react'
+import { ComponentProps, useState } from 'react'
 
 import NumberFlow, { NumberFlowGroup } from '@number-flow/react'
 import { motion } from 'framer-motion'
@@ -29,11 +29,6 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
   )
 
   const [timerStatus, setTimerStatus] = useState<TimerStatus>('stopped')
-  const controlsElRef = useRef<HTMLDivElement>(null)
-
-  useLayoutEffect(() => {
-    console.log(controlsElRef.current?.getBoundingClientRect().width)
-  }, [controlsElRef.current])
 
   const {
     control: {
@@ -69,32 +64,34 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
   return (
     <Flex
       className={cn(
-        'w-full h-9 bg-dark rounded-medium',
-        timerStatus !== 'stopped' && 'pr-2'
+        'w-full h-full bg-dark rounded-md gap-x-2',
+        timerStatus !== 'stopped' && 'pl-4 pr-2'
       )}
       justify="center"
       align="center"
       {...props}
     >
-      <Button
-        className={cn(
-          'text-gray-accent h-full cursor-default space-x-1',
-          timerStatus === 'stopped' &&
-            'hover:text-white/80 hover:bg-dark/80 cursor-pointer'
-        )}
-        startContent={<Icons.Timer className="text-gray-light" size="sm" />}
-        onClick={timerStatus === 'stopped' ? startTimer : undefined}
-      >
-        {timerStatus === 'stopped' ? (
-          'Запустить таймер'
-        ) : (
+      {timerStatus === 'stopped' ? (
+        <Button
+          size={'sm'}
+          variant={timerStatus === 'stopped' ? 'default' : 'ghost'}
+          className={cn(
+            'h-9 text-gray-accent',
+            timerStatus !== 'stopped' && 'cursor-default'
+          )}
+          startContent={<Icons.Timer className="text-gray-light" size="sm" />}
+          onClick={timerStatus === 'stopped' ? startTimer : undefined}
+        >
+          Запустить таймер
+        </Button>
+      ) : (
+        <Flex className="h-9" align="center">
           <NumberFlowGroup>
             <Flex
-              className="font-medium font-azeret-mono"
+              className="font-medium font-azeret-mono text-md text-gray-accent"
               style={{
                 fontVariantNumeric: 'tabular-nums',
                 letterSpacing: '-0.5px',
-                fontFamily: 'Azeret Mono',
               }}
             >
               <NumberFlow
@@ -122,8 +119,8 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
               />
             </Flex>
           </NumberFlowGroup>
-        )}
-      </Button>
+        </Flex>
+      )}
 
       {timerStatus !== 'stopped' && (
         <TimerControls
@@ -131,9 +128,9 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <Flex ref={controlsElRef} className="text-gray-light" align="center">
+          <Flex className="text-gray-light" align="center">
             <Button
-              className="hover:text-gray-accent px-0.5 "
+              className="hover:text-gray-accent px-0.5"
               variant="ghost"
               size="sm"
               isIconOnly

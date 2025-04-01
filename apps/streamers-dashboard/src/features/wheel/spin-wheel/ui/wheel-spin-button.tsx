@@ -33,7 +33,7 @@ const SpinWheelButton = ({ className, ...props }: SpinWheelButtonProps) => {
     <Button
       className={className}
       variant="action"
-      startContent={<Icons.Refresh size="sm" />}
+      startContent={<Icons.Refresh size="xs" />}
       onClick={handleOnClick}
       disabled={isButtonShouldBeDisabled}
       {...props}

@@ -15,7 +15,7 @@ import { SettingsArea, SettingsAreasDivider } from '../auction-settings-area'
 const AuctionTimerSettingsContent = () => {
   return (
     <TabsContent className="w-full h-full" value="timer">
-      <Flex className="w-full gap-y-12" direction="column">
+      <Flex className="w-full gap-y-10" direction="column">
         <ControlTimeSettingsArea />
         <SettingsAreasDivider />
         <TimerActionsSettingsArea />

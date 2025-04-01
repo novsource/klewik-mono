@@ -42,11 +42,11 @@ const IntegrationCard = (props: IntegrationCardProps) => {
         {integrationButton}
       </CardHeader>
       <CardContent>
-        <Typography tag="h3" className="font-golos-f">
+        <Typography tag="span" className="text-title font-bold">
           {integrationPlatformName}
         </Typography>
         {description && (
-          <Typography tag="p" className="text-gray-accent font-golos-f">
+          <Typography tag="p" className="text-gray-accent">
             {description}
           </Typography>
         )}

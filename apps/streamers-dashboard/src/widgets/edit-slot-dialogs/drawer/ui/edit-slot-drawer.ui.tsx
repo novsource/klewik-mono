@@ -11,11 +11,13 @@ import { useActionCreators } from '~shared/lib/redux-toolkit'
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from '~shared/ui/drawer'
 import { Flex } from '~shared/ui/flex'
+import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
@@ -38,8 +40,11 @@ const EditSlotDrawer = ({
     <Drawer noBodyStyles open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
       <DrawerContent className="px-4" isFullPageHeight={isFullPageHeight}>
-        <DrawerHeader>
+        <DrawerHeader className="flex-row">
           <DrawerTitle className="text-white">Изменение слота</DrawerTitle>
+          <DrawerDescription asChild>
+            <Typography tag="p">Измените данные слота</Typography>
+          </DrawerDescription>
         </DrawerHeader>
         <Flex className="h-full gap-y-6 pb-6" direction="column">
           <Flex className="gap-y-2" direction="column">

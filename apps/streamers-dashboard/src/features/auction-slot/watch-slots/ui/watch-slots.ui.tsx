@@ -14,7 +14,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { ClassValue } from 'clsx'
 import { useMotionValueEvent, useScroll } from 'framer-motion'
-import { VList } from 'virtua'
+import { Virtualizer as VirtualList } from 'virtua'
 
 import { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -28,67 +28,18 @@ import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
-const SlotsShadowScrollArea = ({
-  style,
-  ref: forwardRef,
-  ...otherProps
-}: ComponentProps<'div'>) => {
-  const containerRef = useRef<HTMLDivElement | null>(null)
-
-  const [scrollYProgress, setScrollYProgress] = useState(0)
-
-  const { scrollYProgress: motionScrollYProgress } = useScroll({
-    container: containerRef,
-  })
-
-  useLayoutEffect(() => {
-    if (!forwardRef) return
-
-    if (typeof forwardRef === 'function' || typeof forwardRef === 'string') {
-      return
-    } else {
-      containerRef.current = forwardRef.current
-    }
-  }, [forwardRef])
-
-  useMotionValueEvent(motionScrollYProgress, 'change', (value) => {
-    setScrollYProgress(value)
-  })
-
-  const shadowScrollAreaStyle = useMemo(() => {
-    const isEndOfContainer = scrollYProgress === 1
-    const isStartOfContainer = scrollYProgress === 0
-
-    const topGradientValue = isStartOfContainer ? 0 : 100
-    const bottomGradientValue = isEndOfContainer ? 0 : 100
-
-    return `linear-gradient(#000, #000,transparent 0,#000 ${topGradientValue}px,#000 calc(100% - ${bottomGradientValue}px),transparent)`
-  }, [scrollYProgress])
-
-  return (
-    <div
-      data-slot="scrolling-shadow"
-      ref={containerRef}
-      style={{
-        ...style,
-        maskImage: shadowScrollAreaStyle,
-      }}
-      {...otherProps}
-    />
-  )
-}
-
 type AuctionSlotsListProps = {
   data?: AuctionSlot[]
   className?: string
   renderCard?: (item: AuctionSlot, index: number) => ReactNode
-  shadowScroll?: boolean
-}
+} & Pick<SlotsShadowScrollAreaProps, 'shadowSize' | 'shadowEnabled'>
 
 const VirtualizedSlotsList = ({
   data,
+  className,
   renderCard,
-  shadowScroll = false,
+  shadowEnabled,
+  shadowSize,
 }: AuctionSlotsListProps) => {
   const storedSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const [slots, setSlots] = useState(() => data ?? storedSlots)
@@ -129,12 +80,19 @@ const VirtualizedSlotsList = ({
   }
 
   return (
-    <AutoSizer disableWidth>
-      {({ height }) => {
+    <AutoSizer>
+      {({ width, height }) => {
         return (
-          <VList style={{ height }}>
-            {renderCard ? slots.map(renderCard) : defaultSlotsCardList}
-          </VList>
+          <SlotsShadowScrollArea
+            className={cn('pb-4', className)}
+            shadowSize={shadowSize}
+            shadowEnabled={shadowEnabled}
+            style={{ width, height, overflowAnchor: 'none', overflowY: 'auto' }}
+          >
+            <VirtualList count={slots.length}>
+              {renderCard ? slots.map(renderCard) : defaultSlotsCardList}
+            </VirtualList>
+          </SlotsShadowScrollArea>
         )
       }}
     </AutoSizer>
@@ -142,6 +100,63 @@ const VirtualizedSlotsList = ({
 }
 
 export { VirtualizedSlotsList }
+
+type SlotsShadowScrollAreaProps = ComponentProps<'div'> & {
+  shadowEnabled?: boolean
+  shadowSize?: number
+}
+
+const SlotsShadowScrollArea = ({
+  style,
+  ref: forwardRef,
+  shadowEnabled = true,
+  shadowSize = 80,
+  ...otherProps
+}: SlotsShadowScrollAreaProps) => {
+  const containerRef = useRef<HTMLDivElement | null>(null)
+
+  const [scrollYProgress, setScrollYProgress] = useState(0)
+
+  const { scrollYProgress: motionScrollYProgress } = useScroll({
+    container: containerRef,
+  })
+
+  useLayoutEffect(() => {
+    if (!forwardRef) return
+
+    if (typeof forwardRef === 'function' || typeof forwardRef === 'string') {
+      return
+    } else {
+      containerRef.current = forwardRef.current
+    }
+  }, [forwardRef])
+
+  useMotionValueEvent(motionScrollYProgress, 'change', (value) => {
+    setScrollYProgress(value)
+  })
+
+  const shadowScrollAreaStyle = useMemo(() => {
+    const isEndOfContainer = scrollYProgress === 1
+    const isStartOfContainer = scrollYProgress === 0
+
+    const topGradientValue = isStartOfContainer ? 0 : shadowSize
+    const bottomGradientValue = isEndOfContainer ? 0 : shadowSize
+
+    return `linear-gradient(#000, #000,transparent 0,#000 ${topGradientValue}px,#000 calc(100% - ${bottomGradientValue}px),transparent)`
+  }, [scrollYProgress])
+
+  return (
+    <div
+      data-slot="scrolling-shadow"
+      ref={containerRef}
+      style={{
+        ...style,
+        maskImage: shadowEnabled ? shadowScrollAreaStyle : 'none',
+      }}
+      {...otherProps}
+    />
+  )
+}
 
 type AuctionCardChipProps = {
   children?: ReactNode
