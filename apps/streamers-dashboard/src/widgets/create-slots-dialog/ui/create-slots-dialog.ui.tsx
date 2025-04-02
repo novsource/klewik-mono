@@ -53,7 +53,7 @@ const CreateSlotsDialog = ({
           <SheetHeader className="flex flex-row gap-x-4 w-full">
             <CreateSlotDialogIcon />
             <Flex direction="column" align="start">
-              <SheetTitle>Добавление слота</SheetTitle>
+              <SheetTitle>Добавление слотов</SheetTitle>
               <SheetDescription asChild>
                 <Typography
                   className="text-gray-accent font-normal leading-4"
@@ -84,15 +84,31 @@ const CreateSlotsDialog = ({
   )
 }
 
+/**
+  @todo Refactor create-slots dialog icon
+*/
 const CreateSlotDialogIcon = () => {
   return (
     <div className="w-fit h-fit bg-gradient-to-r from-[#1D976C]/30 to-[#93F9B9]/30 p-0.5 rounded-small outline-2 outline-[#6FCF97]/10">
       <Flex
-        className="p-1.25 border-[0.5px] border-[#93F9B9]/30 rounded-small"
+        className="relative p-1.25 border-[0.5px] border-[#93F9B9]/30 rounded-small w-10 h-10"
         align="center"
         justify="center"
       >
-        <Icons.Slots width="28" height="28" gradient />
+        <Icons.Slots
+          className="absolute left-1 bottom-1"
+          width="26"
+          height="26"
+          gradient
+        />
+
+        <Icons.Plus
+          className="absolute right-0 top-[2px]"
+          width="16"
+          height="16"
+          strokeWidth={1}
+          gradient
+        />
       </Flex>
     </div>
   )
