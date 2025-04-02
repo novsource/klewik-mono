@@ -15,7 +15,7 @@ export const sheetVariants = cva(
         left: 'inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm',
         right: [
           'inset-y-0 border border-dark my-auto right-2.5 h-sheet rounded-large w-3/4',
-          'landtop:max-w-[550px] desktop:max-w-[600px] desktop-lg:max-w-[650px] tablet:max-w-[500px]',
+          'landtop:max-w-[480px] desktop:max-w-[500px] desktop-lg:max-w-[550px] tablet:max-w-[400px]',
           'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right',
         ],
       },

@@ -21,7 +21,7 @@
   --color-dark-foreground: #141315;
   --color-yellow: #cfc56f;
 
-  --color-red: #fe7968;
+  --color-red: #FF746C;
 
   --color-gray: #5d5d5d;
   --color-gray-light: #818181;
@@ -102,6 +102,7 @@
   --animate-fade-in: fadeIn 2s ease;
   --animate-fade-out: fadeIn 2s ease reverse;
   --animate-fade-change: fadeChange 2s ease;
+  --animate-horizontal-shaking: horizontal-shaking 0.4s ease;
 
   --height-sheet: var(--sheet-height);
 
@@ -111,6 +112,12 @@
   --spacing-4xl: 1.5rem;
 
   --border-width-1: 1px;
+
+  @keyframes horizontal-shaking {
+    0%, 100% { transform: translateX(0) }
+    50% { transform: translateX(-2px) }
+    25%, 75% { transform: translateX(2px) }
+  }
 
   @keyframes fadeChange {
     0%,
