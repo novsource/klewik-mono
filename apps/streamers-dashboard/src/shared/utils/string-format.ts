@@ -1,15 +1,25 @@
-export const stringNumberFormat = (str: string) => {
+import { formatNumberToIntlString } from './number-format'
+
+type StringNumberFormatOptions = {
+  locales?: Intl.LocalesArgument
+  numberFormat?: Intl.NumberFormatOptions
+}
+
+export const stringNumberFormat = (
+  str: string,
+  options?: StringNumberFormatOptions
+) => {
   try {
     const value = Number.parseInt(str, 10)
 
-    return new Intl.NumberFormat('ru-RU').format(value)
+    return formatNumberToIntlString(value, options)
   } catch (error) {
     if (error instanceof Error) throw new Error(error.message)
   }
 }
 
-export const isStringContainNotOnlyNumbers = (str: string) => {
-  const pattern = /[^0-9.]/gm
+export const isStringContainNotOnlyDigits = (str: string) => {
+  const pattern = /[^0-9]/gm
 
   const regex = new RegExp(pattern)
 
