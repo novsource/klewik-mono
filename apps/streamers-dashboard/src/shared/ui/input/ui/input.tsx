@@ -29,8 +29,8 @@ export type InputProps = Omit<ComponentProps<'input'>, 'size' | 'className'> &
       id: string
       value: string
     }
-    startContent?: JSX.Element
-    endContent?: JSX.Element
+    startContent?: JSX.Element | string
+    endContent?: JSX.Element | string
     description?: string
     errorMessage?: string
     slotClassNames?: InputSlotsClassnames
