@@ -5,7 +5,7 @@ import { HexColorSchema, RGBColorSchema } from '~shared/lib/zod'
 const AuctionSlotSchema = z.object({
   id: z.number().nonnegative(),
   name: z.string().nonempty().max(200),
-  points: z.number().nonnegative(),
+  points: z.number().nonnegative().min(1),
   color: z.union([HexColorSchema, RGBColorSchema]),
 })
 
