@@ -2,15 +2,13 @@ import { useCallback, useLayoutEffect, useState } from 'react'
 
 import { motion } from 'framer-motion'
 
-import {
-  AuctionSlotCard,
-  VirtualizedSlotsList,
-} from '~features/auction-slot/watch-slots/ui'
+import { VirtualizedSlotsList } from '~features/auction-slot/watch-slots/ui'
 
 import { auctionSelectors } from '~entities/auction/store'
 
 import { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+import { AuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 

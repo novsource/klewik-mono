@@ -1,9 +1,6 @@
 import {
   ComponentProps,
-  HTMLAttributes,
   ReactNode,
-  forwardRef,
-  memo,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -12,19 +9,18 @@ import {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
-import { ClassValue } from 'clsx'
 import { AnimatePresence, motion, transform } from 'framer-motion'
 import { useMotionValueEvent, useScroll } from 'framer-motion'
 import { Virtualizer as VirtualList } from 'virtua'
 
 import { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+import { AuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { useDebouncedCallback } from '~shared/hooks/use-debounced-callback'
 
-import { Card, CardContent, CardHeader, CardTitle } from '~shared/ui/card'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { ScrollArea } from '~shared/ui/scroll-area'
@@ -55,9 +51,7 @@ const VirtualizedSlotsList = (props: AuctionSlotsListProps) => {
   const defaultSlotsCardList = useMemo(() => {
     if (renderCard) return
 
-    return slots.map((slot) => {
-      return <AuctionSlotCard {...slot} />
-    })
+    return slots.map((slot) => <AuctionSlotCard {...slot} />)
   }, [slots, renderCard])
 
   if (slots.length === 0) {
@@ -122,7 +116,7 @@ const SlotsShadowScrollArea = (props: SlotsShadowScrollAreaProps) => {
 
   const [isShadowAnimated, setIsShadowAnimated] = useState(false)
 
-  const { scrollYProgress: motionScrollYProgress, scrollY } = useScroll({
+  const { scrollYProgress: motionScrollYProgress } = useScroll({
     container: scrollElementRef,
   })
 
@@ -132,8 +126,14 @@ const SlotsShadowScrollArea = (props: SlotsShadowScrollAreaProps) => {
   )
 
   useLayoutEffect(() => {
+    if (!scrollElementRef.current) return
+
     debouncedShadowAnimation()
-  }, [])
+
+    scrollElementRef.current.addEventListener('resize', () => {
+      console.log('resize')
+    })
+  }, [scrollElementRef])
 
   useLayoutEffect(() => {
     if (!forwardRef) return
@@ -240,100 +240,4 @@ const SlotsShadowScrollArea = (props: SlotsShadowScrollAreaProps) => {
   )
 }
 
-type AuctionCardChipProps = {
-  children?: ReactNode
-  style?: HTMLAttributes<HTMLDivElement>['style']
-  startContent?: JSX.Element
-  endContent?: JSX.Element
-  classNames?: {
-    base?: ClassValue
-    text?: ClassValue
-  }
-}
-
-const AuctionCardChip = (props: AuctionCardChipProps) => {
-  const { children, startContent, endContent, classNames } = props
-
-  return (
-    <Flex
-      className={cn(
-        'px-2 py-1 bg-gray/30 gap-x-1.5 rounded-md',
-        classNames?.base
-      )}
-      direction="row"
-      align="center"
-    >
-      {startContent}
-      <Typography
-        className={cn(
-          'font-golos-f text-md font-medium text-gray-accent',
-          classNames?.text
-        )}
-        tag="span"
-      >
-        {children}
-      </Typography>
-      {endContent}
-    </Flex>
-  )
-}
-
-type AuctionSlotCardProps = AuctionSlot & {
-  percent?: string | number
-}
-
-const AuctionSlotCard = memo(
-  forwardRef<HTMLDivElement, AuctionSlotCardProps>((props, forwardRef) => {
-    const { percent, ...slot } = props
-    return (
-      <Card
-        ref={forwardRef}
-        className="flex flex-col justify-between border-1 border-dark gap-y-3 py-2"
-      >
-        <CardHeader className="flex items-start justify-between h-6">
-          <CardTitle className="w-full">
-            <Typography
-              tag="span"
-              className="font-golos-f font-semibold text-title"
-            >
-              {slot.name}
-            </Typography>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="w-full flex flex-col gap-y-2 pt-0">
-          <Flex className="w-full gap-x-2" direction="row" align="center">
-            <div
-              className="w-8 h-7 rounded-md"
-              style={{
-                backgroundColor: Array.isArray(slot.color)
-                  ? `rgb(${slot.color.join(',')})`
-                  : slot.color,
-              }}
-            />
-            <AuctionCardChip
-              startContent={<Icons.Id className="text-gray-light" size="sm" />}
-            >
-              {slot.id}
-            </AuctionCardChip>
-            <AuctionCardChip
-              startContent={
-                <Icons.Coin className="text-gray-light" size="sm" />
-              }
-            >
-              {Intl.NumberFormat('ru-Ru').format(slot.points).toString()}
-            </AuctionCardChip>
-            {percent && (
-              <AuctionCardChip
-                classNames={{ base: 'bg-green/20', text: 'text-green' }}
-              >
-                {percent}%
-              </AuctionCardChip>
-            )}
-          </Flex>
-        </CardContent>
-      </Card>
-    )
-  })
-)
-
-export { AuctionSlotCard, AuctionCardChip }
+export { SlotsShadowScrollArea }
