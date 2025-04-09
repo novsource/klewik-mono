@@ -7,12 +7,12 @@ const scrollAreaViewportVariants = cva(
 )
 
 const scrollAreaScrollbarVariants = cva(
-  'flex touch-none p-px transition-colors select-none',
+  'flex touch-none p-px transition-colors select-none rounded',
   {
     variants: {
       orientation: {
-        vertical: 'h-full w-2.5 border-l border-l-transparent',
-        horizontal: 'h-2.5 flex-col border-t border-t-transparent',
+        vertical: 'h-full w-2.25 border-l border-l-transparent',
+        horizontal: 'h-2.25 flex-col border-t border-t-transparent',
       },
     },
     defaultVariants: {
@@ -21,7 +21,9 @@ const scrollAreaScrollbarVariants = cva(
   }
 )
 
-const scrollAreaThumbVariants = cva('bg-border relative flex-1 rounded-full')
+const scrollAreaThumbVariants = cva(
+  'bg-gray-light relative flex-1 rounded-[2px] outline-gray-accent outline-1'
+)
 
 export type ScrollAreaScrollbarVariantsProps = VariantProps<
   typeof scrollAreaScrollbarVariants

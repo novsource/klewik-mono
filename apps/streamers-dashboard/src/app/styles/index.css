@@ -302,6 +302,17 @@
     background-color: var(--color-dark-foreground);
   }
 
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
   .slider {
     container-type: size;
     container-name: slider;
