@@ -13,18 +13,17 @@ type TabsContext = {
     selectedKey: string
     keys: string[]
     triggersData: TriggersData
-    isTriggerRunnerRended: boolean
   }
   dispatch: {
     setDefaultKey: Dispatch<SetStateAction<string>>
     setSelectedKey: Dispatch<SetStateAction<string>>
     setKeys: Dispatch<SetStateAction<string[]>>
     setTriggersData: Dispatch<SetStateAction<TriggersData>>
-    setIsTriggerRunnerRended: Dispatch<SetStateAction<boolean>>
   }
 }
 
 type TabsContextProps = {
+  value?: string
   defaultValue?: string
   children: JSX.Element
 }
@@ -40,13 +39,13 @@ export const TabsContext = createContext<NullablePossible<TabsContext>>(null)
 export const TabsContextProvider = ({
   children,
   defaultValue,
+  value,
 }: TabsContextProps) => {
   const [keys, setKeys] = useState<string[]>([])
   const [defaultKey, setDefaultKey] = useState<string>(defaultValue ?? '')
-  const [selectedKey, setSelectedKey] = useState<string>('')
-
-  const [isTriggerRunnerRended, setIsTriggerRunnerRended] =
-    useState<boolean>(false)
+  const [selectedKey, setSelectedKey] = useState<string>(
+    () => value ?? defaultValue ?? ''
+  )
 
   const [triggersData, setTriggersData] = useState<TriggersData>([])
 
@@ -54,19 +53,22 @@ export const TabsContextProvider = ({
     if (keys.length !== 0 && defaultKey === '') {
       setDefaultKey(keys[0])
     }
-  }, [keys])
+  }, [defaultValue, keys])
+
+  useEffect(() => {
+    if (selectedKey !== value) setSelectedKey(value ?? '')
+  }, [value])
 
   useEffect(() => {
     if (selectedKey === '' && defaultKey !== '') {
       setSelectedKey(defaultKey)
     }
-  }, [defaultKey])
+  }, [defaultKey, selectedKey])
 
   return (
     <TabsContext.Provider
       value={{
         state: {
-          isTriggerRunnerRended,
           defaultKey,
           selectedKey,
           keys,
@@ -77,7 +79,6 @@ export const TabsContextProvider = ({
           setDefaultKey,
           setSelectedKey,
           setTriggersData,
-          setIsTriggerRunnerRended,
         },
       }}
     >

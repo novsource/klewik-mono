@@ -2,6 +2,8 @@ import { useMemo } from 'react'
 
 import { Toaster as Sonner } from 'sonner'
 
+import { Icons } from '~shared/ui/icons'
+
 import { cn } from '~shared/utils'
 
 import {
@@ -15,6 +17,13 @@ import {
 } from '../styles/sonner-variants'
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
+
+const ToasterIcons: ToasterProps['icons'] = {
+  success: <Icons.Check className="text-green-accent" />,
+  warning: <Icons.Warning />,
+  error: <Icons.CloseSquare />,
+  info: <Icons.Info />,
+}
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const slotsStyles = useMemo(() => {
@@ -44,6 +53,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
       offset={16}
       gap={10}
       cn={cn}
+      icons={ToasterIcons}
+      closeButton={true}
       toastOptions={{
         unstyled: true,
         classNames: {

@@ -17,10 +17,35 @@ import {
 const Tabs = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>
->((props, ref) => {
+>(({ onValueChange, value, defaultValue, ...props }, ref) => {
+  const [currentValue, setCurrentValue] = React.useState(
+    value ?? defaultValue ?? ''
+  )
+
+  const onValueChangeHandler = React.useCallback(
+    (value: string) => {
+      setCurrentValue(value)
+
+      onValueChange && onValueChange(value)
+    },
+    [onValueChange]
+  )
+
+  React.useLayoutEffect(() => {
+    if (currentValue !== value && value) {
+      setCurrentValue(value)
+    }
+  }, [value])
+
   return (
-    <TabsContextProvider>
-      <TabsPrimitive.Root ref={ref} {...props} />
+    <TabsContextProvider defaultValue={defaultValue} value={currentValue}>
+      <TabsPrimitive.Root
+        ref={ref}
+        onValueChange={onValueChangeHandler}
+        defaultValue={defaultValue}
+        value={currentValue}
+        {...props}
+      />
     </TabsContextProvider>
   )
 })
@@ -87,7 +112,7 @@ const TabsTrigger = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
 >(({ className, value, ...props }, ref) => {
-  const tabTrigger = React.useRef<NullablePossible<HTMLButtonElement>>(null)
+  const tabTriggerRef = React.useRef<NullablePossible<HTMLElement>>(null)
 
   const {
     state: { triggersData },
@@ -99,11 +124,11 @@ const TabsTrigger = React.forwardRef<
   }, [])
 
   React.useEffect(() => {
-    const tabElement = tabTrigger.current
-    const eventController = new AbortController()
+    const tabElement = tabTriggerRef.current
+    const resizeEventCtrl = new AbortController()
 
     if (tabElement) {
-      window.addEventListener(
+      tabElement.addEventListener(
         'resize',
         () => {
           const x = tabElement?.offsetLeft
@@ -114,17 +139,17 @@ const TabsTrigger = React.forwardRef<
             { value, startX: x, width },
           ])
         },
-        { signal: eventController.signal }
+        { signal: resizeEventCtrl.signal }
       )
     }
 
     return () => {
-      eventController.abort()
+      resizeEventCtrl.abort()
     }
-  }, [])
+  }, [tabTriggerRef])
 
   React.useEffect(() => {
-    const tabElement = tabTrigger.current
+    const tabElement = tabTriggerRef.current
 
     const isTriggerExists =
       triggersData.find((item) => item.value === value) !== undefined
@@ -135,7 +160,7 @@ const TabsTrigger = React.forwardRef<
 
       setTriggersData((prev) => [...prev, { value, startX: x, width }])
     }
-  }, [tabTrigger])
+  }, [tabTriggerRef, triggersData])
 
   const styles = React.useMemo(
     () => cn(tabsTriggerVariants(), className),
@@ -145,7 +170,7 @@ const TabsTrigger = React.forwardRef<
   return (
     <TabsPrimitive.Trigger
       ref={(node) => {
-        tabTrigger.current = node
+        tabTriggerRef.current = node
 
         if (typeof ref === 'function') {
           ref(node)
