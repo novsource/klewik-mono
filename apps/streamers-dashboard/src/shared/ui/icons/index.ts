@@ -1,7 +1,9 @@
 import { default as Bill } from './Bill';
 import { default as Bin } from './Bin';
 import { default as CardSend } from './CardSend';
+import { default as Check } from './Check';
 import { default as Close } from './Close';
+import { default as CloseSquare } from './CloseSquare';
 import { default as Coin } from './Coin';
 import { default as Copy } from './Copy';
 import { default as Crown } from './Crown';
@@ -16,6 +18,7 @@ import { default as Github } from './Github';
 import { default as Hamburger } from './Hamburger';
 import { default as Home } from './Home';
 import { default as Id } from './Id';
+import { default as Info } from './Info';
 import { default as Integrations } from './Integrations';
 import { default as Key } from './Key';
 import { default as LinkArrow } from './LinkArrow';
@@ -57,7 +60,9 @@ import { default as YoutubeLogo } from './YoutubeLogo';
       Bill,
   Bin,
   CardSend,
+  Check,
   Close,
+  CloseSquare,
   Coin,
   Copy,
   Crown,
@@ -72,6 +77,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Hamburger,
   Home,
   Id,
+  Info,
   Integrations,
   Key,
   LinkArrow,

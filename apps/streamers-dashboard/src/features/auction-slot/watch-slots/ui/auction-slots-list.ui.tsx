@@ -1,6 +1,7 @@
 import {
   ComponentProps,
   ReactNode,
+  forwardRef,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -9,8 +10,14 @@ import {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
-import { AnimatePresence, motion, transform } from 'framer-motion'
-import { useMotionValueEvent, useScroll } from 'framer-motion'
+import { ScrollAreaViewport } from '@radix-ui/react-scroll-area'
+import {
+  AnimatePresence,
+  motion,
+  transform,
+  useMotionValueEvent,
+  useScroll,
+} from 'framer-motion'
 import { Virtualizer as VirtualList } from 'virtua'
 
 import { AuctionSlot } from '~entities/auction-slot/model'
@@ -23,7 +30,6 @@ import { useDebouncedCallback } from '~shared/hooks/use-debounced-callback'
 
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import { ScrollArea } from '~shared/ui/scroll-area'
 import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
@@ -100,17 +106,19 @@ type SlotsShadowScrollAreaProps = ComponentProps<'div'> & {
   shadowSize?: number
 }
 
-const SlotsShadowScrollArea = (props: SlotsShadowScrollAreaProps) => {
+const SlotsShadowScrollArea = forwardRef<
+  typeof ScrollAreaViewport,
+  SlotsShadowScrollAreaProps
+>((props, forwardRef) => {
   const {
     style,
     children,
-    ref: forwardRef,
     shadowEnabled = true,
     shadowSize = 60,
     ...restProps
   } = props
 
-  const scrollElementRef = useRef<HTMLDivElement | null>(null)
+  const scrollElementRef = useRef<HTMLDivElement>(null)
 
   const [scrollYProgress, setScrollYProgress] = useState(0)
 
@@ -138,7 +146,9 @@ const SlotsShadowScrollArea = (props: SlotsShadowScrollAreaProps) => {
   useLayoutEffect(() => {
     if (!forwardRef) return
 
-    if (typeof forwardRef === 'function' || typeof forwardRef === 'string') {
+    if (typeof forwardRef === 'function') {
+      return
+    } else if (typeof forwardRef === 'string') {
       return
     } else {
       scrollElementRef.current = forwardRef.current
@@ -163,6 +173,7 @@ const SlotsShadowScrollArea = (props: SlotsShadowScrollAreaProps) => {
 
   return (
     <div
+      ref={scrollElementRef}
       data-slot="shadow-scroll-area"
       style={{
         ...style,
@@ -176,7 +187,7 @@ const SlotsShadowScrollArea = (props: SlotsShadowScrollAreaProps) => {
           <>
             <motion.div
               className={cn(
-                'w-full bg-gradient-to-b from-transparent via-white/40 via-20% to-transparent to-80%',
+                'w-full bg-gradient-to-b from-transparent via-white/70 via-20% to-transparent to-80%',
                 `h-[50px]`
               )}
               initial={{ opacity: 0, translateY: 0 }}
@@ -198,7 +209,7 @@ const SlotsShadowScrollArea = (props: SlotsShadowScrollAreaProps) => {
             />
             <motion.div
               className={cn(
-                'w-full bg-gradient-to-t from-transparent via-white/40 via-20% to-transparent to-80% bottom-0',
+                'w-full bg-gradient-to-t from-transparent via-white/70 via-20% to-transparent to-80% bottom-0',
                 `h-[50px]`
               )}
               initial={{ opacity: 0, translateY: 0 }}
@@ -221,23 +232,9 @@ const SlotsShadowScrollArea = (props: SlotsShadowScrollAreaProps) => {
           </>
         )}
       </AnimatePresence>
-      <ScrollArea
-        className="h-full w-full"
-        style={{ scrollMarginLeft: 50 }}
-        viewportProps={{
-          ref: scrollElementRef,
-          style: {
-            paddingBottom: 16,
-            scrollPaddingLeft: 26,
-            scrollMarginLeft: 50,
-            scrollbarWidth: 'none',
-          },
-        }}
-      >
-        {children}
-      </ScrollArea>
+      {children}
     </div>
   )
-}
+})
 
 export { SlotsShadowScrollArea }
