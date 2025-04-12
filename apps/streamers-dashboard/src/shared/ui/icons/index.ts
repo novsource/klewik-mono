@@ -21,6 +21,7 @@ import { default as Id } from './Id';
 import { default as Info } from './Info';
 import { default as Integrations } from './Integrations';
 import { default as Key } from './Key';
+import { default as LargeCross } from './LargeCross';
 import { default as LinkArrow } from './LinkArrow';
 import { default as List } from './List';
 import { default as Login } from './Login';
@@ -80,6 +81,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Info,
   Integrations,
   Key,
+  LargeCross,
   LinkArrow,
   List,
   Login,
