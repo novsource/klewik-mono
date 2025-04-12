@@ -118,13 +118,14 @@ const SlotsShadowScrollArea = forwardRef<
     ...restProps
   } = props
 
-  const scrollElementRef = useRef<HTMLDivElement>(null)
-
-  const [scrollYProgress, setScrollYProgress] = useState(0)
-
   const [isShadowAnimated, setIsShadowAnimated] = useState(false)
 
-  const { scrollYProgress: motionScrollYProgress } = useScroll({
+  const [scrollYProgress, setScrollYProgress] = useState(0)
+  const [scrollYValue, setScrollYValue] = useState(0)
+
+  const scrollElementRef = useRef<HTMLDivElement>(null)
+
+  const { scrollYProgress: motionScrollYProgress, scrollY } = useScroll({
     container: scrollElementRef,
   })
 
@@ -137,10 +138,6 @@ const SlotsShadowScrollArea = forwardRef<
     if (!scrollElementRef.current) return
 
     debouncedShadowAnimation()
-
-    scrollElementRef.current.addEventListener('resize', () => {
-      console.log('resize')
-    })
   }, [scrollElementRef])
 
   useLayoutEffect(() => {
@@ -162,6 +159,10 @@ const SlotsShadowScrollArea = forwardRef<
     })
 
     setScrollYProgress(value)
+  })
+
+  useMotionValueEvent(scrollY, 'change', (value) => {
+    setScrollYValue(value)
   })
 
   const shadowScrollAreaStyle = useMemo(() => {
@@ -190,10 +191,10 @@ const SlotsShadowScrollArea = forwardRef<
                 'w-full bg-gradient-to-b from-transparent via-white/70 via-20% to-transparent to-80%',
                 `h-[50px]`
               )}
-              initial={{ opacity: 0, translateY: 0 }}
+              initial={{ opacity: 0, translateY: 0 + scrollYValue }}
               animate={{
                 opacity: [0, 1, 0],
-                translateY: [0, -40],
+                translateY: [0 + scrollYValue, -40 + scrollYValue],
               }}
               transition={{
                 duration: 2.5,
@@ -212,9 +213,9 @@ const SlotsShadowScrollArea = forwardRef<
                 'w-full bg-gradient-to-t from-transparent via-white/70 via-20% to-transparent to-80% bottom-0',
                 `h-[50px]`
               )}
-              initial={{ opacity: 0, translateY: 0 }}
+              initial={{ opacity: 0, translateY: 0 + scrollYValue }}
               animate={{
-                translateY: [0, 40],
+                translateY: [0 + scrollYValue, 40 + scrollYValue],
                 opacity: [0, 1, 0],
               }}
               transition={{
