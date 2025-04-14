@@ -25,13 +25,14 @@ const selectTriggerVariants = cva<SelectTriggerSizes>(
     "border-dark-accent/70 data-[placeholder]:text-gray-accent [&_svg:not([class*='text-'])]:text-muted-foreground",
     'focus-visible:border-ring focus-visible:ring-gray-accent/80 aria-invalid:ring-destructive/20 aria-invalid:border-destructive',
     'focus-visible:ring-[1px] disabled:cursor-not-allowed disabled:opacity-50',
-    "*:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    '*:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:text-gray-accent *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0',
   ],
   {
     variants: {
       size: {
-        default: 'h-10 px-3 py-2 text-md gap-2',
-        sm: 'h-9 text-sm px-2 py-1 gap-1',
+        default:
+          "h-10 px-3 py-2 text-md gap-2 [&_svg:not([class*='size-'])]:size-4.5",
+        sm: "h-9 text-sm px-2 py-1 gap-1 [&_svg:not([class*='size-'])]:size-4",
       },
     },
     defaultVariants: {
