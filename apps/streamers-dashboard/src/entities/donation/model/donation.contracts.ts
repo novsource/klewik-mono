@@ -8,6 +8,7 @@ const DonationSchema = z.object({
   message_type: z.enum(['text', 'audio']),
   amount: z.number(),
   currency: z.string(),
+  processingStatus: z.enum(['added', 'empty', 'error', 'confirm']),
 })
 
 export { DonationSchema }
