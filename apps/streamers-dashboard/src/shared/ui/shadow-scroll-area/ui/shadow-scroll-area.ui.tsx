@@ -27,7 +27,7 @@ export type ShadowScrollAreaProps = ComponentProps<'div'> & {
 
 const ShadowScrollArea = forwardRef<
   typeof ScrollAreaViewport,
-  SlotsShadowScrollAreaProps
+  ShadowScrollAreaProps
 >((props, forwardRef) => {
   const {
     style,
@@ -99,6 +99,7 @@ const ShadowScrollArea = forwardRef<
         ...style,
         position: 'relative',
         maskImage: shadowEnabled ? shadowScrollAreaStyle : 'none',
+        overflowY: 'scroll',
       }}
       {...restProps}
     >
