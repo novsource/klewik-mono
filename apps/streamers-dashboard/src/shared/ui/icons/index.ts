@@ -13,6 +13,7 @@ import { default as DonationAlerts } from './DonationAlerts';
 import { default as EyeClosed } from './EyeClosed';
 import { default as EyeOpen } from './EyeOpen';
 import { default as Face } from './Face';
+import { default as Filter } from './Filter';
 import { default as Gamepad } from './Gamepad';
 import { default as Github } from './Github';
 import { default as Hamburger } from './Hamburger';
@@ -47,6 +48,7 @@ import { default as Slots } from './Slots';
 import { default as Sort } from './Sort';
 import { default as SortAlphabetAsc } from './SortAlphabetAsc';
 import { default as SortAlphabetDes } from './SortAlphabetDes';
+import { default as Status } from './Status';
 import { default as Stop } from './Stop';
 import { default as Success } from './Success';
 import { default as Telegram } from './Telegram';
@@ -73,6 +75,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   EyeClosed,
   EyeOpen,
   Face,
+  Filter,
   Gamepad,
   Github,
   Hamburger,
@@ -107,6 +110,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Sort,
   SortAlphabetAsc,
   SortAlphabetDes,
+  Status,
   Stop,
   Success,
   Telegram,
