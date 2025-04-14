@@ -8,15 +8,22 @@ import { Flex } from '~shared/ui/flex'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
+import { cn } from '~shared/utils'
+
 const AuctionDonationsPage = () => {
   const isMediaLargeThenTablet = useMediaQuery(
     `(min-width: ${tailwindScreens.tablet})`
   )
 
   return (
-    <Flex
-      className="mb-4 gap-y-3 mobile:gap-y-5 tablet:max-w-[1100px] landtop:max-w-[1300px] tablet:gap-y-7 tablet:pb-4 tablet:px-2 desktop:max-w-[1800px] desktop-lg:max-w-[2100px] mx-auto w-full h-full"
-      direction="column"
+    <div
+      className={cn([
+        'mx-auto w-full h-full pt-5 mb-4 grid grid-rows-slots-table gap-y-3',
+        'mobile:gap-y-5',
+        'tablet:grid-rows-slots-desktop max-tablet:max-w-[1100px] tablet:gap-y-4 tablet:pl-10',
+        'desktop:max-w-[1750px] desktop-lg:max-w-[2100px]',
+        'landtop:max-w-[1600px]',
+      ])}
     >
       <Flex
         className="gap-x-4 pt-1"
@@ -29,7 +36,7 @@ const AuctionDonationsPage = () => {
       <div className="h-full w-full overflow-scroll">
         <DonationsList />
       </div>
-    </Flex>
+    </div>
   )
 }
 

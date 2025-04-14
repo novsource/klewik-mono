@@ -1,7 +1,6 @@
 import {
-  AuctionCardChip,
-  AuctionSlotCard,
+  SlotsShadowScrollArea,
   VirtualizedSlotsList,
-} from './watch-slots.ui'
+} from './auction-slots-list.ui'
 
-export { VirtualizedSlotsList, AuctionCardChip, AuctionSlotCard }
+export { VirtualizedSlotsList, SlotsShadowScrollArea }

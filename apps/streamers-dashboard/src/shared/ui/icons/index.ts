@@ -1,7 +1,9 @@
 import { default as Bill } from './Bill';
 import { default as Bin } from './Bin';
 import { default as CardSend } from './CardSend';
+import { default as Check } from './Check';
 import { default as Close } from './Close';
+import { default as CloseSquare } from './CloseSquare';
 import { default as Coin } from './Coin';
 import { default as Copy } from './Copy';
 import { default as Crown } from './Crown';
@@ -11,13 +13,16 @@ import { default as DonationAlerts } from './DonationAlerts';
 import { default as EyeClosed } from './EyeClosed';
 import { default as EyeOpen } from './EyeOpen';
 import { default as Face } from './Face';
+import { default as Filter } from './Filter';
 import { default as Gamepad } from './Gamepad';
 import { default as Github } from './Github';
 import { default as Hamburger } from './Hamburger';
 import { default as Home } from './Home';
 import { default as Id } from './Id';
+import { default as Info } from './Info';
 import { default as Integrations } from './Integrations';
 import { default as Key } from './Key';
+import { default as LargeCross } from './LargeCross';
 import { default as LinkArrow } from './LinkArrow';
 import { default as List } from './List';
 import { default as Login } from './Login';
@@ -43,6 +48,7 @@ import { default as Slots } from './Slots';
 import { default as Sort } from './Sort';
 import { default as SortAlphabetAsc } from './SortAlphabetAsc';
 import { default as SortAlphabetDes } from './SortAlphabetDes';
+import { default as Status } from './Status';
 import { default as Stop } from './Stop';
 import { default as Success } from './Success';
 import { default as Telegram } from './Telegram';
@@ -57,7 +63,9 @@ import { default as YoutubeLogo } from './YoutubeLogo';
       Bill,
   Bin,
   CardSend,
+  Check,
   Close,
+  CloseSquare,
   Coin,
   Copy,
   Crown,
@@ -67,13 +75,16 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   EyeClosed,
   EyeOpen,
   Face,
+  Filter,
   Gamepad,
   Github,
   Hamburger,
   Home,
   Id,
+  Info,
   Integrations,
   Key,
+  LargeCross,
   LinkArrow,
   List,
   Login,
@@ -99,6 +110,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Sort,
   SortAlphabetAsc,
   SortAlphabetDes,
+  Status,
   Stop,
   Success,
   Telegram,

@@ -2,15 +2,13 @@ import { useCallback, useLayoutEffect, useState } from 'react'
 
 import { motion } from 'framer-motion'
 
-import {
-  AuctionSlotCard,
-  VirtualizedSlotsList,
-} from '~features/auction-slot/watch-slots/ui'
+import { VirtualizedSlotsList } from '~features/auction-slot/watch-slots/ui'
 
 import { auctionSelectors } from '~entities/auction/store'
 
 import { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+import { AuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -93,9 +91,10 @@ const AuctionSlotsList = ({
       return (
         <motion.div
           key={item.name}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          initial={{ scaleY: 0.25, translateY: 50 }}
+          animate={{ scaleY: 1, translateY: 0 }}
+          exit={{ scaleY: 0, translateY: -50, className: 'absolute -z-2' }}
+          transition={{ ease: 'easeInOut', duration: 0.35 }}
           style={{
             marginTop: index > 0 ? `8px` : '0',
           }}
@@ -112,7 +111,7 @@ const AuctionSlotsList = ({
       data={showedSlots}
       renderCard={renderAuctionCard}
       className={className}
-      shadowScroll
+      shadowEnabled
       {...otherProps}
     />
   )

@@ -13,10 +13,11 @@ import {
   cardTitleVariants,
 } from '../styles/card-variants'
 
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<'div'> & CardStyleProps
->(({ className, size, variant, ...htmlProps }, ref) => {
+export type CardProps = React.ComponentProps<'div'> & CardStyleProps
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>((props, ref) => {
+  const { className, size, variant, ...restProps } = props
+
   const style = React.useMemo(
     () => cn(cardBaseVariants({ size, variant }), className),
     [className, size, variant]
@@ -24,7 +25,7 @@ const Card = React.forwardRef<
 
   return (
     <CardProvider variant={variant ?? 'default'} size={size ?? 'default'}>
-      <div ref={ref} className={style} {...htmlProps} />
+      <div ref={ref} className={style} {...restProps} />
     </CardProvider>
   )
 })

@@ -18,7 +18,7 @@ const SlotsWheelTab = () => {
   return (
     <TabsContent value="lots" className="data-[state=active]:h-full">
       <AuctionSlotsList
-        className={'flex pb-4'}
+        className="flex"
         data={sortedSlots}
         withControls={false}
         disableAnimation

@@ -5,11 +5,11 @@ import NumberFlow from '@number-flow/react'
 import { ResponsiveEditSlotDialogue } from '~widgets/edit-slot-dialogs/responsive-dialog/ui'
 
 import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
-import { AuctionCardChip } from '~features/auction-slot/watch-slots/ui'
 
 import { Auction } from '~entities/auction/model'
 
 import { AuctionSlot } from '~entities/auction-slot/model'
+import { AuctionCardChip } from '~entities/auction-slot/ui/card'
 
 import { Button } from '~shared/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~shared/ui/card'

@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
 import { EditSlotForm } from '~features/auction-slot/edit-slot/ui'
-import { AuctionSlotCard } from '~features/auction-slot/watch-slots/ui'
 
 import { auctionSlotsActions } from '~entities/auction-slot/store'
+import { AuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import { useActionCreators } from '~shared/lib/redux-toolkit'
 

@@ -4,7 +4,7 @@ import { cn } from '~shared/utils'
 
 import { FlexVariantsProps, flexVariants } from '../styles/flex-variants'
 
-type FlexProps = Omit<ComponentProps<'div'>, 'align'> &
+export type FlexProps = Omit<ComponentProps<'div'>, 'align'> &
   FlexVariantsProps & {
     component?: Omit<keyof JSX.IntrinsicElements, 'svg'>
   }
