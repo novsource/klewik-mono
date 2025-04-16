@@ -21,7 +21,7 @@
   --color-dark-foreground: #141315;
   --color-yellow: #cfc56f;
 
-  --color-red: #FF746C;
+  --color-red: #ff746c;
 
   --color-gray: #5d5d5d;
   --color-gray-light: #818181;
@@ -117,9 +117,17 @@
   --border-width-1: 1px;
 
   @keyframes horizontal-shaking {
-    0%, 100% { transform: translateX(0) }
-    50% { transform: translateX(-2px) }
-    25%, 75% { transform: translateX(2px) }
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(-2px);
+    }
+    25%,
+    75% {
+      transform: translateX(2px);
+    }
   }
 
   @keyframes fadeChange {
@@ -141,21 +149,21 @@
   }
 
   @keyframes slideDown {
-	from {
-		height: 0;
-	}
-	to {
-		height: var(--radix-accordion-content-height);
-	}
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
   }
 
   @keyframes slideUp {
-	from {
-		height: var(--radix-accordion-content-height);
-	}
-	to {
-		height: 0;
-	}
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
   }
 }
 
@@ -330,7 +338,7 @@
   }
 
   /* Firefox */
-  input[type=number] {
+  input[type='number'] {
     -moz-appearance: textfield;
   }
 
@@ -359,11 +367,10 @@
     background: linear-gradient(
       to right,
       #494842 0%,
-      #5E5E5E 33%,
+      #5e5e5e 33%,
       #575757 67%,
-      #5B5B5B 100%
+      #5b5b5b 100%
     );
-    background-op
   }
 
   @container slider (300px <= height <= 768px) {

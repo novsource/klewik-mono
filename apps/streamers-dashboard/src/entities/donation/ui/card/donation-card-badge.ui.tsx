@@ -32,7 +32,11 @@ const DonationCardBadge = memo((props: DonationCardBadgeProps) => {
   }[status]
 
   return (
-    <Badge variant={donationStatusToBadgeVariants} {...badgeProps}>
+    <Badge
+      className="text-nowrap"
+      variant={donationStatusToBadgeVariants}
+      {...badgeProps}
+    >
       {badgeText}
     </Badge>
   )

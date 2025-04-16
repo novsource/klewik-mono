@@ -37,9 +37,15 @@ const DonationCard = (props: DonationCardProps) => {
 
     if (message && message_type === 'audio') {
       return (
-        <Flex>
-          <Icons.Stop />
-          <Typography className="text-gray-light" tag="span">
+        <Flex
+          className="w-fit bg-dark-accent/70 px-2 py-1.5 rounded-md gap-x-1.5"
+          align="center"
+        >
+          <Icons.Sound className="text-gray-light" />
+          <Typography
+            className="text-gray-light text-sm font-medium font-golos-f"
+            tag="span"
+          >
             Аудио-формат сообщений не поддерживается
           </Typography>
         </Flex>
