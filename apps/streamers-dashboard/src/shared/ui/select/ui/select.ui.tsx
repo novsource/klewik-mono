@@ -21,12 +21,10 @@ import {
   selectViewportVariants,
 } from '../styles'
 
-function Select({
-  size,
-  position,
-  ...rootProps
-}: React.ComponentProps<typeof SelectPrimitive.Root> &
-  Partial<SelectContextState>) {
+export type SelectProps = React.ComponentProps<typeof SelectPrimitive.Root> &
+  Partial<SelectContextState>
+
+function Select({ size, position, ...rootProps }: SelectProps) {
   return (
     <SelectProvider size={size} position={position}>
       <SelectPrimitive.Root data-slot="select" {...rootProps} />
