@@ -48,6 +48,7 @@ import { default as Slots } from './Slots';
 import { default as Sort } from './Sort';
 import { default as SortAlphabetAsc } from './SortAlphabetAsc';
 import { default as SortAlphabetDes } from './SortAlphabetDes';
+import { default as Sound } from './Sound';
 import { default as Status } from './Status';
 import { default as Stop } from './Stop';
 import { default as Success } from './Success';
@@ -110,6 +111,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Sort,
   SortAlphabetAsc,
   SortAlphabetDes,
+  Sound,
   Status,
   Stop,
   Success,
