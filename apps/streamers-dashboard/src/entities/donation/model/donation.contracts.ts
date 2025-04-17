@@ -5,7 +5,7 @@ import { UnixTimestampInMsSchema } from '~shared/lib/zod'
 const DonationSchema = z.object({
   id: z.number(),
   username: z.string(),
-  provider: z.enum(['donation-alerts', 'donate-pay']),
+  provider: z.enum(['donationAlerts', 'donatePay']),
   message: z.string().max(210).nullable(),
   message_type: z.enum(['text', 'audio']),
   amount: z.number(),

@@ -1,3 +1,3 @@
-const integrationsPlatforms = ['donation-alerts', 'donate-pay'] as const
+const integrationsPlatforms = ['donationAlerts', 'donatePay'] as const
 
 export { integrationsPlatforms }
