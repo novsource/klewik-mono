@@ -1,6 +1,10 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
-import { DonatePayDonation, Donation, DonationAlertsDonation } from '../model'
+import {
+  DonatePayDonation,
+  DonationAlertsDonation,
+  ProcessedDonation,
+} from '../model'
 
 type DonationsSliceState = {
   donations: {
@@ -20,7 +24,7 @@ const slice = createSlice({
   name: 'donations',
   initialState,
   reducers: {
-    addDonation(state, action: PayloadAction<Donation>) {
+    addDonation(state, action: PayloadAction<ProcessedDonation>) {
       const payload = action.payload
 
       switch (payload.provider) {
@@ -47,7 +51,7 @@ const slice = createSlice({
         Object.keys(state.donations) as Array<
           keyof DonationsSliceState['donations']
         >
-      ).reduce<Donation[]>((acc, providerName) => {
+      ).reduce<ProcessedDonation[]>((acc, providerName) => {
         acc = [...acc, ...state.donations[providerName]]
         return acc
       }, [])

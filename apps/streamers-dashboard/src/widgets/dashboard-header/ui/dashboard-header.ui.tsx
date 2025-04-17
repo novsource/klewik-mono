@@ -25,6 +25,8 @@ import { tailwindScreens } from '~shared/constants/tailwindcss'
 
 import { cn } from '~shared/utils'
 
+import { DonationsStats } from './donations-stats'
+
 export const DashboardHeader = memo(({ children }: { children: ReactNode }) => {
   const isLargeThenTablet = useMediaQuery(
     `(min-width:${tailwindScreens.tablet})`
@@ -38,6 +40,7 @@ export const DashboardHeader = memo(({ children }: { children: ReactNode }) => {
             <Flex className="gap-x-1.5" align="center" justify="center">
               <SlotsStatisticCard />
               <SlotsPointsSumStatisticCard />
+              <DonationsStats />
               <IntegrationsStatisticCard />
             </Flex>
             <div className="h-2/3 w-0.5 bg-dark-accent/80" />

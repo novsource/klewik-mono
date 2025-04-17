@@ -1,15 +1,22 @@
 import { z } from 'zod'
 
-import { DonationSchema } from './donation.contracts'
+import { DonationSchema, ProcessedDonationSchema } from './donation.contracts'
 
 type Donation = z.infer<typeof DonationSchema>
 
-type DonationAlertsDonation = Omit<Donation, 'provider'> & {
+type ProcessedDonation = z.infer<typeof ProcessedDonationSchema>
+
+type DonationAlertsDonation = Omit<ProcessedDonation, 'provider'> & {
   provider: 'donation-alerts'
 }
 
-type DonatePayDonation = Omit<Donation, 'provider'> & {
+type DonatePayDonation = Omit<ProcessedDonation, 'provider'> & {
   provider: 'donate-pay'
 }
 
-export type { Donation, DonationAlertsDonation, DonatePayDonation }
+export type {
+  Donation,
+  DonationAlertsDonation,
+  DonatePayDonation,
+  ProcessedDonation,
+}

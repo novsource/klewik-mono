@@ -23,7 +23,7 @@ const DonationCardChip = (props: DonationCardChipProps) => {
   return (
     <Flex
       className={cn(
-        'px-1.5 py-1 bg-gray/30 gap-x-0.5 rounded-md',
+        'px-2 py-1 bg-dark-accent gap-x-1 rounded-md',
         classNames?.base
       )}
       direction="row"
@@ -32,7 +32,7 @@ const DonationCardChip = (props: DonationCardChipProps) => {
       {startContent}
       <Typography
         className={cn(
-          'font-golos-f text-sm font-semibold text-gray-accent',
+          'font-golos-f text-md font-semibold text-gray-accent',
           classNames?.text
         )}
         tag="span"

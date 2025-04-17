@@ -29,9 +29,12 @@ import { default as Login } from './Login';
 import { default as Logo } from './Logo';
 import { default as MagicStick } from './MagicStick';
 import { default as Magnifier } from './Magnifier';
+import { default as Message } from './Message';
 import { default as Minus } from './Minus';
 import { default as Money } from './Money';
 import { default as MoneyBag } from './MoneyBag';
+import { default as MoneyHand } from './MoneyHand';
+import { default as OpenArrow } from './OpenArrow';
 import { default as OpenBets } from './OpenBets';
 import { default as Palette } from './Palette';
 import { default as Pause } from './Pause';
@@ -48,6 +51,8 @@ import { default as Slots } from './Slots';
 import { default as Sort } from './Sort';
 import { default as SortAlphabetAsc } from './SortAlphabetAsc';
 import { default as SortAlphabetDes } from './SortAlphabetDes';
+import { default as Sound } from './Sound';
+import { default as Source } from './Source';
 import { default as Status } from './Status';
 import { default as Stop } from './Stop';
 import { default as Success } from './Success';
@@ -55,6 +60,7 @@ import { default as Telegram } from './Telegram';
 import { default as Timer } from './Timer';
 import { default as Tuning } from './Tuning';
 import { default as TwitchLogo } from './TwitchLogo';
+import { default as User } from './User';
 import { default as Warning } from './Warning';
 import { default as Wheel } from './Wheel';
 import { default as YoutubeLogo } from './YoutubeLogo';
@@ -91,9 +97,12 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Logo,
   MagicStick,
   Magnifier,
+  Message,
   Minus,
   Money,
   MoneyBag,
+  MoneyHand,
+  OpenArrow,
   OpenBets,
   Palette,
   Pause,
@@ -110,6 +119,8 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Sort,
   SortAlphabetAsc,
   SortAlphabetDes,
+  Sound,
+  Source,
   Status,
   Stop,
   Success,
@@ -117,6 +128,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Timer,
   Tuning,
   TwitchLogo,
+  User,
   Warning,
   Wheel,
   YoutubeLogo
