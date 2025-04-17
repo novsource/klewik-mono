@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Donation } from '~entities/donation/model'
+import { ProcessedDonation } from '~entities/donation/model'
 
 import { Icons } from '~shared/ui/icons'
 import {
@@ -14,7 +14,7 @@ import {
 } from '~shared/ui/select'
 import { Typography } from '~shared/ui/typograghy'
 
-type DonationProcessStatus = Donation['processingStatus'] | 'default'
+type DonationProcessStatus = ProcessedDonation['processingStatus'] | 'default'
 
 const donationProccessStatus: Array<DonationProcessStatus> = [
   'default',
@@ -58,9 +58,7 @@ const DonationsProcessStatusFilter = (
       <SelectTrigger className="min-w-[80px]">
         <Icons.Status />
 
-        {filterValue === 'default' ? (
-          ''
-        ) : (
+        {filterValue !== 'default' && (
           <Typography className="font-semibold" tag="span">
             Статус:{' '}
           </Typography>

@@ -1,9 +1,15 @@
-import { useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 
-import { Donation } from '~entities/donation/model'
+import { ProcessedDonation } from '~entities/donation/model'
 
 import { Badge } from '~shared/ui/badge'
-import { Card, CardContent, CardFooter, CardHeader } from '~shared/ui/card'
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardProps,
+} from '~shared/ui/card'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
@@ -14,28 +20,26 @@ import { DonationCardBadge } from './donation-card-badge.ui'
 import { DonationCardChip } from './donation-card-chip.ui'
 import { DonationCardMessage } from './donation-card-message.ui'
 
-type DonationCardProps = Donation
+export type DonationCardProps = CardProps & {
+  data: ProcessedDonation
+  renderHeader?: (donation: ProcessedDonation) => ReactNode | undefined
+  renderContent?: (donation: ProcessedDonation) => ReactNode | undefined
+  renderFooter?: (donation: ProcessedDonation) => ReactNode | undefined
+}
 
 const DonationCard = (props: DonationCardProps) => {
-  const {
-    amount,
-    message,
-    username,
-    provider,
-    currency,
-    message_type,
-    processingStatus,
-  } = props
+  const { data, renderHeader, renderContent, renderFooter, ...cardProps } =
+    props
 
   const providerName = {
     'donation-alerts': 'DonationAlerts',
     'donate-pay': 'DonatePay',
-  }[provider]
+  }[data.provider]
 
   const cardMessage = useMemo(() => {
-    if (!message) return undefined
+    if (!data.message) return undefined
 
-    if (message && message_type === 'audio') {
+    if (data.message && data.message_type === 'audio') {
       return (
         <Flex
           className="w-fit bg-dark-accent/70 px-2 py-1.5 rounded-md gap-x-1.5"
@@ -52,25 +56,34 @@ const DonationCard = (props: DonationCardProps) => {
       )
     }
 
-    return <DonationCardMessage value={message} />
-  }, [message, message_type])
+    return <DonationCardMessage value={data.message} />
+  }, [data.message, data.message_type])
 
-  return (
-    <Card>
-      <CardHeader className="flex gap-x-2">
+  const cardHeader = useMemo(() => {
+    return renderHeader ? (
+      renderHeader(data)
+    ) : (
+      <>
         <Badge className={'bg-orange/20 text-orange'}>
           <Flex className="gap-x-1" align={'center'}>
             <Icons.DonationAlerts width={14} height={14} />
             {providerName}
           </Flex>
         </Badge>
-        <DonationCardBadge status={processingStatus} />
-      </CardHeader>
-      <CardContent className="w-full flex flex-col py-2">
+        <DonationCardBadge status={data.processingStatus} />
+      </>
+    )
+  }, [data.processingStatus, providerName, renderHeader])
+
+  const cardContent = useMemo(() => {
+    return renderContent ? (
+      renderContent(data)
+    ) : (
+      <>
         <Flex className="gap-y-2" direction="column">
           <Flex className="gap-x-1.5" direction="row" align="center">
             <Typography tag="span" className="text-title font-bold">
-              {username}
+              {data.username}
             </Typography>
             <Typography tag="span" className="text-md font-semibold">
               отправил
@@ -79,14 +92,21 @@ const DonationCard = (props: DonationCardProps) => {
               tag="span"
               className="font-semibold text-green text-[17px] font-golos-f"
             >
-              {formatNumberToIntlString(amount)}
-              {` ${currency.toUpperCase()}`}
+              {formatNumberToIntlString(data.amount)}
+              {` ${data.currency.toUpperCase()}`}
             </Typography>
           </Flex>
         </Flex>
         {cardMessage}
-      </CardContent>
-      <CardFooter className="flex flex-row gap-x-1 mt-2 items-end justify-between">
+      </>
+    )
+  }, [renderContent, data.amount, data.currency, data.username, cardMessage])
+
+  const cardFooter = useMemo(() => {
+    return renderFooter ? (
+      renderFooter(data)
+    ) : (
+      <>
         <Flex className="gap-x-2">
           <DonationCardChip
             startContent={<Icons.Coin className="text-gray-accent" size="sm" />}
@@ -95,12 +115,27 @@ const DonationCard = (props: DonationCardProps) => {
               text: 'text-gray-accent font-medium',
             }}
           >
-            {formatNumberToIntlString(Math.floor(amount))}
+            {formatNumberToIntlString(Math.floor(data.amount))}
           </DonationCardChip>
         </Flex>
         <Typography className="text-gray" tag="span">
-          {new Intl.RelativeTimeFormat().format(-5, 'seconds')}
+          {new Intl.RelativeTimeFormat().format(
+            data.createdAt ?? -5,
+            'seconds'
+          )}
         </Typography>
+      </>
+    )
+  }, [renderFooter, data.amount, data.createdAt])
+
+  return (
+    <Card {...cardProps}>
+      <CardHeader className="flex gap-x-2">{cardHeader}</CardHeader>
+      <CardContent className="w-full flex flex-col py-2">
+        {cardContent}
+      </CardContent>
+      <CardFooter className="flex flex-row gap-x-1 mt-2 items-end justify-between">
+        {cardFooter}
       </CardFooter>
     </Card>
   )

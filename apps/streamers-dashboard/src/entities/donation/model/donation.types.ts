@@ -6,11 +6,11 @@ type Donation = z.infer<typeof DonationSchema>
 
 type ProcessedDonation = z.infer<typeof ProcessedDonationSchema>
 
-type DonationAlertsDonation = Omit<Donation, 'provider'> & {
+type DonationAlertsDonation = Omit<ProcessedDonation, 'provider'> & {
   provider: 'donation-alerts'
 }
 
-type DonatePayDonation = Omit<Donation, 'provider'> & {
+type DonatePayDonation = Omit<ProcessedDonation, 'provider'> & {
   provider: 'donate-pay'
 }
 
