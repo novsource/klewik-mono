@@ -16,6 +16,6 @@ const SvgSound = (props: IconsProps) => {
     width: props.size ? sizes[props.size] : props.width ?? sizes['default'],
     height: props.size ? sizes[props.size] : props.height ?? sizes['default']
   };
-  return <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 25 25" {...props}><path fill="currentColor" fillRule="evenodd" d="M12.409 4.139a.75.75 0 0 1 .75.75v16a.75.75 0 0 1-1.5 0v-16a.75.75 0 0 1 .75-.75m-4 3a.75.75 0 0 1 .75.75v10a.75.75 0 0 1-1.5 0v-10a.75.75 0 0 1 .75-.75m8 0a.75.75 0 0 1 .75.75v10a.75.75 0 0 1-1.5 0v-10a.75.75 0 0 1 .75-.75m-12 4a.75.75 0 0 1 .75.75v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 1 .75-.75m16 0a.75.75 0 0 1 .75.75v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 1 .75-.75" clipRule="evenodd" /></svg>;
+  return <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 25 25" {...props}><path fill="currentColor" fillRule="evenodd" d="M12.409 4.139a.75.75 0 0 1 .749.749l-.001 15.999a.75.75 0 0 1-1.501-.001l-.001-16.001a.75.75 0 0 1 .749-.751zM8.408 7.138a.75.75 0 0 1 .749.749v9.999a.75.75 0 0 1-1.501-.001V7.888a.75.75 0 0 1 .749-.751zm7.999-.001a.75.75 0 0 1 .749.749v9.999a.75.75 0 0 1-1.501-.001V7.888a.75.75 0 0 1 .749-.751zM4.408 11.138a.75.75 0 0 1 .749.749l-.001 1.999a.75.75 0 0 1-1.501-.001l-.001-2.001a.75.75 0 0 1 .749-.751zm15.999-.001a.75.75 0 0 1 .749.749v1.999a.75.75 0 0 1-1.501-.001v-2.001a.75.75 0 0 1 .749-.751z" clipRule="evenodd" /></svg>;
 };
 export default SvgSound;

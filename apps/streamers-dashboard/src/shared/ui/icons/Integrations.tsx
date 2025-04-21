@@ -16,6 +16,6 @@ const SvgIntegrations = (props: IconsProps) => {
     width: props.size ? sizes[props.size] : props.width ?? sizes['default'],
     height: props.size ? sizes[props.size] : props.height ?? sizes['default']
   };
-  return <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 24 25" {...props}><path fill="currentColor" d="M21.537 12.328a2.532 2.532 0 0 0-4.963-.71h-4.171v-5.05h4.17a2.533 2.533 0 1 0-.038-1.266h-4.132c-.428-.07-1.282.084-1.282 1.266v5.05H7.426a2.533 2.533 0 1 0 .038 1.273h3.657v5.283c0 1.132.854 1.319 1.282 1.271h4.154a2.533 2.533 0 1 0-.007-1.27h-4.147V12.89h4.133a2.533 2.533 0 0 0 5.001-.563" /></svg>;
+  return <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 24 25" {...props}><path fill="currentColor" d="M21.537 12.328a2.532 2.532 0 0 0-4.963-.71h-4.171v-5.05h4.17a2.533 2.533 0 1 0-.038-1.266h-4.132c-.427-.07-1.282.084-1.282 1.266l.001 5.05H7.427a2.533 2.533 0 1 0 .038 1.273h3.657l.001 5.284c.001 1.132.856 1.32 1.283 1.271h4.152a2.533 2.533 0 1 0-.008-1.27h-4.147V12.89h4.133a2.533 2.533 0 0 0 5.001-.562" /></svg>;
 };
 export default SvgIntegrations;
