@@ -36,8 +36,8 @@ const ConnectedIntegrationsStatisticCard = memo(() => {
   )
 
   const integrationsLogo: Record<IntegrationsPlatforms, ReactNode> = {
-    'donation-alerts': <Icons.DonationAlerts width={18} height={24} />,
-    'donate-pay': <Icons.DonatePay />,
+    donationAlerts: <Icons.DonationAlerts width={18} height={24} />,
+    donatePay: <Icons.DonatePay />,
   }
 
   const isAllIntegrationsNotConnected = useMemo(() => {

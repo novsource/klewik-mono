@@ -36,10 +36,10 @@ const integrationsSlice = createSlice({
   },
   selectors: {
     getDonationAlertsStatus(state) {
-      return state['donation-alerts']
+      return state['donationAlerts']
     },
     getDonatePayStatus(state) {
-      return state['donate-pay']
+      return state['donatePay']
     },
     getAllIntegrationsStatuses(state) {
       return state
