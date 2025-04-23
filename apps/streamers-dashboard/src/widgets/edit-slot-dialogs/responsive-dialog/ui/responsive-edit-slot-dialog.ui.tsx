@@ -149,9 +149,9 @@ const EditSlotDialogue = ({
 
 const EditSlotDialogsIcon = () => {
   return (
-    <div className="w-fit h-fit pencil-icon-gradient p-0.5 rounded-small outline-2 outline-[#E9E4F0]/10">
+    <div className="w-fit h-fit pencil-icon-gradient p-0.5 rounded-small outline-2 outline-[#F8C1AE]/10">
       <Flex
-        className="p-1.75 border-[0.5px] border-[#E9E4F0]/30 rounded-small"
+        className="p-1.75 border-[0.5px] border-[#F8C1AE]/30 rounded-small"
         align="center"
         justify="center"
       >
