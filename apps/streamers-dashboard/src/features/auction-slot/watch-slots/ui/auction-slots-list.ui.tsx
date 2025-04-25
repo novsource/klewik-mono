@@ -65,22 +65,29 @@ const VirtualizedSlotsList = (props: AuctionSlotsListProps) => {
   }
 
   return (
-    <AutoSizer>
-      {({ width, height }) => {
-        return (
-          <ShadowScrollArea
-            className={cn(className)}
-            shadowSize={shadowSize}
-            shadowEnabled={shadowEnabled}
-            style={{ width, height, overflowAnchor: 'none', overflowY: 'auto' }}
-          >
-            <VirtualList count={slots.length}>
-              {renderCard ? slots.map(renderCard) : defaultSlotsCardList}
-            </VirtualList>
-          </ShadowScrollArea>
-        )
-      }}
-    </AutoSizer>
+    <Flex className="w-full h-full">
+      <AutoSizer>
+        {({ width, height }) => {
+          return (
+            <ShadowScrollArea
+              className={cn(className)}
+              shadowSize={shadowSize}
+              shadowEnabled={shadowEnabled}
+              style={{
+                width,
+                height,
+                overflowAnchor: 'none',
+                overflowY: 'auto',
+              }}
+            >
+              <VirtualList count={slots.length} overscan={5}>
+                {renderCard ? slots.map(renderCard) : defaultSlotsCardList}
+              </VirtualList>
+            </ShadowScrollArea>
+          )
+        }}
+      </AutoSizer>
+    </Flex>
   )
 }
 
