@@ -170,7 +170,7 @@ const DonationAlertsIntegrationButton = () => {
 const DonationAlertsIntegrationCard = memo(() => {
   return (
     <IntegrationCard
-      integrationSystem="donation-alerts"
+      integrationSystem="donationAlerts"
       description="Использование пожертвований для создания слотов"
     />
   )

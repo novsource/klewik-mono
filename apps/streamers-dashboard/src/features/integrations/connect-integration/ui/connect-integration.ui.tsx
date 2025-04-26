@@ -21,18 +21,18 @@ const IntegrationCard = (props: IntegrationCardProps) => {
   const { integrationSystem, description } = props
 
   const integrationIcon = {
-    'donation-alerts': <Icons.DonationAlerts width={24} height={28} />,
-    'donate-pay': <Icons.DonatePay width={32} height={32} />,
+    donationAlerts: <Icons.DonationAlerts width={24} height={28} />,
+    donatePay: <Icons.DonatePay width={32} height={32} />,
   }[integrationSystem]
 
   const integrationButton = {
-    'donation-alerts': <DonationAlertsIntegrationButton />,
-    'donate-pay': <DonatePayIntegrationButton />,
+    donationAlerts: <DonationAlertsIntegrationButton />,
+    donatePay: <DonatePayIntegrationButton />,
   }[integrationSystem]
 
   const integrationPlatformName = {
-    'donation-alerts': 'Donation Alerts',
-    'donate-pay': 'Donate Pay',
+    donationAlerts: 'Donation Alerts',
+    donatePay: 'Donate Pay',
   }[integrationSystem]
 
   return (
@@ -56,13 +56,13 @@ const IntegrationCard = (props: IntegrationCardProps) => {
 }
 
 type RedirectDisplayProps = {
-  provider: 'donalerts' | 'donatepay'
+  provider: IntegrationsPlatforms
 }
 
 const RedirectDisplay = memo((props: RedirectDisplayProps) => {
   const redirectDisplay = {
-    donalerts: <DonationAlertsRedirectDisplay />,
-    donatepay: <></>,
+    donationAlerts: <DonationAlertsRedirectDisplay />,
+    donatePay: <></>,
   }[props.provider]
 
   return redirectDisplay

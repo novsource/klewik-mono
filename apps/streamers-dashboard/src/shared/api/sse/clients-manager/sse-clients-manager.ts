@@ -2,19 +2,17 @@ import { SpecializedSSEClient } from '~shared/lib/fetch-event-source'
 
 import { BROADCAST_CHANNEL_NAMES } from '~shared/constants/broadcast-channels'
 
-import { AuctionSlotDTOSchema } from '../clients/auction-slots/channel.contracts'
 import {
   AuctionEventSourceMessage,
+  AuctionSlotDTOSchema,
   AuctionSlotsEventsCallbacks,
-} from '../clients/auction-slots/channel.types'
+} from '../clients/auction-slots'
 import {
   DonationDTOSchema,
-  DonationsEventSourceMessageSchema,
-} from '../clients/donations/channel.contracts'
-import {
   DonationsEventSourceMessage,
+  DonationsEventSourceMessageSchema,
   DonationsEventsCallbacks,
-} from '../clients/donations/channel.types'
+} from '../clients/donations'
 import {
   SSEApiEventSourceMessage,
   SSEClientsManagerBroadcastChannel,
@@ -36,7 +34,7 @@ class SSEClientsManager {
   public donations = new SpecializedSSEClient<
     DonationsEventSourceMessage,
     DonationsEventsCallbacks
-  >(`${this._auctionId}/donations-events`, BROADCAST_CHANNEL_NAMES.DONATIONS, {
+  >(BROADCAST_CHANNEL_NAMES.DONATIONS, {
     messageSchema: DonationsEventSourceMessageSchema,
     validationEventMessage: { 'donations/add': DonationDTOSchema },
   })
@@ -44,7 +42,7 @@ class SSEClientsManager {
   public auctionSlots = new SpecializedSSEClient<
     AuctionEventSourceMessage,
     AuctionSlotsEventsCallbacks
-  >(`${this._auctionId}/slots-events`, BROADCAST_CHANNEL_NAMES.AUCTION_SLOTS, {
+  >(BROADCAST_CHANNEL_NAMES.AUCTION_SLOTS, {
     messageSchema: DonationsEventSourceMessageSchema,
     validationEventMessage: {
       'auction-slots/add': AuctionSlotDTOSchema,
@@ -177,12 +175,12 @@ class SSEClientsManager {
       this.auctionSlots.onSSEEvent('onopen', onOpenEventHandler('auctionSlots'))
       this.donations.onSSEEvent('onopen', onOpenEventHandler('donations'))
 
-      this.auctionSlots.connectToServer({
+      this.auctionSlots.connectToServer(`${this._auctionId}/slots-events`, {
         ...options,
         lastMessageId: options?.slotsLastMessageId,
       })
 
-      this.donations.connectToServer({
+      this.donations.connectToServer(`${this._auctionId}/donations-events`, {
         ...options,
         lastMessageId: options?.donationsLastMessageId,
       })
@@ -200,4 +198,4 @@ class SSEClientsManager {
   }
 }
 
-export { SSEClientsManager as SSEApiClient }
+export { SSEClientsManager }

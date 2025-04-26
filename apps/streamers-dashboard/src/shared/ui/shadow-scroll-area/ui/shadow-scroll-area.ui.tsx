@@ -1,5 +1,6 @@
 import {
   ComponentProps,
+  ComponentPropsWithoutRef,
   forwardRef,
   useLayoutEffect,
   useMemo,
@@ -20,7 +21,7 @@ import { useDebouncedCallback } from '~shared/hooks/use-debounced-callback'
 
 import { cn } from '~shared/utils'
 
-export type ShadowScrollAreaProps = ComponentProps<'div'> & {
+export type ShadowScrollAreaProps = ComponentPropsWithoutRef<'div'> & {
   shadowEnabled?: boolean
   shadowSize?: number
 }
@@ -43,6 +44,7 @@ const ShadowScrollArea = forwardRef<
   const [scrollYValue, setScrollYValue] = useState(0)
 
   const scrollElementRef = useRef<HTMLDivElement>(null)
+  const scrollableAreaWrapperRef = useRef<HTMLDivElement>(null)
 
   const { scrollYProgress: motionScrollYProgress, scrollY } = useScroll({
     container: scrollElementRef,
@@ -54,10 +56,17 @@ const ShadowScrollArea = forwardRef<
   )
 
   useLayoutEffect(() => {
-    if (!scrollElementRef.current) return
+    if (!scrollElementRef.current || !scrollableAreaWrapperRef.current) return
+
+    const element = scrollElementRef.current
+    const areaWrapper = scrollableAreaWrapperRef.current
+
+    if (areaWrapper.clientHeight <= element.clientHeight) {
+      setIsShadowAnimated(false)
+    }
 
     debouncedShadowAnimation()
-  }, [scrollElementRef])
+  }, [scrollElementRef, scrollableAreaWrapperRef.current])
 
   useLayoutEffect(() => {
     if (!forwardRef) return
@@ -108,8 +117,7 @@ const ShadowScrollArea = forwardRef<
           <>
             <motion.div
               className={cn(
-                'w-full bg-gradient-to-b from-transparent via-white/70 via-20% to-transparent to-80%',
-                `h-[50px]`
+                'w-full bg-gradient-to-b from-transparent via-white/70 via-20% to-transparent to-80%'
               )}
               initial={{ opacity: 0, translateY: 0 + scrollYValue }}
               animate={{
@@ -124,14 +132,14 @@ const ShadowScrollArea = forwardRef<
               }}
               style={{
                 display: scrollYProgress !== 0 ? 'inline-block' : 'none',
-                zIndex: 2,
                 position: 'absolute',
+                zIndex: 2,
+                height: shadowSize,
               }}
             />
             <motion.div
               className={cn(
-                'w-full bg-gradient-to-t from-transparent via-white/70 via-20% to-transparent to-80% bottom-0',
-                `h-[50px]`
+                'w-full bg-gradient-to-t from-transparent via-white/70 via-20% to-transparent to-80% bottom-0'
               )}
               initial={{ opacity: 0, translateY: 0 + scrollYValue }}
               animate={{
@@ -146,13 +154,17 @@ const ShadowScrollArea = forwardRef<
               }}
               style={{
                 display: scrollYProgress !== 1 ? 'inline-block' : 'none',
-                zIndex: 2,
                 position: 'absolute',
+                zIndex: 2,
+                height: shadowSize,
               }}
             />
           </>
         )}
       </AnimatePresence>
+      {/* <div ref={scrollableAreaWrapperRef} className="w-full h-fit">
+        {children}
+      </div> */}
       {children}
     </div>
   )

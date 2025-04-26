@@ -1,3 +1,3 @@
-import { SSEApiClient } from './sse-api-client'
+import { SSEClientsManager } from './sse-clients-manager'
 
-export { SSEApiClient }
+export { SSEClientsManager }

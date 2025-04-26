@@ -365,11 +365,9 @@
 
   .pencil-icon-gradient {
     background: linear-gradient(
-      to right,
-      #494842 0%,
-      #5e5e5e 33%,
-      #575757 67%,
-      #5b5b5b 100%
+      to left,
+      rgba(255, 249, 168, 0.3),
+      rgba(249, 139, 133, 0.3)
     );
   }
 

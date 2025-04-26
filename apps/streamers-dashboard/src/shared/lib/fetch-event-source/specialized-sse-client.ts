@@ -17,15 +17,12 @@ class SpecializedSSEClient<
 > extends BaseSSEClient {
   private readonly _sseEventsEmitter = new SSEEmiter()
   private readonly _messageSchema: ZodSchema
-
-  public readonly endpoint: string
   public readonly broadcastChannel: CommunicableSSEChannel<
     SourceMessage,
     EventsMap
   >
 
   constructor(
-    endpoint: string,
     channelName: string,
     channelOptions: CommunicableSSEChannelOptions<EventsMap>
   ) {
@@ -33,7 +30,6 @@ class SpecializedSSEClient<
 
     this._messageSchema = channelOptions.messageSchema
 
-    this.endpoint = endpoint
     this.broadcastChannel = new CommunicableSSEChannel<
       SourceMessage,
       EventsMap
@@ -55,6 +51,7 @@ class SpecializedSSEClient<
   }
 
   async connectToServer(
+    url: string,
     options?: SSEClientConnectOptions & { lastMessageId?: number }
   ): Promise<void> {
     const listeners: SSEClientListeners = {
@@ -91,7 +88,7 @@ class SpecializedSSEClient<
       onclose: () => this._sseEventsEmitter.notify('onclose'),
     }
 
-    return this.connect(`${this.endpoint}`, listeners, {
+    return this.connect(url, listeners, {
       retry: { counts: 5, delay: 1000 },
       ...options,
     }).catch((err) => {

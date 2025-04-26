@@ -1,6 +1,3 @@
-import {
-  SlotsShadowScrollArea,
-  VirtualizedSlotsList,
-} from './auction-slots-list.ui'
+import { VirtualizedSlotsList } from './auction-slots-list.ui'
 
-export { VirtualizedSlotsList, SlotsShadowScrollArea }
+export { VirtualizedSlotsList }

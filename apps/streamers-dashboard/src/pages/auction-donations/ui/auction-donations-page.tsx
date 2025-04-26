@@ -1,17 +1,27 @@
 import { useState } from 'react'
 
+import { IntegrationBadge } from '~entities/integrations/ui/badge'
+
+import { ProcessDonationSheet } from '~widgets/process-donation-dialogs/ui'
 import { SearchInput } from '~widgets/search-input/ui'
 
 import { DonationsList } from '~features/donations/watch-donations/ui'
 
-import { Donation } from '~entities/donation/model'
+import { ProcessedDonation } from '~entities/donation/model'
 import { donationsSelectors } from '~entities/donation/store'
+import {
+  DonationCard,
+  DonationCardBadge,
+  DonationCardProps,
+} from '~entities/donation/ui/card'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
+import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
+import { Icons } from '~shared/ui/icons'
 import { ShadowScrollArea } from '~shared/ui/shadow-scroll-area'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
@@ -21,35 +31,19 @@ import { cn } from '~shared/utils'
 import { useFiltredDonations } from '../lib'
 import { DonationsFilterSelect } from './donations-filter'
 
-type DonationProcessStatus = Donation['processingStatus'] | 'default'
-
-const mockedDonations = Array<Donation | null>(30)
-  .fill(null)
-  .map(
-    (_, index) =>
-      ({
-        amount: Math.random() * 50000,
-        currency: 'RUB',
-        id: index,
-        message: 'Test',
-        message_type: 'text',
-        processingStatus: 'added',
-        provider: 'donation-alerts',
-        username: 'Barbos',
-      }) satisfies Donation
-  )
+type DonationProcessStatus = ProcessedDonation['processingStatus'] | 'default'
 
 const AuctionDonationsPage = () => {
+  const donations = useStoreSelector(donationsSelectors.getAllDonations)
+
   const isMediaLargeThenTablet = useMediaQuery(
     `(min-width: ${tailwindScreens.tablet})`
   )
 
-  const donations = useStoreSelector(donationsSelectors.getAllDonations)
-
   const [donationsFilterValue, setDonationsFilterValue] =
     useState<DonationProcessStatus>('default')
 
-  const filtredDonations = useFiltredDonations(mockedDonations, {
+  const filtredDonations = useFiltredDonations(donations, {
     status: donationsFilterValue,
   })
 
@@ -82,11 +76,50 @@ const AuctionDonationsPage = () => {
           }
         />
       </Flex>
-      <ShadowScrollArea className="h-full pb-4">
-        <DonationsList data={filtredDonations} />
-      </ShadowScrollArea>
+      <DonationsList
+        className="pb-4"
+        data={filtredDonations}
+        renderDonation={(donation, index) => (
+          <DonationCardWithControls
+            data={donation}
+            style={{
+              marginTop: index !== 0 ? '8px' : '0',
+            }}
+          />
+        )}
+      />
     </div>
   )
 }
 
 export { AuctionDonationsPage }
+
+const DonationCardWithControls = (props: DonationCardProps) => {
+  return (
+    <DonationCard
+      {...props}
+      renderHeader={(donation) => (
+        <Flex className="w-full h-6" justify="between">
+          <Flex className="gap-x-1.5">
+            <IntegrationBadge integration={donation.provider} />
+            <DonationCardBadge status={donation.processingStatus} />
+          </Flex>
+          <Flex>
+            <ProcessDonationSheet
+              donation={donation}
+              trigger={
+                <Button
+                  className="h-full text-gray-accent hover:text-white/80 transition-colors"
+                  variant={'ghost'}
+                  size="xs"
+                  isIconOnly
+                  icon={<Icons.OpenArrow size="xs" />}
+                />
+              }
+            />
+          </Flex>
+        </Flex>
+      )}
+    />
+  )
+}

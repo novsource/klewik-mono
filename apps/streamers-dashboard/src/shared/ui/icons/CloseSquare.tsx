@@ -16,6 +16,6 @@ const SvgCloseSquare = (props: IconsProps) => {
     width: props.size ? sizes[props.size] : props.width ?? sizes['default'],
     height: props.size ? sizes[props.size] : props.height ?? sizes['default']
   };
-  return <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 25 25" {...props}><path fill="currentColor" fillRule="evenodd" d="M12.25 22.013c-4.714 0-7.071 0-8.536-1.465-1.464-1.464-1.464-3.821-1.464-8.535s0-7.071 1.464-8.536C5.18 2.013 7.536 2.013 12.25 2.013s7.071 0 8.535 1.464C22.25 4.942 22.25 7.3 22.25 12.013s0 7.07-1.465 8.535c-1.464 1.465-3.821 1.465-8.535 1.465M9.22 8.983a.75.75 0 0 1 1.06 0l1.97 1.969 1.97-1.97a.75.75 0 0 1 1.06 1.061l-1.97 1.97 1.97 1.97a.75.75 0 1 1-1.06 1.06l-1.97-1.97-1.97 1.97a.75.75 0 1 1-1.06-1.06l1.97-1.97-1.97-1.97a.75.75 0 0 1 0-1.06" clipRule="evenodd" /></svg>;
+  return <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 25 25" {...props}><path fill="currentColor" fillRule="evenodd" d="M12.25 22.013c-4.714 0-7.071 0-8.536-1.465-1.464-1.464-1.464-3.821-1.464-8.535s0-7.071 1.464-8.536C5.18 2.013 7.536 2.013 12.25 2.013s7.071 0 8.535 1.464C22.25 4.942 22.25 7.3 22.25 12.013s0 7.07-1.465 8.535c-1.464 1.465-3.82 1.465-8.535 1.465M9.22 8.983a.75.75 0 0 1 1.06 0l1.97 1.97 1.97-1.97a.75.75 0 0 1 1.06 1.06l-1.97 1.97 1.97 1.97a.75.75 0 1 1-1.06 1.06l-1.97-1.97-1.97 1.97a.75.75 0 1 1-1.06-1.06l1.97-1.97-1.97-1.97a.75.75 0 0 1 0-1.06" clipRule="evenodd" /></svg>;
 };
 export default SvgCloseSquare;
