@@ -1,9 +1,8 @@
-import { RefObject, useEffect, useRef } from 'react'
+import { RefObject, useEffect, useRef, useState } from 'react'
 
-const useResizeObserver = (
-  target: RefObject<Element>,
-  callback: (entries: ResizeObserverEntry[]) => void
-) => {
+const useResizeObserver = (target: RefObject<Element>) => {
+  const [entries, setEntries] = useState<ResizeObserverEntry[]>([])
+
   const resizeObserverRef = useRef<NullablePossible<ResizeObserver>>(null)
 
   useEffect(() => {
@@ -11,10 +10,9 @@ const useResizeObserver = (
 
     if (!element) return
 
-    const observer = new ResizeObserver(callback)
+    const observer = new ResizeObserver(setEntries)
 
     observer.observe(element)
-
     resizeObserverRef.current = observer
 
     return () => {
@@ -22,6 +20,8 @@ const useResizeObserver = (
       resizeObserverRef.current = null
     }
   }, [target.current])
+
+  return { entries }
 }
 
 export { useResizeObserver }
