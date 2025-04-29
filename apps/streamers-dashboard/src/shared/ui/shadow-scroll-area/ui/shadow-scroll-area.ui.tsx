@@ -1,7 +1,7 @@
 import {
-  ComponentProps,
   ComponentPropsWithoutRef,
   forwardRef,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -18,6 +18,7 @@ import {
 } from 'framer-motion'
 
 import { useDebouncedCallback } from '~shared/hooks/use-debounced-callback'
+import { useResizeObserver } from '~shared/hooks/use-resize-observer'
 
 import { cn } from '~shared/utils'
 
@@ -38,35 +39,34 @@ const ShadowScrollArea = forwardRef<
     ...restProps
   } = props
 
-  const [isShadowAnimated, setIsShadowAnimated] = useState(false)
+  const [isShadowsAnimated, setIsShadowAnimated] = useState({
+    topShadow: false,
+    bottomShadow: false,
+  })
 
   const [scrollYProgress, setScrollYProgress] = useState(0)
   const [scrollYValue, setScrollYValue] = useState(0)
 
   const scrollElementRef = useRef<HTMLDivElement>(null)
-  const scrollableAreaWrapperRef = useRef<HTMLDivElement>(null)
+  const contentAreaRef = useRef<HTMLDivElement>(null)
 
   const { scrollYProgress: motionScrollYProgress, scrollY } = useScroll({
     container: scrollElementRef,
   })
 
+  const { entries } = useResizeObserver(contentAreaRef)
+
   const debouncedShadowAnimation = useDebouncedCallback(
-    () => setIsShadowAnimated(true),
+    (
+      values: { topShadow: boolean; bottomShadow: boolean } = {
+        topShadow: true,
+        bottomShadow: true,
+      }
+    ) => {
+      setIsShadowAnimated(values)
+    },
     2000
   )
-
-  useLayoutEffect(() => {
-    if (!scrollElementRef.current || !scrollableAreaWrapperRef.current) return
-
-    const element = scrollElementRef.current
-    const areaWrapper = scrollableAreaWrapperRef.current
-
-    if (areaWrapper.clientHeight <= element.clientHeight) {
-      setIsShadowAnimated(false)
-    }
-
-    debouncedShadowAnimation()
-  }, [scrollElementRef, scrollableAreaWrapperRef.current])
 
   useLayoutEffect(() => {
     if (!forwardRef) return
@@ -82,8 +82,7 @@ const ShadowScrollArea = forwardRef<
 
   useMotionValueEvent(motionScrollYProgress, 'change', (value) => {
     setIsShadowAnimated(() => {
-      debouncedShadowAnimation()
-      return false
+      return { bottomShadow: false, topShadow: false }
     })
 
     setScrollYProgress(value)
@@ -93,9 +92,63 @@ const ShadowScrollArea = forwardRef<
     setScrollYValue(value)
   })
 
+  useEffect(() => {
+    const scrollElement = scrollElementRef.current
+    const element = contentAreaRef.current
+
+    if (!element || !scrollElement) return
+
+    for (const entry of entries) {
+      if (entry.target === element) {
+        const scrollValue = scrollYValue + scrollElement.clientHeight
+
+        const newScrollYProgress =
+          scrollValue / entry.target.scrollHeight >= 1
+            ? 1
+            : scrollValue / entry.target.scrollHeight
+
+        if (scrollYProgress !== 0) setScrollYProgress(newScrollYProgress)
+      }
+
+      if (entry.target.scrollHeight <= scrollElement.clientHeight) {
+        setScrollYProgress(0)
+        setScrollYValue(0)
+        setIsShadowAnimated({ topShadow: false, bottomShadow: false })
+      }
+    }
+  }, [entries, scrollElementRef.current, contentAreaRef.current])
+
+  useEffect(() => {
+    const element = scrollElementRef.current
+    const contentElement = contentAreaRef.current
+
+    if (!element || !contentElement) return
+
+    const isShouldShowBottomShadow =
+      element.clientHeight <= contentElement.scrollHeight && scrollYValue !== 1
+
+    if (scrollYValue === 0 && scrollYProgress === 0) {
+      return debouncedShadowAnimation({
+        topShadow: false,
+        bottomShadow: isShouldShowBottomShadow,
+      })
+    } else
+      debouncedShadowAnimation({
+        topShadow: true,
+        bottomShadow: isShouldShowBottomShadow,
+      })
+  }, [
+    scrollYValue,
+    scrollYProgress,
+    scrollElementRef.current,
+    contentAreaRef.current,
+  ])
+
+  console.log(scrollYValue)
+
   const shadowScrollAreaStyle = useMemo(() => {
-    const getTopGradientValue = transform([0, 0.025], [0, shadowSize])
-    const getBottomGradientValue = transform([0.975, 1], [shadowSize, 0])
+    const getTopGradientValue = transform([0, 0.015], [0, shadowSize])
+    const getBottomGradientValue = transform([0.985, 1], [shadowSize, 0])
 
     return `linear-gradient(#000, #000,transparent 0,#000 ${getTopGradientValue(scrollYProgress)}px,#000 calc(100% - ${getBottomGradientValue(scrollYProgress)}px),transparent)`
   }, [scrollYProgress, shadowSize])
@@ -113,8 +166,8 @@ const ShadowScrollArea = forwardRef<
       {...restProps}
     >
       <AnimatePresence>
-        {isShadowAnimated && (
-          <>
+        <>
+          {isShadowsAnimated.topShadow && (
             <motion.div
               className={cn(
                 'w-full bg-gradient-to-b from-transparent via-white/70 via-20% to-transparent to-80%'
@@ -131,12 +184,13 @@ const ShadowScrollArea = forwardRef<
                 repeatDelay: 1,
               }}
               style={{
-                display: scrollYProgress !== 0 ? 'inline-block' : 'none',
                 position: 'absolute',
                 zIndex: 2,
-                height: shadowSize,
+                height: transform([0, 0.015], [0, shadowSize])(scrollYProgress),
               }}
             />
+          )}
+          {isShadowsAnimated.bottomShadow && (
             <motion.div
               className={cn(
                 'w-full bg-gradient-to-t from-transparent via-white/70 via-20% to-transparent to-80% bottom-0'
@@ -153,19 +207,17 @@ const ShadowScrollArea = forwardRef<
                 repeatDelay: 1,
               }}
               style={{
-                display: scrollYProgress !== 1 ? 'inline-block' : 'none',
                 position: 'absolute',
                 zIndex: 2,
                 height: shadowSize,
               }}
             />
-          </>
-        )}
+          )}
+        </>
       </AnimatePresence>
-      {/* <div ref={scrollableAreaWrapperRef} className="w-full h-fit">
+      <div ref={contentAreaRef} className="w-full h-fit">
         {children}
-      </div> */}
-      {children}
+      </div>
     </div>
   )
 })
