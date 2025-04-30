@@ -1,8 +1,9 @@
-import { ReactNode } from 'react'
+import { ComponentProps, ReactNode } from 'react'
 
 import { ClassValue } from 'clsx'
 
 import { Flex } from '~shared/ui/flex'
+import { Skeleton } from '~shared/ui/skeleton'
 import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
@@ -44,4 +45,13 @@ const DonationCardChip = (props: DonationCardChipProps) => {
   )
 }
 
-export { DonationCardChip }
+const SkeletonDonationCardChip = ({
+  className,
+  ...props
+}: ComponentProps<'div'>) => {
+  return (
+    <Skeleton className={cn('w-20 h-7 rounded-md', className)} {...props} />
+  )
+}
+
+export { DonationCardChip, SkeletonDonationCardChip }

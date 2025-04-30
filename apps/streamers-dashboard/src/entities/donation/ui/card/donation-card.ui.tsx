@@ -12,32 +12,47 @@ import {
 } from '~shared/ui/card'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
+import { Skeleton } from '~shared/ui/skeleton'
 import { Typography } from '~shared/ui/typograghy'
+
+import { FORMATTED_INTEGRATIONS_PLATFORMS_NAMES } from '~shared/constants/integrations'
 
 import { formatNumberToIntlString } from '~shared/utils'
 
-import { DonationCardBadge } from './donation-card-badge.ui'
-import { DonationCardChip } from './donation-card-chip.ui'
+import {
+  DonationCardBadge,
+  SkeletonDonationCardBadge,
+} from './donation-card-badge.ui'
+import {
+  DonationCardChip,
+  SkeletonDonationCardChip,
+} from './donation-card-chip.ui'
 import { DonationCardMessage } from './donation-card-message.ui'
 
 export type DonationCardProps = CardProps & {
   data: ProcessedDonation
+  showingSkeleton?: boolean
   renderHeader?: (donation: ProcessedDonation) => ReactNode | undefined
   renderContent?: (donation: ProcessedDonation) => ReactNode | undefined
   renderFooter?: (donation: ProcessedDonation) => ReactNode | undefined
 }
 
 const DonationCard = (props: DonationCardProps) => {
-  const { data, renderHeader, renderContent, renderFooter, ...cardProps } =
-    props
-
-  const providerName = {
-    'donation-alerts': 'DonationAlerts',
-    'donate-pay': 'DonatePay',
-  }[data.provider]
+  const {
+    data,
+    showingSkeleton = false,
+    renderHeader,
+    renderContent,
+    renderFooter,
+    ...cardProps
+  } = props
 
   const cardMessage = useMemo(() => {
     if (!data.message) return undefined
+
+    if (showingSkeleton) {
+      return <Skeleton className="w-40 h-6 rounded-md" />
+    }
 
     if (data.message && data.message_type === 'audio') {
       return (
@@ -57,27 +72,39 @@ const DonationCard = (props: DonationCardProps) => {
     }
 
     return <DonationCardMessage value={data.message} />
-  }, [data.message, data.message_type])
+  }, [data.message, data.message_type, showingSkeleton])
 
   const cardHeader = useMemo(() => {
-    return renderHeader ? (
-      renderHeader(data)
+    if (renderHeader) {
+      return renderHeader(data)
+    }
+
+    return showingSkeleton ? (
+      <>
+        <SkeletonDonationCardBadge />
+        <SkeletonDonationCardBadge />
+      </>
     ) : (
       <>
         <Badge className={'bg-orange/20 text-orange'}>
           <Flex className="gap-x-1" align={'center'}>
             <Icons.DonationAlerts width={14} height={14} />
-            {providerName}
+            {FORMATTED_INTEGRATIONS_PLATFORMS_NAMES[data.provider]}
           </Flex>
         </Badge>
         <DonationCardBadge status={data.processingStatus} />
       </>
     )
-  }, [data.processingStatus, providerName, renderHeader])
+  }, [data.processingStatus, renderHeader, showingSkeleton])
 
   const cardContent = useMemo(() => {
-    return renderContent ? (
-      renderContent(data)
+    if (renderContent) return renderContent(data)
+
+    return showingSkeleton ? (
+      <>
+        <Skeleton className="max-w-[280px] h-6 rounded-md" />
+        {cardMessage}
+      </>
     ) : (
       <>
         <Flex className="gap-y-2" direction="column">
@@ -100,11 +127,26 @@ const DonationCard = (props: DonationCardProps) => {
         {cardMessage}
       </>
     )
-  }, [renderContent, data.amount, data.currency, data.username, cardMessage])
+  }, [
+    renderContent,
+    data.amount,
+    data.currency,
+    data.username,
+    cardMessage,
+    showingSkeleton,
+  ])
 
   const cardFooter = useMemo(() => {
-    return renderFooter ? (
-      renderFooter(data)
+    if (renderFooter) return renderFooter(data)
+
+    return showingSkeleton ? (
+      <>
+        <Flex className="gap-x-2">
+          <SkeletonDonationCardChip />
+          <SkeletonDonationCardChip />
+        </Flex>
+        <SkeletonDonationCardChip className="h-5" />
+      </>
     ) : (
       <>
         <Flex className="gap-x-2">
@@ -126,7 +168,7 @@ const DonationCard = (props: DonationCardProps) => {
         </Typography>
       </>
     )
-  }, [renderFooter, data.amount, data.createdAt])
+  }, [renderFooter, data.amount, data.createdAt, showingSkeleton])
 
   return (
     <Card {...cardProps}>
