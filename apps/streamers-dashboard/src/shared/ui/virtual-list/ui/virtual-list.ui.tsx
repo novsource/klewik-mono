@@ -6,18 +6,26 @@ import {
   useVirtualizer,
 } from '@tanstack/react-virtual'
 
-type VirtualListSlots = 'content' | 'contentWrapper' | 'container' | 'item'
+export type VirtualListSlots =
+  | 'content'
+  | 'contentWrapper'
+  | 'container'
+  | 'item'
 
-type VirtualListProps<
+export type VirtualListProps<
   T extends Element = HTMLElement,
   ListDataElement extends unknown = unknown,
-> = Omit<VirtualizerOptions<HTMLDivElement, T>, 'count'> & {
+> = Omit<
+  Required<VirtualizerOptions<HTMLDivElement, T>>,
+  'count' | 'getScrollElement'
+> & {
   data: ListDataElement[]
   children: (
     data: ListDataElement[],
     virtualizedItem: VirtualItem,
     index: number
   ) => ReactNode
+  estimateSize?: (index: number) => number
   slotsClassNames?: Partial<Record<VirtualListSlots, string>>
   scrollElementRef?: MutableRefObject<NullablePossible<HTMLDivElement>>
   contentElementRef?: MutableRefObject<NullablePossible<HTMLDivElement>>
@@ -35,7 +43,6 @@ const VirtualList = (props: VirtualListProps<HTMLElement>) => {
     scrollElementRef,
     contentElementRef,
     slotsClassNames,
-    getScrollElement: inputGetScrollElement,
     estimateSize: inputEstimateSize,
     children,
     ...virtualizerOptions

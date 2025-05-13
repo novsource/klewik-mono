@@ -1,5 +1,6 @@
 import {
   ComponentPropsWithoutRef,
+  RefObject,
   forwardRef,
   useEffect,
   useLayoutEffect,
@@ -8,7 +9,10 @@ import {
   useState,
 } from 'react'
 
-import { ScrollAreaViewport } from '@radix-ui/react-scroll-area'
+import {
+  ScrollAreaProps,
+  ScrollAreaViewport,
+} from '@radix-ui/react-scroll-area'
 import {
   AnimatePresence,
   motion,
@@ -20,9 +24,14 @@ import {
 import { useDebouncedCallback } from '~shared/hooks/use-debounced-callback'
 import { useResizeObserver } from '~shared/hooks/use-resize-observer'
 
+import { ScrollArea } from '~shared/ui/scroll-area'
+
 import { cn } from '~shared/utils'
 
 export type ShadowScrollAreaProps = ComponentPropsWithoutRef<'div'> & {
+  contentAreaHTMLProps?: ScrollAreaProps
+  externalScrollRef?: RefObject<HTMLDivElement>
+  externalContentRef?: RefObject<HTMLElement>
   shadowEnabled?: boolean
   shadowSize?: number
 }
@@ -34,6 +43,10 @@ const ShadowScrollArea = forwardRef<
   const {
     style,
     children,
+    className,
+    contentAreaHTMLProps,
+    externalScrollRef,
+    externalContentRef,
     shadowEnabled = true,
     shadowSize = 60,
     ...restProps
@@ -41,20 +54,20 @@ const ShadowScrollArea = forwardRef<
 
   const [isShadowsAnimated, setIsShadowAnimated] = useState({
     topShadow: false,
-    bottomShadow: false,
+    bottomShadow: true,
   })
 
   const [scrollYProgress, setScrollYProgress] = useState(0)
   const [scrollYValue, setScrollYValue] = useState(0)
 
-  const scrollElementRef = useRef<HTMLDivElement>(null)
-  const contentAreaRef = useRef<HTMLDivElement>(null)
+  const internalScrollElementRef = useRef<HTMLDivElement>(null)
+  const internalContentAreaRef = useRef<HTMLDivElement>(null)
 
   const { scrollYProgress: motionScrollYProgress, scrollY } = useScroll({
-    container: scrollElementRef,
+    container: externalScrollRef ?? internalScrollElementRef,
   })
 
-  const { entries } = useResizeObserver(contentAreaRef)
+  const { entries } = useResizeObserver(internalContentAreaRef)
 
   const debouncedShadowAnimation = useDebouncedCallback(
     (
@@ -65,7 +78,7 @@ const ShadowScrollArea = forwardRef<
     ) => {
       setIsShadowAnimated(values)
     },
-    2000
+    2500
   )
 
   useLayoutEffect(() => {
@@ -76,7 +89,7 @@ const ShadowScrollArea = forwardRef<
     } else if (typeof forwardRef === 'string') {
       return
     } else {
-      scrollElementRef.current = forwardRef.current
+      internalScrollElementRef.current = forwardRef.current
     }
   }, [forwardRef])
 
@@ -93,13 +106,15 @@ const ShadowScrollArea = forwardRef<
   })
 
   useEffect(() => {
-    const scrollElement = scrollElementRef.current
-    const element = contentAreaRef.current
+    const scrollElement =
+      externalScrollRef?.current ?? internalScrollElementRef.current
+    const contentAreaElement =
+      externalContentRef?.current ?? internalContentAreaRef.current
 
-    if (!element || !scrollElement) return
+    if (!contentAreaElement || !scrollElement) return
 
     for (const entry of entries) {
-      if (entry.target === element) {
+      if (entry.target === contentAreaElement) {
         const scrollValue = scrollYValue + scrollElement.clientHeight
 
         const newScrollYProgress =
@@ -116,16 +131,25 @@ const ShadowScrollArea = forwardRef<
         setIsShadowAnimated({ topShadow: false, bottomShadow: false })
       }
     }
-  }, [entries, scrollElementRef.current, contentAreaRef.current])
+  }, [
+    entries,
+    externalScrollRef,
+    externalContentRef,
+    internalScrollElementRef,
+    internalContentAreaRef,
+  ])
 
   useEffect(() => {
-    const element = scrollElementRef.current
-    const contentElement = contentAreaRef.current
+    const scrollElement =
+      externalScrollRef?.current ?? internalScrollElementRef.current
+    const contentElement =
+      externalContentRef?.current ?? internalContentAreaRef.current
 
-    if (!element || !contentElement) return
+    if (!scrollElement || !contentElement) return
 
     const isShouldShowBottomShadow =
-      element.clientHeight <= contentElement.scrollHeight && scrollYValue !== 1
+      // scrollElement.clientHeight <= contentElement.scrollHeight &&
+      scrollYProgress !== 0.999
 
     if (scrollYValue === 0 && scrollYProgress === 0) {
       return debouncedShadowAnimation({
@@ -140,11 +164,11 @@ const ShadowScrollArea = forwardRef<
   }, [
     scrollYValue,
     scrollYProgress,
-    scrollElementRef.current,
-    contentAreaRef.current,
+    externalScrollRef,
+    externalContentRef,
+    internalScrollElementRef,
+    internalContentAreaRef,
   ])
-
-  console.log(scrollYValue)
 
   const shadowScrollAreaStyle = useMemo(() => {
     const getTopGradientValue = transform([0, 0.015], [0, shadowSize])
@@ -155,13 +179,15 @@ const ShadowScrollArea = forwardRef<
 
   return (
     <div
-      ref={scrollElementRef}
+      ref={internalScrollElementRef}
       data-slot="shadow-scroll-area"
+      className={cn(className)}
       style={{
-        ...style,
+        width: '100%',
+        height: '100%',
         position: 'relative',
         maskImage: shadowEnabled ? shadowScrollAreaStyle : 'none',
-        overflowY: 'scroll',
+        ...style,
       }}
       {...restProps}
     >
@@ -172,13 +198,16 @@ const ShadowScrollArea = forwardRef<
               className={cn(
                 'w-full bg-gradient-to-b from-transparent via-white/70 via-20% to-transparent to-80%'
               )}
-              initial={{ opacity: 0, translateY: 0 + scrollYValue }}
+              initial={{
+                opacity: 0,
+                height: shadowSize,
+              }}
               animate={{
-                opacity: [0, 1, 0],
-                translateY: [0 + scrollYValue, -40 + scrollYValue],
+                opacity: [0, 0.6, 0],
+                height: 0,
               }}
               transition={{
-                duration: 2.5,
+                duration: 3,
                 ease: 'easeInOut',
                 repeat: Infinity,
                 repeatDelay: 1,
@@ -186,7 +215,7 @@ const ShadowScrollArea = forwardRef<
               style={{
                 position: 'absolute',
                 zIndex: 2,
-                height: transform([0, 0.015], [0, shadowSize])(scrollYProgress),
+                pointerEvents: 'none',
               }}
             />
           )}
@@ -195,13 +224,16 @@ const ShadowScrollArea = forwardRef<
               className={cn(
                 'w-full bg-gradient-to-t from-transparent via-white/70 via-20% to-transparent to-80% bottom-0'
               )}
-              initial={{ opacity: 0, translateY: 0 + scrollYValue }}
+              initial={{
+                opacity: 0,
+                height: shadowSize,
+              }}
               animate={{
-                translateY: [0 + scrollYValue, 40 + scrollYValue],
                 opacity: [0, 1, 0],
+                height: 0,
               }}
               transition={{
-                duration: 2.5,
+                duration: 3,
                 ease: 'easeInOut',
                 repeat: Infinity,
                 repeatDelay: 1,
@@ -209,15 +241,14 @@ const ShadowScrollArea = forwardRef<
               style={{
                 position: 'absolute',
                 zIndex: 2,
-                height: shadowSize,
               }}
             />
           )}
         </>
       </AnimatePresence>
-      <div ref={contentAreaRef} className="w-full h-fit">
+      <ScrollArea ref={internalContentAreaRef} {...contentAreaHTMLProps}>
         {children}
-      </div>
+      </ScrollArea>
     </div>
   )
 })
