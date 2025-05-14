@@ -67,7 +67,9 @@ const ShadowScrollArea = forwardRef<
     container: externalScrollRef ?? internalScrollElementRef,
   })
 
-  const { entries } = useResizeObserver(internalContentAreaRef)
+  const { entries } = useResizeObserver(
+    externalContentRef ?? internalContentAreaRef
+  )
 
   const debouncedShadowAnimation = useDebouncedCallback(
     (
@@ -118,14 +120,14 @@ const ShadowScrollArea = forwardRef<
         const scrollValue = scrollYValue + scrollElement.clientHeight
 
         const newScrollYProgress =
-          scrollValue / entry.target.scrollHeight >= 1
+          scrollValue / contentAreaElement.scrollHeight >= 1
             ? 1
-            : scrollValue / entry.target.scrollHeight
+            : scrollValue / contentAreaElement.scrollHeight
 
         if (scrollYProgress !== 0) setScrollYProgress(newScrollYProgress)
       }
 
-      if (entry.target.scrollHeight <= scrollElement.clientHeight) {
+      if (entry.target.scrollHeight < scrollElement.clientHeight) {
         setScrollYProgress(0)
         setScrollYValue(0)
         setIsShadowAnimated({ topShadow: false, bottomShadow: false })
@@ -148,8 +150,8 @@ const ShadowScrollArea = forwardRef<
     if (!scrollElement || !contentElement) return
 
     const isShouldShowBottomShadow =
-      // scrollElement.clientHeight <= contentElement.scrollHeight &&
-      scrollYProgress !== 0.999
+      scrollElement.clientHeight <= contentElement.scrollHeight &&
+      scrollYProgress <= 0.999
 
     if (scrollYValue === 0 && scrollYProgress === 0) {
       return debouncedShadowAnimation({

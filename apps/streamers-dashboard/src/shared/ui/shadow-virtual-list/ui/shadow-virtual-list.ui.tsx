@@ -8,7 +8,7 @@ import {
 import { VirtualList, VirtualListProps } from '~shared/ui/virtual-list'
 
 export type ShadowVirtualListProps = VirtualListProps & {
-  className: string
+  className?: string
   shadowScrollProps?: ShadowScrollAreaProps
 }
 
@@ -32,7 +32,7 @@ const ShadowVirtualList = (props: ShadowVirtualListProps) => {
               width={width}
               height={height}
               scrollElementRef={internalScrollElementRef}
-              contentElementRef={internalContentElementRef}
+              contentWrapperRef={internalContentElementRef}
               {...virtualListProps}
             />
           </ShadowScrollArea>

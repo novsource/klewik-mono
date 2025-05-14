@@ -16,8 +16,13 @@ export type VirtualListProps<
   T extends Element = HTMLElement,
   ListDataElement extends unknown = unknown,
 > = Omit<
-  Required<VirtualizerOptions<HTMLDivElement, T>>,
-  'count' | 'getScrollElement'
+  VirtualizerOptions<HTMLDivElement, T>,
+  | 'count'
+  | 'estimateSize'
+  | 'getScrollElement'
+  | 'observeElementRect'
+  | 'observeElementOffset'
+  | 'scrollToFn'
 > & {
   data: ListDataElement[]
   children: (
@@ -29,6 +34,7 @@ export type VirtualListProps<
   slotsClassNames?: Partial<Record<VirtualListSlots, string>>
   scrollElementRef?: MutableRefObject<NullablePossible<HTMLDivElement>>
   contentElementRef?: MutableRefObject<NullablePossible<HTMLDivElement>>
+  contentWrapperRef?: MutableRefObject<NullablePossible<HTMLDivElement>>
   count?: number
   width?: number
   height?: number
@@ -42,6 +48,7 @@ const VirtualList = (props: VirtualListProps<HTMLElement>) => {
     data,
     scrollElementRef,
     contentElementRef,
+    contentWrapperRef,
     slotsClassNames,
     estimateSize: inputEstimateSize,
     children,
@@ -78,6 +85,7 @@ const VirtualList = (props: VirtualListProps<HTMLElement>) => {
     >
       <div
         data-slot="virtual-list-content-wrapper"
+        ref={contentWrapperRef}
         className={slotsClassNames?.contentWrapper}
         style={{
           position: 'relative',
