@@ -67,7 +67,7 @@ export const EditSlotForm = ({
   onFieldValueChange,
   ...props
 }: EditSlotsFormProps) => {
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const { control, handleSubmit, formState } = useForm<
     EditSlotFormData,

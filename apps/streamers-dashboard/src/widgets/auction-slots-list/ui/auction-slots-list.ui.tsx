@@ -28,7 +28,7 @@ const AuctionSlotsList = ({
   className,
   ...otherProps
 }: AuctionSlotsListProps) => {
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const storedSlotsPointsSum = useStoreSelector(
     auctionSlotsSelectors.getSlotsPointsSum

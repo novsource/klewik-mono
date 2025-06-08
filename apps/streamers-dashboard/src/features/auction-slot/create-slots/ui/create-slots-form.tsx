@@ -95,7 +95,7 @@ type SingleSlotCreatingFormProps = CreateSlotsFormProps
 const SingleSlotCreatingForm = (props: SingleSlotCreatingFormProps) => {
   const { onError, onSuccess, ...formProps } = props
 
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const {
     control,
@@ -163,7 +163,7 @@ type MultiplySlotsCreatingFormProps = CreateSlotsFormProps & {
 
 const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
   const { onSuccess, onError, maxCreatingSlotsCount = 10, ...formProps } = props
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const [activeTabValue, setActiveTabValue] =
     useState<`slot-${string}`>('slot-0')

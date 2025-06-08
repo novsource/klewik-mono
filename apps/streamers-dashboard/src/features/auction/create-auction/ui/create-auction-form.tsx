@@ -58,10 +58,10 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
       return
     }
 
-    await loginInAuction(createAuctionResponse.data.auctionId, formData.key)
+    await loginInAuction(createAuctionResponse.data.auctionUUID, formData.key)
 
     auctionActions.setAuction({
-      id: createAuctionResponse.data.auctionId,
+      auctionUUID: createAuctionResponse.data.auctionUUID,
       url: createAuctionResponse.data.url,
     })
 

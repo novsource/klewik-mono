@@ -13,7 +13,7 @@ import { cn } from '~shared/utils'
 import { useLazyCloseBetsQuery, useLazyOpenBetsQuery } from '../api'
 
 const UpdateBetsStatusButton = memo(() => {
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
   const isBetsClosed = useStoreSelector(auctionSelectors.getBetsStatus)
 
   const [openBetsQuery, { isLoading: openBetsQueryLoading }] =

@@ -5,7 +5,7 @@ import { CreateAuctionFormData } from '../model'
 type CreateAuctionQueryArgs = CreateAuctionFormData
 
 type CreateAuctionQueryReturnValue = {
-  auctionId: string
+  auctionUUID: string
   url: string
   auctionOwnerId: string
 }

@@ -40,7 +40,7 @@ const BaseAuctionSettingsContent = () => {
 const DeleteAuctionSettingsArea = memo(() => {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const [isInputEmpty, setIsInputEmpty] = useState(true)

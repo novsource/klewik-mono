@@ -22,7 +22,7 @@ type SortingSlotsComboboxProps = {
 
 const SortingSlotsCombobox = memo(
   ({ onSortingChange }: SortingSlotsComboboxProps) => {
-    const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
+    const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
     const slotsSortOptions = useStoreSelector(appSelectors.getSlotsSortOptions)
 
     const appActions = useActionCreators(storeAppActions)

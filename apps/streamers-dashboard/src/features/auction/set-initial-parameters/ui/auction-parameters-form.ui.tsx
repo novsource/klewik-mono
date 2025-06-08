@@ -32,7 +32,7 @@ const AuctionInitialParametersForm = ({
   className,
   ...props
 }: AuctionInitialParametersFormProps) => {
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const { control, handleSubmit } = useForm<SetAuctionViewParametersFormData>({
     defaultValues: {
