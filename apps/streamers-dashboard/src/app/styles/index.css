@@ -96,7 +96,7 @@
   --shadow-table-border: 0px 4x 0px 0px rgba(85, 85, 85, 0.7);
 
   --font-*: initial;
-  --font-golos-f: 'Golos Text';
+  --font-golos-f: 'Golos Text', sans-serif;
   --font-azeret-mono: 'Azeret Mono';
   --font-manrope: 'Manrope', sans-serif;
 

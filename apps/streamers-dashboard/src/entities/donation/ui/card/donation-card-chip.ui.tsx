@@ -1,9 +1,9 @@
-import { ReactNode } from 'react'
+import { ComponentProps, ReactNode } from 'react'
 
 import { ClassValue } from 'clsx'
 
 import { Flex } from '~shared/ui/flex'
-import { Typography } from '~shared/ui/typograghy'
+import { Skeleton } from '~shared/ui/skeleton'
 
 import { cn } from '~shared/utils'
 
@@ -26,22 +26,23 @@ const DonationCardChip = (props: DonationCardChipProps) => {
         'px-2 py-1 bg-dark-accent gap-x-1 rounded-md',
         classNames?.base
       )}
-      direction="row"
       align="center"
+      justify="center"
     >
       {startContent}
-      <Typography
-        className={cn(
-          'font-golos-f text-md font-semibold text-gray-accent',
-          classNames?.text
-        )}
-        tag="span"
-      >
-        {children}
-      </Typography>
+      {children}
       {endContent}
     </Flex>
   )
 }
 
-export { DonationCardChip }
+const SkeletonDonationCardChip = ({
+  className,
+  ...props
+}: ComponentProps<'div'>) => {
+  return (
+    <Skeleton className={cn('w-20 h-7 rounded-md', className)} {...props} />
+  )
+}
+
+export { DonationCardChip, SkeletonDonationCardChip }

@@ -39,8 +39,6 @@ const DonationCardMessage = ({ value, ...props }: DonationCardMessageProps) => {
   const textRef = useRef<HTMLSpanElement>(null)
 
   useLayoutEffect(() => {
-    console.log(textRef.current)
-
     if (!textRef.current || !messageContainerRef.current) return
 
     const textWidth = textRef.current.getBoundingClientRect().width
