@@ -4,12 +4,26 @@ import { EventSourceMessageSchema } from '~shared/lib/fetch-event-source'
 
 const DonationDTOSchema = z.object({
   id: z.number(),
+  auctionUUID: z.string().uuid(),
+  sourceDonationId: z.number().positive().nullable(),
   username: z.string(),
-  provider: z.enum(['donation-alerts', 'donate-pay']),
+  source: z.enum(['donatePay', 'donationAlerts', 'twitch', 'userInput']),
   message: z.string().max(210).nullable(),
-  message_type: z.enum(['text', 'audio']),
+  messageType: z.enum(['audio', 'empty', 'text']),
   amount: z.number(),
   currency: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  processedAction: z.enum(['createSlot', 'noAction', 'updateSlot']),
+  processedSlotsIds: z.number().array().nullable(),
+  processedStatus: z.enum([
+    'added',
+    'checkRequested',
+    'empty',
+    'error',
+    'rejected',
+    'inProgress',
+  ]),
 })
 
 const DonationsEventSourceMessageSchema = EventSourceMessageSchema.merge(

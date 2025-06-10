@@ -80,7 +80,7 @@ const axiosBaseQuery =
 const axiosAuthBaseQuery =
   (options: AxiosBaseQueryOptions): AxiosQueryFn =>
   async (args, api, extraOptions) => {
-    const initBaseUrl = import.meta.env.VITE_SERVER_URL + '/api'
+    const initBaseUrl = import.meta.env.VITE_SERVER_URL + '/api/v1'
 
     const baseQuery = axiosBaseQuery({
       ...options,

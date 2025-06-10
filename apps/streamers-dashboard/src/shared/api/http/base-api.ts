@@ -8,7 +8,7 @@ const baseHttpClient = new BaseHttpClient({ rateLimiterOptions: { maxRPS: 3 } })
 const baseApi = createApi({
   baseQuery: axiosBaseQuery({
     axiosInstance: baseHttpClient,
-    baseUrl: import.meta.env.VITE_SERVER_URL + '/api',
+    baseUrl: import.meta.env.VITE_SERVER_URL + '/api/v1',
   }),
   endpoints: () => ({}),
 })

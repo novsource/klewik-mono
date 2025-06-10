@@ -1,21 +1,62 @@
 import { z } from 'zod'
 
-import { UnixTimestampInMsSchema } from '~shared/lib/zod'
+import { zodEnum } from '~shared/lib/zod'
+
+import {
+  DonationMessageType,
+  ProcessedDonationAction,
+  ProcessedDonationStatus,
+} from './donation.types'
+
+const processedDonationStatuses = [
+  'added',
+  'checkRequested',
+  'empty',
+  'error',
+  'rejected',
+  'inProgress',
+] as const satisfies ProcessedDonationStatus[]
+
+const processedDonationAction = [
+  'createSlot',
+  'noAction',
+  'updateSlot',
+] as const satisfies ProcessedDonationAction[]
+
+const donationMessageTypes = [
+  'audio',
+  'empty',
+  'text',
+] as const satisfies DonationMessageType[]
 
 const DonationSchema = z.object({
   id: z.number(),
+  auctionUUID: z.string().uuid(),
+  sourceDonationId: z.number().positive().nullable(),
   username: z.string(),
-  provider: z.enum(['donationAlerts', 'donatePay']),
+  source: z.enum(['donatePay', 'donationAlerts', 'twitch', 'userInput']),
   message: z.string().max(210).nullable(),
-  message_type: z.enum(['text', 'audio']),
+  messageType: z.enum(['audio', 'empty', 'text']),
   amount: z.number(),
   currency: z.string(),
-  createdAt: UnixTimestampInMsSchema.optional(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 })
 
 const ProcessedDonationSchema = DonationSchema.extend({
-  processingStatus: z.enum(['added', 'empty', 'error', 'confirm']),
-  reason: z.string().optional(),
+  processedAction: z.enum(
+    zodEnum<ProcessedDonationAction>(processedDonationAction)
+  ),
+  processedSlotsIds: z.number().array().nullable(),
+  processedStatus: z.enum(
+    zodEnum<ProcessedDonationStatus>(processedDonationStatuses)
+  ),
 })
 
-export { DonationSchema, ProcessedDonationSchema }
+export {
+  DonationSchema,
+  ProcessedDonationSchema,
+  processedDonationAction,
+  processedDonationStatuses,
+  donationMessageTypes,
+}

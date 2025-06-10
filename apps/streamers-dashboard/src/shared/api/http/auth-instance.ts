@@ -34,12 +34,16 @@ class AuthHttpClient extends BaseHttpClient {
           const refreshRequest = fetchOptions.retry
             ? this._retryFetching<T>(
                 '/auth/refresh',
-                { ...fetchOptions, url: '/api/auth/refresh', method: 'POST' },
+                {
+                  ...fetchOptions,
+                  url: '/api/v1/auth/refresh',
+                  method: 'POST',
+                },
                 fetchOptions.retriesCount
               )
             : this._internalRequest<T>('/auth/refresh', {
                 ...fetchOptions,
-                url: '/api/auth/refresh',
+                url: '/api/v1/auth/refresh',
                 method: 'POST',
               })
 
