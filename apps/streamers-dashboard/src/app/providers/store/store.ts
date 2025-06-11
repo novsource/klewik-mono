@@ -40,6 +40,7 @@ export const store = configureStore({
       .concat(
         auctionApi.middleware,
         auctionSlotsApi.middleware,
+        donationsApi.middleware,
         integrationsApi.middleware,
         sseApi.middleware
       ),
