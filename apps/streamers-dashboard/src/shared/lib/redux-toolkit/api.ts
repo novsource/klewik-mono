@@ -39,8 +39,12 @@ type AxiosBaseQueryError = {
   hint?: string
 }
 
+type AxiosQueryArgs = AxiosBaseQueryArgs & {
+  rewriteBaseURL?: boolean
+}
+
 type AxiosQueryFn = BaseQueryFn<
-  AxiosBaseQueryArgs,
+  AxiosQueryArgs,
   AxiosBaseQueryResult,
   AxiosBaseQueryError
 >
@@ -48,18 +52,30 @@ type AxiosQueryFn = BaseQueryFn<
 const axiosBaseQuery =
   (options: AxiosBaseQueryOptions): AxiosQueryFn =>
   /*@ts-ignore */
-  async ({ url, method, data, headers, params }) => {
+  async ({
+    url,
+    method,
+    data,
+    headers,
+    params,
+    rewriteBaseURL = false,
+    withCredentials = false,
+  }) => {
     try {
       const axios = new BaseHttpClient({
         axiosOptions: options.axiosOptions,
         rateLimiterOptions: options.rateLimiterOptions,
       })
 
-      const result = await axios.request(options.baseUrl + url, {
+      const queryURL = rewriteBaseURL
+        ? new URL(url)
+        : new URL(url, options.baseUrl)
+      const result = await axios.request(queryURL.toJSON(), {
         method,
         data,
         params,
         headers,
+        withCredentials,
       })
 
       return { data: result.data }
@@ -80,7 +96,7 @@ const axiosBaseQuery =
 const axiosAuthBaseQuery =
   (options: AxiosBaseQueryOptions): AxiosQueryFn =>
   async (args, api, extraOptions) => {
-    const initBaseUrl = import.meta.env.VITE_SERVER_URL + '/api/v1'
+    const initBaseUrl = import.meta.env.VITE_SERVER_URL
 
     const baseQuery = axiosBaseQuery({
       ...options,
@@ -89,22 +105,24 @@ const axiosAuthBaseQuery =
       rateLimiterOptions: { maxRPS: 3 },
     })
 
+    const url = new URL(`/api/v1${options.baseUrl}${args.url}`, initBaseUrl)
+
     let result = await baseQuery(
-      { ...args, ...options, url: options.baseUrl + args.url },
+      { ...args, ...options, url: url.toString(), rewriteBaseURL: true },
       api,
       extraOptions
     )
 
     if (result.error && result.error.status === 401) {
       const refreshResult = await baseQuery(
-        { url: '/auth/refresh', method: 'POST' },
+        { url: '/api/v1/auth/refresh', method: 'POST' },
         api,
         extraOptions
       )
 
       if (refreshResult.error === undefined) {
         result = await baseQuery(
-          { ...args, ...options, url: options.baseUrl + args.url },
+          { ...args, ...options, url: url.toString() },
           api,
           extraOptions
         )
