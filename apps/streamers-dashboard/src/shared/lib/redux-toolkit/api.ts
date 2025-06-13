@@ -24,7 +24,7 @@ type AxiosBaseQueryArgs = {
   withCredentials?: AxiosRequestConfig['withCredentials']
 }
 
-type AxiosBaseQueryResult = AxiosResponse<unknown, unknown>['data']
+type AxiosBaseQueryResult = AxiosResponse<unknown, unknown>
 
 type ServerErrorData = {
   message: string
@@ -52,15 +52,7 @@ type AxiosQueryFn = BaseQueryFn<
 const axiosBaseQuery =
   (options: AxiosBaseQueryOptions): AxiosQueryFn =>
   /*@ts-ignore */
-  async ({
-    url,
-    method,
-    data,
-    headers,
-    params,
-    rewriteBaseURL = false,
-    withCredentials = false,
-  }) => {
+  async ({ url, method, data, headers, params, rewriteBaseURL = false }) => {
     try {
       const axios = new BaseHttpClient({
         axiosOptions: options.axiosOptions,
@@ -75,7 +67,6 @@ const axiosBaseQuery =
         data,
         params,
         headers,
-        withCredentials,
       })
 
       return { data: result.data }
