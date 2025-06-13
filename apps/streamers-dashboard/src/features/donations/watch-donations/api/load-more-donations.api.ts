@@ -5,13 +5,12 @@ import { ProcessedDonation } from '~entities/donation/model'
 
 type LoadMoreDonationsQueryArgs = {
   auctionUUID: Auction['auctionUUID']
-  fromId?: number
-  count?: number
+  page: number
+  limit: number
+  orderBy?: 'ascending' | 'descending'
 }
 
-type LoadMoreDonationsQueryReturnValue = {
-  data: ProcessedDonation[]
-}
+type LoadMoreDonationsQueryReturnValue = ProcessedDonation[]
 
 const loadMoreDonationApi = splittedDonationApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -19,12 +18,12 @@ const loadMoreDonationApi = splittedDonationApi.injectEndpoints({
       LoadMoreDonationsQueryReturnValue,
       LoadMoreDonationsQueryArgs
     >({
-      query: ({ auctionUUID, count, fromId }) => {
+      query: ({ auctionUUID, limit, page, orderBy }) => {
         const searchParams: Record<string, string | number> = {
-          limit: count ?? 15,
+          limit,
+          page,
+          orderBy: orderBy ?? 'ascending',
         }
-
-        if (fromId) searchParams['fromId'] = fromId
 
         return {
           url: `/auction/${auctionUUID}/donations`,
