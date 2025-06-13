@@ -1,7 +1,8 @@
 enum FORMATTED_INTEGRATIONS_PLATFORMS_NAMES {
   donationAlerts = 'DonationAlerts',
   donatePay = 'Donate Pay',
-  unknown = 'Unknown/Other',
+  twitch = 'Twitch',
+  userInput = 'Custom',
 }
 
 export { FORMATTED_INTEGRATIONS_PLATFORMS_NAMES }

@@ -6,6 +6,7 @@ import { ProcessedDonation } from '~entities/donation/model'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { TabsContent } from '~shared/ui/tabs'
+import { Typography } from '~shared/ui/typograghy'
 
 import { formatNumberToIntlString } from '~shared/utils'
 
@@ -34,9 +35,11 @@ const DonationInfoTabContent = ({
           titleIcon={<Icons.Money className="text-gray" size="sm" />}
         >
           {donation.amount && (
-            <div className="space-x-2">
-              {formatNumberToIntlString(donation.amount)}
-              {donation?.currency}
+            <div className="space-x-1">
+              <Typography className="text-green-accent" tag="span">
+                {formatNumberToIntlString(donation.amount)}
+              </Typography>
+              <Typography tag="span">{donation?.currency}</Typography>
             </div>
           )}
         </ProcessDonationCard>
