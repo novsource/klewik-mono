@@ -23,7 +23,7 @@ import { useLazyConnectSSEDonationAlertsQuery } from '../../api/donation-alerts'
 import { IntegrationCard } from '../connect-integration.ui'
 
 const DonationAlertsRedirectDisplay = memo(() => {
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const [connectSSEDonationAlerts, { isSuccess }] =
     useLazyConnectSSEDonationAlertsQuery()
@@ -112,7 +112,7 @@ const DonationAlertsRedirectDisplay = memo(() => {
 })
 
 const DonationAlertsIntegrationButton = () => {
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
+  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
   const { isConnected } = useStoreSelector(
     integrationsSelectors.getDonationAlertsStatus
   )

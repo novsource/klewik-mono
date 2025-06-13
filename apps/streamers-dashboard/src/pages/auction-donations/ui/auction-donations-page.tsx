@@ -13,6 +13,7 @@ import {
   DonationCard,
   DonationCardBadge,
   DonationCardProps,
+  SkeletonDonationCard,
 } from '~entities/donation/ui/card'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -22,7 +23,6 @@ import { useMediaQuery } from '~shared/hooks/use-media-query'
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import { ShadowScrollArea } from '~shared/ui/shadow-scroll-area'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
@@ -31,7 +31,7 @@ import { cn } from '~shared/utils'
 import { useFiltredDonations } from '../lib'
 import { DonationsFilterSelect } from './donations-filter'
 
-type DonationProcessStatus = ProcessedDonation['processingStatus'] | 'default'
+type DonationProcessStatus = ProcessedDonation['processedStatus'] | 'default'
 
 const AuctionDonationsPage = () => {
   const donations = useStoreSelector(donationsSelectors.getAllDonations)
@@ -77,7 +77,6 @@ const AuctionDonationsPage = () => {
         />
       </Flex>
       <DonationsList
-        className="pb-4"
         data={filtredDonations}
         renderDonation={(donation, index) => (
           <DonationCardWithControls
@@ -94,22 +93,27 @@ const AuctionDonationsPage = () => {
 
 export { AuctionDonationsPage }
 
-const DonationCardWithControls = (props: DonationCardProps) => {
+const DonationCardWithControls = ({
+  showingSkeleton,
+  ...props
+}: DonationCardProps & { showingSkeleton?: boolean }) => {
+  if (showingSkeleton) return <SkeletonDonationCard {...props} />
+
   return (
     <DonationCard
       {...props}
       renderHeader={(donation) => (
         <Flex className="w-full h-6" justify="between">
           <Flex className="gap-x-1.5">
-            <IntegrationBadge integration={donation.provider} />
-            <DonationCardBadge status={donation.processingStatus} />
+            <IntegrationBadge integration={donation.source} />
+            <DonationCardBadge status={donation.processedStatus} />
           </Flex>
           <Flex>
             <ProcessDonationSheet
               donation={donation}
               trigger={
                 <Button
-                  className="h-full text-gray-accent hover:text-white/80 transition-colors"
+                  className="h-full text-gray-accent hover:text-white/80 transition-colors z-50"
                   variant={'ghost'}
                   size="xs"
                   isIconOnly

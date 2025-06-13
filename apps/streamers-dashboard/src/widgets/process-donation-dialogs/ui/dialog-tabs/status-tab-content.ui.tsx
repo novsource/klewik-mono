@@ -1,14 +1,14 @@
 import { TabsContent, TabsContentProps } from '@radix-ui/react-tabs'
-import { IntegrationBadge } from '~entities/integrations/ui/badge'
 
 import { ProcessedDonation } from '~entities/donation/model'
 import { DonationCardBadge } from '~entities/donation/ui/card'
 
+import { Badge } from '~shared/ui/badge'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
 
-import { formatNumberToIntlString } from '~shared/utils'
+import { cn } from '~shared/utils'
 
 import { ProcessDonationCard } from '../dialog-card'
 
@@ -25,7 +25,7 @@ const DonationStatusTabContent = (props: DonationStatusTabContentProps) => {
           title="Статус"
           titleIcon={<Icons.Status className="text-gray" size="sm" />}
         >
-          <DonationCardBadge status={donation.processingStatus} />
+          <DonationCardBadge status={donation.processedStatus} />
         </ProcessDonationCard>
         <ProcessDonationCard
           title="Обоснование статуса"
@@ -40,31 +40,41 @@ const DonationStatusTabContent = (props: DonationStatusTabContentProps) => {
           </Typography>
         </ProcessDonationCard>
         <ProcessDonationCard
-          title="Тип пожертвования"
-          titleIcon={<Icons.Source className="text-gray" size="sm" />}
-        >
-          <IntegrationBadge integration={donation.provider} />
-        </ProcessDonationCard>
-        <ProcessDonationCard
-          title="Дата создания"
+          title="Дата изменения статуса"
           titleIcon={<Icons.Timer className="text-gray" size="sm" />}
         >
           {donation.createdAt}
         </ProcessDonationCard>
         <ProcessDonationCard
+          title="Тип пожертвования"
+          titleIcon={<Icons.Signpost className="text-gray" size="sm" />}
+        >
+          <Badge className="h-full w-full font-medium">
+            Прибавление очков к слоту
+          </Badge>
+        </ProcessDonationCard>
+
+        <ProcessDonationCard
           contentPosition="bottom"
           title="Сообщение"
           titleIcon={
-            donation.message_type === 'audio' ? (
+            donation.messageType === 'audio' ? (
               <Icons.Sound className="text-gray" size="sm" />
             ) : (
               <Icons.Message className="text-gray" size="sm" />
             )
           }
         >
-          {donation.message_type === 'audio'
-            ? 'Аудио-формат сообщений не поддерживается'
-            : donation.message}
+          <Typography
+            className={cn(
+              donation.messageType === 'audio' && 'text-gray-accent'
+            )}
+            tag="span"
+          >
+            {donation.messageType === 'audio'
+              ? 'Аудио-формат сообщений не поддерживается'
+              : donation.message}
+          </Typography>
         </ProcessDonationCard>
       </Flex>
     </TabsContent>

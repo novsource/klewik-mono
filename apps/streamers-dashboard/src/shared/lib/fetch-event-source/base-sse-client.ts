@@ -89,7 +89,7 @@ abstract class BaseSSEClient {
     }
 
     const connectUrl = new URL(
-      `${import.meta.env.VITE_SERVER_URL}/api/sse/${url}`
+      `${import.meta.env.VITE_SERVER_URL}/api/v1/sse/${url}`
     )
     const params = new URLSearchParams()
 

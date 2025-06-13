@@ -10,10 +10,10 @@ import { auctionSelectors } from '~entities/auction/store'
 import { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions as storeAuctionSlotsActions } from '~entities/auction-slot/store'
 
-import { Donation } from '~entities/donation/model'
+import { ProcessedDonation } from '~entities/donation/model'
 import { donationsActions as storeDonationsActions } from '~entities/donation/store'
 
-import { SSEApiClient } from '~shared/api/sse/clients-manager/sse-clients-manager'
+import { SSEClientsManager } from '~shared/api/sse/clients-manager'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -27,7 +27,7 @@ import { toastPromiseNotification } from '~shared/ui/toaster/lib'
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
 const AuctionDashboardLayout = () => {
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionId)
+  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
   const isLargeThenTablet = useMediaQuery(
     `(min-width:${tailwindScreens.tablet})`
   )
@@ -51,7 +51,9 @@ const AuctionDashboardLayout = () => {
   }, [])
 
   useEffect(() => {
-    const connectSSERequest = SSEApiClient.init(auctionId).connectToAllEvents({
+    const connectSSERequest = SSEClientsManager.init(
+      auctionUUID
+    ).connectToAllEvents({
       slotsLastMessageId: slotsLastMessageId.value,
       donationsLastMessageId: donationsLastMessageId.value,
     })
@@ -63,30 +65,33 @@ const AuctionDashboardLayout = () => {
         setIsConnected(true)
       },
     })
-  }, [])
+  }, [auctionUUID])
 
   useEffect(() => {
     const dispatchSlots = (slots: AuctionSlot[]) =>
       auctionSlotsActions.addSlots(slots)
-    const dispatchDonation = (donation: Donation) =>
+    const dispatchDonation = (donation: ProcessedDonation) =>
       donationActions.addDonation(donation)
 
-    SSEApiClient.getInstance().auctionSlots.onSSEEvent(
+    SSEClientsManager.getInstance().auctionSlots.onSSEEvent(
       'onmessage',
       ({ id }) => {
         slotsLastMessageId.set(Number(id))
       }
     )
 
-    SSEApiClient.getInstance().donations.onSSEEvent('onmessage', ({ id }) => {
-      slotsLastMessageId.set(Number(id))
-    })
+    SSEClientsManager.getInstance().donations.onSSEEvent(
+      'onmessage',
+      ({ id }) => {
+        slotsLastMessageId.set(Number(id))
+      }
+    )
 
-    SSEApiClient.getInstance().auctionSlots.onEvent(
+    SSEClientsManager.getInstance().auctionSlots.onEvent(
       'auction-slots/add',
       dispatchSlots
     )
-    SSEApiClient.getInstance().donations.onEvent(
+    SSEClientsManager.getInstance().donations.onEvent(
       'donations/add',
       dispatchDonation
     )

@@ -1,4 +1,4 @@
 export enum AUTH_ENDPOINTS {
-  LOGIN = '/api/auth/login',
-  REFRESH = '/api/auth/refresh',
+  LOGIN = '/api/v1/auth/login',
+  REFRESH = '/api/v1/auth/refresh',
 }

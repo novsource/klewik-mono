@@ -29,7 +29,7 @@ const NavbarMenu = () => {
       const menuIcon = {
         '/wheel': <Icons.Wheel size={isLargeThenTablet ? 'sm' : 'default'} />,
         '/donations': (
-          <Icons.DonateMessage size={isLargeThenTablet ? 'sm' : 'default'} />
+          <Icons.MoneyHand size={isLargeThenTablet ? 'default' : 'default'} />
         ),
         '/settings': (
           <Icons.Settings size={isLargeThenTablet ? 'sm' : 'default'} />
@@ -45,7 +45,7 @@ const NavbarMenu = () => {
             to={routerLink}
             className={({ isActive }) =>
               cn(
-                'transition-all hover:text-gray-accent text-gray/70',
+                'flex items-center justify-center transition-all hover:text-gray-accent text-gray/70',
                 isActive && 'text-gray-accent'
               )
             }
@@ -80,7 +80,7 @@ const NavbarMenu = () => {
   return (
     <nav data-slot="navbar" className="fixed left-3 top-1/2 -translate-y-1/2">
       <Flex
-        className="w-full gap-y-5 py-4 bg-dark/60 px-4 rounded-lg"
+        className="w-full gap-y-5 py-4 bg-dark/60 px-3.5 rounded-lg"
         component="ul"
         direction="column"
         justify="between"

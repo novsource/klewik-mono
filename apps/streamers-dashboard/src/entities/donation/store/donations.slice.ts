@@ -1,41 +1,28 @@
-import { faker } from '@faker-js/faker'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 import {
   DonatePayDonation,
   DonationAlertsDonation,
   ProcessedDonation,
+  TwitchDonation,
+  UserCustomDonation,
 } from '../model'
-
-const mockedDonAlertsDonations = Array<ProcessedDonation | null>(30)
-  .fill(null)
-  .map<ProcessedDonation>((_, index) => {
-    const message = faker.lorem.words({ min: 10, max: 35 })
-    return {
-      amount: Math.random() * 50000,
-      currency: 'USD',
-      id: index,
-      message,
-      message_type: ['text', 'audio'][faker.number.int({ min: 0, max: 1 })],
-      processingStatus: ['added', 'error', 'confirm', 'empty'][
-        faker.number.int({ min: 0, max: 3 })
-      ],
-      provider: 'donationAlerts',
-      username: faker.internet.username(),
-    }
-  })
 
 type DonationsSliceState = {
   donations: {
     donationAlerts: DonationAlertsDonation[]
     donatePay: DonatePayDonation[]
+    twitch: TwitchDonation[]
+    userInput: UserCustomDonation[]
   }
 }
 
 const initialState: DonationsSliceState = {
   donations: {
     donatePay: [],
-    donationAlerts: mockedDonAlertsDonations || [],
+    donationAlerts: [],
+    twitch: [],
+    userInput: [],
   },
 }
 
@@ -46,7 +33,7 @@ const slice = createSlice({
     addDonation(state, action: PayloadAction<ProcessedDonation>) {
       const payload = action.payload
 
-      switch (payload.provider) {
+      switch (payload.source) {
         case 'donationAlerts': {
           state.donations.donationAlerts.push(payload as DonationAlertsDonation)
           break
@@ -69,10 +56,10 @@ const slice = createSlice({
       state,
       options: {
         id: ProcessedDonation['id']
-        provider: ProcessedDonation['provider']
+        source: ProcessedDonation['source']
       }
     ) {
-      return state.donations[options.provider].find(
+      return state.donations[options.source].find(
         (donation) => donation.id === options.id
       )
     },

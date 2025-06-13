@@ -8,11 +8,16 @@ type AuctionSliceState = {
 
 const initialState: AuctionSliceState = {
   auctionInfo: {
-    id: '',
+    id: 0,
+    auctionUUID: '',
+    dropoutSlotsIds: [],
+    slotsIds: [],
+    winnerSlotId: null,
+    processedDonationsIds: [],
     ownerId: '',
     url: '',
-    createAt: 0,
-    endedAt: 0,
+    createAt: new Date(),
+    endedAt: new Date(),
     isBetsClosed: false,
     isEnded: false,
     wheelMode: 'classic',
@@ -30,7 +35,7 @@ const auctionSlice = createSlice({
     },
   },
   selectors: {
-    getAuctionId: (state) => state.auctionInfo.id,
+    getAuctionUUID: (state) => state.auctionInfo.auctionUUID,
     getAuctionUrl: (state) => state.auctionInfo.url,
     getAuctionInfo: (state) => state.auctionInfo,
     getBetsStatus: (state) => state.auctionInfo.isBetsClosed,
