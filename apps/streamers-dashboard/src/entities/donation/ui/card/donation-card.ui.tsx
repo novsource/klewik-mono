@@ -32,33 +32,22 @@ import { DonationCardMessage } from './donation-card-message.ui'
 
 export type DonationCardProps = CardProps & {
   data: ProcessedDonation
-  showingSkeleton?: boolean
   renderHeader?: (donation: ProcessedDonation) => ReactNode | undefined
   renderContent?: (donation: ProcessedDonation) => ReactNode | undefined
   renderFooter?: (donation: ProcessedDonation) => ReactNode | undefined
 }
 
 const DonationCard = (props: DonationCardProps) => {
-  const {
-    data,
-    showingSkeleton = false,
-    renderHeader,
-    renderContent,
-    renderFooter,
-    ...cardProps
-  } = props
+  const { data, renderHeader, renderContent, renderFooter, ...cardProps } =
+    props
 
   const isShouldSkipFooterRendering =
-    data.processingStatus === 'error' || data.processingStatus === 'rejected'
+    data.processedStatus === 'error' || data.processedStatus === 'rejected'
 
   const cardMessage = useMemo(() => {
     if (!data.message) return undefined
 
-    if (showingSkeleton) {
-      return <Skeleton className="w-40 h-6 rounded-md" />
-    }
-
-    if (data.message && data.message_type === 'audio') {
+    if (data.message && data.messageType === 'audio') {
       return (
         <Flex
           className="w-fit bg-dark-accent/70 px-2 py-1.5 rounded-md gap-x-1.5 whitespace-nowrap"
@@ -76,40 +65,27 @@ const DonationCard = (props: DonationCardProps) => {
     }
 
     return <DonationCardMessage value={data.message} />
-  }, [data.message, data.message_type, showingSkeleton])
+  }, [data.message, data.messageType])
 
   const cardHeader = useMemo(() => {
     if (renderHeader) {
       return renderHeader(data)
     }
 
-    return showingSkeleton ? (
-      <>
-        <SkeletonDonationCardBadge />
-        <SkeletonDonationCardBadge />
-      </>
-    ) : (
+    return (
       <>
         <Badge className={'bg-orange/20 text-orange'}>
           <Flex className="gap-x-1" align={'center'}>
             <Icons.DonationAlerts width={14} height={14} />
-            {FORMATTED_INTEGRATIONS_PLATFORMS_NAMES[data.provider]}
+            {FORMATTED_INTEGRATIONS_PLATFORMS_NAMES[data.source]}
           </Flex>
         </Badge>
-        <DonationCardBadge status={data.processingStatus} />
+        <DonationCardBadge status={data.processedStatus} />
       </>
     )
-  }, [data.processingStatus, renderHeader, showingSkeleton])
+  }, [data.processedStatus, renderHeader])
 
   const cardContent = useMemo(() => {
-    if (showingSkeleton)
-      return (
-        <>
-          <Skeleton className="max-w-[280px] h-6 rounded-md" />
-          {cardMessage}
-        </>
-      )
-
     if (renderContent) return renderContent(data)
 
     return (
@@ -134,14 +110,11 @@ const DonationCard = (props: DonationCardProps) => {
         {!isShouldSkipFooterRendering ? (
           cardMessage
         ) : (
-          <Flex justify="between" align="end">
+          <Flex align="end">
             {cardMessage}
             <Flex className="w-full justify-end text-gray">
               <Typography tag="span">
-                {new Intl.RelativeTimeFormat().format(
-                  data.createdAt ?? -5,
-                  'seconds'
-                )}
+                {new Intl.RelativeTimeFormat().format(-5, 'seconds')}
               </Typography>
             </Flex>
           </Flex>
@@ -155,24 +128,11 @@ const DonationCard = (props: DonationCardProps) => {
     data.currency,
     data.username,
     cardMessage,
-    showingSkeleton,
   ])
 
   const cardFooter = useMemo(() => {
-    if (showingSkeleton)
-      return (
-        <>
-          <Flex className="gap-x-2">
-            <SkeletonDonationCardChip />
-            <SkeletonDonationCardChip />
-          </Flex>
-          <SkeletonDonationCardChip className="h-5" />
-        </>
-      )
-
-    if (renderFooter) return renderFooter(data)
-
     if (isShouldSkipFooterRendering) return
+    if (renderFooter) return renderFooter(data)
 
     return (
       <>
@@ -190,7 +150,11 @@ const DonationCard = (props: DonationCardProps) => {
                   tag="span"
                   className="font-golos-f text-gray-accent"
                 >
-                  {formatNumberToIntlString(Math.floor(data.processedData.id))}
+                  {formatNumberToIntlString(
+                    Math.floor(
+                      (data.processedSlotsIds && data.processedSlotsIds[0]) || 0
+                    )
+                  )}
                 </Typography>
               </Flex>
               <Divider className="border-1 h-3/4 border-gray mx-1.5" />
@@ -207,20 +171,11 @@ const DonationCard = (props: DonationCardProps) => {
           </DonationCardChip>
         </Flex>
         <Typography className="text-gray" tag="span">
-          {new Intl.RelativeTimeFormat().format(
-            data.createdAt ?? -5,
-            'seconds'
-          )}
+          {new Intl.RelativeTimeFormat().format(-5, 'seconds')}
         </Typography>
       </>
     )
-  }, [
-    isShouldSkipFooterRendering,
-    renderFooter,
-    data.amount,
-    data.createdAt,
-    showingSkeleton,
-  ])
+  }, [isShouldSkipFooterRendering, renderFooter, data.amount, data.createdAt])
 
   return (
     <Card {...cardProps}>
@@ -240,4 +195,27 @@ const DonationCard = (props: DonationCardProps) => {
   )
 }
 
-export { DonationCard }
+type SkeletonDonationCardProps = CardProps
+
+const SkeletonDonationCard = (props: SkeletonDonationCardProps) => {
+  return (
+    <Card {...props}>
+      <CardHeader className="flex gap-x-2">
+        <SkeletonDonationCardBadge />
+        <SkeletonDonationCardBadge />
+      </CardHeader>
+      <CardContent className={'w-full flex flex-col p-0 py-2'}>
+        <Skeleton className="max-w-[280px] h-6 rounded-md" />
+      </CardContent>
+      <CardFooter className="flex flex-row gap-x-1 mt-2 items-end justify-between">
+        <Flex className="gap-x-2">
+          <SkeletonDonationCardChip />
+          <SkeletonDonationCardChip />
+        </Flex>
+        <SkeletonDonationCardChip className="h-5" />
+      </CardFooter>
+    </Card>
+  )
+}
+
+export { DonationCard, SkeletonDonationCard }
