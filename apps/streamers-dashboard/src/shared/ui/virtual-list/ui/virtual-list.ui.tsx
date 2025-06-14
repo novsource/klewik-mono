@@ -13,10 +13,10 @@ export type VirtualListSlots =
   | 'item'
 
 export type VirtualListProps<
-  T extends Element = HTMLElement,
-  ListDataElement extends unknown = unknown,
+  ListElementType extends Element,
+  ListDataElement extends unknown,
 > = Omit<
-  VirtualizerOptions<HTMLDivElement, T>,
+  VirtualizerOptions<HTMLDivElement, ListElementType>,
   | 'count'
   | 'estimateSize'
   | 'getScrollElement'
@@ -40,7 +40,12 @@ export type VirtualListProps<
   height?: number
 }
 
-const VirtualList = (props: VirtualListProps<HTMLElement>) => {
+const VirtualList = <
+  Element extends HTMLElement,
+  ListDataElement extends unknown,
+>(
+  props: VirtualListProps<Element, ListDataElement>
+) => {
   const {
     width,
     height,

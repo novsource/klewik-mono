@@ -7,12 +7,20 @@ import {
 } from '~shared/ui/shadow-scroll-area'
 import { VirtualList, VirtualListProps } from '~shared/ui/virtual-list'
 
-export type ShadowVirtualListProps = VirtualListProps & {
+export type ShadowVirtualListProps<
+  Element extends HTMLElement,
+  ListDataItem,
+> = VirtualListProps<Element, ListDataItem> & {
   className?: string
   shadowScrollProps?: ShadowScrollAreaProps
 }
 
-const ShadowVirtualList = (props: ShadowVirtualListProps) => {
+const ShadowVirtualList = <
+  Element extends HTMLElement,
+  ListDataElement = unknown,
+>(
+  props: ShadowVirtualListProps<Element, ListDataElement>
+) => {
   const { className, shadowScrollProps, ...virtualListProps } = props
 
   const internalScrollElementRef = useRef<HTMLDivElement>(null)
