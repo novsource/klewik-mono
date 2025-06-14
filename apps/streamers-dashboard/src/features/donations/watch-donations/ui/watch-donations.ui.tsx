@@ -1,5 +1,6 @@
 import { ComponentProps, ReactNode, memo, useMemo } from 'react'
 
+import { VirtualItem } from '@tanstack/react-virtual'
 import { motion } from 'framer-motion'
 
 import { auctionSelectors } from '~entities/auction/store'
@@ -11,10 +12,11 @@ import { DonationCard, SkeletonDonationCard } from '~entities/donation/ui/card'
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { useInfiniteScroll } from '~shared/hooks/use-infinite-scroll'
-import { useIsFirstRender } from '~shared/hooks/use-is-first-render'
 
 import { Flex } from '~shared/ui/flex'
+import { Icons } from '~shared/ui/icons'
 import { ShadowVirtualList } from '~shared/ui/shadow-virtual-list'
+import { Typography } from '~shared/ui/typograghy'
 
 import { useLazyLoadMoreDonationsQuery } from '../api'
 
@@ -66,12 +68,14 @@ const DonationsList = memo((props: DonationListProps) => {
         }).then((result) => {
           const donations = result.data
 
-          if (!donations || donations.length === 0) {
-            return resolve({ list: [] })
-          }
+          setTimeout(() => {
+            if (!donations || donations.length === 0) {
+              return resolve({ list: [] })
+            }
 
-          donations.forEach(addDonation)
-          setTimeout(() => resolve({ list: donations }), 3000)
+            donations.forEach(addDonation)
+            resolve({ list: donations })
+          }, 3000)
         })
       })
     },
@@ -79,6 +83,56 @@ const DonationsList = memo((props: DonationListProps) => {
   )
 
   const virtualListItemsCount = isPending ? 15 : infinityScrollData.length + 1
+
+  const renderVirtualListItem = (
+    listData: ProcessedDonation[],
+    virtualizeItem: VirtualItem,
+    index: number
+  ) => {
+    if (
+      virtualizeItem.index === infinityScrollData.length &&
+      isCanLoadMore &&
+      !isPending
+    ) {
+      fetchMoreDonations({ currentPage: page, limit: pageLimit })
+    }
+
+    if (!isPending && !isCanLoadMore && infinityScrollData.length === 0)
+      return <EmptyDonationsList />
+
+    if (isPending) {
+      return (
+        <SkeletonDonationCard
+          key={virtualizeItem.key}
+          style={{
+            marginTop: index !== 0 ? '8px' : '0',
+          }}
+        />
+      )
+    }
+
+    if (!listData[index]) return
+
+    const donation = listData[index]
+
+    if (renderDonation) {
+      return renderDonation(donation, index)
+    }
+
+    return (
+      <motion.li
+        key={donation.id}
+        initial={disableAnimation ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{
+          duration: disableAnimation ? 0 : 0.5,
+          ease: 'easeIn',
+        }}
+      >
+        <DonationCard data={donation} />
+      </motion.li>
+    )
+  }
 
   return (
     <Flex className="w-full h-full" {...restProps}>
@@ -88,51 +142,23 @@ const DonationsList = memo((props: DonationListProps) => {
         slotsClassNames={{ content: 'pb-4' }}
         overscan={5}
       >
-        {(data, virtualizeItem, index) => {
-          if (
-            virtualizeItem.index === infinityScrollData.length &&
-            isCanLoadMore &&
-            !isPending
-          ) {
-            fetchMoreDonations({ currentPage: page, limit: pageLimit })
-          }
-
-          if (isPending) {
-            return (
-              <SkeletonDonationCard
-                key={virtualizeItem.key}
-                style={{
-                  marginTop: index !== 0 ? '8px' : '0',
-                }}
-              />
-            )
-          }
-
-          if (!data[index]) return
-
-          const donation = data[index] as (typeof donations)[number]
-
-          if (renderDonation) {
-            return renderDonation(donation, index)
-          }
-
-          return (
-            <motion.li
-              key={donation.id}
-              initial={disableAnimation ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{
-                duration: disableAnimation ? 0 : 0.5,
-                ease: 'easeIn',
-              }}
-            >
-              <DonationCard data={donation} />
-            </motion.li>
-          )
-        }}
+        {renderVirtualListItem}
       </ShadowVirtualList>
     </Flex>
   )
 })
+
+const EmptyDonationsList = () => {
+  return (
+    <Flex className="w-full h-screen" align="center" justify="center">
+      <Flex className="gap-y-1" direction="column" align="center">
+        <Icons.Logo width={32} height={32} className="text-gray" />
+        <Typography tag="h3" className="text-gray font-medium">
+          Донаты не были найдены
+        </Typography>
+      </Flex>
+    </Flex>
+  )
+}
 
 export { DonationsList }

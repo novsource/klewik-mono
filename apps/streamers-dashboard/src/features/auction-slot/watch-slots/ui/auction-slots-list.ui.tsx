@@ -1,7 +1,4 @@
 import { ReactNode, useEffect, useMemo, useState } from 'react'
-import AutoSizer from 'react-virtualized-auto-sizer'
-
-import { Virtualizer as VirtualList } from 'virtua'
 
 import { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -11,13 +8,9 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import {
-  ShadowScrollArea,
-  ShadowScrollAreaProps,
-} from '~shared/ui/shadow-scroll-area'
+import { ShadowScrollAreaProps } from '~shared/ui/shadow-scroll-area'
+import { ShadowVirtualList } from '~shared/ui/shadow-virtual-list'
 import { Typography } from '~shared/ui/typograghy'
-
-import { cn } from '~shared/utils'
 
 type AuctionSlotsListProps = {
   data?: AuctionSlot[]
@@ -26,7 +19,7 @@ type AuctionSlotsListProps = {
 } & Pick<ShadowScrollAreaProps, 'shadowSize' | 'shadowEnabled'>
 
 const VirtualizedSlotsList = (props: AuctionSlotsListProps) => {
-  const { data, className, renderCard, shadowEnabled, shadowSize } = props
+  const { data, renderCard } = props
 
   const storedSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const [slots, setSlots] = useState(() => data ?? storedSlots)
@@ -66,27 +59,17 @@ const VirtualizedSlotsList = (props: AuctionSlotsListProps) => {
 
   return (
     <Flex className="w-full h-full">
-      <AutoSizer>
-        {({ width, height }) => {
-          return (
-            <ShadowScrollArea
-              className={cn(className)}
-              shadowSize={shadowSize}
-              shadowEnabled={shadowEnabled}
-              style={{
-                width,
-                height,
-                overflowAnchor: 'none',
-                overflowY: 'auto',
-              }}
-            >
-              <VirtualList count={slots.length} overscan={5}>
-                {renderCard ? slots.map(renderCard) : defaultSlotsCardList}
-              </VirtualList>
-            </ShadowScrollArea>
-          )
+      <ShadowVirtualList
+        slotsClassNames={{ content: 'pb-4' }}
+        data={slots}
+        overscan={5}
+      >
+        {(data, virtualItem) => {
+          return renderCard
+            ? renderCard(data[virtualItem.index], virtualItem.index)
+            : defaultSlotsCardList
         }}
-      </AutoSizer>
+      </ShadowVirtualList>
     </Flex>
   )
 }

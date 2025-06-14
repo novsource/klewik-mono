@@ -53,8 +53,6 @@ const useInfiniteScroll = <T>(
 
       const newData = await serviceFn(...args)
 
-      console.log('HERE')
-
       setIsPending(false)
       setData((curr) => [...curr, ...newData.list])
       setPage((currentPage) => currentPage + 1)
