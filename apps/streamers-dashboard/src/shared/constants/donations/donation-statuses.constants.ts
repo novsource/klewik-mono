@@ -1,6 +1,6 @@
 /**@todo i18 */
 const DONATION_STATUS_NAME = {
-  added: 'Добавлено в аукцион',
+  added: 'Обработано',
   confirm: 'Необходима проверка',
   error: 'Ошибка обработки',
   empty: 'Данные не найдены',

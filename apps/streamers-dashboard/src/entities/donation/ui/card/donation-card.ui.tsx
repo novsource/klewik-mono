@@ -41,8 +41,7 @@ const DonationCard = (props: DonationCardProps) => {
   const { data, renderHeader, renderContent, renderFooter, ...cardProps } =
     props
 
-  const isShouldSkipFooterRendering =
-    data.processedStatus === 'error' || data.processedStatus === 'rejected'
+  const isShouldSkipFooterRendering = data.processedStatus !== 'added'
 
   const cardMessage = useMemo(() => {
     if (!data.message) return undefined
@@ -83,7 +82,7 @@ const DonationCard = (props: DonationCardProps) => {
         <DonationCardBadge status={data.processedStatus} />
       </>
     )
-  }, [data.processedStatus, renderHeader])
+  }, [data.processedStatus, data.source, data.processedStatus, renderHeader])
 
   const cardContent = useMemo(() => {
     if (renderContent) return renderContent(data)

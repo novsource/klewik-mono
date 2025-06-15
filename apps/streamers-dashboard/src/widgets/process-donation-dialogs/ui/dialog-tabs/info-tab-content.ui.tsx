@@ -1,7 +1,8 @@
 import { TabsContentProps } from '@radix-ui/react-tabs'
-import { IntegrationBadge } from '~entities/integrations/ui/badge'
 
 import { ProcessedDonation } from '~entities/donation/model'
+
+import { IntegrationBadge } from '~entities/integrations/ui/badge'
 
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
@@ -47,7 +48,7 @@ const DonationInfoTabContent = ({
           title="Источник"
           titleIcon={<Icons.Source className="text-gray" size="sm" />}
         >
-          <IntegrationBadge integration={donation.provider} />
+          <IntegrationBadge integration={donation.source} />
         </ProcessDonationCard>
         <ProcessDonationCard
           title="Дата создания"
@@ -59,14 +60,14 @@ const DonationInfoTabContent = ({
           contentPosition="bottom"
           title="Сообщение"
           titleIcon={
-            donation.message_type === 'audio' ? (
+            donation.messageType === 'audio' ? (
               <Icons.Sound className="text-gray" size="sm" />
             ) : (
               <Icons.Message className="text-gray" size="sm" />
             )
           }
         >
-          {donation.message_type === 'audio'
+          {donation.messageType === 'audio'
             ? 'Аудио-формат сообщений не поддерживается'
             : donation.message}
         </ProcessDonationCard>

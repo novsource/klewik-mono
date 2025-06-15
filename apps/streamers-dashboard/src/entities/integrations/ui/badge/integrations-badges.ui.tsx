@@ -23,6 +23,8 @@ const IntegrationBadge = (props: IntegrationsBadgeProps) => {
     const integrationsStyles: Record<IntegrationsPlatforms, string> = {
       donatePay: 'bg-green-accent/20 text-white/80',
       donationAlerts: 'bg-orange/20 text-orange',
+      twitch: 'bg-gray text-white/80',
+      userInput: 'bg-gray text-white/80',
     }
     return cn(integrationsStyles[integration], className)
   }, [integration, className])

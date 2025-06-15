@@ -65,6 +65,7 @@ const DonationsList = memo((props: DonationListProps) => {
           auctionUUID: auctionInfo.auctionUUID,
           page: currentPage,
           limit,
+          orderBy: 'descending',
         }).then((result) => {
           const donations = result.data
 
