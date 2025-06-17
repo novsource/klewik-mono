@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite --port 5500 --host 0.0.0.0",
     "dev:icons": "pnpm run icons && vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
