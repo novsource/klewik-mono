@@ -31,7 +31,7 @@ const donationMessageTypes = [
 
 const DonationSchema = z.object({
   id: z.number(),
-  auctionUUID: z.string().uuid(),
+  auctionId: z.number(),
   sourceDonationId: z.number().positive().nullable(),
   username: z.string(),
   source: z.enum(['donatePay', 'donationAlerts', 'twitch', 'userInput']),
