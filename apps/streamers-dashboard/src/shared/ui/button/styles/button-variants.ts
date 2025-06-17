@@ -44,7 +44,8 @@ export const buttonVariants = cva<ButtonVariants>(
       variant: {
         default:
           'bg-dark text-gray-accent border-1 border-dark-accent/70 hover:border-gray/55 hover:bg-dark-accent/50 hover:text-white',
-        action: 'bg-green text-white hover:bg-green/80',
+        action:
+          'bg-[#242A28] text-green-accent/80 hover:bg-[#2C3B33] hover:text-green-accent',
         error: 'bg-red/10 text-red hover:bg-red/15 border-1 border-red/20',
         outline:
           'bg-dark border-1 border-dark-accent hover:border-gray text-gray-accent hover:bg-dark/80 hover:text-white/80',
