@@ -34,24 +34,24 @@ type ButtonVariants = {
 export const buttonVariants = cva<ButtonVariants>(
   [
     'inline-flex items-center justify-center gap-2',
-    'ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+    'ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-hidden',
     'disabled:pointer-events-none disabled:opacity-50',
-    '[&_svg]:shrink-0 [&_svg]:pointer-events-none',
-    'whitespace-nowrap rounded-small transition-all select-none cursor-pointer',
+    '[&_svg]:pointer-events-none [&_svg]:shrink-0',
+    'cursor-pointer rounded-small whitespace-nowrap transition-all select-none',
   ],
   {
     variants: {
       variant: {
         default:
-          'bg-dark text-gray-accent border-1 border-dark-accent/70 hover:border-gray/55 hover:bg-dark-accent/50 hover:text-white',
+          'border-1 border-dark-accent/70 bg-dark text-gray-accent hover:border-gray/55 hover:bg-dark-accent/50 hover:text-white',
         action:
           'bg-[#242A28] text-green-accent/80 hover:bg-[#2C3B33] hover:text-green-accent',
-        error: 'bg-red/10 text-red hover:bg-red/15 border-1 border-red/20',
+        error: 'border-1 border-red/20 bg-red/10 text-red hover:bg-red/15',
         outline:
-          'bg-dark border-1 border-dark-accent hover:border-gray text-gray-accent hover:bg-dark/80 hover:text-white/80',
-        ghost: 'bg-transparent border-transparent',
+          'border-1 border-dark-accent bg-dark text-gray-accent hover:border-gray hover:bg-dark/80 hover:text-white/80',
+        ghost: 'border-transparent bg-transparent',
         'ghost-outline':
-          'bg-transparent border-1 border-dark-accent/70 hover:border-gray',
+          'border-1 border-dark-accent/70 bg-transparent hover:border-gray',
         link: 'text-primary underline-offset-4 hover:underline',
       },
       isIconOnly: {
@@ -60,9 +60,9 @@ export const buttonVariants = cva<ButtonVariants>(
       },
       size: {
         default:
-          'h-10 px-2.5 py-1 text-md leading-6 rounded-md font-medium data-[icon-only=false]:[&_svg]:size-4.5',
+          'h-10 rounded-md px-2.5 py-1 text-md leading-6 font-medium data-[icon-only=false]:[&_svg]:size-4.5',
         sm: 'h-9 rounded-md px-2 text-sm leading-6 font-medium data-[icon-only=false]:[&_svg]:size-4',
-        xs: 'h-8.5 rounded-md px-1.5 text-sm leading-5 font-regular data-[icon-only=false]:[&_svg]:size-3.5',
+        xs: 'font-regular h-8.5 rounded-md px-1.5 text-sm leading-5 data-[icon-only=false]:[&_svg]:size-3.5',
         lg: 'h-10.5 rounded-md px-3 font-medium data-[icon-only=false]:[&_svg]:size-5',
       },
       startContent: {
@@ -81,7 +81,7 @@ export const buttonVariants = cva<ButtonVariants>(
     },
     compoundVariants: [
       { isIconOnly: true, size: 'default', className: 'px-3' },
-      { isIconOnly: true, size: 'sm', className: 'px-2.5 h-8' },
+      { isIconOnly: true, size: 'sm', className: 'h-8 px-2.5' },
     ],
   }
 )
