@@ -28,25 +28,37 @@ type AuctionCardChipProps = {
   }
 }
 
-type AuctionSlotCardProps = Omit<CardProps, 'id' | 'color'> &
+type AuctionSlotCardProps = Omit<CardProps, 'id' | 'color' | 'className'> &
   AuctionSlot & {
     percent?: string | number
+    slotClassNames?: {
+      base?: string
+      header?: string
+      title?: string
+      content?: string
+    }
   }
 
 const AuctionSlotCard = forwardRef<HTMLDivElement, AuctionSlotCardProps>(
   (props, forwardRef) => {
-    const { id, percent, name, color, points, className, ...cardProps } = props
+    const { id, percent, name, color, points, slotClassNames, ...cardProps } =
+      props
     return (
       <Card
         ref={forwardRef}
         className={cn(
           'flex flex-col justify-between gap-y-3 border-1 border-dark py-2',
-          className
+          slotClassNames?.base
         )}
         {...cardProps}
       >
-        <CardHeader className="flex h-6 items-start justify-between">
-          <CardTitle className="w-full">
+        <CardHeader
+          className={cn(
+            'flex h-6 items-start justify-between',
+            slotClassNames?.header
+          )}
+        >
+          <CardTitle className={cn('w-full', slotClassNames?.title)}>
             <Typography
               tag="span"
               className="font-golos-f text-md tablet:text-title tablet:font-semibold"
@@ -55,14 +67,19 @@ const AuctionSlotCard = forwardRef<HTMLDivElement, AuctionSlotCardProps>(
             </Typography>
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex w-full flex-col gap-y-2 pt-0">
+        <CardContent
+          className={cn(
+            'flex w-full flex-col gap-y-2 pt-0',
+            slotClassNames?.content
+          )}
+        >
           <Flex
             className="w-full gap-x-1 tablet:gap-x-2"
             direction="row"
             align="center"
           >
             <div
-              className="h-7 w-8 rounded-md"
+              className="h-7 w-8 rounded-md max-tablet:size-6"
               style={{
                 backgroundColor: Array.isArray(color)
                   ? `rgb(${color.join(',')})`
