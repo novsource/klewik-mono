@@ -87,6 +87,7 @@
   --radius-sm: calc(var(--radius) - 4px);
 
   --breakpoint-*: initial;
+  --breakpoint-small-mobile: 320px;
   --breakpoint-mobile: 640px;
   --breakpoint-tablet: 1024px;
   --breakpoint-landtop: 1440px;
@@ -109,6 +110,8 @@
   --animate-accordion-down: slideDown 0.4s ease;
 
   --height-sheet: var(--sheet-height);
+  --height-footer: var(--footer-height);
+  --mobile-menu-bottom: calc(var(--mobile-menu-bottom)+var(--footer-height));
 
   --grid-template-rows-slots-desktop: max(40px) 1fr;
   --grid-template-rows-slots-table: minmax(40px, 42px) 1fr;
@@ -254,26 +257,21 @@
   --sheet-enter-translate-y: initial;
 }
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
-  }
-}
-
 @layer base {
   :root {
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    --header-height: 60px;
+    --footer-height: 52px;
+    --mobile-menu-bottom: 16px;
+    --sheet-height: calc(100% - 20px);
+
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -332,6 +330,48 @@
     background-color: var(--color-dark-foreground);
   }
 
+  html {
+    @apply h-full w-full;
+  }
+
+  #root {
+    @apply relative h-full w-full;
+  }
+
+  body {
+    @apply m-0 h-full w-full antialiased;
+  }
+
+  header {
+    height: var(--header-height);
+  }
+
+  li {
+    list-style-type: none;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: #f4f4f4 !important;
+    animation-name: onAutoFillStart;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  input:not(:-webkit-autofill) {
+    animation-name: onAutoFillCancel;
+  }
+
+  footer {
+    height: var(--footer-height);
+  }
+
+  section > header {
+    height: auto;
+  }
+
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -343,33 +383,17 @@
     -moz-appearance: textfield;
   }
 
-  .slider {
-    container-type: size;
-    container-name: slider;
-    @apply flex h-full w-full flex-col justify-center gap-y-6 overflow-scroll px-0.5 transition-[height];
-  }
-
-  .slider-content {
+  .main--dashboard {
     position: relative;
     width: 100%;
     height: 100%;
-    padding: 2px 0 2px 0;
-    display: flex;
-    flex-direction: column;
-    row-gap: 24px;
+    max-height: calc(100% - var(--header-height));
+    overflow: hidden;
   }
 
   .border-divider {
     border: none;
     border-bottom: 3px dotted var(--color-dark-accent);
-  }
-
-  .pencil-icon-gradient {
-    background: linear-gradient(
-      to left,
-      rgba(255, 249, 168, 0.3),
-      rgba(249, 139, 133, 0.3)
-    );
   }
 
   @container slider (300px <= height <= 768px) {
@@ -391,73 +415,28 @@
   }
 }
 
-:root {
-  --header-height: 60px;
-  --footer-height: 52px;
-  --sheet-height: calc(100% - 20px);
-}
+@layer components {
+  .slider {
+    container-type: size;
+    container-name: slider;
+    @apply flex h-full w-full flex-col justify-center gap-y-6 overflow-scroll px-0.5 transition-[height];
+  }
 
-:root {
-  font-family: Manrope, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  letter-spacing: -0.0125rem;
-  font-weight: 400;
+  .slider-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 2px 0 2px 0;
+    display: flex;
+    flex-direction: column;
+    row-gap: 24px;
+  }
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-html {
-  @apply h-full w-full;
-}
-
-#root {
-  @apply relative h-full w-full;
-}
-
-body {
-  @apply m-0 h-full w-full antialiased;
-}
-
-header {
-  height: var(--header-height);
-}
-
-li {
-  list-style-type: none;
-}
-
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: #f4f4f4 !important;
-  animation-name: onAutoFillStart;
-  transition: background-color 5000s ease-in-out 0s;
-}
-
-input:not(:-webkit-autofill) {
-  animation-name: onAutoFillCancel;
-}
-
-footer {
-  height: var(--footer-height);
-}
-
-section > header {
-  height: auto;
-}
-
-.main--dashboard {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  max-height: calc(100% - var(--header-height));
-  overflow: hidden;
+  .pencil-icon-gradient {
+    background: linear-gradient(
+      to left,
+      rgba(255, 249, 168, 0.3),
+      rgba(249, 139, 133, 0.3)
+    );
+  }
 }

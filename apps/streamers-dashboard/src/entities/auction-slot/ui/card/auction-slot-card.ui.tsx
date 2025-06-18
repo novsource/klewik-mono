@@ -40,25 +40,29 @@ const AuctionSlotCard = forwardRef<HTMLDivElement, AuctionSlotCardProps>(
       <Card
         ref={forwardRef}
         className={cn(
-          'flex flex-col justify-between border-1 border-dark gap-y-3 py-2',
+          'flex flex-col justify-between gap-y-3 border-1 border-dark py-2',
           className
         )}
         {...cardProps}
       >
-        <CardHeader className="flex items-start justify-between h-6">
+        <CardHeader className="flex h-6 items-start justify-between">
           <CardTitle className="w-full">
             <Typography
               tag="span"
-              className="font-golos-f font-semibold text-title"
+              className="font-golos-f text-md tablet:text-title tablet:font-semibold"
             >
               {name}
             </Typography>
           </CardTitle>
         </CardHeader>
-        <CardContent className="w-full flex flex-col gap-y-2 pt-0">
-          <Flex className="w-full gap-x-2" direction="row" align="center">
+        <CardContent className="flex w-full flex-col gap-y-2 pt-0">
+          <Flex
+            className="w-full gap-x-1 tablet:gap-x-2"
+            direction="row"
+            align="center"
+          >
             <div
-              className="w-8 h-7 rounded-md"
+              className="h-7 w-8 rounded-md"
               style={{
                 backgroundColor: Array.isArray(color)
                   ? `rgb(${color.join(',')})`
@@ -97,7 +101,7 @@ const AuctionCardChip = (props: AuctionCardChipProps) => {
   return (
     <Flex
       className={cn(
-        'px-2 py-1 bg-gray/30 gap-x-1.5 rounded-md',
+        'gap-x-1 rounded-md bg-gray/30 px-1.5 py-1 tablet:gap-x-1.5 tablet:px-2 tablet:py-1',
         classNames?.base
       )}
       direction="row"
@@ -106,7 +110,7 @@ const AuctionCardChip = (props: AuctionCardChipProps) => {
       {startContent}
       <Typography
         className={cn(
-          'font-golos-f text-md font-medium text-gray-accent',
+          'font-golos-f text-sm font-medium text-gray-accent tablet:text-md',
           classNames?.text
         )}
         tag="span"
