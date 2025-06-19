@@ -21,6 +21,7 @@ const createAuctionApi = splittedAuctionApi.injectEndpoints({
         data: { key },
         headers: { 'Content-Type': 'multipart/form-data' },
         method: 'POST',
+        withCredentials: false,
       }),
     }),
   }),

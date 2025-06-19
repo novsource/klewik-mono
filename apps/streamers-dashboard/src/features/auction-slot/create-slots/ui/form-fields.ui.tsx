@@ -1,5 +1,7 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import {
+  FieldPath,
+  FieldValues,
   UseControllerProps,
   useController,
   useFormContext,
@@ -19,22 +21,23 @@ import { deleteAllSpacesFromString } from '~shared/utils/string-format'
 
 import { cn, formatNumberToIntlString } from '~shared/utils'
 
-import { TransformedCreateSlotsFormData } from '../lib'
-import { CreateSlotForm } from '../model'
+type ControllerFormInputProps<
+  FormFields extends FieldValues | Record<string, FieldValues>,
+  Paths extends FieldPath<FormFields>,
+  TransformedValues extends FormFields,
+> = UseControllerProps<FormFields, Paths, TransformedValues>
 
-type ControllerFormInputProps = UseControllerProps<
-  CreateSlotForm,
-  `slots.${number}.name` | `slots.${number}.points`,
-  TransformedCreateSlotsFormData
->
-
-const SlotNameFormInput = ({
+const SlotNameFormInput = <
+  FormFields extends FieldValues,
+  Paths extends FieldPath<FormFields>,
+  TransformedValues extends FormFields,
+>({
   control,
   name,
   maxLength = 35,
   ...props
 }: InputProps &
-  ControllerFormInputProps & {
+  ControllerFormInputProps<FormFields, Paths, TransformedValues> & {
     maxLength?: number
   }) => {
   const [boundAnimationStatus, setBoundAnimationStatus] = useState<
@@ -88,36 +91,33 @@ const SlotNameFormInput = ({
   )
 }
 
-const SlotPointsFormInput = ({
+const SlotPointsFormInput = <
+  FormFields extends FieldValues,
+  Paths extends FieldPath<FormFields>,
+  TransformedValues extends FormFields,
+>({
   control,
   name,
   maxValue = 10000000,
   ...props
-}: InputProps &
-  ControllerFormInputProps & {
+}: Omit<InputProps, 'type'> &
+  ControllerFormInputProps<FormFields, Paths, TransformedValues> & {
     maxValue?: number
   }) => {
+  const { clearErrors, setError } = useFormContext()
+  const {
+    field: { value, ...field },
+  } = useController({ name, control })
+
   const slotsPointsSum = useStoreSelector(
     auctionSlotsSelectors.getSlotsPointsSum
   )
-
-  const { field } = useController({ name, control })
-
-  const { clearErrors, setError } = useFormContext()
-
   const [pointsValue, setPointsValue] = useState(() => {
-    return Number(deleteAllSpacesFromString(field.value))
+    return Number(deleteAllSpacesFromString(value))
   })
   const [percentInputValue, setPercentInputValue] = useState(() => {
     return (pointsValue / (slotsPointsSum + pointsValue)) * 100
   })
-
-  const pointsValuesBounds = useMemo(() => {
-    return {
-      min: Math.floor(slotsPointsSum * 0.5),
-      max: Math.floor(slotsPointsSum * 99),
-    }
-  }, [slotsPointsSum])
 
   const onWinPercentChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     const percent = parseFloat(deleteAllSpacesFromString(event.target.value))
@@ -143,15 +143,17 @@ const SlotPointsFormInput = ({
   }
 
   useEffect(() => {
-    if (pointsValue < pointsValuesBounds.min) {
+    const minPointsValue = Math.floor(slotsPointsSum * 0.5)
+
+    if (pointsValue < minPointsValue) {
       setError(name, {
-        message: `Минимальное количество очков - ${pointsValuesBounds.min} (0.5%)`,
+        message: `Минимальное количество очков - ${minPointsValue} (0.5%)`,
         type: 'custom',
       })
     } else {
       clearErrors(name)
     }
-  }, [pointsValue])
+  }, [slotsPointsSum])
 
   return (
     <Flex className="w-full gap-x-2" align="start">
@@ -167,13 +169,15 @@ const SlotPointsFormInput = ({
         placeholder="Очки"
         allowNegative={false}
         startContent={<Icons.Coin className="text-gray-light" size="lg" />}
+        value={value}
         {...field}
         isAllowed={(values) => {
           const { floatValue } = values
+          const maxPointsValue = Math.floor(slotsPointsSum * 99)
 
           if (!floatValue) return true
 
-          return floatValue <= pointsValuesBounds.max
+          return floatValue <= maxPointsValue
         }}
         onChange={onPointsChangeHandler}
         {...props}

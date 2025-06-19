@@ -4,15 +4,15 @@ import { splittedAuctionSlotsApi } from '~entities/auction-slot/api'
 import { AuctionSlot } from '~entities/auction-slot/model'
 
 type CreateSlotsQueryArgs = {
-  auctionId: Auction['id']
+  auctionUUID: Auction['auctionUUID']
   slots: Array<Omit<AuctionSlot, 'id' | 'color'>>
 }
 
 const createSlotsApi = splittedAuctionSlotsApi.injectEndpoints({
   endpoints: (build) => ({
     createSlots: build.mutation<void, CreateSlotsQueryArgs>({
-      query: ({ auctionId, slots }) => ({
-        url: `/${auctionId}/create-slots`,
+      query: ({ auctionUUID, slots }) => ({
+        url: `/${auctionUUID}/create-slots`,
         data: {
           slots,
         },

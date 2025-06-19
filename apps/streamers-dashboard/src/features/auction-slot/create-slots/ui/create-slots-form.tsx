@@ -100,15 +100,15 @@ const SingleSlotCreatingForm = (props: SingleSlotCreatingFormProps) => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useFormContext<CreateSlotForm, unknown, TransformedCreateSlotsFormData>()
 
   const [createSlotsMutation, { isLoading }] = useCreateSlotsMutation()
 
   const submitForm = async (formData: TransformedCreateSlotsFormData) => {
     const response = await createSlotsMutation({
-      auctionId: auctionUUID,
-      slots: formData,
+      auctionUUID,
+      slots: formData.slots,
     })
 
     if (response.error) {
@@ -124,7 +124,7 @@ const SingleSlotCreatingForm = (props: SingleSlotCreatingFormProps) => {
     }
 
     toastSuccessNotification('Слот успешно добавлен в аукцион!')
-    onSuccess && onSuccess(formData)
+    onSuccess && onSuccess(formData.slots)
   }
 
   return (
@@ -149,7 +149,7 @@ const SingleSlotCreatingForm = (props: SingleSlotCreatingFormProps) => {
         type="submit"
         variant="action"
         className="w-full"
-        disabled={isLoading}
+        disabled={isLoading || !isValid}
       >
         Добавить в аукцион
       </Button>
@@ -184,8 +184,8 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
 
   const submitForm = async (formData: TransformedCreateSlotsFormData) => {
     const response = await createSlotsMutation({
-      auctionId: auctionUUID,
-      slots: formData,
+      auctionUUID,
+      slots: formData.slots,
     })
 
     if (response.error) {
@@ -201,7 +201,7 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
     }
 
     toastSuccessNotification('Слоты успешно добавлены в аукцион!')
-    onSuccess && onSuccess(formData)
+    onSuccess && onSuccess(formData.slots)
   }
 
   const checkIsTabHasError = (tabIndex: number) => {
