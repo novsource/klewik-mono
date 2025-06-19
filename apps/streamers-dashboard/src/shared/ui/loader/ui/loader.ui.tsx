@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
-import { AnimatePresence, TargetAndTransition, motion } from 'framer-motion'
+import { AnimatePresence, TargetAndTransition } from 'motion/react'
+import * as m from 'motion/react-m'
 
 import { Icons } from '~shared/ui/icons'
 
@@ -39,11 +40,9 @@ const loaderAnimationsVariants: Record<
 const Loader = () => {
   const [isInitialAnimationDone, setIsInitialAnimationDone] = useState(false)
 
-  console.log(isInitialAnimationDone)
-
   return (
     <AnimatePresence>
-      <motion.div
+      <m.div
         variants={loaderAnimationsVariants}
         initial={'appear'}
         animate={isInitialAnimationDone ? 'visible' : 'loopVisible'}
@@ -53,7 +52,7 @@ const Loader = () => {
         }}
       >
         <Icons.Logo className="text-gray-accent" width={32} height={32} />
-      </motion.div>
+      </m.div>
     </AnimatePresence>
   )
 }

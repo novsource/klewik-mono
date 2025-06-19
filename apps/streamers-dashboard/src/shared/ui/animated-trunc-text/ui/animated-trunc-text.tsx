@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { ClassValue } from 'clsx'
-import { animate, useMotionValue } from 'framer-motion'
+import { animate } from 'motion'
+import { useMotionValue } from 'motion/react'
 
 import { fitTextEllipsis } from '~shared/utils/canvas'
 
@@ -212,14 +213,14 @@ const AnimatedTruncText = ({
       <span className="opacity-0">{children}</span>
       <span
         ref={spanRef}
-        className={cn('absolute left-0 top-1/2 z-10 font-medium', className)}
+        className={cn('absolute top-1/2 left-0 z-10 font-medium', className)}
       >
         {text}
       </span>
       {isNeedToShowEllipsis && (
         <span
           className={cn(
-            'absolute right-0 top-1/2 -translate-y-1/2 font-medium',
+            'absolute top-1/2 right-0 -translate-y-1/2 font-medium',
             className
           )}
         >

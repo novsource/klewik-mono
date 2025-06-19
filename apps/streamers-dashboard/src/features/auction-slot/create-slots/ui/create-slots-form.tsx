@@ -7,7 +7,7 @@ import {
   useFormContext,
 } from 'react-hook-form'
 
-import { motion } from 'framer-motion'
+import * as m from 'motion/react-m'
 
 import { auctionSelectors } from '~entities/auction/store'
 
@@ -95,7 +95,7 @@ type SingleSlotCreatingFormProps = CreateSlotsFormProps
 const SingleSlotCreatingForm = (props: SingleSlotCreatingFormProps) => {
   const { onError, onSuccess, ...formProps } = props
 
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
+  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const {
     control,
@@ -107,7 +107,7 @@ const SingleSlotCreatingForm = (props: SingleSlotCreatingFormProps) => {
 
   const submitForm = async (formData: TransformedCreateSlotsFormData) => {
     const response = await createSlotsMutation({
-      auctionId,
+      auctionId: auctionUUID,
       slots: formData,
     })
 
@@ -129,7 +129,7 @@ const SingleSlotCreatingForm = (props: SingleSlotCreatingFormProps) => {
 
   return (
     <form
-      className="flex flex-col w-full justify-between"
+      className="flex w-full flex-col justify-between"
       onSubmit={handleSubmit(submitForm)}
       {...formProps}
     >
@@ -163,7 +163,7 @@ type MultiplySlotsCreatingFormProps = CreateSlotsFormProps & {
 
 const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
   const { onSuccess, onError, maxCreatingSlotsCount = 10, ...formProps } = props
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
+  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const [activeTabValue, setActiveTabValue] =
     useState<`slot-${string}`>('slot-0')
@@ -184,7 +184,7 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
 
   const submitForm = async (formData: TransformedCreateSlotsFormData) => {
     const response = await createSlotsMutation({
-      auctionId,
+      auctionId: auctionUUID,
       slots: formData,
     })
 
@@ -213,10 +213,7 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
   const renderFormFields = useCallback(
     (field: (typeof fields)[number], index: number) => {
       return (
-        <motion.li
-          key={field.id}
-          className="flex flex-col w-full gap-y-4 relative"
-        >
+        <m.li key={field.id} className="relative flex w-full flex-col gap-y-4">
           <SlotNameFormInput
             control={control}
             name={`slots.${index}.name` as const}
@@ -243,7 +240,7 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
               Удалить слот
             </Button>
           )}
-        </motion.li>
+        </m.li>
       )
     },
     [fields, getErrorMessageForField, errors]
@@ -251,7 +248,7 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
 
   return (
     <form
-      className="w-full h-full flex flex-col justify-between overflow-x-clip"
+      className="flex h-full w-full flex-col justify-between overflow-x-clip"
       onSubmit={handleSubmit(submitForm)}
       {...formProps}
     >
@@ -267,7 +264,7 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
             {fields.map((field, index) => (
               <TabsTrigger
                 className={cn(
-                  'flex gap-x-1 text-md font-medium data-[state=active]:rounded-[8px] cursor-pointer text-gray-light/70 hover:text-gray-light data-[state=active]:[&_button]:block',
+                  'flex cursor-pointer gap-x-1 text-md font-medium text-gray-light/70 hover:text-gray-light data-[state=active]:rounded-[8px] data-[state=active]:[&_button]:block',
                   checkIsTabHasError(index) &&
                     'text-red/80 hover:text-red data-[state=active]:text-red'
                 )}
@@ -280,7 +277,7 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
             {fields.length < maxCreatingSlotsCount && (
               <Button
                 variant={'ghost'}
-                className="hover:text-white/80 transition-colors"
+                className="transition-colors hover:text-white/80"
                 startContent={<Icons.Plus />}
                 size={'sm'}
                 onClick={() => {

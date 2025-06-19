@@ -15,11 +15,11 @@ import {
 } from '@radix-ui/react-scroll-area'
 import {
   AnimatePresence,
-  motion,
   transform,
   useMotionValueEvent,
   useScroll,
-} from 'framer-motion'
+} from 'motion/react'
+import * as m from 'motion/react-m'
 
 import { useDebouncedCallback } from '~shared/hooks/use-debounced-callback'
 import { useResizeObserver } from '~shared/hooks/use-resize-observer'
@@ -196,7 +196,7 @@ const ShadowScrollArea = forwardRef<
       <AnimatePresence>
         <>
           {isShadowsAnimated.topShadow && (
-            <motion.div
+            <m.div
               className={cn(
                 'w-full bg-gradient-to-b from-transparent via-white/70 via-20% to-transparent to-80%'
               )}
@@ -222,9 +222,9 @@ const ShadowScrollArea = forwardRef<
             />
           )}
           {isShadowsAnimated.bottomShadow && (
-            <motion.div
+            <m.div
               className={cn(
-                'w-full bg-gradient-to-t from-transparent via-white/70 via-20% to-transparent to-80% bottom-0'
+                'bottom-0 w-full bg-gradient-to-t from-transparent via-white/70 via-20% to-transparent to-80%'
               )}
               initial={{
                 opacity: 0,

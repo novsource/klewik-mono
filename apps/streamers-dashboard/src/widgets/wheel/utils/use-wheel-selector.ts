@@ -1,6 +1,6 @@
 import { RefObject, useCallback, useRef } from 'react'
 
-import { transform, useAnimationFrame } from 'framer-motion'
+import { transform } from 'motion/react'
 
 import { clearCanvas, resizeCanvasWithRatio } from '~shared/utils/canvas'
 

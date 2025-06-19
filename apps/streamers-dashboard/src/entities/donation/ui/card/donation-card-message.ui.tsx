@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
+import * as m from 'motion/react-m'
 
 import {
   Accordion,
@@ -49,15 +50,13 @@ const DonationCardMessage = ({ value, ...props }: DonationCardMessageProps) => {
 
     const containerWidth = containerWrapper.getBoundingClientRect().width
 
-    console.log(Math.ceil(textWidth / containerWidth))
-
     setMessageTextLinesCount(Math.ceil(textWidth / containerWidth))
   }, [accordionAnimationStatus, textRef.current, messageContainerRef.current])
 
   return (
     <div
       ref={messageContainerRef}
-      className="transition-[width] duration-500 bg-dark-accent/70 px-2 rounded-md"
+      className="rounded-md bg-dark-accent/70 px-2 transition-[width] duration-500"
       style={{ width: isMessageOpened ? width : 300 }}
       onAnimationStart={() => setAccordionAnimatinoStatus('animating')}
       onAnimationEnd={() => setAccordionAnimatinoStatus('animated')}
@@ -65,40 +64,43 @@ const DonationCardMessage = ({ value, ...props }: DonationCardMessageProps) => {
       <Accordion type="single" collapsible>
         <AccordionItem value="message" {...props}>
           <AccordionTrigger
-            className="py-1.5 text-gray-accent flex-row-reverse justify-end gap-x-1.5"
+            className="flex-row-reverse justify-end gap-x-1.5 py-1.5 text-gray-accent"
             onClick={() => setIsMessageOpened((curr) => !curr)}
           >
             {isMessageOpened
               ? 'Скрыть текст пожертвования'
               : 'Показать текст пожертвования'}
           </AccordionTrigger>
-          <AccordionContent className="relative text-md font-medium pb-2 text-white/85 font-golos-f pl-1 tracking-normal">
+          <AccordionContent className="relative pb-2 pl-1 font-golos-f text-md font-medium tracking-normal text-white/85">
             {accordionAnimationStatus === 'animating' && (
               <span
                 ref={textRef}
-                className="absolute invisible text-nowrap inline"
+                className="invisible absolute inline text-nowrap"
               >
                 {value}
               </span>
             )}
             <AnimatePresence>
-              <motion.span
+              <m.span
                 className={cn(`line-clamp-${messageTextLinesCount}`)}
                 initial={{
                   opacity: 0,
-                  translateY: 3,
-                  // lineClamp: 0.05,
+                  translate: [0, 3, 0],
                 }}
                 animate={accordionAnimationStatus}
                 exit={{ opacity: 0, display: 'hidden' }}
                 variants={{
-                  animated: { opacity: 1, translateY: 0, textWrap: 'wrap' },
+                  animated: {
+                    opacity: 1,
+                    translate: [0, 0, 0],
+                    textWrap: 'wrap',
+                  },
                   animating: { opacity: 0 },
                 }}
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
               >
                 {value}
-              </motion.span>
+              </m.span>
             </AnimatePresence>
           </AccordionContent>
         </AccordionItem>

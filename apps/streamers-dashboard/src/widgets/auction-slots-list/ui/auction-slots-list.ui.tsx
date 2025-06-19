@@ -1,6 +1,6 @@
 import { useCallback, useLayoutEffect, useState } from 'react'
 
-import { motion } from 'framer-motion'
+import * as m from 'motion/react-m'
 
 import { VirtualizedSlotsList } from '~features/auction-slot/watch-slots/ui'
 
@@ -89,18 +89,22 @@ const AuctionSlotsList = ({
       }
 
       return (
-        <motion.div
+        <m.div
           key={item.name}
-          initial={{ scaleY: 0.25, translateY: 50 }}
-          animate={{ scaleY: 1, translateY: 0 }}
-          exit={{ scaleY: 0, translateY: -50, className: 'absolute -z-2' }}
+          initial={{ scaleY: 0.25, translate: [0, 50, 0] }}
+          animate={{ scaleY: 1, translate: [0, 0, 0] }}
+          exit={{
+            scaleY: 0,
+            translate: [0, -50, 0],
+            className: 'absolute -z-2',
+          }}
           transition={{ ease: 'easeInOut', duration: 0.35 }}
           style={{
             marginTop: index > 0 ? `8px` : '0',
           }}
         >
           {card}
-        </motion.div>
+        </m.div>
       )
     },
     [storedSlotsPointsSum, withControls, disableAnimation]

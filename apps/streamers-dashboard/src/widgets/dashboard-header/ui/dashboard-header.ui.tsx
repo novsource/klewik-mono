@@ -3,14 +3,15 @@ import { ComponentProps } from 'react'
 import { NavLink } from 'react-router-dom'
 
 import NumberFlow from '@number-flow/react'
-import { motion } from 'framer-motion'
-import { IntegrationsPlatforms } from '~entities/integrations/model'
-import { integrationsSelectors } from '~entities/integrations/store'
+import * as m from 'motion/react-m'
 
 import { TimerButton } from '~features/auction/set-timer/ui'
 import { UpdateBetsStatusButton } from '~features/auction/update-bets-status/ui'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+
+import { IntegrationsPlatforms } from '~entities/integrations/model'
+import { integrationsSelectors } from '~entities/integrations/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -35,7 +36,7 @@ export const DashboardHeader = memo(({ children }: { children: ReactNode }) => {
   return (
     <Header>
       {isLargeThenTablet && (
-        <Flex className="gap-x-4 h-full" align="center">
+        <Flex className="h-full gap-x-4" align="center">
           <Flex className="h-8.5 gap-x-4" align="center">
             <Flex className="gap-x-1.5" align="center" justify="center">
               <SlotsStatisticCard />
@@ -64,14 +65,14 @@ const Header = ({ children, ...otherProps }: ComponentProps<'header'>) => {
         align="center"
         justify="between"
       >
-        <motion.div
+        <m.div
           whileHover={{ rotate: '180deg' }}
           transition={{ duration: 0.65 }}
         >
           <NavLink to={'/'}>
             <Icons.Logo className="text-green-accent" width={28} height={28} />
           </NavLink>
-        </motion.div>
+        </m.div>
 
         {children}
       </Flex>
@@ -89,7 +90,7 @@ const StatisticCard = ({
   return (
     <Flex
       className={cn(
-        'gap-x-1.5 py-1.5 px-2.5 h-9 bg-dark rounded-md text-md font-semibold leading-5 text-gray-accent',
+        'h-9 gap-x-1.5 rounded-md bg-dark px-2.5 py-1.5 text-md leading-5 font-semibold text-gray-accent',
         className
       )}
       align="center"
