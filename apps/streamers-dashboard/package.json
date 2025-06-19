@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite --port 5500 --host 0.0.0.0",
     "dev:icons": "pnpm run icons && vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
@@ -84,7 +84,7 @@
     "jsdom": "^26.0.0",
     "postcss": "^8.4.47",
     "prettier": "3.3.3",
-    "prettier-plugin-tailwindcss": "^0.6.10",
+    "prettier-plugin-tailwindcss": "^0.6.12",
     "prop-types": "^15.8.1",
     "tailwind-merge": "^2.5.3",
     "tailwindcss": "^4.0.0",

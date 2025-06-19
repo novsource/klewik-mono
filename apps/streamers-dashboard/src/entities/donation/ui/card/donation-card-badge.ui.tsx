@@ -1,29 +1,33 @@
 import { ComponentProps, memo } from 'react'
 
-import { ProcessedDonation } from '~entities/donation/model'
+import { DONATION_PROCESSED_STATUS } from '~entities/donation/constants'
+import {
+  ProcessedDonation,
+  ProcessedDonationStatus,
+} from '~entities/donation/model'
 
 import { Badge, BadgeProps } from '~shared/ui/badge'
 import { Skeleton } from '~shared/ui/skeleton'
 
-import { DONATION_STATUS_NAME } from '~shared/constants/donations'
-
 import { cn } from '~shared/utils'
 
 type DonationCardBadgeProps = BadgeProps & {
-  status: ProcessedDonation['processingStatus']
+  status: ProcessedDonation['processedStatus']
 }
 
 const DonationCardBadge = memo((props: DonationCardBadgeProps) => {
   const { status, variant, ...badgeProps } = props
 
   const donationStatusToBadgeVariants: Record<
-    ProcessedDonation['processingStatus'],
-    string
-  >[ProcessedDonation['processingStatus']] = {
+    ProcessedDonationStatus,
+    NonNullable<BadgeProps['variant']>
+  >[ProcessedDonationStatus] = {
     added: 'success',
-    confirm: 'warning',
+    inProgress: 'warning',
+    checkRequested: 'warning',
     empty: 'default',
     error: 'error',
+    rejected: 'error',
   }[status]
 
   return (
@@ -32,7 +36,7 @@ const DonationCardBadge = memo((props: DonationCardBadgeProps) => {
       variant={donationStatusToBadgeVariants}
       {...badgeProps}
     >
-      {DONATION_STATUS_NAME[status]}
+      {DONATION_PROCESSED_STATUS[status]}
     </Badge>
   )
 })

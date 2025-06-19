@@ -53,6 +53,7 @@ const axiosBaseQuery =
   (options: AxiosBaseQueryOptions): AxiosQueryFn =>
   /*@ts-ignore */
   async ({ url, method, data, headers, params, rewriteBaseURL = false }) => {
+    const isDev = import.meta.env.VITE_DEV
     try {
       const axios = new BaseHttpClient({
         axiosOptions: options.axiosOptions,
@@ -60,9 +61,14 @@ const axiosBaseQuery =
       })
 
       const queryURL = rewriteBaseURL
-        ? new URL(url)
-        : new URL(url, options.baseUrl)
-      const result = await axios.request(queryURL.toJSON(), {
+        ? isDev
+          ? url
+          : new URL(url).toString()
+        : isDev
+          ? `${options.baseUrl}${url}`
+          : new URL(url, options.baseUrl).toString()
+
+      const result = await axios.request(queryURL, {
         method,
         data,
         params,
@@ -87,19 +93,28 @@ const axiosBaseQuery =
 const axiosAuthBaseQuery =
   (options: AxiosBaseQueryOptions): AxiosQueryFn =>
   async (args, api, extraOptions) => {
+    const isDev = import.meta.env.VITE_DEV
+
     const initBaseUrl = import.meta.env.VITE_SERVER_URL
 
     const baseQuery = axiosBaseQuery({
       ...options,
-      baseUrl: initBaseUrl,
+      baseUrl: isDev ? null : import.meta.env.VITE_SERVER_URL,
       axiosOptions: { withCredentials: true },
       rateLimiterOptions: { maxRPS: 3 },
     })
 
-    const url = new URL(`/api/v1${options.baseUrl}${args.url}`, initBaseUrl)
+    const url = isDev
+      ? `/api/v1${options.baseUrl}${args.url}`
+      : new URL(`/api/v1${options.baseUrl}${args.url}`, initBaseUrl).toString()
 
     let result = await baseQuery(
-      { ...args, ...options, url: url.toString(), rewriteBaseURL: true },
+      {
+        ...args,
+        ...options,
+        url,
+        rewriteBaseURL: true,
+      },
       api,
       extraOptions
     )
@@ -113,7 +128,7 @@ const axiosAuthBaseQuery =
 
       if (refreshResult.error === undefined) {
         result = await baseQuery(
-          { ...args, ...options, url: url.toString() },
+          { ...args, ...options, url },
           api,
           extraOptions
         )

@@ -1,7 +1,6 @@
 import { ReactNode, useState } from 'react'
 
 import { EditSlotForm } from '~features/auction-slot/edit-slot/ui'
-import { AuctionSlotCard } from '~features/auction-slot/watch-slots/ui'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions } from '~entities/auction-slot/store'
@@ -53,8 +52,8 @@ const EditSlotDrawer = ({
 
           <EditSlotForm
             className={cn(
-              'flex flex-col h-full',
-              !isFullPageHeight ? 'gap-y-12' : 'gap-y-0 justify-between'
+              'flex h-full flex-col',
+              !isFullPageHeight ? 'gap-y-12' : 'justify-between gap-y-0'
             )}
             targetSlot={inputSlot}
             onSuccess={(slot) => {

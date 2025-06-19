@@ -1,7 +1,5 @@
 import { useState } from 'react'
 
-import { IntegrationBadge } from '~entities/integrations/ui/badge'
-
 import { ProcessDonationSheet } from '~widgets/process-donation-dialogs/ui'
 import { SearchInput } from '~widgets/search-input/ui'
 
@@ -15,6 +13,8 @@ import {
   DonationCardProps,
   SkeletonDonationCard,
 } from '~entities/donation/ui/card'
+
+import { IntegrationBadge } from '~entities/integrations/ui/badge'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -50,15 +50,16 @@ const AuctionDonationsPage = () => {
   return (
     <div
       className={cn([
-        'mx-auto w-full h-full pt-5 mb-4 grid grid-rows-slots-table gap-y-3',
+        'grid grid-rows-slots-table gap-y-3 tablet:grid-rows-slots-desktop',
+        'relative mx-auto w-full h-full pt-5 mb-4',
         'mobile:gap-y-5',
-        'tablet:grid-rows-slots-desktop max-tablet:max-w-[1100px] tablet:gap-y-4 tablet:pl-10',
+        'max-tablet:max-w-[1100px] tablet:gap-y-4 tablet:pl-10',
         'desktop:max-w-[1750px] desktop-lg:max-w-[2100px]',
         'landtop:max-w-[1600px]',
       ])}
     >
       <Flex
-        className="gap-x-4 pt-1"
+        className="w-full gap-x-4 pt-1"
         wrap="nowrap"
         align="center"
         justify="between"
@@ -76,6 +77,7 @@ const AuctionDonationsPage = () => {
           }
         />
       </Flex>
+
       <DonationsList
         data={filtredDonations}
         renderDonation={(donation, index) => (

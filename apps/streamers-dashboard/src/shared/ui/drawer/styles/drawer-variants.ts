@@ -1,15 +1,15 @@
 import { VariantProps, cva } from 'class-variance-authority'
 
 const drawerOverlayVariants = cva([
-  'dark fixed inset-0 z-50 bg-black/50 blur:2 backdrop-blur-xs',
-  'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+  'dark blur:2 fixed inset-0 z-50 bg-black/50 backdrop-blur-xs',
+  'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
 ])
 
 const drawerContentVariants = cva(
   [
-    'group/drawer-content bg-dark-foreground fixed z-50 flex flex-col border-dark-accent',
+    'group/drawer-content fixed z-50 flex flex-col border-dark-accent bg-dark-foreground',
     'data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0',
-    'data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 ',
+    'data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0',
     'data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0',
     'data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0',
   ],
@@ -39,15 +39,15 @@ const drawerContentVariants = cva(
 )
 
 const drawerPillVariants = cva(
-  'bg-gray mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block'
+  'mx-auto mt-4 hidden h-1.25 w-14 shrink-0 rounded-full bg-gray group-data-[vaul-drawer-direction=bottom]/drawer-content:block'
 )
 
 const drawerHeaderVariants = cva(['flex flex-col gap-1.5 p-4'])
 const drawerFooterVariants = cva(['mt-auto flex flex-col gap-2 p-4'])
 
-const drawerTitleVariants = cva('text-white font-semibold')
+const drawerTitleVariants = cva('font-semibold text-white')
 
-const drawerDescriptionVariants = cva('text-gray-light text-sm')
+const drawerDescriptionVariants = cva('text-sm text-gray-light')
 
 export type DrawerContentVariantsProps = VariantProps<
   typeof drawerContentVariants

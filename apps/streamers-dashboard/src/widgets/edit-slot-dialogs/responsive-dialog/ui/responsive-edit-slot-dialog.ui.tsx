@@ -69,7 +69,10 @@ const EditSlotDialogue = ({
   const dialogContent = useMemo(() => {
     return (
       <Flex className="h-full gap-y-6" direction="column">
-        <AuctionSlotCard {...inputSlot} />
+        <AuctionSlotCard
+          slotClassNames={{ base: 'max-tablet:py-1' }}
+          {...inputSlot}
+        />
         <EditSlotForm
           defaultValues={
             isDialogOpen
@@ -102,7 +105,7 @@ const EditSlotDialogue = ({
       <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <SheetTrigger>{trigger}</SheetTrigger>
         <SheetContent side={isMediaLargeThenTablet ? 'right' : 'bottom'}>
-          <Flex className="w-full h-full gap-y-4" direction="column">
+          <Flex className="h-full w-full gap-y-4" direction="column">
             <SheetHeader>
               <Flex className="h-full gap-x-4" align="center">
                 <EditSlotDialogsIcon />
@@ -114,7 +117,7 @@ const EditSlotDialogue = ({
                 >
                   <SheetTitle>Редактирование слота</SheetTitle>
                   <Typography
-                    className="text-gray-accent font-normal leading-4"
+                    className="leading-4 font-normal text-gray-accent"
                     tag="p"
                   >
                     Измените параметры у слота
@@ -133,13 +136,17 @@ const EditSlotDialogue = ({
   return (
     <Drawer noBodyStyles open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DrawerTrigger>{trigger}</DrawerTrigger>
-      <DrawerContent className="px-4" isFullPageHeight={isFullPageHeight}>
-        <DrawerHeader className="flex-row gap-x-4">
+      <DrawerContent className="px-4 pb-4" isFullPageHeight={isFullPageHeight}>
+        <DrawerHeader className="flex-row items-center gap-x-4 px-2">
           <EditSlotDialogsIcon />
-          <DrawerTitle className="text-white">Изменение слота</DrawerTitle>
-          <DrawerDescription asChild>
-            <Typography tag="p">Измените данные слота</Typography>
-          </DrawerDescription>
+          <Flex className="" direction="column">
+            <DrawerTitle className="leading-5 font-medium text-white">
+              Изменение слота
+            </DrawerTitle>
+            <DrawerDescription asChild>
+              <Typography tag="p">Измените данные слота</Typography>
+            </DrawerDescription>
+          </Flex>
         </DrawerHeader>
         {dialogContent}
       </DrawerContent>
@@ -149,9 +156,9 @@ const EditSlotDialogue = ({
 
 const EditSlotDialogsIcon = () => {
   return (
-    <div className="w-fit h-fit pencil-icon-gradient p-0.5 rounded-small outline-2 outline-[#F8C1AE]/10">
+    <div className="pencil-icon-gradient h-fit w-fit rounded-small p-0.5 outline-2 outline-[#F8C1AE]/10">
       <Flex
-        className="p-1.75 border-[0.5px] border-[#F8C1AE]/30 rounded-small"
+        className="rounded-small border-[0.5px] border-[#F8C1AE]/30 p-1.75"
         align="center"
         justify="center"
       >

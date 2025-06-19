@@ -31,13 +31,13 @@ const AuctionSlotCardWithControls = memo(
       return (
         <Card
           ref={forwardRef}
-          className="flex flex-col justify-between border-1 border-dark gap-y-3 py-2"
+          className="flex flex-col justify-between border-1 border-dark gap-y-2 tablet:gap-y-3 py-1 tablet:py-2"
         >
           <CardHeader className="flex items-start justify-between h-6">
             <CardTitle className="w-full">
               <Typography
                 tag="span"
-                className="text-title font-semibold font-golos-f"
+                className="text-md tablet:text-title font-semibold font-golos-f"
               >
                 {slot.name}
               </Typography>
@@ -66,9 +66,13 @@ const AuctionSlotCardWithControls = memo(
             </Flex>
           </CardHeader>
           <CardContent className="w-full flex flex-col gap-y-2 pt-0">
-            <Flex className="w-full gap-x-2" direction="row" align="center">
+            <Flex
+              className="w-full gap-x-1.25 tablet:gap-x-2"
+              direction="row"
+              align="center"
+            >
               <div
-                className="w-8 h-7 rounded-md"
+                className="h-6 w-7 tablet:w-8 tablet:h-7 rounded-md"
                 style={{
                   backgroundColor: Array.isArray(slot.color)
                     ? `rgb(${slot.color.join(',')})`

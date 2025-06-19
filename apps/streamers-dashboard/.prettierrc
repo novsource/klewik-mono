@@ -14,6 +14,8 @@
     "^~entities/auction-slot/(.*)$",
     "^~entities/donation/(.*)$",
     "^~entities/wheel/(.*)$",
+    "^~entities/integrations/(.*)$",
+    "^~entities/(.*)$",
     "^~ui/(.*)$",
     "^~shared/api/(.*)$",
     "^~shared/store/(.*)$",
@@ -28,8 +30,10 @@
   ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
+  "tailwindStylesheet": "./src/app/styles/index.css",
+  "tailwindFunctions": ["clsx", "cva", "cn"],
   "plugins": [
+    "@trivago/prettier-plugin-sort-imports",
     "prettier-plugin-tailwindcss",
-    "@trivago/prettier-plugin-sort-imports"
   ]
 }
