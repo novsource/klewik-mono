@@ -18,7 +18,7 @@ import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
 
 type AuctionSlotCardWithControlsProps = AuctionSlot & {
-  auctionId: Auction['id']
+  auctionUUID: Auction['auctionUUID']
   percent: number
   ref?: RefObject<HTMLDivElement>
 }
@@ -26,7 +26,7 @@ type AuctionSlotCardWithControlsProps = AuctionSlot & {
 const AuctionSlotCardWithControls = memo(
   forwardRef<HTMLDivElement, AuctionSlotCardWithControlsProps>(
     (props, forwardRef) => {
-      const { percent, auctionId, ...slot } = props
+      const { percent, auctionUUID, ...slot } = props
 
       return (
         <Card
@@ -58,9 +58,9 @@ const AuctionSlotCardWithControls = memo(
                 }
               />
               <DeleteSlotButton
-                icon={<Icons.Bin size="xs" />}
-                auctionId={auctionId}
+                auctionUUID={auctionUUID}
                 slotId={slot.id}
+                icon={<Icons.Bin size="xs" />}
               />
             </Flex>
           </CardHeader>

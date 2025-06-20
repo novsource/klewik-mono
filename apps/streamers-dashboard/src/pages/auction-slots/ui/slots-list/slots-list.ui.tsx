@@ -12,7 +12,7 @@ import { AuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { AuctionSlotCardWithControls } from './list-card'
+import { AuctionSlotCardWithControls } from './list-card.ui'
 
 type AuctionSlotsListProps = {
   data?: AuctionSlot[]
@@ -28,7 +28,7 @@ const AuctionSlotsList = ({
   className,
   ...otherProps
 }: AuctionSlotsListProps) => {
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
+  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const storedSlotsPointsSum = useStoreSelector(
     auctionSlotsSelectors.getSlotsPointsSum
@@ -67,7 +67,7 @@ const AuctionSlotsList = ({
 
       const card = withControls ? (
         <AuctionSlotCardWithControls
-          auctionId={auctionId}
+          auctionUUID={auctionUUID}
           percent={Number(parseFloat(percent).toPrecision(4))}
           {...item}
         />
