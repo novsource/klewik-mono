@@ -4,15 +4,15 @@ import { splittedAuctionSlotsApi } from '~entities/auction-slot/api'
 import { AuctionSlot } from '~entities/auction-slot/model'
 
 type DeleteSlotRequestArgs = {
-  auctionId: Auction['id']
+  auctionUUID: Auction['auctionUUID']
   slotId: AuctionSlot['id']
 }
 
 const deleteSlotApi = splittedAuctionSlotsApi.injectEndpoints({
   endpoints: (builder) => ({
     deleteSlot: builder.mutation<void, DeleteSlotRequestArgs>({
-      query: ({ auctionId, slotId }) => ({
-        url: `/${auctionId}/delete-slot`,
+      query: ({ auctionUUID, slotId }) => ({
+        url: `/${auctionUUID}/delete-slot`,
         data: { id: slotId },
         headers: {
           'Content-Type': 'application/json',
