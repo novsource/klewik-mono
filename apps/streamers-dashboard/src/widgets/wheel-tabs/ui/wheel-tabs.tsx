@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 
 import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
 
+import { TABS_CONTENT_NAMES } from '../constants'
 import { ControlWheelTab } from './wheel-tab-control'
 import { SlotsWheelTab } from './wheel-tab-slots'
 
@@ -9,7 +10,7 @@ const triggersWithIcons = {
   control: {
     title: 'Управление',
   },
-  lots: {
+  slots: {
     title: 'Слоты',
   },
 }
@@ -22,15 +23,18 @@ const WheelTabs = () => {
       <TabsTrigger
         key={triggersWithIcons[item].title}
         value={item.toLowerCase()}
-        className="flex grow gap-x-2 text-md font-medium data-[state=active]:rounded-[8px] cursor-pointer text-gray-light/70 hover:text-gray-light"
+        className="flex grow cursor-pointer gap-x-2 text-md font-medium text-gray-light/70 hover:text-gray-light data-[state=active]:rounded-[8px]"
       >
         {triggersWithIcons[item].title}
       </TabsTrigger>
     ))
   }, [])
   return (
-    <Tabs defaultValue="control" className="flex h-full flex-col">
-      <TabsList className="dark flex w-full justify-between rounded-large bg-dark ">
+    <Tabs
+      className="flex h-full flex-col"
+      defaultValue={TABS_CONTENT_NAMES.CONTROL}
+    >
+      <TabsList className="dark flex w-full justify-between rounded-large bg-dark">
         {tabsTriggers}
       </TabsList>
       <ControlWheelTab />
