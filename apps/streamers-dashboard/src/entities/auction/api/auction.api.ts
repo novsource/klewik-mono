@@ -5,15 +5,15 @@ import { axiosAuthBaseQuery } from '~shared/lib/redux-toolkit'
 import { Auction } from '../model'
 
 type GetAuctionInfoQueryArgs = {
-  auctionId: Auction['id']
+  auctionUUID: Auction['auctionUUID']
 }
 
 const splittedAuctionApi = createApi({
-  baseQuery: axiosAuthBaseQuery({ baseUrl: '/auction' }),
+  baseQuery: axiosAuthBaseQuery({ baseUrl: '/auctions' }),
   reducerPath: 'auctionApi',
   endpoints: (builder) => ({
     getAuctionInfo: builder.query<Auction, GetAuctionInfoQueryArgs>({
-      query: ({ auctionId }) => ({ url: `/${auctionId}/info` }),
+      query: ({ auctionUUID }) => ({ url: `/${auctionUUID}` }),
     }),
   }),
 })
