@@ -34,6 +34,7 @@ export type ShadowScrollAreaProps = ComponentPropsWithoutRef<'div'> & {
   externalContentRef?: RefObject<HTMLElement>
   shadowEnabled?: boolean
   shadowSize?: number
+  disableAnimation?: boolean
 }
 
 const ShadowScrollArea = forwardRef<
@@ -48,6 +49,7 @@ const ShadowScrollArea = forwardRef<
     externalScrollRef,
     externalContentRef,
     shadowEnabled = true,
+    disableAnimation = true,
     shadowSize = 60,
     ...restProps
   } = props
@@ -179,6 +181,11 @@ const ShadowScrollArea = forwardRef<
     return `linear-gradient(#000, #000,transparent 0,#000 ${getTopGradientValue(scrollYProgress)}px,#000 calc(100% - ${getBottomGradientValue(scrollYProgress)}px),transparent)`
   }, [scrollYProgress, shadowSize])
 
+  const isTopShadowShouldBeRendered =
+    isShadowsAnimated.topShadow && !disableAnimation
+  const isBottomShadowShouldBeRendered =
+    isShadowsAnimated.bottomShadow && !disableAnimation
+
   return (
     <div
       ref={internalScrollElementRef}
@@ -195,7 +202,7 @@ const ShadowScrollArea = forwardRef<
     >
       <AnimatePresence>
         <>
-          {isShadowsAnimated.topShadow && (
+          {isTopShadowShouldBeRendered && (
             <m.div
               className={cn(
                 'w-full bg-gradient-to-b from-transparent via-white/70 via-20% to-transparent to-80%'
@@ -221,7 +228,7 @@ const ShadowScrollArea = forwardRef<
               }}
             />
           )}
-          {isShadowsAnimated.bottomShadow && (
+          {isBottomShadowShouldBeRendered && (
             <m.div
               className={cn(
                 'bottom-0 w-full bg-gradient-to-t from-transparent via-white/70 via-20% to-transparent to-80%'
