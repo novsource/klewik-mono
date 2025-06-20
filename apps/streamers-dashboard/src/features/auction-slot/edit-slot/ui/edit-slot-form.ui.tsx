@@ -1,18 +1,15 @@
-import { HTMLAttributes, useEffect, useMemo } from 'react'
+import { HTMLAttributes } from 'react'
 import {
   Control,
-  Controller,
   DefaultValues,
-  FormState,
-  useForm,
-  useWatch,
+  UseFormReturn,
+  useController,
+  useFormState,
 } from 'react-hook-form'
 
-import { zodResolver } from '@hookform/resolvers/zod'
+import { SlotPointsFormInput } from '~features/auction-slot/create-slots/ui/form-fields.ui'
 
 import { auctionSelectors } from '~entities/auction/store'
-
-import { AuctionSlot } from '~entities/auction-slot/model'
 
 import {
   AxiosBaseQueryError,
@@ -22,75 +19,48 @@ import {
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Input } from '~shared/ui/input'
-import { NumberInput } from '~shared/ui/number-input'
 import {
   toastErrorNotification,
   toastSuccessNotification,
 } from '~shared/ui/toaster/lib'
 
 import { useEditSlotMutation } from '../api'
-import { TransformedEditSlotFormData, transformEditSlotFormData } from '../lib'
+import { TransformedEditSlotFormData } from '../lib'
 import type { EditSlotFormData } from '../model'
-
-type EditSlotFormWatchingProps<
-  T extends Partial<Record<keyof EditSlotFormData, boolean>> = Partial<
-    Record<keyof EditSlotFormData, boolean>
-  >,
-  Return extends Extract<keyof T, keyof EditSlotFormData> = Extract<
-    keyof T,
-    keyof EditSlotFormData
-  >,
-> = {
-  watchingFields?: T
-  onFieldValueChange?: (
-    data: Partial<Record<Return, EditSlotFormData[Return]>>
-  ) => void
-}
 
 type EditSlotsFormStateProps = {
   defaultValues?: DefaultValues<EditSlotFormData>
 }
 
 type EditSlotsFormProps = Omit<HTMLAttributes<HTMLFormElement>, 'onSubmit'> & {
-  targetSlot: AuctionSlot
-  onSuccess?: (formData: TransformedEditSlotFormData) => void
-  onError?: () => void
-} & EditSlotFormWatchingProps &
-  EditSlotsFormStateProps
-
-export const EditSlotForm = ({
-  targetSlot,
-  onError,
-  onSuccess,
-  defaultValues,
-  watchingFields,
-  onFieldValueChange,
-  ...props
-}: EditSlotsFormProps) => {
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
-
-  const { control, handleSubmit, formState } = useForm<
+  slotId: number
+  formMethods: UseFormReturn<
     EditSlotFormData,
     unknown,
     TransformedEditSlotFormData
-  >({
-    defaultValues: {
-      name: defaultValues?.name ?? targetSlot.name,
-      points: Intl.NumberFormat('ru-RU')
-        .format(Number(defaultValues?.points) || targetSlot.points)
-        .toString(),
-    },
-    resolver: zodResolver(transformEditSlotFormData()),
-    mode: 'all',
-    reValidateMode: 'onChange',
-  })
+  >
+  onSuccess?: (formData: TransformedEditSlotFormData) => void
+  onError?: () => void
+} & EditSlotsFormStateProps
+
+export const EditSlotForm = ({
+  slotId,
+  formMethods,
+  onError,
+  onSuccess,
+  defaultValues,
+  ...props
+}: EditSlotsFormProps) => {
+  const formState = useFormState({ control: formMethods.control })
+
+  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const [editSlotMutation, { isLoading }] = useEditSlotMutation()
 
   const submitForm = async (formData: TransformedEditSlotFormData) => {
     const response = await editSlotMutation({
-      auctionId,
-      slot: { id: targetSlot.id, ...formData },
+      auctionUUID,
+      slot: { id: slotId, ...formData },
     })
 
     if (response.error) {
@@ -106,31 +76,24 @@ export const EditSlotForm = ({
     }
 
     toastSuccessNotification('Слот успешно изменен!')
-
     onSuccess && onSuccess(formData)
   }
 
+  const isFieldsChanges = formState.isDirty
+
   return (
-    <Flex
-      className="w-full h-full"
-      component="form"
-      direction="column"
-      justify="between"
-      onSubmit={handleSubmit(submitForm)}
+    <form
+      className="flex h-full w-full flex-col justify-between"
+      onSubmit={formMethods.handleSubmit(submitForm)}
       {...props}
     >
       <Flex className="w-full gap-y-6" direction="column" align="stretch">
         <Flex className="w-full" component={'ul'} direction={'column'}>
           <Flex
-            className="w-full h-full overflow-y-scroll p-1 gap-y-3"
+            className="h-full w-full gap-y-3 overflow-y-scroll p-1"
             direction="column"
           >
-            <EditSlotFormFields
-              control={control}
-              formState={formState}
-              watchingFields={watchingFields}
-              onFieldValueChange={onFieldValueChange}
-            />
+            <EditSlotFormFields control={formMethods.control} />
           </Flex>
         </Flex>
       </Flex>
@@ -138,60 +101,22 @@ export const EditSlotForm = ({
         type="submit"
         variant={'action'}
         className="w-full"
-        disabled={isLoading}
+        disabled={isLoading || !isFieldsChanges}
       >
         Изменить слот
       </Button>
-    </Flex>
+    </form>
   )
 }
 
 type EditSlotFormFieldsProps = {
-  formState: FormState<EditSlotFormData>
-  control: Control<EditSlotFormData>
-} & EditSlotFormWatchingProps
+  control: Control<EditSlotFormData, unknown, TransformedEditSlotFormData>
+}
 
-const EditSlotFormFields = ({
-  control,
-  formState,
-  watchingFields,
-  onFieldValueChange,
-}: EditSlotFormFieldsProps) => {
-  const watchedFieldsNames = useMemo(() => {
-    if (!watchingFields || Object.keys(watchingFields).length === 0) return []
+const EditSlotFormFields = ({ control }: EditSlotFormFieldsProps) => {
+  const formState = useFormState({ control })
 
-    const fields = Object.keys(watchingFields) as Array<keyof EditSlotFormData>
-
-    return fields.reduce<Array<keyof EditSlotFormData>>((acc, name) => {
-      const isWatching = watchingFields[name]
-
-      if (isWatching) {
-        acc.push(name)
-      }
-
-      return acc
-    }, [])
-  }, [watchingFields])
-
-  const fieldsValues = useWatch({ control, name: watchedFieldsNames })
-
-  useEffect(() => {
-    if (!watchingFields || Object.keys(watchedFieldsNames).length === 0) return
-
-    let counter = 0
-
-    const transformedData = fieldsValues.reduce<{
-      [P in keyof EditSlotFormData]?: EditSlotFormData[P]
-    }>((acc, value) => {
-      const fieldName = watchedFieldsNames[counter]
-      acc[fieldName] = value
-      counter++
-
-      return acc
-    }, {})
-
-    onFieldValueChange && onFieldValueChange(transformedData)
-  }, [fieldsValues, watchedFieldsNames])
+  const { field: slotNameField } = useController({ control, name: 'name' })
 
   const getErrorMessageForField = (
     fieldName: keyof EditSlotFormData
@@ -203,23 +128,17 @@ const EditSlotFormFields = ({
 
   return (
     <div className="flex flex-col gap-y-4">
-      <Controller
-        render={({ field }) => (
-          <Input
-            slotClassNames={{
-              base: 'font-golos-f w-full basis-1/2 grow',
-              description: 'text-wrap',
-            }}
-            label={{ id: 'slotTitle', value: 'Новое название' }}
-            placeholder="Название слота"
-            errorMessage={getErrorMessageForField('name')}
-            {...field}
-          />
-        )}
-        control={control}
-        name={'name'}
+      <Input
+        slotClassNames={{
+          base: 'font-golos-f w-full basis-1/2 grow',
+          description: 'text-wrap',
+        }}
+        label={{ id: 'slotTitle', value: 'Новое название' }}
+        placeholder="Название слота"
+        errorMessage={getErrorMessageForField('name')}
+        {...slotNameField}
       />
-      <Controller
+      {/* <Controller
         render={({ field }) => (
           <NumberInput
             slotClassNames={{
@@ -231,14 +150,14 @@ const EditSlotFormFields = ({
               value: 'Новое количество очков',
             }}
             placeholder="Очки"
-            maxValue={1000000}
             errorMessage={getErrorMessageForField('points')}
             {...field}
           />
         )}
         control={control}
         name={'points'}
-      />
+      /> */}
+      <SlotPointsFormInput control={control} name={'points'} />
     </div>
   )
 }

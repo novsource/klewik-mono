@@ -11,6 +11,7 @@ const EditSlotFormSchema = AuctionSlotSchema.omit({
       .string()
       .min(1, 'Поле не может быть пустым')
       .max(20, 'Слишком большое количество очков'),
+    // points: z.number(),
   })
 )
 
