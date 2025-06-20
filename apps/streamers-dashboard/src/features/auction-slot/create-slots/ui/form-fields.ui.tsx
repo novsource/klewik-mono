@@ -104,7 +104,7 @@ const SlotPointsFormInput = <
   ControllerFormInputProps<FormFields, Paths, TransformedValues> & {
     maxValue?: number
   }) => {
-  const { clearErrors, setError } = useFormContext()
+  // const { clearErrors, setError } = useFormContext()
   const {
     field: { value, ...field },
   } = useController({ name, control })
@@ -142,18 +142,18 @@ const SlotPointsFormInput = <
     setPointsValue(points)
   }
 
-  useEffect(() => {
-    const minPointsValue = Math.floor(slotsPointsSum * 0.5)
+  // useEffect(() => {
+  //   const minPointsValue = Math.floor(slotsPointsSum * 0.5)
 
-    if (pointsValue < minPointsValue) {
-      setError(name, {
-        message: `Минимальное количество очков - ${minPointsValue} (0.5%)`,
-        type: 'custom',
-      })
-    } else {
-      clearErrors(name)
-    }
-  }, [slotsPointsSum])
+  //   if (pointsValue < minPointsValue) {
+  //     setError(name, {
+  //       message: `Минимальное количество очков - ${minPointsValue} (0.5%)`,
+  //       type: 'custom',
+  //     })
+  //   } else {
+  //     clearErrors(name)
+  //   }
+  // }, [slotsPointsSum])
 
   return (
     <Flex className="w-full gap-x-2" align="start">

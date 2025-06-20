@@ -2,16 +2,14 @@ import { HTMLAttributes, useCallback, useState } from 'react'
 import {
   FieldErrors,
   FormProvider,
+  UseFormReturn,
   useFieldArray,
-  useForm,
   useFormContext,
 } from 'react-hook-form'
 
 import * as m from 'motion/react-m'
 
 import { auctionSelectors } from '~entities/auction/store'
-
-import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import {
   AxiosBaseQueryError,
@@ -30,7 +28,7 @@ import {
 import { cn } from '~shared/utils'
 
 import { useCreateSlotsMutation } from '../api'
-import { TransformedCreateSlotsFormData, createSlotsFormResolver } from '../lib'
+import { TransformedCreateSlotsFormData } from '../lib'
 import { CreateSlotForm, FormArrayData } from '../model'
 import { SlotNameFormInput, SlotPointsFormInput } from './form-fields.ui'
 
@@ -58,27 +56,20 @@ type CreateSlotsFormProps = Omit<
   multiplySlots?: boolean
   multiplySlotsCount?: number
   checkIsSlotsExists?: boolean
+  formMethods: UseFormReturn<
+    CreateSlotForm,
+    unknown,
+    TransformedCreateSlotsFormData
+  >
   onSuccess?: (formData: FormArrayData[]) => void
   onError?: () => void
 }
 
 export const CreateSlotsForm = ({
   multiplySlots,
+  formMethods,
   ...props
 }: CreateSlotsFormProps) => {
-  const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-
-  const formMethods = useForm<
-    CreateSlotForm,
-    unknown,
-    TransformedCreateSlotsFormData
-  >({
-    defaultValues: { slots: [DEFAULT_FORM_VALUE] },
-    resolver: createSlotsFormResolver(auctionSlots),
-    reValidateMode: 'onChange',
-    shouldFocusError: true,
-  })
-
   return (
     <FormProvider {...formMethods}>
       {multiplySlots ? (
@@ -90,7 +81,10 @@ export const CreateSlotsForm = ({
   )
 }
 
-type SingleSlotCreatingFormProps = CreateSlotsFormProps
+type SingleSlotCreatingFormProps = Omit<
+  CreateSlotsFormProps,
+  'multiplySlots' | 'multiplySlotsCount' | 'formMethods'
+>
 
 const SingleSlotCreatingForm = (props: SingleSlotCreatingFormProps) => {
   const { onError, onSuccess, ...formProps } = props
@@ -157,7 +151,10 @@ const SingleSlotCreatingForm = (props: SingleSlotCreatingFormProps) => {
   )
 }
 
-type MultiplySlotsCreatingFormProps = CreateSlotsFormProps & {
+type MultiplySlotsCreatingFormProps = Omit<
+  CreateSlotsFormProps,
+  'multiplySlots' | 'formMethods'
+> & {
   maxCreatingSlotsCount?: number
 }
 
