@@ -1,7 +1,9 @@
-import { useMemo } from 'react'
+import { ReactNode, useEffect, useMemo, useState } from 'react'
 
+import { useEditSlotForm } from '~features/auction-slot/edit-slot/hooks'
 import { EditSlotForm } from '~features/auction-slot/edit-slot/ui'
 
+import { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions } from '~entities/auction-slot/store'
 import { AuctionSlotCard } from '~entities/auction-slot/ui/card'
 
@@ -31,40 +33,35 @@ import { Typography } from '~shared/ui/typograghy'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
-import { EditSlotDrawerProps } from '../../drawer/ui'
-import { EditSlotSheetProps } from '../../sheet/ui'
-import {
-  ResponsiveEditSlotDialogProvider,
-  useResponsiveEditSlotDialogContext,
-} from '../context'
-
-type ResponsiveEditSlotDialogueProps = EditSlotSheetProps & EditSlotDrawerProps
+type ResponsiveEditSlotDialogueProps = {
+  slot: AuctionSlot
+  trigger: ReactNode
+}
 
 export const ResponsiveEditSlotDialogue = (
   props: ResponsiveEditSlotDialogueProps
 ) => {
-  return (
-    <ResponsiveEditSlotDialogProvider>
-      <EditSlotDialogue {...props} />
-    </ResponsiveEditSlotDialogProvider>
-  )
+  return <EditSlotDialogue {...props} />
 }
 
 const EditSlotDialogue = ({
   slot: inputSlot,
   trigger,
-  isFullPageHeight,
 }: ResponsiveEditSlotDialogueProps) => {
-  const {
-    state: { isDialogOpen, formInputState },
-    dispatch: { setFormInputState, setIsDialogOpen },
-  } = useResponsiveEditSlotDialogContext()
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const { formMethods } = useEditSlotForm({ target: inputSlot })
+
+  const { updateSlot } = useActionCreators(auctionSlotsActions)
 
   const isMediaLargeThenTablet = useMediaQuery(
     `(min-width: ${tailwindScreens.tablet})`
   )
 
-  const { updateSlot } = useActionCreators(auctionSlotsActions)
+  useEffect(() => {
+    if (!isDialogOpen) {
+      formMethods.reset()
+    }
+  }, [formMethods, isDialogOpen])
 
   const dialogContent = useMemo(() => {
     return (
@@ -74,31 +71,17 @@ const EditSlotDialogue = ({
           {...inputSlot}
         />
         <EditSlotForm
-          defaultValues={
-            isDialogOpen
-              ? formInputState !== null
-                ? formInputState
-                : undefined
-              : undefined
-          }
-          targetSlot={inputSlot}
-          watchingFields={{ points: true, name: true }}
-          onFieldValueChange={(fields) => {
-            setFormInputState({
-              name: fields.name ?? '',
-              points: fields.points ?? '',
-            })
-          }}
+          slotId={inputSlot.id}
+          formMethods={formMethods}
           onSuccess={(slot) => {
             updateSlot({ id: inputSlot.id, data: slot })
 
             setIsDialogOpen(false)
-            setFormInputState(null)
           }}
         />
       </Flex>
     )
-  }, [setIsDialogOpen, setFormInputState, inputSlot])
+  }, [setIsDialogOpen, inputSlot, formMethods, updateSlot])
 
   if (isMediaLargeThenTablet) {
     return (
@@ -136,7 +119,7 @@ const EditSlotDialogue = ({
   return (
     <Drawer noBodyStyles open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DrawerTrigger>{trigger}</DrawerTrigger>
-      <DrawerContent className="px-4 pb-4" isFullPageHeight={isFullPageHeight}>
+      <DrawerContent className="px-4 pb-4" isFullPageHeight={true}>
         <DrawerHeader className="flex-row items-center gap-x-4 px-2">
           <EditSlotDialogsIcon />
           <Flex className="" direction="column">

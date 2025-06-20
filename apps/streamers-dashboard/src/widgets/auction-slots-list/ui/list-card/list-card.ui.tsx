@@ -2,7 +2,7 @@ import { RefObject, forwardRef, memo } from 'react'
 
 import NumberFlow from '@number-flow/react'
 
-import { ResponsiveEditSlotDialogue } from '~widgets/edit-slot-dialogs/responsive-dialog/ui'
+import { ResponsiveEditSlotDialogue } from '~widgets/edit-slot-dialog/ui'
 
 import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
 
@@ -31,18 +31,18 @@ const AuctionSlotCardWithControls = memo(
       return (
         <Card
           ref={forwardRef}
-          className="flex flex-col justify-between border-1 border-dark gap-y-2 tablet:gap-y-3 py-1 tablet:py-2"
+          className="flex flex-col justify-between gap-y-2 border-1 border-dark py-1 tablet:gap-y-3 tablet:py-2"
         >
-          <CardHeader className="flex items-start justify-between h-6">
+          <CardHeader className="flex h-6 items-start justify-between">
             <CardTitle className="w-full">
               <Typography
                 tag="span"
-                className="text-md tablet:text-title font-semibold font-golos-f"
+                className="font-golos-f text-md font-semibold tablet:text-title"
               >
                 {slot.name}
               </Typography>
             </CardTitle>
-            <Flex className="gap-x-1 h-6" direction="row">
+            <Flex className="h-6 gap-x-1" direction="row">
               <ResponsiveEditSlotDialogue
                 slot={slot}
                 trigger={
@@ -50,13 +50,12 @@ const AuctionSlotCardWithControls = memo(
                     variant={'ghost'}
                     isIconOnly
                     icon={<Icons.Pencil size="xs" />}
-                    className="text-gray-accent transition-colors hover:text-white h-full px-1 py-1"
+                    className="h-full px-1 py-1 text-gray-accent transition-colors hover:text-white"
                     size={'sm'}
                   >
                     Изменить
                   </Button>
                 }
-                isFullPageHeight
               />
               <DeleteSlotButton
                 icon={<Icons.Bin size="xs" />}
@@ -65,14 +64,14 @@ const AuctionSlotCardWithControls = memo(
               />
             </Flex>
           </CardHeader>
-          <CardContent className="w-full flex flex-col gap-y-2 pt-0">
+          <CardContent className="flex w-full flex-col gap-y-2 pt-0">
             <Flex
               className="w-full gap-x-1.25 tablet:gap-x-2"
               direction="row"
               align="center"
             >
               <div
-                className="h-6 w-7 tablet:w-8 tablet:h-7 rounded-md"
+                className="h-6 w-7 rounded-md tablet:h-7 tablet:w-8"
                 style={{
                   backgroundColor: Array.isArray(slot.color)
                     ? `rgb(${slot.color.join(',')})`
