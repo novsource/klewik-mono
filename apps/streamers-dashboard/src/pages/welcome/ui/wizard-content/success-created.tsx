@@ -1,6 +1,8 @@
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 
+import { WELCOME_PAGE_WIZARD_ITEMS_IDS } from '~pages/welcome/constants'
+
 import { auctionSelectors } from '~entities/auction/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -11,11 +13,17 @@ import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
-import { SliderContent } from '~shared/ui/slider'
 import { toastSuccessNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
+import { WizardItem, WizardItemProps } from '~shared/ui/wizard'
 
-const SliderSuccessContent = () => {
+import { cn } from '~shared/utils'
+
+const WizardSuccessCreatedItem = (
+  props: Omit<WizardItemProps, 'value' | 'children'>
+) => {
+  const { className, ...restProps } = props
+
   const auctionInfo = useStoreSelector(auctionSelectors.getAuctionInfo)
 
   const inputNumberRef = useRef<HTMLInputElement>(null)
@@ -24,7 +32,11 @@ const SliderSuccessContent = () => {
   const { copyToClipboard } = useCopyToClipboard()
 
   return (
-    <SliderContent className="slider-content" value="successCreate">
+    <WizardItem
+      value={WELCOME_PAGE_WIZARD_ITEMS_IDS.SUCCESS_CREATE}
+      className={cn(className)}
+      {...restProps}
+    >
       <Flex className="gap-y-2" direction="column">
         <Typography tag="h1">Аукцион успешно создан!</Typography>
         <Typography tag="p" className="text-gray">
@@ -38,40 +50,48 @@ const SliderSuccessContent = () => {
           <Input
             ref={inputNumberRef}
             disabled
-            slotClassNames={{ base: 'w-full' }}
-            label={{ id: 'auctionId', value: 'Номер аукциона' }}
-            value={auctionInfo.id}
+            value={auctionInfo.auctionUUID}
+            slotClassNames={{ base: 'w-full', wrapper: 'pr-0' }}
+            label={{ id: 'auctionUUID', value: 'Номер аукциона' }}
+            endContent={
+              <Button
+                className="text-gray-light hover:text-gray-accent"
+                variant={'ghost'}
+                isIconOnly
+                icon={<Icons.Copy size="sm" />}
+                onClick={() => {
+                  copyToClipboard(inputNumberRef.current?.value || '')
+                  toastSuccessNotification('Номер аукциона скопирован в буфер')
+                }}
+              />
+            }
           />
-          <Button
-            onClick={() => {
-              copyToClipboard(inputNumberRef.current?.value || '')
-              toastSuccessNotification('Номер аукциона скопирован в буфер')
-            }}
-            startContent={<Icons.Copy size="default" />}
-          >
-            Скопировать
-          </Button>
         </Flex>
         <Flex className="gap-x-2" align="end" justify="end">
           <Input
             ref={inputURLRef}
             disabled
-            slotClassNames={{ base: 'w-full' }}
+            slotClassNames={{ base: 'w-full', wrapper: 'pr-0' }}
             label={{
               id: 'auctionURL',
               value: 'Ссылка на аукцион для участников',
             }}
             value={auctionInfo.url}
+            endContent={
+              <Button
+                className="text-gray-light hover:text-gray-accent"
+                variant={'ghost'}
+                isIconOnly
+                icon={<Icons.Copy size="sm" />}
+                onClick={() => {
+                  copyToClipboard(inputURLRef.current?.value || '')
+                  toastSuccessNotification(
+                    'Ссылка на аукцион скопирована в буфер'
+                  )
+                }}
+              />
+            }
           />
-          <Button
-            onClick={() => {
-              copyToClipboard(inputURLRef.current?.value || '')
-              toastSuccessNotification('Ссылка на аукцион скопирована в буфер')
-            }}
-            startContent={<Icons.Copy size="default" />}
-          >
-            Скопировать
-          </Button>
         </Flex>
       </Flex>
       <Link to={`/dashboard/${auctionInfo.url?.split('/').at(-1)}`}>
@@ -83,8 +103,8 @@ const SliderSuccessContent = () => {
           Перейти в панель управления
         </Button>
       </Link>
-    </SliderContent>
+    </WizardItem>
   )
 }
 
-export default SliderSuccessContent
+export { WizardSuccessCreatedItem }

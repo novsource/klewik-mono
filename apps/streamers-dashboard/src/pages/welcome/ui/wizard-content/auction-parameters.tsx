@@ -1,24 +1,33 @@
+import { WELCOME_PAGE_WIZARD_ITEMS_IDS } from '~pages/welcome/constants'
+
 import { AuctionInitialParametersForm } from '~features/auction/set-initial-parameters/ui'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
-import {
-  SliderContent,
-  SliderTrigger,
-  useSliderContext,
-} from '~shared/ui/slider'
 import { Typography } from '~shared/ui/typograghy'
+import { WizardItem, WizardItemProps, WizardTrigger } from '~shared/ui/wizard'
+import { useWizardContext } from '~shared/ui/wizard/context'
 
-export const SliderAuctionParametersContent = () => {
-  const {
-    func: { setSelectedKey },
-  } = useSliderContext()
+import { cn } from '~shared/utils'
+
+const WizardAuctionParametersItem = (
+  props: Omit<WizardItemProps, 'value' | 'children'>
+) => {
+  const { className, ...restProps } = props
+
+  const { next, getNodesById } = useWizardContext()
+
+  const nextIds = getNodesById(WELCOME_PAGE_WIZARD_ITEMS_IDS.AUCTION_PARAMETERS)
 
   return (
-    <SliderContent className="slider-content" value="parameters">
-      <SliderTrigger value="successCreate">
+    <WizardItem
+      value={WELCOME_PAGE_WIZARD_ITEMS_IDS.AUCTION_PARAMETERS}
+      className={cn(className)}
+      {...restProps}
+    >
+      <WizardTrigger type="next" nextStepId={nextIds ? nextIds[0] : ''}>
         <Button>Пропустить этот шаг</Button>
-      </SliderTrigger>
+      </WizardTrigger>
       <Flex className="gap-y-2" direction="column">
         <Typography tag="h1">
           Настройки данных страницы аукциона для гостей
@@ -35,8 +44,10 @@ export const SliderAuctionParametersContent = () => {
       </Flex>
 
       <AuctionInitialParametersForm
-        onSuccess={() => setSelectedKey('successCreate')}
+        onSuccess={() => next(nextIds ? nextIds[0] : '')}
       />
-    </SliderContent>
+    </WizardItem>
   )
 }
+
+export { WizardAuctionParametersItem }

@@ -1,3 +1,1 @@
-import { useWizard } from './use-wizard'
-
-export { useWizard }
+export * from './use-wizard'

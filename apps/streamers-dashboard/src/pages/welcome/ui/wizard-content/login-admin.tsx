@@ -1,19 +1,26 @@
 import { useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
+import { WELCOME_PAGE_WIZARD_ITEMS_IDS } from '~pages/welcome/constants'
+
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
-import { SliderContent, SliderTrigger } from '~shared/ui/slider'
 import { Typography } from '~shared/ui/typograghy'
+import { WizardItem, WizardItemProps, WizardTrigger } from '~shared/ui/wizard'
+
+import { cn } from '~shared/utils'
 
 type LoginAuction = {
   auctionId: string
   password: string
 }
 
-const SliderAdminContent = () => {
+const WizardLoginAdminItem = (
+  props: Omit<WizardItemProps, 'value' | 'children'>
+) => {
+  const { className, ...restProps } = props
   const [isPasswordHidden, setIsPasswordHidden] = useState(true)
   const { control, handleSubmit } = useForm<LoginAuction>({
     defaultValues: {
@@ -25,12 +32,16 @@ const SliderAdminContent = () => {
   const onSubmit: SubmitHandler<LoginAuction> = async (formData) => {}
 
   return (
-    <SliderContent className="slider-content" value="admin">
-      <SliderTrigger value="roles">
+    <WizardItem
+      value={WELCOME_PAGE_WIZARD_ITEMS_IDS.LOGIN_ADMIN}
+      className={cn(className)}
+      {...restProps}
+    >
+      <WizardTrigger type="back">
         <Button startContent={<Icons.ReturnArrow size="default" />}>
           Назад
         </Button>
-      </SliderTrigger>
+      </WizardTrigger>
 
       <Flex className="gap-y-2" direction="column">
         <Typography tag="h1">Вход в аукцион в роли администратора</Typography>
@@ -76,13 +87,13 @@ const SliderAdminContent = () => {
                   isPasswordHidden ? (
                     <Icons.EyeClosed
                       size="default"
-                      className="cursor-pointer select-none text-gray transition-colors hover:text-gray-light"
+                      className="cursor-pointer text-gray transition-colors select-none hover:text-gray-light"
                       onClick={() => setIsPasswordHidden(false)}
                     />
                   ) : (
                     <Icons.EyeOpen
                       size="default"
-                      className="cursor-pointer select-none text-gray transition-colors hover:text-gray-light"
+                      className="cursor-pointer text-gray transition-colors select-none hover:text-gray-light"
                       onClick={() => setIsPasswordHidden(true)}
                     />
                   )
@@ -98,8 +109,8 @@ const SliderAdminContent = () => {
           Войти
         </Button>
       </Flex>
-    </SliderContent>
+    </WizardItem>
   )
 }
 
-export default SliderAdminContent
+export { WizardLoginAdminItem }
