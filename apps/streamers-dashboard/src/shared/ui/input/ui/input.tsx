@@ -48,6 +48,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     label,
     onFocus,
     onBlur,
+    disabled,
     ...otherProps
   } = props
 
@@ -89,6 +90,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       type={type}
       className={baseInputStyle}
       ref={ref}
+      disabled={disabled}
       data-slot="input"
       onFocus={(e) => {
         onFocus && onFocus(e)
@@ -112,10 +114,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         contentWrapperVariants({
           size,
           isError: !!errorMessage,
+          isDisabled: disabled,
         }),
         classNames?.wrapper
       ),
-    [classNames?.wrapper, size, errorMessage]
+    [classNames?.wrapper, size, errorMessage, disabled]
   )
 
   return (

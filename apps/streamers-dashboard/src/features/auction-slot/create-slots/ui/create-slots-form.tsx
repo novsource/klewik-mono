@@ -2,16 +2,14 @@ import { HTMLAttributes, useCallback, useState } from 'react'
 import {
   FieldErrors,
   FormProvider,
+  UseFormReturn,
   useFieldArray,
-  useForm,
   useFormContext,
 } from 'react-hook-form'
 
-import { motion } from 'framer-motion'
+import * as m from 'motion/react-m'
 
 import { auctionSelectors } from '~entities/auction/store'
-
-import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import {
   AxiosBaseQueryError,
@@ -30,7 +28,7 @@ import {
 import { cn } from '~shared/utils'
 
 import { useCreateSlotsMutation } from '../api'
-import { TransformedCreateSlotsFormData, createSlotsFormResolver } from '../lib'
+import { TransformedCreateSlotsFormData } from '../lib'
 import { CreateSlotForm, FormArrayData } from '../model'
 import { SlotNameFormInput, SlotPointsFormInput } from './form-fields.ui'
 
@@ -58,27 +56,20 @@ type CreateSlotsFormProps = Omit<
   multiplySlots?: boolean
   multiplySlotsCount?: number
   checkIsSlotsExists?: boolean
+  formMethods: UseFormReturn<
+    CreateSlotForm,
+    unknown,
+    TransformedCreateSlotsFormData
+  >
   onSuccess?: (formData: FormArrayData[]) => void
   onError?: () => void
 }
 
 export const CreateSlotsForm = ({
   multiplySlots,
+  formMethods,
   ...props
 }: CreateSlotsFormProps) => {
-  const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-
-  const formMethods = useForm<
-    CreateSlotForm,
-    unknown,
-    TransformedCreateSlotsFormData
-  >({
-    defaultValues: { slots: [DEFAULT_FORM_VALUE] },
-    resolver: createSlotsFormResolver(auctionSlots),
-    reValidateMode: 'onChange',
-    shouldFocusError: true,
-  })
-
   return (
     <FormProvider {...formMethods}>
       {multiplySlots ? (
@@ -90,25 +81,28 @@ export const CreateSlotsForm = ({
   )
 }
 
-type SingleSlotCreatingFormProps = CreateSlotsFormProps
+type SingleSlotCreatingFormProps = Omit<
+  CreateSlotsFormProps,
+  'multiplySlots' | 'multiplySlotsCount' | 'formMethods'
+>
 
 const SingleSlotCreatingForm = (props: SingleSlotCreatingFormProps) => {
   const { onError, onSuccess, ...formProps } = props
 
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
+  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useFormContext<CreateSlotForm, unknown, TransformedCreateSlotsFormData>()
 
   const [createSlotsMutation, { isLoading }] = useCreateSlotsMutation()
 
   const submitForm = async (formData: TransformedCreateSlotsFormData) => {
     const response = await createSlotsMutation({
-      auctionId,
-      slots: formData,
+      auctionUUID,
+      slots: formData.slots,
     })
 
     if (response.error) {
@@ -124,12 +118,12 @@ const SingleSlotCreatingForm = (props: SingleSlotCreatingFormProps) => {
     }
 
     toastSuccessNotification('Слот успешно добавлен в аукцион!')
-    onSuccess && onSuccess(formData)
+    onSuccess && onSuccess(formData.slots)
   }
 
   return (
     <form
-      className="flex flex-col w-full justify-between"
+      className="flex w-full flex-col justify-between"
       onSubmit={handleSubmit(submitForm)}
       {...formProps}
     >
@@ -149,7 +143,7 @@ const SingleSlotCreatingForm = (props: SingleSlotCreatingFormProps) => {
         type="submit"
         variant="action"
         className="w-full"
-        disabled={isLoading}
+        disabled={isLoading || !isValid}
       >
         Добавить в аукцион
       </Button>
@@ -157,13 +151,16 @@ const SingleSlotCreatingForm = (props: SingleSlotCreatingFormProps) => {
   )
 }
 
-type MultiplySlotsCreatingFormProps = CreateSlotsFormProps & {
+type MultiplySlotsCreatingFormProps = Omit<
+  CreateSlotsFormProps,
+  'multiplySlots' | 'formMethods'
+> & {
   maxCreatingSlotsCount?: number
 }
 
 const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
   const { onSuccess, onError, maxCreatingSlotsCount = 10, ...formProps } = props
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
+  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const [activeTabValue, setActiveTabValue] =
     useState<`slot-${string}`>('slot-0')
@@ -184,8 +181,8 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
 
   const submitForm = async (formData: TransformedCreateSlotsFormData) => {
     const response = await createSlotsMutation({
-      auctionId,
-      slots: formData,
+      auctionUUID,
+      slots: formData.slots,
     })
 
     if (response.error) {
@@ -201,7 +198,7 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
     }
 
     toastSuccessNotification('Слоты успешно добавлены в аукцион!')
-    onSuccess && onSuccess(formData)
+    onSuccess && onSuccess(formData.slots)
   }
 
   const checkIsTabHasError = (tabIndex: number) => {
@@ -213,10 +210,7 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
   const renderFormFields = useCallback(
     (field: (typeof fields)[number], index: number) => {
       return (
-        <motion.li
-          key={field.id}
-          className="flex flex-col w-full gap-y-4 relative"
-        >
+        <m.li key={field.id} className="relative flex w-full flex-col gap-y-4">
           <SlotNameFormInput
             control={control}
             name={`slots.${index}.name` as const}
@@ -243,7 +237,7 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
               Удалить слот
             </Button>
           )}
-        </motion.li>
+        </m.li>
       )
     },
     [fields, getErrorMessageForField, errors]
@@ -251,7 +245,7 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
 
   return (
     <form
-      className="w-full h-full flex flex-col justify-between overflow-x-clip"
+      className="flex h-full w-full flex-col justify-between overflow-x-clip"
       onSubmit={handleSubmit(submitForm)}
       {...formProps}
     >
@@ -267,7 +261,7 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
             {fields.map((field, index) => (
               <TabsTrigger
                 className={cn(
-                  'flex gap-x-1 text-md font-medium data-[state=active]:rounded-[8px] cursor-pointer text-gray-light/70 hover:text-gray-light data-[state=active]:[&_button]:block',
+                  'flex cursor-pointer gap-x-1 text-md font-medium text-gray-light/70 hover:text-gray-light data-[state=active]:rounded-[8px] data-[state=active]:[&_button]:block',
                   checkIsTabHasError(index) &&
                     'text-red/80 hover:text-red data-[state=active]:text-red'
                 )}
@@ -280,7 +274,7 @@ const MultiplySlotsCreatingForm = (props: MultiplySlotsCreatingFormProps) => {
             {fields.length < maxCreatingSlotsCount && (
               <Button
                 variant={'ghost'}
-                className="hover:text-white/80 transition-colors"
+                className="transition-colors hover:text-white/80"
                 startContent={<Icons.Plus />}
                 size={'sm'}
                 onClick={() => {

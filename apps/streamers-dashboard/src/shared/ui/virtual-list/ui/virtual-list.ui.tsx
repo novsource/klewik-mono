@@ -38,6 +38,7 @@ export type VirtualListProps<
   count?: number
   width?: number
   height?: number
+  gap?: number
 }
 
 const VirtualList = <
@@ -50,6 +51,7 @@ const VirtualList = <
     width,
     height,
     count,
+    gap = 0,
     data,
     scrollElementRef,
     contentElementRef,
@@ -113,11 +115,12 @@ const VirtualList = <
           {virtualizer.getVirtualItems().map((virtualizedItem) => {
             return (
               <div
+                key={virtualizedItem.key}
+                ref={virtualizer.measureElement}
+                className={slotsClassNames?.item}
                 data-slot="virtual-list-item"
                 data-index={virtualizedItem.index}
-                ref={virtualizer.measureElement}
-                key={virtualizedItem.key}
-                className={slotsClassNames?.item}
+                style={{ marginTop: virtualizedItem.index !== 0 ? gap : 0 }}
               >
                 {children(data, virtualizedItem, virtualizedItem.index)}
               </div>

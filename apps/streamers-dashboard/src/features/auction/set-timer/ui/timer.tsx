@@ -1,7 +1,7 @@
 import { ComponentProps, useState } from 'react'
 
 import NumberFlow, { NumberFlowGroup } from '@number-flow/react'
-import { motion } from 'framer-motion'
+import * as m from 'motion/react-m'
 
 import { appSelectors } from '~shared/store/slices'
 
@@ -21,7 +21,7 @@ type TimerButtonProps = ComponentProps<'div'> & {
 
 type TimerStatus = 'stopped' | 'paused' | 'ticking' | 'ended'
 
-const TimerControls = motion.create('timer-controls')
+const TimerControls = m.create('timer-controls')
 
 const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
   const { initial, addedTimeValue, decreaseTimeValue } = useStoreSelector(
@@ -64,8 +64,8 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
   return (
     <Flex
       className={cn(
-        'w-full h-full bg-dark rounded-md gap-x-2',
-        timerStatus !== 'stopped' && 'pl-4 pr-2'
+        'h-full w-full gap-x-2 rounded-md bg-dark',
+        timerStatus !== 'stopped' && 'pr-2 pl-4'
       )}
       justify="center"
       align="center"
@@ -88,7 +88,7 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
         <Flex className="h-9" align="center">
           <NumberFlowGroup>
             <Flex
-              className="font-medium font-azeret-mono text-md text-gray-accent"
+              className="font-azeret-mono text-md font-medium text-gray-accent"
               style={{
                 fontVariantNumeric: 'tabular-nums',
                 letterSpacing: '-0.5px',
@@ -130,7 +130,7 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
         >
           <Flex className="text-gray-light" align="center">
             <Button
-              className="hover:text-gray-accent px-0.5"
+              className="px-0.5 hover:text-gray-accent"
               variant="ghost"
               size="sm"
               isIconOnly
@@ -144,7 +144,7 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
               onClick={timerStatus === 'ticking' ? pauseTimer : startTimer}
             />
             <Button
-              className="hover:text-gray-accent px-0.5"
+              className="px-0.5 hover:text-gray-accent"
               variant="ghost"
               size="sm"
               isIconOnly
@@ -152,7 +152,7 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
               icon={<Icons.Stop width={14} height={14} />}
             />
             <Button
-              className="hover:text-gray-accent px-0.5 "
+              className="px-0.5 hover:text-gray-accent"
               variant="ghost"
               size="sm"
               isIconOnly
@@ -160,7 +160,7 @@ const TimerButton = ({ defaultTimerText, ...props }: TimerButtonProps) => {
               onClick={() => addTime(addedTimeValue * 1000)}
             />
             <Button
-              className="hover:text-gray-accent px-0.5"
+              className="px-0.5 hover:text-gray-accent"
               variant="ghost"
               size="sm"
               isIconOnly

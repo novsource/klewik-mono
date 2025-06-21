@@ -28,7 +28,12 @@ type LabelVariants = SizesCvaVariants & ErrorCvaVariants
 type DescriptionVariants = SizesCvaVariants & ErrorCvaVariants
 
 type ContentBaseVariants = CvaClassValue
-type ContentWrapperVariants = SizesCvaVariants & ErrorCvaVariants
+type ContentWrapperVariants = SizesCvaVariants &
+  ErrorCvaVariants & {
+    isDisabled: {
+      [Bool in 'true' | 'false']: CvaClassValue
+    }
+  }
 
 type InputVariants = SizesCvaVariants &
   ErrorCvaVariants & {
@@ -62,7 +67,7 @@ export const labelVariants = cva<LabelVariants>('select-none', {
 })
 
 export const descriptionVariants = cva<DescriptionVariants>(
-  'text-gray-accent font-medium',
+  'font-medium text-gray-accent',
   {
     variants: {
       size: {
@@ -88,29 +93,34 @@ export const contentVariants = cva<ContentBaseVariants>([
 
 export const contentWrapperVariants = cva<ContentWrapperVariants>(
   [
-    'border border-1 border-gray/55 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-offset-1',
-    'flex w-full items-center bg-dark transition-all ring-gray/55 rounded-medium',
-    'data-[focus=true]:ring-1 data-[hover=true]:ring-1 data-[focus=true]:bg-dark/50 data-[hover=true]:bg-dark/50',
+    'border border-1 border-gray/55 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden',
+    'flex w-full items-center rounded-medium bg-dark ring-gray/55 transition-all',
   ],
   {
     variants: {
       size: {
-        default: 'h-10 px-4 gap-x-2',
-        sm: 'h-9 px-3 py-2 gap-x-1',
-        lg: 'h-11 px-4 gap-x-3',
+        default: 'h-10 gap-x-2 px-4',
+        sm: 'h-9 gap-x-1 px-3 py-2',
+        lg: 'h-11 gap-x-3 px-4',
       },
-      isError: { true: 'ring-red/80 ring-1', false: 'ring-gray-light' },
+      isError: { true: 'ring-1 ring-red/80', false: 'ring-gray-light' },
+      isDisabled: {
+        true: 'ring-0 data-[hover=true]:ring-0',
+        false:
+          'data-[focus=true]:bg-dark/50 data-[focus=true]:ring-1 data-[hover=true]:bg-dark/50 data-[hover=true]:ring-1',
+      },
     },
     defaultVariants: {
       size: 'default',
       isError: false,
+      isDisabled: false,
     },
   }
 )
 
 export const inputVariants = cva<InputVariants>(
   [
-    'flex w-full h-full items-center',
+    'flex h-full w-full items-center',
     'dark bg-transparent',
     'font-medium text-white caret-white',
     'file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground',
@@ -123,7 +133,7 @@ export const inputVariants = cva<InputVariants>(
       size: {
         default: 'py-3 text-md',
         lg: 'text-md',
-        sm: 'text-sm ',
+        sm: 'text-sm',
       },
       isError: {
         true: 'focus-visible:ring-red',

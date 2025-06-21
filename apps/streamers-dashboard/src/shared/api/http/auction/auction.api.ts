@@ -28,7 +28,7 @@ export const getAuctionInfo = async <T>(
   auctionUUID: string,
   fetchOptions?: HttpClientRequestOptions
 ) => {
-  return authHttpClient.get<T>(`/api/v1/auction/${auctionUUID}/info`, {
+  return authHttpClient.get<T>(`/api/v1/auctions/${auctionUUID}`, {
     ...fetchOptions,
   })
 }

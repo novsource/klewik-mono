@@ -17,11 +17,11 @@ import { useDeleteSlotMutation } from '../api'
 type DeleteSlotButtonProps = ComponentPropsWithoutRef<'button'> &
   ButtonProps & {
     slotId: AuctionSlot['id']
-    auctionId: Auction['id']
+    auctionUUID: Auction['auctionUUID']
   }
 
 const DeleteSlotButton = (props: DeleteSlotButtonProps) => {
-  const { slotId, auctionId, ...buttonProps } = props
+  const { slotId, auctionUUID, ...buttonProps } = props
 
   const { deleteSlot } = useActionCreators(auctionSlotsActions)
 
@@ -29,7 +29,7 @@ const DeleteSlotButton = (props: DeleteSlotButtonProps) => {
 
   const handleOnClick = async () => {
     const toastPromise = new Promise((resolve, reject) => {
-      deleteSlotMutation({ auctionId, slotId }).then((response) => {
+      deleteSlotMutation({ auctionUUID, slotId }).then((response) => {
         if (response.error) {
           reject(response.error)
         } else {
@@ -51,7 +51,7 @@ const DeleteSlotButton = (props: DeleteSlotButtonProps) => {
       variant={'ghost'}
       isIconOnly
       icon={<Icons.Bin />}
-      className="text-gray-accent transition-colors hover:text-red h-full px-1 py-1"
+      className="h-full px-1 py-1 text-gray-accent transition-colors hover:text-red"
       disabled={isLoading}
       onClick={handleOnClick}
       {...buttonProps}
