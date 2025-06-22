@@ -1,16 +1,16 @@
-import pluginJs from '@eslint/js'
-import eslintConfigPrettier from 'eslint-config-prettier'
-import pluginReact from 'eslint-plugin-react'
-import pluginTailwindCSS from 'eslint-plugin-tailwindcss'
-import globals from 'globals'
-import tseslint from 'typescript-eslint'
+import antfu from '@antfu/eslint-config'
 
-export default [
-  { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
-  { languageOptions: { globals: globals.browser } },
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
-  pluginTailwindCSS.configs.recommended,
-  eslintConfigPrettier,
-]
+export default antfu({
+  type: 'app',
+
+  stylistic: {
+    indent: 4, // 4, or 'tab'
+    quotes: 'single', // or 'double'
+  },
+
+  jsonc: false,
+  yaml: false,
+
+  typescript: true,
+  react: true,
+})

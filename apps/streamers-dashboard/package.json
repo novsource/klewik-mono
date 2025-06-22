@@ -7,7 +7,8 @@
     "dev": "vite --port 5500 --host 0.0.0.0",
     "dev:icons": "pnpm run icons && vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "preview": "vite preview",
     "icons": "npx @svgr/cli -- ./src/shared/assets/icons",
     "vitest:test": "vitest",
@@ -43,7 +44,6 @@
     "motion": "^12.18.1",
     "next-themes": "^0.4.4",
     "path": "^0.12.7",
-    "rc-virtual-list": "^3.18.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.55.0",
@@ -93,6 +93,7 @@
     "vite": "^6.3.3",
     "vite-tsconfig-paths": "^5.0.1",
     "vitest": "^3.0.4",
-    "vitest-canvas-mock": "^0.3.3"
+    "vitest-canvas-mock": "^0.3.3",
+    "@antfu/eslint-config": "^4.15.0"
   }
 }
