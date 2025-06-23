@@ -1,11 +1,12 @@
-import { EventSourceMessage } from '../fetch-event-source/models'
-import { BroadcastLeaderChannel } from './broadcast-leader-channel'
-import { ChannelMessagesValidator } from './channel-messages-validator'
-import {
+import type { EventSourceMessage } from '../fetch-event-source/models'
+import type {
   CommunicableSSEChannelEventsMap,
   CommunicableSSEChannelMessage,
   CommunicableSSEChannelOptions,
 } from './model'
+
+import { BroadcastLeaderChannel } from './broadcast-leader-channel'
+import { ChannelMessagesValidator } from './channel-messages-validator'
 
 /**
  * A channel with the ability to validate incoming messages and also notifies all existing channels about its initialization
@@ -28,7 +29,7 @@ class CommunicableSSEChannel<
       messageSchema,
       validationEventMessage,
       ...channelOptions
-    }: CommunicableSSEChannelOptions<ChannelEventsMap>
+    }: CommunicableSSEChannelOptions<ChannelEventsMap>,
   ) {
     super(channelName, channelOptions)
 
@@ -37,23 +38,23 @@ class CommunicableSSEChannel<
       validateEventDataMessages: validationEventMessage,
     })
 
-    this.onMessage((message) => {
-      const validatedMessage = this._messagesValidator.validate(message)
-
-      if (validatedMessage instanceof Error || validatedMessage === undefined) {
-        throw new Error(
-          validatedMessage?.message ?? 'Error on message validation: '
-        )
-      }
-
-      /** @todo Refactor */
-      // @ts-expect-error Emitter eventArgs issue
-      this.emit('message', validatedMessage)
-
-      this.emit(validatedMessage.event, validatedMessage.data)
-    })
-
+    this.onMessage(message => this.messageProcessing(message))
     this.postMessage({ id: '0', data: '', event: 'employee/new' })
+  }
+
+  messageProcessing(message: CommunicableSSEChannelMessage<SourceMessage>) {
+    const validatedMessage = this._messagesValidator.validate(message)
+
+    if (validatedMessage instanceof Error || validatedMessage === undefined) {
+      throw new Error(
+        validatedMessage?.message ?? 'Error on message validation: ',
+      )
+    }
+
+    /** @todo Refactor */
+    // @ts-expect-error Emitter eventArgs issue
+    this.emit('message', validatedMessage)
+    this.emit(validatedMessage.event, validatedMessage.data)
   }
 }
 

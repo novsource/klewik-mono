@@ -1,21 +1,20 @@
-import { ReactNode, useMemo } from 'react'
+import type { ReactNode } from 'react'
+import { useMemo } from 'react'
+
 import { NavLink, useLocation } from 'react-router-dom'
 
+import { tailwindScreens } from '~shared/constants/tailwindcss'
 import { useMediaQuery } from '~shared/hooks/use-media-query'
-
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~shared/ui/tooltip'
 import { Typography } from '~shared/ui/typograghy'
-
-import { tailwindScreens } from '~shared/constants/tailwindcss'
-
 import { cn } from '~shared/utils'
 
 const NavbarMenu = () => {
   const { pathname } = useLocation()
   const isLargeThenTablet = useMediaQuery(
-    `(min-width:${tailwindScreens.tablet})`
+    `(min-width:${tailwindScreens.tablet})`,
   )
 
   const menuItems = useMemo(() => {
@@ -46,9 +45,8 @@ const NavbarMenu = () => {
             className={({ isActive }) =>
               cn(
                 'flex items-center justify-center transition-all hover:text-gray-accent text-gray/70',
-                isActive && 'text-gray-accent'
-              )
-            }
+                isActive && 'text-gray-accent',
+              )}
           >
             {menuIcon}
           </NavLink>
@@ -70,15 +68,15 @@ const NavbarMenu = () => {
               {tooltipContent}
             </Typography>
           </TooltipContent>
-        </Tooltip>
+        </Tooltip>,
       )
 
       return acc
     }, [])
-  }, [pathname])
+  }, [isLargeThenTablet])
 
   return (
-    <nav data-slot="navbar" className="fixed left-3 top-1/2 -translate-y-1/2">
+    <nav data-slot="navbar" className="fixed left-3 top-1/2 -translate-y-1/2 z-50">
       <Flex
         className="w-full gap-y-5 py-4 bg-dark/60 px-3.5 rounded-lg"
         component="ul"

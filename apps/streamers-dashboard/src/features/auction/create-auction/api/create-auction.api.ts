@@ -1,17 +1,17 @@
-import { splittedAuctionApi } from '~entities/auction/api'
+import type { CreateAuctionFormData } from '../model'
 
-import { CreateAuctionFormData } from '../model'
+import { splittedAuctionApi } from '~entities/auction/api'
 
 type CreateAuctionQueryArgs = CreateAuctionFormData
 
-type CreateAuctionQueryReturnValue = {
+export type CreateAuctionQueryReturnValue = {
   auctionUUID: string
   url: string
   auctionOwnerId: string
 }
 
 const createAuctionApi = splittedAuctionApi.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     createAuction: builder.mutation<
       CreateAuctionQueryReturnValue,
       CreateAuctionQueryArgs

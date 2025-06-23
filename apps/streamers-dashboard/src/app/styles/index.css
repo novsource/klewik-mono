@@ -339,7 +339,7 @@
   }
 
   body {
-    @apply m-0 h-full w-full antialiased;
+    @apply m-0 h-full w-full overflow-hidden antialiased;
   }
 
   header {

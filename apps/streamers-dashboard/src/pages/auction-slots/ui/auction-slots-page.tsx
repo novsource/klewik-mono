@@ -1,6 +1,5 @@
 import { useState } from 'react'
 
-import { AuctionSlotsList } from '~widgets/auction-slots-list/ui'
 import { CreateSlotsDialog } from '~widgets/create-slots-dialog/ui'
 import { SearchInput } from '~widgets/search-input/ui'
 import { useSortingSlots } from '~widgets/slots-with-sort/lib'
@@ -9,16 +8,14 @@ import { useSearchAuctionSlots } from '~features/auction-slot/search-slots/hooks
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
-import { appSelectors } from '~shared/store/slices'
-
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
+import { appSelectors } from '~shared/store/slices'
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-
 import { cn } from '~shared/utils'
 
+import { AuctionSlotsList } from './slots-list/slots-list.ui'
 import { SortingSlotsCombobox } from './sorting-slots-combobox'
 
 const AuctionSlotsPage = () => {
@@ -33,9 +30,10 @@ const AuctionSlotsPage = () => {
   return (
     <div
       className={cn([
-        'mx-auto w-full h-full pt-5 mb-4 grid grid-rows-slots-table gap-y-3',
-        'mobile:gap-y-5',
-        'tablet:grid-rows-slots-desktop max-tablet:max-w-[1100px] tablet:gap-y-4 tablet:pl-10',
+        'mx-auto mb-4 grid h-full w-full grid-rows-slots-table gap-y-3 pt-5',
+        'small-mobile:pt-1.5',
+        'mobile:gap-y-5 mobile:pt-3',
+        'max-tablet:max-w-[1100px] tablet:grid-rows-slots-desktop tablet:gap-y-4 tablet:pl-10',
         'desktop:max-w-[1750px] desktop-lg:max-w-[2100px]',
         'landtop:max-w-[1600px]',
       ])}
@@ -50,17 +48,21 @@ const AuctionSlotsPage = () => {
           slotClassNames={{
             base: 'w-full tablet:max-w-[400px] landtop:max-w-[450px] desktop:max-w-[500px]',
           }}
-          onChange={(e) => setSearchValue(e.target.value)}
+          onChange={e => setSearchValue(e.target.value)}
         />
-        <Flex className="gap-x-2" align="center">
+        <Flex className="tablet:gap-x-2" align="center">
           <SortingSlotsCombobox />
           <CreateSlotsDialog
             multiplySlots
-            trigger={
-              <Button variant={'action'} startContent={<Icons.Plus />}>
+            trigger={(
+              <Button
+                className="z-50 w-full max-tablet:fixed max-tablet:bottom-[calc(var(--mobile-menu-bottom)+var(--footer-height)+12px)] max-tablet:left-1/2 max-tablet:-translate-x-1/2 max-tablet:rounded-pill"
+                variant="action"
+                startContent={<Icons.Plus />}
+              >
                 Добавить слоты
               </Button>
-            }
+            )}
           />
         </Flex>
       </Flex>

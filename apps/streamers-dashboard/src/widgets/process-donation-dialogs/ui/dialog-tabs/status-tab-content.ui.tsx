@@ -1,13 +1,19 @@
-import { TabsContent, TabsContentProps } from '@radix-ui/react-tabs'
+import type { TabsContentProps } from '@radix-ui/react-tabs'
 
-import { ProcessedDonation } from '~entities/donation/model'
-import { DonationCardBadge } from '~entities/donation/ui/card'
+import { TabsContent } from '@radix-ui/react-tabs'
+
+import type { ProcessedDonation } from '~entities/donation/model'
+import type {
+  DonationCardProps,
+} from '~entities/donation/ui/card'
+import {
+  DonationCardBadge,
+} from '~entities/donation/ui/card'
 
 import { Badge } from '~shared/ui/badge'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
-
 import { cn } from '~shared/utils'
 
 import { ProcessDonationCard } from '../dialog-card'
@@ -18,6 +24,7 @@ type DonationStatusTabContentProps = Omit<TabsContentProps, 'value'> & {
 
 const DonationStatusTabContent = (props: DonationStatusTabContentProps) => {
   const { donation, ...restProps } = props
+
   return (
     <TabsContent className="w-full h-full mt-4" value="status" {...restProps}>
       <Flex className="w-full gap-y-2" direction="column">
@@ -28,16 +35,12 @@ const DonationStatusTabContent = (props: DonationStatusTabContentProps) => {
           <DonationCardBadge status={donation.processedStatus} />
         </ProcessDonationCard>
         <ProcessDonationCard
-          title="Обоснование статуса"
-          titleIcon={<Icons.Info className="text-gray" size="sm" />}
-          contentPosition="bottom"
+          title="Тип пожертвования"
+          titleIcon={<Icons.Signpost className="text-gray" size="sm" />}
         >
-          <Typography tag="p">
-            Наиболее распространные причины: наличие оскорбления(-ий) в тексте
-            сообщения и/или имени пожертвователя неправономерная информация в
-            тексте сообщения и/или имени пожертвователя недопустимые названия
-            нового слота{' '}
-          </Typography>
+          <Badge className="h-full w-full font-medium">
+            Прибавление очков к слоту
+          </Badge>
         </ProcessDonationCard>
         <ProcessDonationCard
           title="Дата изменения статуса"
@@ -46,28 +49,21 @@ const DonationStatusTabContent = (props: DonationStatusTabContentProps) => {
           {donation.createdAt}
         </ProcessDonationCard>
         <ProcessDonationCard
-          title="Тип пожертвования"
-          titleIcon={<Icons.Signpost className="text-gray" size="sm" />}
-        >
-          <Badge className="h-full w-full font-medium">
-            Прибавление очков к слоту
-          </Badge>
-        </ProcessDonationCard>
-
-        <ProcessDonationCard
           contentPosition="bottom"
           title="Сообщение"
           titleIcon={
-            donation.messageType === 'audio' ? (
-              <Icons.Sound className="text-gray" size="sm" />
-            ) : (
-              <Icons.Message className="text-gray" size="sm" />
-            )
+            donation.messageType === 'audio'
+              ? (
+                  <Icons.Sound className="text-gray" size="sm" />
+                )
+              : (
+                  <Icons.Message className="text-gray" size="sm" />
+                )
           }
         >
           <Typography
             className={cn(
-              donation.messageType === 'audio' && 'text-gray-accent'
+              donation.messageType === 'audio' && 'text-gray-accent',
             )}
             tag="span"
           >
@@ -82,3 +78,11 @@ const DonationStatusTabContent = (props: DonationStatusTabContentProps) => {
 }
 
 export { DonationStatusTabContent }
+
+const DonationTypeBadge = (
+  props: DonationCardProps & {
+    processedAction: ProcessedDonation['processedAction']
+  },
+) => {
+
+}

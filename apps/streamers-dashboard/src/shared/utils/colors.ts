@@ -1,21 +1,21 @@
 export const getRandomRGBColor = () => {
   return `rgb(${Math.random() * 255},${Math.random() * 255},${
     Math.random() * 255
-  })`
+  })` as const
 }
 
 export const getRandomHEXColor = () => {
-  return `#${Math.floor(16777215 * Math.random()).toString(16)}`
+  return `#${Math.floor(16777215 * Math.random()).toString(16)}` as const
 }
 
 export const getRandomHSLColor = () => {
-  return 'hsl(' + 360 * Math.random() + ',40%,48%)'
+  return `hsl(${360 * Math.random()},40%,48%)` as const
 }
 
 export const hslToHEX = (
   hue: number,
   saturation: number,
-  lightness: number
+  lightness: number,
 ) => {
   lightness /= 100
 

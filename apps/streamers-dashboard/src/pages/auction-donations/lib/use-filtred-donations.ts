@@ -1,10 +1,10 @@
-/**@todo Rework with all donations properties */
+/** @todo Rework with all donations properties */
 import { useEffect, useState } from 'react'
 
-import { ProcessedDonation } from '~entities/donation/model'
+import type { ProcessedDonation } from '~entities/donation/model'
 
 type FiltredDonationsOptions = {
-  status: ProcessedDonation['processingStatus'] | 'default'
+  status: ProcessedDonation['processedStatus'] | 'default'
 }
 
 /**
@@ -14,16 +14,17 @@ type FiltredDonationsOptions = {
  */
 const useFiltredDonations = (
   data: ProcessedDonation[],
-  options: FiltredDonationsOptions
+  options: FiltredDonationsOptions,
 ) => {
   const [filtredDonations, setFiltredDonations] = useState(() => data)
 
   useEffect(() => {
     setFiltredDonations(() => {
-      if (options.status === 'default') return data
+      if (options.status === 'default')
+        return data
 
       return data.filter(
-        (donation) => donation.processingStatus === options.status
+        donation => donation.processedStatus === options.status,
       )
     })
   }, [data, options.status])

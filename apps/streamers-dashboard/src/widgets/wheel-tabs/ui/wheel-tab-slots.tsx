@@ -23,7 +23,7 @@ const SlotsWheelTab = () => {
       className="data-[state=active]:h-full"
       value={TABS_CONTENT_NAMES.SLOTS}
     >
-      <VirtualizedSlotsList data={sortedSlots} />
+      <VirtualizedSlotsList data={sortedSlots} gap={8} />
     </TabsContent>
   )
 }
