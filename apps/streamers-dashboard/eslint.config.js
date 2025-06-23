@@ -1,4 +1,46 @@
 import antfu from '@antfu/eslint-config'
+import ts from 'typescript-eslint'
+
+/**
+ * For now is not supporting tailwindCSS v4
+ * https://github.com/francoismassart/eslint-plugin-tailwindcss/issues/325
+ */
+// import tailwind from 'eslint-plugin-tailwindcss'
+
+const perfectionistFSDImportsGroups = [
+          'app',
+          'pages',
+          'widgets',
+          'features',
+          'entities',
+          'shared',
+        ]
+
+const perfectionistFSDImportsCustomGroups = [
+          {
+            groupName: 'app',
+            elementNamePattern: ['^~app'],
+          },
+          {
+            groupName: 'pages',
+            elementNamePattern: ['^~pages'],
+          },
+          {
+            groupName: 'widgets',
+            elementNamePattern: ['^~widgets'],
+          },
+          {
+            groupName: 'features',
+            elementNamePattern: ['^~features'],
+          },
+          {
+            groupName: 'entities',
+            elementNamePattern: ['^~entities'],
+          },
+          {
+            groupName: 'shared',
+            elementNamePattern: ['^~shared'],
+          },]
 
 export default antfu({
   type: 'app',
@@ -9,10 +51,10 @@ export default antfu({
   typescript: true,
   react: true,
 
-  ignores: ['**/*.config.ts', '**/*.config.js'],
   rules: {
     'antfu/top-level-function': 'off',
     'no-console': 'warn',
+    'ts/consistent-type-definitions': ['error', 'type'],
     'perfectionist/sort-imports': [
       'error',
       {
@@ -37,12 +79,7 @@ export default antfu({
 
           'external',
 
-          'app',
-          'pages',
-          'widgets',
-          'features',
-          'entities',
-          'shared',
+          ...perfectionistFSDImportsGroups,
 
           'builtin',
           'internal',
@@ -55,6 +92,7 @@ export default antfu({
           {
             groupName: 'react',
             elementNamePattern: ['^react$', '^react-dom$'],
+
           },
           {
             groupName: 'others-react-start-libs',
@@ -64,33 +102,10 @@ export default antfu({
             groupName: 'react-hook-form',
             elementNamePattern: ['^react-hook-form$'],
           },
-          {
-            groupName: 'app',
-            elementNamePattern: ['^~app'],
-          },
-          {
-            groupName: 'pages',
-            elementNamePattern: ['^~pages'],
-          },
-          {
-            groupName: 'widgets',
-            elementNamePattern: ['^~widgets'],
-          },
-          {
-            groupName: 'features',
-            elementNamePattern: ['^~features'],
-          },
-          {
-            groupName: 'entities',
-            elementNamePattern: ['^~entities'],
-          },
-          {
-            groupName: 'shared',
-            elementNamePattern: ['^~shared'],
-          },
+          ...perfectionistFSDImportsCustomGroups
         ],
       },
     ],
   },
-  ignore: ['**/*.d.ts, **/*.mts'],
+  ignore: ['**/*.d.ts, **/*.mts', '**/*.config.ts'],
 })
