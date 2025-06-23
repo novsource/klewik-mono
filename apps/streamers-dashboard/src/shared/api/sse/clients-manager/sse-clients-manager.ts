@@ -132,8 +132,8 @@ class SSEClientsManager {
     }
 
     const connectPromise = new Promise<void>((resolve, reject) => {
-      this._broadcastChannel.on('manager/status', ([data]) => {
-        if (data.isConnected && !this._broadcastChannel.isLeader) {
+      this._broadcastChannel.on('manager/status', (status) => {
+        if (status.isConnected && !this._broadcastChannel.isLeader) {
           resolve()
         }
       })

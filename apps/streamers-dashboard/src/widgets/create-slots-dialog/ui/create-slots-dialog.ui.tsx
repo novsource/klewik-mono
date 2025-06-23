@@ -29,7 +29,7 @@ import {
   SheetTrigger,
 } from '~shared/ui/sheet/ui/sheet'
 import { Typography } from '~shared/ui/typograghy'
-import { getRandomHEXColor,  } from '~shared/utils/colors'
+import { getRandomHEXColor } from '~shared/utils/colors'
 
 type CreateSlotsDialogProps = {
   multiplySlots?: boolean

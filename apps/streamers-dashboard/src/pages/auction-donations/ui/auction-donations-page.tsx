@@ -5,27 +5,24 @@ import { SearchInput } from '~widgets/search-input/ui'
 
 import { DonationsList } from '~features/donations/watch-donations/ui'
 
-import { ProcessedDonation } from '~entities/donation/model'
+import type { ProcessedDonation } from '~entities/donation/model'
 import { donationsSelectors } from '~entities/donation/store'
+import type {
+  DonationCardProps,
+} from '~entities/donation/ui/card'
 import {
   DonationCard,
   DonationCardBadge,
-  DonationCardProps,
   SkeletonDonationCard,
 } from '~entities/donation/ui/card'
-
 import { IntegrationBadge } from '~entities/integrations/ui/badge'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
+import { tailwindScreens } from '~shared/constants/tailwindcss'
 import { useMediaQuery } from '~shared/hooks/use-media-query'
-
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-
-import { tailwindScreens } from '~shared/constants/tailwindcss'
-
 import { cn } from '~shared/utils'
 
 import { useFiltredDonations } from '../lib'
@@ -37,11 +34,11 @@ const AuctionDonationsPage = () => {
   const donations = useStoreSelector(donationsSelectors.getAllDonations)
 
   const isMediaLargeThenTablet = useMediaQuery(
-    `(min-width: ${tailwindScreens.tablet})`
+    `(min-width: ${tailwindScreens.tablet})`,
   )
 
-  const [donationsFilterValue, setDonationsFilterValue] =
-    useState<DonationProcessStatus>('default')
+  const [donationsFilterValue, setDonationsFilterValue]
+    = useState<DonationProcessStatus>('default')
 
   const filtredDonations = useFiltredDonations(donations, {
     status: donationsFilterValue,
@@ -73,10 +70,11 @@ const AuctionDonationsPage = () => {
         <DonationsFilterSelect
           status={donationsFilterValue}
           onValueChange={(status: DonationProcessStatus) =>
-            setDonationsFilterValue(status)
-          }
+            setDonationsFilterValue(status)}
         />
       </Flex>
+
+      {/* <DonationsInfinityList data={filtredDonations} /> */}
 
       <DonationsList
         data={filtredDonations}
@@ -95,16 +93,17 @@ const AuctionDonationsPage = () => {
 
 export { AuctionDonationsPage }
 
-const DonationCardWithControls = ({
+function DonationCardWithControls({
   showingSkeleton,
   ...props
-}: DonationCardProps & { showingSkeleton?: boolean }) => {
-  if (showingSkeleton) return <SkeletonDonationCard {...props} />
+}: DonationCardProps & { showingSkeleton?: boolean }) {
+  if (showingSkeleton)
+    return <SkeletonDonationCard {...props} />
 
   return (
     <DonationCard
       {...props}
-      renderHeader={(donation) => (
+      renderHeader={donation => (
         <Flex className="w-full h-6" justify="between">
           <Flex className="gap-x-1.5">
             <IntegrationBadge integration={donation.source} />
@@ -113,15 +112,15 @@ const DonationCardWithControls = ({
           <Flex>
             <ProcessDonationSheet
               donation={donation}
-              trigger={
+              trigger={(
                 <Button
                   className="h-full text-gray-accent hover:text-white/80 transition-colors z-50"
-                  variant={'ghost'}
+                  variant="ghost"
                   size="xs"
                   isIconOnly
                   icon={<Icons.OpenArrow size="xs" />}
                 />
-              }
+              )}
             />
           </Flex>
         </Flex>

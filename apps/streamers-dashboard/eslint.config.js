@@ -1,5 +1,4 @@
 import antfu from '@antfu/eslint-config'
-import ts from 'typescript-eslint'
 
 /**
  * For now is not supporting tailwindCSS v4
@@ -8,39 +7,40 @@ import ts from 'typescript-eslint'
 // import tailwind from 'eslint-plugin-tailwindcss'
 
 const perfectionistFSDImportsGroups = [
-          'app',
-          'pages',
-          'widgets',
-          'features',
-          'entities',
-          'shared',
-        ]
+  'app',
+  'pages',
+  'widgets',
+  'features',
+  'entities',
+  'shared',
+]
 
 const perfectionistFSDImportsCustomGroups = [
-          {
-            groupName: 'app',
-            elementNamePattern: ['^~app'],
-          },
-          {
-            groupName: 'pages',
-            elementNamePattern: ['^~pages'],
-          },
-          {
-            groupName: 'widgets',
-            elementNamePattern: ['^~widgets'],
-          },
-          {
-            groupName: 'features',
-            elementNamePattern: ['^~features'],
-          },
-          {
-            groupName: 'entities',
-            elementNamePattern: ['^~entities'],
-          },
-          {
-            groupName: 'shared',
-            elementNamePattern: ['^~shared'],
-          },]
+  {
+    groupName: 'app',
+    elementNamePattern: ['^~app'],
+  },
+  {
+    groupName: 'pages',
+    elementNamePattern: ['^~pages'],
+  },
+  {
+    groupName: 'widgets',
+    elementNamePattern: ['^~widgets'],
+  },
+  {
+    groupName: 'features',
+    elementNamePattern: ['^~features'],
+  },
+  {
+    groupName: 'entities',
+    elementNamePattern: ['^~entities'],
+  },
+  {
+    groupName: 'shared',
+    elementNamePattern: ['^~shared'],
+  },
+]
 
 export default antfu({
   type: 'app',
@@ -102,7 +102,7 @@ export default antfu({
             groupName: 'react-hook-form',
             elementNamePattern: ['^react-hook-form$'],
           },
-          ...perfectionistFSDImportsCustomGroups
+          ...perfectionistFSDImportsCustomGroups,
         ],
       },
     ],
