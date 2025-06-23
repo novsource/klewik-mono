@@ -1,3 +1,3 @@
-import { CreateSlotsForm } from './create-slots-form'
+import { ControlledCreateSlotForm, CreateSlotsForm } from './create-slots-form'
 
-export { CreateSlotsForm }
+export { ControlledCreateSlotForm, CreateSlotsForm }

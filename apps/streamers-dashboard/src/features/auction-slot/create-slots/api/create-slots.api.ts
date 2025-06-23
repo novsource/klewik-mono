@@ -20,7 +20,7 @@ const createSlotsApi = splittedAuctionSlotsApi.injectEndpoints({
           'Content-Type': 'application/json',
         },
         method: 'POST',
-        withCredentials: false,
+        withCredentials: true,
       }),
     }),
   }),

@@ -7,7 +7,6 @@
       "~widgets/*": ["./src/widgets/*"],
       "~features/*": ["./src/features/*"],
       "~entities/*": ["./src/entities/*"],
-      "~ui/*": ["./src/shared/components/ui/*"],
       "~shared/*": ["./src/shared/*"],
       "~root/*": ["./*"],
       "~/*": ["./src/*"]

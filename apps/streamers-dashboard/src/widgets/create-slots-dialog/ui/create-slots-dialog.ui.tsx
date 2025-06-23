@@ -1,14 +1,14 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react'
+import type { ReactNode } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { useCreateSlotsForm } from '~features/auction-slot/create-slots/hooks'
-import { CreateSlotsForm } from '~features/auction-slot/create-slots/ui'
+import { ControlledCreateSlotForm } from '~features/auction-slot/create-slots/ui'
 
 import { auctionSlotsActions as storeAuctionSlotsActions } from '~entities/auction-slot/store'
 
-import { useActionCreators } from '~shared/lib/redux-toolkit'
-
+import { tailwindScreens } from '~shared/constants/tailwindcss'
 import { useMediaQuery } from '~shared/hooks/use-media-query'
-
+import { useActionCreators } from '~shared/lib/redux-toolkit'
 import { Divider } from '~shared/ui/divider'
 import {
   Drawer,
@@ -29,8 +29,7 @@ import {
   SheetTrigger,
 } from '~shared/ui/sheet/ui/sheet'
 import { Typography } from '~shared/ui/typograghy'
-
-import { tailwindScreens } from '~shared/constants/tailwindcss'
+import { getRandomHEXColor,  } from '~shared/utils/colors'
 
 type CreateSlotsDialogProps = {
   multiplySlots?: boolean
@@ -38,45 +37,45 @@ type CreateSlotsDialogProps = {
   isFullPageHeight?: boolean
 }
 
-const CreateSlotsDialog = ({
+function CreateSlotsDialog({
   multiplySlots = true,
   isFullPageHeight = true,
   trigger,
-}: CreateSlotsDialogProps) => {
+}: CreateSlotsDialogProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const auctionSlotsActions = useActionCreators(storeAuctionSlotsActions)
 
   const isMediaLargeThenTablet = useMediaQuery(
-    `(min-width: ${tailwindScreens.tablet})`
+    `(min-width: ${tailwindScreens.tablet})`,
   )
 
-  const { formMethods, formState } = useCreateSlotsForm()
+  const { form, state } = useCreateSlotsForm()
 
   const dialogContent = useMemo(() => {
     return (
-      <CreateSlotsForm
+      <ControlledCreateSlotForm
         multiplySlots={multiplySlots}
-        formMethods={formMethods}
-        onSuccess={(slots) => {
+        form={form}
+        onSuccess={({ slots }) => {
           auctionSlotsActions.addSlots(
-            slots.map((slot) => ({
+            slots.map(slot => ({
               ...slot,
               id: 1,
-              color: '#FFF',
-            }))
+              color: getRandomHEXColor(),
+            })),
           )
           setIsDialogOpen(false)
         }}
       />
     )
-  }, [multiplySlots, auctionSlotsActions, setIsDialogOpen, formMethods])
+  }, [multiplySlots, auctionSlotsActions, setIsDialogOpen, form])
 
   useEffect(() => {
     if (!isDialogOpen) {
-      formMethods.reset()
+      form.reset()
     }
-  }, [formMethods, isDialogOpen])
+  }, [form, isDialogOpen])
 
   if (isMediaLargeThenTablet) {
     return (
@@ -95,7 +94,7 @@ const CreateSlotsDialog = ({
       noBodyStyles
       open={isDialogOpen}
       onOpenChange={setIsDialogOpen}
-      dismissible={!formState.isDirty}
+      dismissible={state.isDirty}
     >
       <DrawerTrigger>{trigger}</DrawerTrigger>
       <DrawerContent className="px-4 pb-4" isFullPageHeight={isFullPageHeight}>
@@ -122,8 +121,8 @@ export { CreateSlotsDialog }
 
 /**
   @todo Refactor create-slots dialog icon
-*/
-const CreateSlotDialogIcon = () => {
+ */
+function CreateSlotDialogIcon() {
   return (
     <div className="h-fit w-fit rounded-small bg-gradient-to-r from-[#1D976C]/30 to-[#93F9B9]/30 p-0.5 outline-2 outline-[#6FCF97]/10">
       <Flex
@@ -157,7 +156,7 @@ type CreateSlotSheetProps = {
   children: ReactNode
 }
 
-const CreateSlotsSheet = (props: CreateSlotSheetProps) => {
+function CreateSlotsSheet(props: CreateSlotSheetProps) {
   const { isOpen, onOpenChange, trigger, children } = props
 
   return (
