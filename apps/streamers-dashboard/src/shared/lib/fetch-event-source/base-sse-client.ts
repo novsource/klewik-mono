@@ -1,50 +1,58 @@
-import {
-  EventStreamContentType,
-  fetchEventSource,
-} from '@microsoft/fetch-event-source'
-
-import { refreshTokens } from '~shared/api/http/auth/auth.api'
-
-import { EventSourceMessageSchema } from './models'
-import {
+import type {
   EventSourceMessage,
   SSEClientConnectOptions,
   SSEClientListeners,
 } from './models/base-sse-client.types'
 
-type AuthorizationError = Error
+import {
+  EventStreamContentType,
+  fetchEventSource,
+} from '@microsoft/fetch-event-source'
+import { AxiosError } from 'axios'
 
-const AuthorizationError = () => new Error('Authorization error')
+import { refreshTokens } from '~shared/api/http/auth/auth.api'
+
+import { EventSourceMessageSchema } from './models'
 
 abstract class BaseSSEClient {
   protected async connect(
     url: string,
     inputListeners: SSEClientListeners,
-    inputOptions?: SSEClientConnectOptions
+    inputOptions?: SSEClientConnectOptions,
   ) {
+    const baseUrl = import.meta.env.VITE_SERVER_URL
+
     const onOpen = async (response: Response) => {
       if (
-        response.ok &&
-        response.headers.get('content-type') === EventStreamContentType
+        response.ok
+        && response.headers.get('content-type') === EventStreamContentType
       ) {
         inputListeners.onopen(response)
-        return
-      } else if (
-        response.status >= 400 &&
-        response.status < 500 &&
-        response.status !== 429
+      }
+      else if (
+        response.status >= 400
+        && response.status < 500
+        && response.status !== 429
       ) {
         /** @todo Refactor auth error */
         if (response.status === 401) {
-          await refreshTokens()
-          throw AuthorizationError()
+          try {
+            await refreshTokens()
+          }
+          catch (error) {
+            if (error instanceof AxiosError)
+              throw new Error(error.cause?.message)
+            if (error instanceof Error)
+              throw new Error('Authorization error')
+          }
         }
-      } else {
+      }
+      else {
         if (response.status === 500) {
-          throw new Error()
+          throw new Error('Server error')
         }
 
-        throw new Error()
+        throw new Error('Unexpected error when trying to connect SSE')
       }
     }
 
@@ -54,8 +62,8 @@ abstract class BaseSSEClient {
       if (!parsedMessage.success) {
         inputListeners.onerror(
           new Error(
-            'Invalid SSE message: ' + parsedMessage.error.errors.join('')
-          )
+            `Invalid SSE message: ${parsedMessage.error.errors.join('')}`,
+          ),
         )
         return
       }
@@ -84,24 +92,19 @@ abstract class BaseSSEClient {
       openWhenHidden: true,
       credentials: 'include',
       headers: {
-        'Access-Control-Allow-Origin': import.meta.env.VITE_SERVER_URL,
+        'Access-Control-Allow-Origin': baseUrl,
       },
     }
 
-    const connectUrl = new URL(
-      `${import.meta.env.VITE_SERVER_URL}/api/v1/sse/${url}`
-    )
     const params = new URLSearchParams()
 
     params.set('lastMessageId', String(options?.lastMessageId ?? 0))
 
-    connectUrl.search = params.toString()
-
     if (Reflect.has(options, 'retry')) {
-      return this._retryConnect(connectUrl.toString(), listeners, options)
+      return this._retryConnect(`/api/v1/sse/${url}`, listeners, options)
     }
 
-    return this._internalRequest(connectUrl.toString(), listeners, options)
+    return this._internalRequest(`/api/v1/sse/${url}`, listeners, options)
   }
 
   private async _retryConnect(
@@ -109,7 +112,7 @@ abstract class BaseSSEClient {
     listeners: SSEClientListeners,
     options: Omit<SSEClientConnectOptions, 'retry'> & {
       retry: NonNullable<SSEClientConnectOptions['retry']>
-    }
+    },
   ): Promise<void> {
     const reconnect = async (err: Error): Promise<void> => {
       options.retry.counts -= 1
@@ -119,7 +122,7 @@ abstract class BaseSSEClient {
       }
 
       const wait = () =>
-        new Promise((res) => setTimeout(res, options.retry.delay))
+        new Promise(res => setTimeout(res, options.retry.delay))
 
       return wait().then(() => this._retryConnect(url, listeners, options))
     }
@@ -130,7 +133,7 @@ abstract class BaseSSEClient {
   private _internalRequest(
     url: string,
     listeners: SSEClientListeners,
-    options: SSEClientConnectOptions
+    options: SSEClientConnectOptions,
   ) {
     return fetchEventSource(url, {
       ...listeners,

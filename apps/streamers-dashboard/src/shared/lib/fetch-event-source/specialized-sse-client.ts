@@ -1,14 +1,15 @@
-import { ZodSchema } from 'zod'
+import type { ZodSchema } from 'zod'
 
-import { CommunicableSSEChannel } from '../broadcast-channel'
-import { CommunicableSSEChannelOptions } from '../broadcast-channel/model'
-import { BaseSSEClient } from './base-sse-client'
-import {
+import type { CommunicableSSEChannelOptions } from '../broadcast-channel/model'
+import type {
   EventSourceMessage,
   SSEClientConnectOptions,
   SSEClientListeners,
   SSEEvents,
 } from './models/base-sse-client.types'
+
+import { CommunicableSSEChannel } from '../broadcast-channel'
+import { BaseSSEClient } from './base-sse-client'
 import { SSEEmiter } from './sse-emitter'
 
 class SpecializedSSEClient<
@@ -24,7 +25,7 @@ class SpecializedSSEClient<
 
   constructor(
     channelName: string,
-    channelOptions: CommunicableSSEChannelOptions<EventsMap>
+    channelOptions: CommunicableSSEChannelOptions<EventsMap>,
   ) {
     super()
 
@@ -38,21 +39,21 @@ class SpecializedSSEClient<
 
   onSSEEvent<Event extends keyof SSEEvents>(
     eventName: Event,
-    handler: (data: Parameters<NonNullable<SSEEvents[Event]>>[number]) => void
+    handler: (data: Parameters<NonNullable<SSEEvents[Event]>>[number]) => void,
   ) {
     this._sseEventsEmitter.subscribe(eventName, handler)
   }
 
   onEvent<Event extends keyof EventsMap>(
     eventName: Event,
-    handler: EventsMap[Event]
+    handler: EventsMap[Event],
   ) {
     this.broadcastChannel.on(eventName, handler)
   }
 
   async connectToServer(
     url: string,
-    options?: SSEClientConnectOptions & { lastMessageId?: number }
+    options?: SSEClientConnectOptions & { lastMessageId?: number },
   ): Promise<void> {
     const listeners: SSEClientListeners = {
       onopen: async (response) => {
@@ -66,22 +67,23 @@ class SpecializedSSEClient<
         }
       },
       onmessage: (message) => {
-        if (message.event === 'connected') return
+        if (message.event === 'connected')
+          return
 
         const parsedMessage = this._messageSchema.safeParse(message)
 
         if (
-          parsedMessage.data === undefined ||
-          parsedMessage.error ||
-          !parsedMessage.success
+          parsedMessage.data === undefined
+          || parsedMessage.error
+          || !parsedMessage.success
         ) {
-          this._sseEventsEmitter.notify('onerror', parsedMessage.error)
-          return
+          return this._sseEventsEmitter.notify('onerror', parsedMessage.error)
         }
 
         this._sseEventsEmitter.notify('onmessage', parsedMessage.data)
 
         if (this.broadcastChannel.isLeader) {
+          this.broadcastChannel.messageProcessing(message)
           this.broadcastChannel.postMessage(parsedMessage.data)
         }
       },
