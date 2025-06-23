@@ -1,3 +1,1 @@
-import { useCreateAuctionMutation } from './create-auction.api'
-
-export { useCreateAuctionMutation }
+export * from './create-auction.api'

@@ -1,77 +1,31 @@
+import type { UseCreateAuctionFormListeners } from '../hooks'
+
+import type { ComponentPropsWithRef } from 'react'
 import { useState } from 'react'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-
-import { auctionActions as storeAuctionActions } from '~entities/auction/store'
-
-import { loginInAuction } from '~shared/api/http/auth'
-
-import {
-  AxiosBaseQueryError,
-  useActionCreators,
-} from '~shared/lib/redux-toolkit'
+import { Controller } from 'react-hook-form'
 
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
-import { toastErrorNotification } from '~shared/ui/toaster/lib'
-
 import { cn } from '~shared/utils'
 
-import { useCreateAuctionMutation } from '../api'
-import { CreateAuctionFormData, CreateAuctionSchema } from '../model'
+import { useCreateAuctionForm } from '../hooks'
 
-type CreateAuctionFormProps = Partial<{
-  onSuccess: () => void
-  onError: () => void
-}>
+type CreateAuctionFormProps = ComponentPropsWithRef<'form'> & UseCreateAuctionFormListeners
 
 export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
-  const auctionActions = useActionCreators(storeAuctionActions)
-
-  const [createAuctionMutation, { isLoading }] = useCreateAuctionMutation()
+  const { onSuccess, onError, className, ...formProps } = props
 
   const [isPasswordHidden, setIsPasswordHidden] = useState<boolean>(true)
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<CreateAuctionFormData>({
-    defaultValues: {
-      key: '',
-    },
-    mode: 'onChange',
-    resolver: zodResolver(CreateAuctionSchema),
-  })
-
-  const onSubmit: SubmitHandler<CreateAuctionFormData> = async (formData) => {
-    const createAuctionResponse = await createAuctionMutation(formData)
-
-    if (createAuctionResponse.error) {
-      const error = createAuctionResponse.error as AxiosBaseQueryError
-
-      toastErrorNotification('Не удалось создать аукцион', error.reason)
-      props.onError && props.onError()
-
-      return
-    }
-
-    await loginInAuction(createAuctionResponse.data.auctionUUID, formData.key)
-
-    auctionActions.setAuction({
-      auctionUUID: createAuctionResponse.data.auctionUUID,
-      url: createAuctionResponse.data.url,
-    })
-
-    props.onSuccess && props.onSuccess()
-  }
+  const { form: { control, handleSubmit }, state: { errors }, submitForm, queryState: { isLoading } } = useCreateAuctionForm()
 
   return (
     <form
-      className="flex w-full flex-col gap-y-3"
-      onSubmit={handleSubmit(onSubmit)}
+      className={cn('flex w-full flex-col gap-y-3', className)}
+      onSubmit={handleSubmit(submitForm)}
+      {...formProps}
     >
       <Controller
         control={control}
@@ -86,19 +40,21 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
             errorMessage={errors.key?.message}
             placeholder="••••••••"
             endContent={
-              isPasswordHidden ? (
-                <Icons.EyeClosed
-                  className="cursor-pointer select-none text-gray transition-colors hover:text-gray-light"
-                  size="default"
-                  onClick={() => setIsPasswordHidden(false)}
-                />
-              ) : (
-                <Icons.EyeOpen
-                  className="cursor-pointer select-none text-gray transition-colors hover:text-gray-light"
-                  size="default"
-                  onClick={() => setIsPasswordHidden(true)}
-                />
-              )
+              isPasswordHidden
+                ? (
+                    <Icons.EyeClosed
+                      className="cursor-pointer select-none text-gray transition-colors hover:text-gray-light"
+                      size="default"
+                      onClick={() => setIsPasswordHidden(false)}
+                    />
+                  )
+                : (
+                    <Icons.EyeOpen
+                      className="cursor-pointer select-none text-gray transition-colors hover:text-gray-light"
+                      size="default"
+                      onClick={() => setIsPasswordHidden(true)}
+                    />
+                  )
             }
             {...field}
           />
