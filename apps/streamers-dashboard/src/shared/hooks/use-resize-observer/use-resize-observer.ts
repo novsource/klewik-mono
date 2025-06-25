@@ -1,4 +1,5 @@
-import { RefObject, useEffect, useRef, useState } from 'react'
+import type { RefObject } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const useResizeObserver = (target: RefObject<Element>) => {
   const [entries, setEntries] = useState<ResizeObserverEntry[]>([])
@@ -8,7 +9,8 @@ const useResizeObserver = (target: RefObject<Element>) => {
   useEffect(() => {
     const element = target.current
 
-    if (!element) return
+    if (!element)
+      return
 
     const observer = new ResizeObserver(setEntries)
 
@@ -19,7 +21,7 @@ const useResizeObserver = (target: RefObject<Element>) => {
       observer.unobserve(element)
       resizeObserverRef.current = null
     }
-  }, [target.current])
+  }, [target])
 
   return { entries }
 }

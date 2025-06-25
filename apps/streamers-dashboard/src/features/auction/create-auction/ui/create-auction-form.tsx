@@ -19,7 +19,7 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
 
   const [isPasswordHidden, setIsPasswordHidden] = useState<boolean>(true)
 
-  const { form: { control, handleSubmit }, state: { errors }, submitForm, queryState: { isLoading } } = useCreateAuctionForm()
+  const { form: { control, handleSubmit }, state: { errors }, submitForm, queryState: { isLoading } } = useCreateAuctionForm({ onSuccess, onError })
 
   return (
     <form

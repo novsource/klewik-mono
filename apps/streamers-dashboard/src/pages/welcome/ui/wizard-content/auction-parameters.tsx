@@ -5,13 +5,13 @@ import { AuctionInitialParametersForm } from '~features/auction/set-initial-para
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Typography } from '~shared/ui/typograghy'
-import { WizardItem, WizardItemProps, WizardTrigger } from '~shared/ui/wizard'
+import type { WizardItemProps } from '~shared/ui/wizard'
+import { WizardItem, WizardTrigger } from '~shared/ui/wizard'
 import { useWizardContext } from '~shared/ui/wizard/context'
-
 import { cn } from '~shared/utils'
 
 const WizardAuctionParametersItem = (
-  props: Omit<WizardItemProps, 'value' | 'children'>
+  props: Omit<WizardItemProps, 'value' | 'children'>,
 ) => {
   const { className, ...restProps } = props
 
@@ -22,7 +22,7 @@ const WizardAuctionParametersItem = (
   return (
     <WizardItem
       value={WELCOME_PAGE_WIZARD_ITEMS_IDS.AUCTION_PARAMETERS}
-      className={cn(className)}
+      className={cn('flex flex-col overflow-scroll')}
       {...restProps}
     >
       <WizardTrigger type="next" nextStepId={nextIds ? nextIds[0] : ''}>
