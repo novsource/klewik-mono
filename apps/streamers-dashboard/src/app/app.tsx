@@ -1,7 +1,7 @@
-import { LazyMotion, domAnimation } from 'motion/react'
+import { domAnimation, LazyMotion } from 'motion/react'
 
-import { AppRouter } from './providers/router'
-import { StoreProvider } from './providers/store'
+import { AppRouter } from './routing'
+import { StoreProvider } from './store'
 
 export const App = () => {
   return (

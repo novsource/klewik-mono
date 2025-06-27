@@ -1,4 +1,6 @@
-import { Navigate, Outlet, createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
+
+import { DashboardLayout } from '~app/layouts'
 
 import { auctionDonationsPageRoute } from '~pages/auction-donations/routing'
 import { auctionSettingsPageRoute } from '~pages/auction-settings/routing'
@@ -9,8 +11,7 @@ import { welcomePageRoute } from '~pages/welcome/routing'
 
 import { Toaster } from '~shared/ui/toaster'
 
-import { AuctionDashboardLayout } from './layouts'
-import { auctionPrepareRoute } from './routes'
+import { prepareDashboardRoute } from './prepate-dashboard.route'
 
 const WelcomePageRouteObject = welcomePageRoute()
 const AuctionSlotsRouteObject = auctionSlotsPageRoute()
@@ -35,17 +36,17 @@ const browserRouter = createBrowserRouter([
           {
             path: 'dashboard/:auctionId',
             children: [
-              auctionPrepareRoute([
+              prepareDashboardRoute([
                 RedirectRouteObject,
-                { index: true, element: <Navigate to={'slots'} /> },
+                { index: true, element: <Navigate to="slots" /> },
                 {
-                  element: <AuctionDashboardLayout />,
+                  element: <DashboardLayout />,
                   children: [
                     AuctionSlotsRouteObject,
                     AuctionWheelRouteObject,
                     AuctionSettingsRouteObject,
                     AuctionDonationsRouteObject,
-                    { path: '*', element: <Navigate to={'slots'} /> },
+                    { path: '*', element: <Navigate to="slots" /> },
                   ],
                 },
               ]),
@@ -53,7 +54,7 @@ const browserRouter = createBrowserRouter([
           },
         ],
       },
-      { path: '*', element: <Navigate to={'/'} /> },
+      { path: '*', element: <Navigate to="/" /> },
     ],
   },
 ])
