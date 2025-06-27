@@ -1,10 +1,11 @@
 import type { RefObject } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
-const useResizeObserver = (target: RefObject<Element>) => {
+const useResizeObserver = (target: RefObject<Element>, onChange?: (entries: ResizeObserverEntry[], observer: ResizeObserver) => void) => {
   const [entries, setEntries] = useState<ResizeObserverEntry[]>([])
 
   const resizeObserverRef = useRef<NullablePossible<ResizeObserver>>(null)
+  const onChangeHandlerRef = useRef(onChange)
 
   useEffect(() => {
     const element = target.current
@@ -12,16 +13,19 @@ const useResizeObserver = (target: RefObject<Element>) => {
     if (!element)
       return
 
-    const observer = new ResizeObserver(setEntries)
+    const observer = new ResizeObserver((entries) => {
+      setEntries(entries)
+      onChangeHandlerRef.current && onChangeHandlerRef.current(entries, observer)
+    })
 
     observer.observe(element)
     resizeObserverRef.current = observer
 
     return () => {
-      observer.unobserve(element)
+      observer.disconnect()
       resizeObserverRef.current = null
     }
-  }, [target])
+  }, [target, onChange])
 
   return { entries }
 }
