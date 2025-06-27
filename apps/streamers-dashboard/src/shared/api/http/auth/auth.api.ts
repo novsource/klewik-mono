@@ -1,13 +1,12 @@
-import { HttpClientRequestOptions } from '~shared/lib/axios'
-
 import { AUTH_ENDPOINTS } from '~shared/constants/api/http'
+import type { HttpClientRequestOptions } from '~shared/lib/axios'
 
 import { authHttpClient } from '../auth-instance'
 
 export const loginInAuction = async (
   auctionId: string,
   password: string,
-  fetchOptions?: HttpClientRequestOptions
+  fetchOptions?: HttpClientRequestOptions,
 ) => {
   return authHttpClient.post<void>(AUTH_ENDPOINTS.LOGIN, {
     ...fetchOptions,
@@ -16,7 +15,7 @@ export const loginInAuction = async (
 }
 
 export const refreshTokens = async (
-  fetchOptions?: HttpClientRequestOptions
+  fetchOptions?: HttpClientRequestOptions,
 ) => {
   return authHttpClient.post(AUTH_ENDPOINTS.REFRESH, {
     ...fetchOptions,
