@@ -1,7 +1,9 @@
-import { VariantProps, cva } from 'class-variance-authority'
+import type { VariantProps } from 'class-variance-authority'
+
+import { cva } from 'class-variance-authority'
 
 const drawerOverlayVariants = cva([
-  'dark blur:2 fixed inset-0 z-50 bg-black/50 backdrop-blur-xs',
+  'dark blur:2 fixed inset-0 z-50 bg-black/30 backdrop-blur-xs',
   'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
 ])
 
@@ -35,11 +37,11 @@ const drawerContentVariants = cva(
     defaultVariants: {
       isFullPageHeight: false,
     },
-  }
+  },
 )
 
 const drawerPillVariants = cva(
-  'mx-auto mt-4 hidden h-1.25 w-14 shrink-0 rounded-full bg-gray group-data-[vaul-drawer-direction=bottom]/drawer-content:block'
+  'mx-auto mt-4 hidden h-1.25 w-14 shrink-0 rounded-full bg-gray group-data-[vaul-drawer-direction=bottom]/drawer-content:block',
 )
 
 const drawerHeaderVariants = cva(['flex flex-col gap-1.5 p-4'])
@@ -53,11 +55,11 @@ export type DrawerContentVariantsProps = VariantProps<
   typeof drawerContentVariants
 >
 export {
-  drawerTitleVariants,
-  drawerPillVariants,
+  drawerContentVariants,
+  drawerDescriptionVariants,
   drawerFooterVariants,
   drawerHeaderVariants,
-  drawerContentVariants,
   drawerOverlayVariants,
-  drawerDescriptionVariants,
+  drawerPillVariants,
+  drawerTitleVariants,
 }
