@@ -1,28 +1,29 @@
-import {
-  Link,
-  Outlet,
+import type {
   RouteObject,
+} from 'react-router-dom'
+import {
   isRouteErrorResponse,
   json,
+  Link,
+  Outlet,
   useRouteError,
 } from 'react-router-dom'
 
 import { AxiosError } from 'axios'
 import { z } from 'zod'
 
-import { store } from '~app/providers/store/store'
+import { store } from '~app/store'
 
-import { Auction } from '~entities/auction/model'
+import type { Auction } from '~entities/auction/model'
 import { auctionActions } from '~entities/auction/store'
 
 import { getAuctionInfo } from '~shared/api/http/auction/auction.api'
-
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
 
 const PrepareRouteErrorBoundary = () => {
-  let error = useRouteError()
+  const error = useRouteError()
 
   if (isRouteErrorResponse(error)) {
     return (
@@ -32,7 +33,8 @@ const PrepareRouteErrorBoundary = () => {
             <Icons.Logo className="text-green-accent" width={48} height={48} />
             <div className="flex flex-col gap-y-1">
               <Typography className="text-[42px] font-golos-f" tag="h1">
-                Ошибка №{error.status}
+                Ошибка №
+                {error.status}
               </Typography>
               <Typography
                 className="font-medium text-title leading-5 font-golos-f"
@@ -42,7 +44,7 @@ const PrepareRouteErrorBoundary = () => {
               </Typography>
             </div>
             <Link to="/">
-              <Button variant={'action'} startContent={<Icons.ReturnArrow />}>
+              <Button variant="action" startContent={<Icons.ReturnArrow />}>
                 Вернуться на главную страницу
               </Button>
             </Link>
@@ -55,7 +57,7 @@ const PrepareRouteErrorBoundary = () => {
   throw error
 }
 
-const auctionPrepareRoute = (childrens: RouteObject[]): RouteObject => {
+const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => {
   return {
     element: <Outlet />,
     loader: async ({ params }) => {
@@ -69,7 +71,7 @@ const auctionPrepareRoute = (childrens: RouteObject[]): RouteObject => {
             reason: 'Некорректный номер аукциона',
             hint: 'Попробуйте войти в аукцион через главную страницу',
           },
-          { status: 400 }
+          { status: 400 },
         )
       }
 
@@ -77,13 +79,14 @@ const auctionPrepareRoute = (childrens: RouteObject[]): RouteObject => {
         const dispatch = store.dispatch
 
         const response = await getAuctionInfo<Auction>(
-          validatedParams.data.auctionId
+          validatedParams.data.auctionId,
         )
 
         dispatch(auctionActions.setAuction(response.data))
 
         return response.data
-      } catch (err) {
+      }
+      catch (err) {
         if (err instanceof AxiosError) {
           throw json(
             {
@@ -92,7 +95,7 @@ const auctionPrepareRoute = (childrens: RouteObject[]): RouteObject => {
             },
             {
               status: err.status,
-            }
+            },
           )
         }
       }
@@ -102,4 +105,4 @@ const auctionPrepareRoute = (childrens: RouteObject[]): RouteObject => {
   }
 }
 
-export { auctionPrepareRoute }
+export { prepareDashboardRoute }

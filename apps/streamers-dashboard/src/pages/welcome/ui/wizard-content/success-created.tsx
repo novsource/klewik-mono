@@ -1,26 +1,25 @@
 import { useRef } from 'react'
+
 import { Link } from 'react-router-dom'
 
 import { WELCOME_PAGE_WIZARD_ITEMS_IDS } from '~pages/welcome/constants'
 
 import { auctionSelectors } from '~entities/auction/store'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
 import { useCopyToClipboard } from '~shared/hooks/use-copy-to-clipboard'
-
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
 import { toastSuccessNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
-import { WizardItem, WizardItemProps } from '~shared/ui/wizard'
-
+import type { WizardItemProps } from '~shared/ui/wizard'
+import { WizardItem } from '~shared/ui/wizard'
 import { cn } from '~shared/utils'
 
 const WizardSuccessCreatedItem = (
-  props: Omit<WizardItemProps, 'value' | 'children'>
+  props: Omit<WizardItemProps, 'value' | 'children'>,
 ) => {
   const { className, ...restProps } = props
 
@@ -53,10 +52,10 @@ const WizardSuccessCreatedItem = (
             value={auctionInfo.auctionUUID}
             slotClassNames={{ base: 'w-full', wrapper: 'pr-0' }}
             label={{ id: 'auctionUUID', value: 'Номер аукциона' }}
-            endContent={
+            endContent={(
               <Button
                 className="text-gray-light hover:text-gray-accent"
-                variant={'ghost'}
+                variant="ghost"
                 isIconOnly
                 icon={<Icons.Copy size="sm" />}
                 onClick={() => {
@@ -64,7 +63,7 @@ const WizardSuccessCreatedItem = (
                   toastSuccessNotification('Номер аукциона скопирован в буфер')
                 }}
               />
-            }
+            )}
           />
         </Flex>
         <Flex className="gap-x-2" align="end" justify="end">
@@ -77,27 +76,27 @@ const WizardSuccessCreatedItem = (
               value: 'Ссылка на аукцион для участников',
             }}
             value={auctionInfo.url}
-            endContent={
+            endContent={(
               <Button
                 className="text-gray-light hover:text-gray-accent"
-                variant={'ghost'}
+                variant="ghost"
                 isIconOnly
                 icon={<Icons.Copy size="sm" />}
                 onClick={() => {
                   copyToClipboard(inputURLRef.current?.value || '')
                   toastSuccessNotification(
-                    'Ссылка на аукцион скопирована в буфер'
+                    'Ссылка на аукцион скопирована в буфер',
                   )
                 }}
               />
-            }
+            )}
           />
         </Flex>
       </Flex>
       <Link to={`/dashboard/${auctionInfo.url?.split('/').at(-1)}`}>
         <Button
           className="w-full"
-          variant={'action'}
+          variant="action"
           startContent={<Icons.LinkArrow size="default" />}
         >
           Перейти в панель управления

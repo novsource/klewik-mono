@@ -1,6 +1,13 @@
-import {
+import type {
+  ScrollAreaProps,
+  ScrollAreaViewport,
+} from '@radix-ui/react-scroll-area'
+
+import type {
   ComponentPropsWithoutRef,
   RefObject,
+} from 'react'
+import {
   forwardRef,
   useEffect,
   useLayoutEffect,
@@ -9,10 +16,6 @@ import {
   useState,
 } from 'react'
 
-import {
-  ScrollAreaProps,
-  ScrollAreaViewport,
-} from '@radix-ui/react-scroll-area'
 import {
   AnimatePresence,
   transform,
@@ -23,9 +26,7 @@ import * as m from 'motion/react-m'
 
 import { useDebouncedCallback } from '~shared/hooks/use-debounced-callback'
 import { useResizeObserver } from '~shared/hooks/use-resize-observer'
-
 import { ScrollArea } from '~shared/ui/scroll-area'
-
 import { cn } from '~shared/utils'
 
 export type ShadowScrollAreaProps = ComponentPropsWithoutRef<'div'> & {
@@ -70,29 +71,26 @@ const ShadowScrollArea = forwardRef<
   })
 
   const { entries } = useResizeObserver(
-    externalContentRef ?? internalContentAreaRef
+    externalContentRef ?? internalContentAreaRef,
   )
 
   const debouncedShadowAnimation = useDebouncedCallback(
     (
-      values: { topShadow: boolean; bottomShadow: boolean } = {
+      values: { topShadow: boolean, bottomShadow: boolean } = {
         topShadow: true,
         bottomShadow: true,
-      }
+      },
     ) => {
       setIsShadowAnimated(values)
     },
-    2500
+    2500,
   )
 
   useLayoutEffect(() => {
-    if (!forwardRef) return
+    if (!forwardRef)
+      return
 
-    if (typeof forwardRef === 'function') {
-      return
-    } else if (typeof forwardRef === 'string') {
-      return
-    } else {
+    if (typeof forwardRef !== 'function' && typeof forwardRef !== 'string') {
       internalScrollElementRef.current = forwardRef.current
     }
   }, [forwardRef])
@@ -110,23 +108,25 @@ const ShadowScrollArea = forwardRef<
   })
 
   useEffect(() => {
-    const scrollElement =
-      externalScrollRef?.current ?? internalScrollElementRef.current
-    const contentAreaElement =
-      externalContentRef?.current ?? internalContentAreaRef.current
+    const scrollElement
+      = externalScrollRef?.current ?? internalScrollElementRef.current
+    const contentAreaElement
+      = externalContentRef?.current ?? internalContentAreaRef.current
 
-    if (!contentAreaElement || !scrollElement) return
+    if (!contentAreaElement || !scrollElement)
+      return
 
     for (const entry of entries) {
       if (entry.target === contentAreaElement) {
         const scrollValue = scrollYValue + scrollElement.clientHeight
 
-        const newScrollYProgress =
-          scrollValue / contentAreaElement.scrollHeight >= 1
+        const newScrollYProgress
+          = scrollValue / contentAreaElement.scrollHeight >= 1
             ? 1
             : scrollValue / contentAreaElement.scrollHeight
 
-        if (scrollYProgress !== 0) setScrollYProgress(newScrollYProgress)
+        if (scrollYProgress !== 0)
+          setScrollYProgress(newScrollYProgress)
       }
 
       if (entry.target.scrollHeight < scrollElement.clientHeight) {
@@ -141,30 +141,35 @@ const ShadowScrollArea = forwardRef<
     externalContentRef,
     internalScrollElementRef,
     internalContentAreaRef,
+    scrollYProgress,
+    scrollYValue,
   ])
 
   useEffect(() => {
-    const scrollElement =
-      externalScrollRef?.current ?? internalScrollElementRef.current
-    const contentElement =
-      externalContentRef?.current ?? internalContentAreaRef.current
+    const scrollElement
+      = externalScrollRef?.current ?? internalScrollElementRef.current
+    const contentElement
+      = externalContentRef?.current ?? internalContentAreaRef.current
 
-    if (!scrollElement || !contentElement) return
+    if (!scrollElement || !contentElement)
+      return
 
-    const isShouldShowBottomShadow =
-      scrollElement.clientHeight <= contentElement.scrollHeight &&
-      scrollYProgress <= 0.999
+    const isShouldShowBottomShadow
+      = scrollElement.clientHeight <= contentElement.scrollHeight
+        && scrollYProgress <= 0.999
 
     if (scrollYValue === 0 && scrollYProgress === 0) {
       return debouncedShadowAnimation({
         topShadow: false,
         bottomShadow: isShouldShowBottomShadow,
       })
-    } else
+    }
+    else {
       debouncedShadowAnimation({
         topShadow: true,
         bottomShadow: isShouldShowBottomShadow,
       })
+    }
   }, [
     scrollYValue,
     scrollYProgress,
@@ -172,6 +177,7 @@ const ShadowScrollArea = forwardRef<
     externalContentRef,
     internalScrollElementRef,
     internalContentAreaRef,
+    debouncedShadowAnimation,
   ])
 
   const shadowScrollAreaStyle = useMemo(() => {
@@ -181,10 +187,10 @@ const ShadowScrollArea = forwardRef<
     return `linear-gradient(#000, #000,transparent 0,#000 ${getTopGradientValue(scrollYProgress)}px,#000 calc(100% - ${getBottomGradientValue(scrollYProgress)}px),transparent)`
   }, [scrollYProgress, shadowSize])
 
-  const isTopShadowShouldBeRendered =
-    isShadowsAnimated.topShadow && !disableAnimation
-  const isBottomShadowShouldBeRendered =
-    isShadowsAnimated.bottomShadow && !disableAnimation
+  const isTopShadowShouldBeRendered
+    = isShadowsAnimated.topShadow && !disableAnimation
+  const isBottomShadowShouldBeRendered
+    = isShadowsAnimated.bottomShadow && !disableAnimation
 
   return (
     <div
@@ -205,7 +211,7 @@ const ShadowScrollArea = forwardRef<
           {isTopShadowShouldBeRendered && (
             <m.div
               className={cn(
-                'w-full bg-gradient-to-b from-transparent via-white/70 via-20% to-transparent to-80%'
+                'w-full bg-gradient-to-b from-transparent via-white/70 via-20% to-transparent to-80%',
               )}
               initial={{
                 opacity: 0,
@@ -231,7 +237,7 @@ const ShadowScrollArea = forwardRef<
           {isBottomShadowShouldBeRendered && (
             <m.div
               className={cn(
-                'bottom-0 w-full bg-gradient-to-t from-transparent via-white/70 via-20% to-transparent to-80%'
+                'bottom-0 w-full bg-gradient-to-t from-transparent via-white/70 via-20% to-transparent to-80%',
               )}
               initial={{
                 opacity: 0,

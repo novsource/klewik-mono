@@ -4,6 +4,8 @@ import { cn } from './cn'
 import * as colorsUtilities from './colors'
 import * as stringUtils from './string-format'
 
-export { cn, canvasUtilities, colorsUtilities, stringUtils, chain }
+export { canvasUtilities, chain, cn, colorsUtilities, stringUtils }
 export * from './local-storage'
 export * from './number-format'
+export * from './object-keys'
+export * from './string'

@@ -1,442 +1,445 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @plugin 'tailwindcss-animate';
 
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-*: initial;
-  --color-white-accent: #f8f8ff;
-  --color-white: #f2f2f2;
+    --color-*: initial;
+    --color-white-accent: #f8f8ff;
+    --color-white: #f2f2f2;
 
-  --color-green: #3f9663;
-  --color-green-light: #2c3b33;
-  --color-green-accent: #74dfa2;
+    --color-green: #3f9663;
+    --color-green-light: #2c3b33;
+    --color-green-accent: #74dfa2;
 
-  --color-black: #000;
+    --color-black: #000;
 
-  --color-dark: #1f1e20;
-  --color-dark-light: #272729;
-  --color-dark-accent: #302f32;
-  --color-dark-foreground-light: #161617;
-  --color-dark-foreground: #141315;
-  --color-yellow: #cfc56f;
+    --color-dark: #1f1e20;
+    --color-dark-light: #272729;
+    --color-dark-accent: #302f32;
+    --color-dark-foreground-light: #161617;
+    --color-dark-foreground: #141315;
+    --color-yellow: #cfc56f;
 
-  --color-red: #ff746c;
+    --color-red: #ff746c;
 
-  --color-gray: #5d5d5d;
-  --color-gray-light: #818181;
-  --color-gray-accent: #a5a5a5;
+    --color-gray: #5d5d5d;
+    --color-gray-light: #818181;
+    --color-gray-accent: #a5a5a5;
 
-  --color-purple: #505285;
+    --color-purple: #505285;
 
-  --color-orange: #f58c08;
+    --color-orange: #f58c08;
 
-  --color-transparent: rgba(255, 255, 255, 0);
+    --color-transparent: rgba(255, 255, 255, 0);
 
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
+    /* --color-background: hsl(var(--background));
+    --color-foreground: hsl(var(--foreground));
 
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
+    --color-card: hsl(var(--card));
+    --color-card-foreground: hsl(var(--card-foreground));
 
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
+    --color-popover: hsl(var(--popover));
+    --color-popover-foreground: hsl(var(--popover-foreground));
 
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
+    --color-primary: hsl(var(--primary));
+    --color-primary-foreground: hsl(var(--primary-foreground));
 
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
+    --color-secondary: hsl(var(--secondary));
+    --color-secondary-foreground: hsl(var(--secondary-foreground));
 
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
+    --color-muted: hsl(var(--muted));
+    --color-muted-foreground: hsl(var(--muted-foreground));
 
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
+    --color-accent: hsl(var(--accent));
+    --color-accent-foreground: hsl(var(--accent-foreground));
 
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
+    --color-destructive: hsl(var(--destructive));
+    --color-destructive-foreground: hsl(var(--destructive-foreground));
 
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
+    --color-border: hsl(var(--border));
+    --color-input: hsl(var(--input));
+    --color-ring: hsl(var(--ring)); */
 
-  --color-chart-1: hsl(var(--chart-1));
-  --color-chart-2: hsl(var(--chart-2));
-  --color-chart-3: hsl(var(--chart-3));
-  --color-chart-4: hsl(var(--chart-4));
-  --color-chart-5: hsl(var(--chart-5));
+    --text-*: initial;
+    --text-xs: 0.56rem;
+    --text-sm: 0.75rem;
+    --text-md: 0.875rem;
+    --text-title: 1.05rem;
+    --text-title-lg: 1.3rem;
+    --text-title-xl: 1.5rem;
 
-  --text-*: initial;
-  --text-xs: 0.56rem;
-  --text-sm: 0.75rem;
-  --text-md: 0.875rem;
-  --text-title: 1.05rem;
-  --text-title-lg: 1.3rem;
-  --text-title-xl: 1.5rem;
+    --radius-*: initial;
+    --radius-none: 0px;
+    --radius-small: 8px;
+    --radius-medium: 10px;
+    --radius-large: 12.5px;
+    --radius-pill: 10000px;
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
 
-  --radius-*: initial;
-  --radius-none: 0px;
-  --radius-small: 8px;
-  --radius-medium: 10px;
-  --radius-large: 16px;
-  --radius-pill: 10000px;
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
+    --breakpoint-*: initial;
+    --breakpoint-small-mobile: 320px;
+    --breakpoint-mobile: 640px;
+    --breakpoint-tablet: 1024px;
+    --breakpoint-landtop: 1440px;
+    --breakpoint-desktop: 1920px;
+    --breakpoint-desktop-lg: 2560px;
 
-  --breakpoint-*: initial;
-  --breakpoint-small-mobile: 320px;
-  --breakpoint-mobile: 640px;
-  --breakpoint-tablet: 1024px;
-  --breakpoint-landtop: 1440px;
-  --breakpoint-desktop: 1920px;
-  --breakpoint-desktop-lg: 2560px;
+    --shadow-*: initial;
+    --shadow-table-border: 0px 4x 0px 0px rgba(85, 85, 85, 0.7);
 
-  --shadow-*: initial;
-  --shadow-table-border: 0px 4x 0px 0px rgba(85, 85, 85, 0.7);
+    --font-*: initial;
+    --font-golos-f: "Golos Text", sans-serif;
+    --font-azeret-mono: "Azeret Mono";
+    --font-manrope: "Manrope", sans-serif;
 
-  --font-*: initial;
-  --font-golos-f: 'Golos Text', sans-serif;
-  --font-azeret-mono: 'Azeret Mono';
-  --font-manrope: 'Manrope', sans-serif;
+    --animate-fade-in: fadeIn 2s ease;
+    --animate-fade-out: fadeIn 2s ease reverse;
+    --animate-fade-change: fadeChange 2s ease;
+    --animate-horizontal-shaking: horizontal-shaking 0.4s ease;
+    --animate-accordion-up: slideUp 0.4s ease;
+    --animate-accordion-down: slideDown 0.4s ease;
 
-  --animate-fade-in: fadeIn 2s ease;
-  --animate-fade-out: fadeIn 2s ease reverse;
-  --animate-fade-change: fadeChange 2s ease;
-  --animate-horizontal-shaking: horizontal-shaking 0.4s ease;
-  --animate-accordion-up: slideUp 0.4s ease;
-  --animate-accordion-down: slideDown 0.4s ease;
+    --height-sheet: var(--sheet-height);
+    --height-footer: var(--footer-height);
+    --mobile-menu-bottom: calc(var(--mobile-menu-bottom)+var(--footer-height));
 
-  --height-sheet: var(--sheet-height);
-  --height-footer: var(--footer-height);
-  --mobile-menu-bottom: calc(var(--mobile-menu-bottom)+var(--footer-height));
+    --grid-template-rows-slots-desktop: max(40px) 1fr;
+    --grid-template-rows-slots-table: minmax(40px, 42px) 1fr;
+    --grid-template-rows-slider: minmax(auto, 80px) 1fr minmax(auto, 60px);
+    --spacing-4xl: 1.5rem;
 
-  --grid-template-rows-slots-desktop: max(40px) 1fr;
-  --grid-template-rows-slots-table: minmax(40px, 42px) 1fr;
-  --grid-template-rows-slider: minmax(auto, 80px) 1fr minmax(auto, 60px);
-  --spacing-4xl: 1.5rem;
+    --border-width-1: 1px;
 
-  --border-width-1: 1px;
-
-  @keyframes horizontal-shaking {
-    0%,
-    100% {
-      transform: translateX(0);
+    @keyframes horizontal-shaking {
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+        50% {
+            transform: translateX(-2px);
+        }
+        25%,
+        75% {
+            transform: translateX(2px);
+        }
     }
-    50% {
-      transform: translateX(-2px);
-    }
-    25%,
-    75% {
-      transform: translateX(2px);
-    }
-  }
 
-  @keyframes fadeChange {
-    0%,
-    100% {
-      opacity: 1;
+    @keyframes fadeChange {
+        0%,
+        100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0;
+        }
     }
-    50% {
-      opacity: 0;
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
     }
-  }
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
 
-  @keyframes slideDown {
-    from {
-      height: 0;
+    @keyframes slideDown {
+        from {
+            height: 0;
+        }
+        to {
+            height: var(--radix-accordion-content-height);
+        }
     }
-    to {
-      height: var(--radix-accordion-content-height);
-    }
-  }
 
-  @keyframes slideUp {
-    from {
-      height: var(--radix-accordion-content-height);
+    @keyframes slideUp {
+        from {
+            height: var(--radix-accordion-content-height);
+        }
+        to {
+            height: 0;
+        }
     }
-    to {
-      height: 0;
-    }
-  }
 }
 
 @keyframes sheet-open {
-  0% {
-    opacity: var(--sheet-enter-opacity, 0);
-    transform: translate3d(
-        var(--sheet-enter-translate-x, 0),
-        var(--sheet-enter-translate-y, 0),
-        0
-      )
-      scale3d(
-        var(--sheet-enter-scale, 1),
-        var(--sheet-enter-scale, 1),
-        var(--sheet-enter-scale, 1)
-      )
-      rotate(var(--sheet-enter-rotate, 0));
-  }
+    0% {
+        opacity: var(--sheet-enter-opacity, 0);
+        transform: translate3d(
+                var(--sheet-enter-translate-x, 0),
+                var(--sheet-enter-translate-y, 0),
+                0
+            )
+            scale3d(
+                var(--sheet-enter-scale, 1),
+                var(--sheet-enter-scale, 1),
+                var(--sheet-enter-scale, 1)
+            )
+            rotate(var(--sheet-enter-rotate, 0));
+    }
 }
 
 @keyframes sheet-exit {
-  100% {
-    opacity: var(--sheet-exit-opacity, 1);
-    transform: translate3d(
-        var(--sheet-exit-translate-x, 0),
-        var(--sheet-exit-translate-y, 0),
-        0
-      )
-      scale3d(
-        var(--sheet-exit-scale, 1),
-        var(--sheet-exit-scale, 1),
-        var(--sheet-exit-scale, 1)
-      )
-      rotate(var(--sheet-exit-rotate, 0));
-  }
+    100% {
+        opacity: var(--sheet-exit-opacity, 1);
+        transform: translate3d(
+                var(--sheet-exit-translate-x, 0),
+                var(--sheet-exit-translate-y, 0),
+                0
+            )
+            scale3d(
+                var(--sheet-exit-scale, 1),
+                var(--sheet-exit-scale, 1),
+                var(--sheet-exit-scale, 1)
+            )
+            rotate(var(--sheet-exit-rotate, 0));
+    }
 }
 
 @utility slide-out-to-top {
-  --sheet-exit-translate-y: -0.25rem;
+    --sheet-exit-translate-y: -0.25rem;
 }
 
 @utility slide-in-from-top {
-  --sheet-enter-translate-y: -0.25rem;
+    --sheet-enter-translate-y: -0.25rem;
 }
 
 @utility slide-in-from-bottom {
-  --sheet-enter-translate-y: 100%;
+    --sheet-enter-translate-y: 100%;
 }
 
 @utility slide-out-to-bottom {
-  --sheet-exit-translate-y: 100%;
+    --sheet-exit-translate-y: 100%;
 }
 
 @utility slide-out-to-left {
-  --sheet-exit-translate-x: 100%;
+    --sheet-exit-translate-x: 100%;
 }
 
 @utility slide-in-from-left {
-  --sheet-enter-translate-x: 100%;
+    --sheet-enter-translate-x: 100%;
 }
 
 @utility slide-out-to-right {
-  --sheet-exit-translate-x: 100%;
+    --sheet-exit-translate-x: 100%;
 }
 
 @utility slide-in-from-right {
-  --sheet-enter-translate-x: 100%;
+    --sheet-enter-translate-x: 100%;
 }
 
 @utility animate-enter-sheet {
-  animation-name: sheet-open;
-  animation-duration: 0.15s;
-  --sheet-enter-opacity: initial;
-  --sheet-enter-scale: initial;
-  --sheet-enter-rotate: initial;
-  --sheet-enter-translate-x: initial;
-  --sheet-enter-translate-y: initial;
+    animation-name: sheet-open;
+    animation-duration: 0.15s;
+    --sheet-enter-opacity: initial;
+    --sheet-enter-scale: initial;
+    --sheet-enter-rotate: initial;
+    --sheet-enter-translate-x: initial;
+    --sheet-enter-translate-y: initial;
 }
 
 @utility animate-exit-sheet {
-  animation-name: sheet-exit;
-  animation-duration: 0.15s;
-  --sheet-enter-opacity: initial;
-  --sheet-enter-scale: initial;
-  --sheet-enter-rotate: initial;
-  --sheet-enter-translate-x: initial;
-  --sheet-enter-translate-y: initial;
+    animation-name: sheet-exit;
+    animation-duration: 0.15s;
+    --sheet-enter-opacity: initial;
+    --sheet-enter-scale: initial;
+    --sheet-enter-rotate: initial;
+    --sheet-enter-translate-x: initial;
+    --sheet-enter-translate-y: initial;
 }
 
 @layer base {
-  :root {
-    color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
+    :root {
+        color-scheme: light dark;
+        color: rgba(255, 255, 255, 0.87);
 
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
 
-    --header-height: 60px;
-    --footer-height: 52px;
-    --mobile-menu-bottom: 16px;
-    --sheet-height: calc(100% - 20px);
+        --header-height: 60px;
+        --footer-height: 52px;
+        --mobile-menu-bottom: 16px;
+        --sheet-height: calc(100% - 20px);
 
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+        --background: 0 0% 100%;
+        --foreground: 240 10% 3.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 3.9%;
+        --primary: 240 5.9% 10%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+        --accent: 240 4.8% 95.9%;
+        --accent-foreground: 240 5.9% 10%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
+        --ring: 240 10% 3.9%;
+        --chart-1: 12 76% 61%;
+        --chart-2: 173 58% 39%;
+        --chart-3: 197 37% 24%;
+        --chart-4: 43 74% 66%;
+        --chart-5: 27 87% 67%;
+        --radius: 0.5rem;
 
-    background-color: var(--color-dark-foreground);
-  }
-
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-
-    background-color: var(--color-dark-foreground);
-  }
-
-  html {
-    @apply h-full w-full;
-  }
-
-  #root {
-    @apply relative h-full w-full;
-  }
-
-  body {
-    @apply m-0 h-full w-full overflow-hidden antialiased;
-  }
-
-  header {
-    height: var(--header-height);
-  }
-
-  li {
-    list-style-type: none;
-  }
-
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  input:-webkit-autofill:active {
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: #f4f4f4 !important;
-    animation-name: onAutoFillStart;
-    transition: background-color 5000s ease-in-out 0s;
-  }
-
-  input:not(:-webkit-autofill) {
-    animation-name: onAutoFillCancel;
-  }
-
-  footer {
-    height: var(--footer-height);
-  }
-
-  section > header {
-    height: auto;
-  }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  /* Firefox */
-  input[type='number'] {
-    -moz-appearance: textfield;
-  }
-
-  .main--dashboard {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    max-height: calc(100% - var(--header-height));
-    overflow: hidden;
-  }
-
-  .border-divider {
-    border: none;
-    border-bottom: 3px dotted var(--color-dark-accent);
-  }
-
-  @container slider (300px <= height <= 768px) {
-    .slider-content {
-      flex-basis: 70%;
+        background-color: var(--color-dark-foreground);
     }
-  }
 
-  @container slider (1080px > height > 768px) {
-    .slider-content {
-      flex-basis: 45%;
-    }
-  }
+    .dark {
+        --background: 240 10% 3.9%;
+        --foreground: 0 0% 98%;
+        --card: 240 10% 3.9%;
+        --card-foreground: 0 0% 98%;
+        --popover: 240 10% 3.9%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 0 0% 98%;
+        --primary-foreground: 240 5.9% 10%;
+        --secondary: 240 3.7% 15.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 240 3.7% 15.9%;
+        --muted-foreground: 240 5% 64.9%;
+        --accent: 240 3.7% 15.9%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 3.7% 15.9%;
+        --input: 240 3.7% 15.9%;
+        --ring: 240 4.9% 83.9%;
+        --chart-1: 220 70% 50%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
 
-  @container slider (height >= 1080px) {
-    .slider-content {
-      flex-basis: 50%;
+        background-color: var(--color-dark-foreground);
     }
-  }
+
+    html {
+        @apply h-full w-full;
+    }
+
+    #root {
+        @apply relative h-full w-full;
+    }
+
+    body {
+        @apply m-0 h-full w-full antialiased;
+    }
+
+    header {
+        height: var(--header-height);
+    }
+
+    li {
+        list-style-type: none;
+    }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: #f4f4f4 !important;
+        animation-name: onAutoFillStart;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
+    input:not(:-webkit-autofill) {
+        animation-name: onAutoFillCancel;
+    }
+
+    footer {
+        height: var(--footer-height);
+    }
+
+    section > header {
+        height: auto;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+
+    .main--dashboard {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        max-height: calc(100% - var(--header-height));
+        overflow: hidden;
+    }
+
+    .border-divider {
+        border: none;
+        border-bottom: 3px dotted var(--color-dark-accent);
+    }
+
+    @container slider (300px <= height <= 768px) {
+        .slider-content {
+            flex-basis: 70%;
+        }
+    }
+
+    @container slider (1080px > height > 768px) {
+        .slider-content {
+            flex-basis: 45%;
+        }
+    }
+
+    @container slider (height >= 1080px) {
+        .slider-content {
+            flex-basis: 50%;
+        }
+    }
 }
 
 @layer components {
-  .slider {
-    container-type: size;
-    container-name: slider;
-    @apply flex h-full w-full flex-col justify-center gap-y-6 overflow-scroll px-0.5 transition-[height];
-  }
+    .slider {
+        container-type: size;
+        container-name: slider;
+        @apply flex h-full w-full flex-col justify-center gap-y-6 overflow-scroll px-0.5 transition-[height];
+    }
 
-  .slider-content {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    padding: 2px 0 2px 0;
-    display: flex;
-    flex-direction: column;
-    row-gap: 24px;
-  }
+    .slider-content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        padding: 2px 0 2px 0;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+    }
 
-  .pencil-icon-gradient {
-    background: linear-gradient(
-      to left,
-      rgba(255, 249, 168, 0.3),
-      rgba(249, 139, 133, 0.3)
-    );
-  }
+    .pencil-icon-gradient {
+        background: linear-gradient(
+            to left,
+            rgba(255, 249, 168, 0.3),
+            rgba(249, 139, 133, 0.3)
+        );
+    }
+
+    .tabs-runner-shadow {
+        box-shadow: 0px 1px 4px 3px rgba(20, 19, 21, 0.3);
+    }
+
+    .sheet-shadow {
+        /* box-shadow: -1px 2px 8px 2px rgba(20, 19, 21, 0.4); */
+        box-shadow: -10px 2px 8px 2px rgba(20, 19, 21, 0.4);
+    }
 }

@@ -1,9 +1,9 @@
-import * as React from 'react'
+import type { ComponentPropsWithoutRef, ElementRef } from 'react'
+import { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import * as TabsPrimitive from '@radix-ui/react-tabs'
 
-import { useIsFirstRender } from '~shared/hooks/use-is-first-render'
-
+import { useResizeObserver } from '~shared/hooks/use-resize-observer'
 import { cn } from '~shared/utils/cn'
 
 import { TabsContextProvider, useTabContext } from '../context/tabs-context'
@@ -14,28 +14,28 @@ import {
   tabsTriggerVariants,
 } from '../styles/tabs-variants'
 
-const Tabs = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>
+const Tabs = forwardRef<
+ElementRef<typeof TabsPrimitive.Root>,
+ComponentPropsWithoutRef<typeof TabsPrimitive.Root>
 >(({ onValueChange, value, defaultValue, ...props }, ref) => {
-  const [currentValue, setCurrentValue] = React.useState(
-    value ?? defaultValue ?? ''
+  const [currentValue, setCurrentValue] = useState(
+    value ?? defaultValue ?? '',
   )
 
-  const onValueChangeHandler = React.useCallback(
+  const onValueChangeHandler = useCallback(
     (value: string) => {
       setCurrentValue(value)
 
       onValueChange && onValueChange(value)
     },
-    [onValueChange]
+    [onValueChange],
   )
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (currentValue !== value && value) {
       setCurrentValue(value)
     }
-  }, [value])
+  }, [currentValue, value])
 
   return (
     <TabsContextProvider defaultValue={defaultValue} value={currentValue}>
@@ -52,28 +52,39 @@ const Tabs = React.forwardRef<
 
 // This is component for animation of selection of tabs
 const TabsTriggerRunner = () => {
-  const [width, setWidth] = React.useState(0)
-  const [x, setX] = React.useState(0)
+  const [width, setWidth] = useState(0)
+  const [x, setX] = useState(0)
+
+  // const isFirstWidthSettedRef = useRef(false)
 
   const {
-    state: { selectedKey, triggersData },
+    state: { selectedKey, triggersData, defaultKey },
   } = useTabContext()
 
-  const isFirstRender = useIsFirstRender()
+  const [isFirstWidthSetted, setIsFirstWidthSetted] = useState(() => defaultKey === selectedKey)
 
-  const styles = React.useMemo(
-    () => cn(tabsTriggerRunnerVariants(), isFirstRender && 'transition-none'),
-    [isFirstRender]
+  const styles = useMemo(
+    () => cn(tabsTriggerRunnerVariants(), 'transition-none', isFirstWidthSetted && 'transition-all'),
+    [isFirstWidthSetted],
   )
 
-  React.useLayoutEffect(() => {
+  if (isFirstWidthSetted && width !== 0 && selectedKey !== defaultKey) {
+    setIsFirstWidthSetted(false)
+  }
+
+  useLayoutEffect(() => {
     if (triggersData.length !== 0 && selectedKey.length !== 0) {
-      const { startX, width } = triggersData?.filter(
-        (item) => item.value === selectedKey
+      const selectedTrigger = triggersData?.filter(
+        item => item.value === selectedKey,
       )[0]
 
-      setWidth(width)
-      setX(startX)
+      setWidth(selectedTrigger.width)
+      setX(selectedTrigger.startX)
+    }
+    else {
+      setIsFirstWidthSetted(false)
+      setWidth(0)
+      setX(0)
     }
   }, [triggersData, selectedKey])
 
@@ -88,13 +99,13 @@ const TabsTriggerRunner = () => {
   )
 }
 
-const TabsList = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
+const TabsList = forwardRef<
+ElementRef<typeof TabsPrimitive.List>,
+ComponentPropsWithoutRef<typeof TabsPrimitive.List>
 >(({ className, children, ...props }, ref) => {
-  const styles = React.useMemo(
+  const styles = useMemo(
     () => cn(tabsListVariants(), className),
-    [className]
+    [className],
   )
 
   return (
@@ -108,63 +119,61 @@ const TabsList = React.forwardRef<
 })
 TabsList.displayName = TabsPrimitive.List.displayName
 
-const TabsTrigger = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
+const TabsTrigger = forwardRef<
+  ElementRef<typeof TabsPrimitive.Trigger>,
+  ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
 >(({ className, value, ...props }, ref) => {
-  const tabTriggerRef = React.useRef<NullablePossible<HTMLElement>>(null)
+  const tabTriggerRef = useRef<NullablePossible<HTMLElement>>(null)
 
   const {
     state: { triggersData },
     dispatch: { setKeys, setSelectedKey, setTriggersData },
   } = useTabContext()
 
-  React.useEffect(() => {
-    setKeys((prev) => [...prev, value])
-  }, [])
+  useEffect(() => {
+    setKeys(prev => [...prev, value])
+  }, [setKeys, value])
 
-  React.useEffect(() => {
-    const tabElement = tabTriggerRef.current
-    const resizeEventCtrl = new AbortController()
+  const triggerData = triggersData.find(trigger => trigger.value === value)
 
-    if (tabElement) {
-      tabElement.addEventListener(
-        'resize',
-        () => {
-          const x = tabElement?.offsetLeft
-          const width = tabElement?.getBoundingClientRect().width
+  const { entries } = useResizeObserver(tabTriggerRef)
 
-          setTriggersData((prev) => [
-            ...prev.filter((data) => data.value !== value),
-            { value, startX: x, width },
-          ])
-        },
-        { signal: resizeEventCtrl.signal }
-      )
+  useEffect(() => {
+    const tabTriggerElement = tabTriggerRef.current
+    const [entry] = entries
+
+    if (!tabTriggerElement || !entry)
+      return
+
+    const updatedElementsProperties = entry.target.getBoundingClientRect()
+
+    const start = tabTriggerElement.offsetLeft
+    const width = updatedElementsProperties.width
+
+    const currentWidth = triggerData?.width
+
+    if (currentWidth !== width) {
+      setTriggersData(curr => [...curr.filter(trigger => trigger.value !== value), { value, startX: start, width }])
     }
+  }, [entries, tabTriggerRef, value, setTriggersData, triggerData])
 
-    return () => {
-      resizeEventCtrl.abort()
-    }
-  }, [tabTriggerRef])
-
-  React.useEffect(() => {
+  useEffect(() => {
     const tabElement = tabTriggerRef.current
 
-    const isTriggerExists =
-      triggersData.find((item) => item.value === value) !== undefined
+    const isTriggerDataExists
+      = triggerData !== undefined
 
-    if (tabElement && !isTriggerExists) {
+    if (tabElement && !isTriggerDataExists) {
       const x = tabElement.offsetLeft
       const width = tabElement.getBoundingClientRect().width
 
-      setTriggersData((prev) => [...prev, { value, startX: x, width }])
+      setTriggersData(prev => [...prev, { value, startX: x, width }])
     }
-  }, [tabTriggerRef, triggersData])
+  }, [tabTriggerRef, triggerData, value, setTriggersData])
 
-  const styles = React.useMemo(
+  const styles = useMemo(
     () => cn(tabsTriggerVariants(), className),
-    [className]
+    [className],
   )
 
   return (
@@ -174,7 +183,8 @@ const TabsTrigger = React.forwardRef<
 
         if (typeof ref === 'function') {
           ref(node)
-        } else if (ref) {
+        }
+        else if (ref) {
           ref.current = node
         }
       }}
@@ -190,17 +200,17 @@ const TabsTrigger = React.forwardRef<
 })
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
 
-const TabsContent = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+const TabsContent = forwardRef<
+ElementRef<typeof TabsPrimitive.Content>,
+ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
 >(({ className, ...props }, ref) => {
-  const styles = React.useMemo(
+  const styles = useMemo(
     () => cn(tabsContentVariants(), className),
-    [className]
+    [className],
   )
 
   return <TabsPrimitive.Content ref={ref} className={styles} {...props} />
 })
 TabsContent.displayName = TabsPrimitive.Content.displayName
 
-export { Tabs, TabsList, TabsTrigger, TabsContent }
+export { Tabs, TabsContent, TabsList, TabsTrigger }

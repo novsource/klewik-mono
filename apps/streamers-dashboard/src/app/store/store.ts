@@ -1,19 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { splittedIntegrationsApi as integrationsApi } from '~entities/integrations/api'
-import { integrationsReducer } from '~entities/integrations/store'
-
-import { splittedAuctionApi as auctionApi } from '~entities/auction/api'
-import { auctionReducer } from '~entities/auction/store'
 
 import { splittedAuctionSlotsApi as auctionSlotsApi } from '~entities/auction-slot/api'
 import {
   auctionSlotsListenersMiddlewares,
   auctionSlotsReducer,
 } from '~entities/auction-slot/store'
-
+import { splittedAuctionApi as auctionApi } from '~entities/auction/api'
+import { auctionReducer } from '~entities/auction/store'
 import { splittedDonationApi as donationsApi } from '~entities/donation/api'
 import { donationsReducer } from '~entities/donation/store'
-
+import { splittedIntegrationsApi as integrationsApi } from '~entities/integrations/api'
+import { integrationsReducer } from '~entities/integrations/store'
 import { wheelReducer } from '~entities/wheel/store'
 
 import { splittedSSEApi as sseApi } from '~shared/store/api'
@@ -34,7 +31,7 @@ export const store = configureStore({
     [donationsApi.reducerPath]: donationsApi.reducer,
     [sseApi.reducerPath]: sseApi.reducer,
   },
-  middleware: (getDefaultMiddleware) =>
+  middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
       .prepend(...auctionSlotsListenersMiddlewares)
       .concat(
@@ -42,7 +39,7 @@ export const store = configureStore({
         auctionSlotsApi.middleware,
         donationsApi.middleware,
         integrationsApi.middleware,
-        sseApi.middleware
+        sseApi.middleware,
       ),
 })
 

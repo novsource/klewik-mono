@@ -53,6 +53,7 @@ export default antfu({
 
   rules: {
     'antfu/top-level-function': 'off',
+    'antfu/consistent-list-newline': 'error',
     'no-console': 'warn',
     'ts/consistent-type-definitions': ['error', 'type'],
     'perfectionist/sort-imports': [

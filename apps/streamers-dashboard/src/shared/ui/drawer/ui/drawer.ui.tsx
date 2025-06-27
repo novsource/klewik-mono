@@ -1,3 +1,7 @@
+import type {
+  DrawerContentVariantsProps,
+} from '../styles/drawer-variants'
+
 import * as React from 'react'
 
 import { Drawer as DrawerPrimitive } from 'vaul'
@@ -5,7 +9,6 @@ import { Drawer as DrawerPrimitive } from 'vaul'
 import { cn } from '~shared/utils'
 
 import {
-  DrawerContentVariantsProps,
   drawerContentVariants,
   drawerDescriptionVariants,
   drawerFooterVariants,
@@ -57,8 +60,8 @@ function DrawerContent({
   children,
   isFullPageHeight,
   ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Content> &
-  DrawerContentVariantsProps) {
+}: React.ComponentProps<typeof DrawerPrimitive.Content>
+  & DrawerContentVariantsProps) {
   return (
     <DrawerPortal data-slot="drawer-portal">
       <DrawerOverlay />
@@ -122,13 +125,13 @@ function DrawerDescription({
 
 export {
   Drawer,
-  DrawerPortal,
-  DrawerOverlay,
-  DrawerTrigger,
   DrawerClose,
   DrawerContent,
-  DrawerHeader,
-  DrawerFooter,
-  DrawerTitle,
   DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerPortal,
+  DrawerTitle,
+  DrawerTrigger,
 }
