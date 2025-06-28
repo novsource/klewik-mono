@@ -1,10 +1,13 @@
-import * as React from 'react'
+import type {
+  CardStyleProps,
+} from '../styles/card-variants'
 
-import { cn } from '~shared/utils'
+import { forwardRef, useMemo } from 'react'
+
+import { cn, objectToDeps } from '~shared/utils'
 
 import { CardProvider, useCardContext } from '../context/card-context'
 import {
-  CardStyleProps,
   cardBaseVariants,
   cardContentVariants,
   cardDescriptionVariants,
@@ -15,13 +18,11 @@ import {
 
 export type CardProps = React.ComponentProps<'div'> & CardStyleProps
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>((props, ref) => {
+const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
   const { className, size, variant, ...restProps } = props
 
-  const style = React.useMemo(
-    () => cn(cardBaseVariants({ size, variant }), className),
-    [className, size, variant]
-  )
+  const style = useMemo(() =>
+    cn(cardBaseVariants({ size, variant }), className), [className, ...objectToDeps(props)])
 
   return (
     <CardProvider variant={variant ?? 'default'} size={size ?? 'default'}>
@@ -31,79 +32,79 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>((props, ref) => {
 })
 Card.displayName = 'Card'
 
-const CardHeader = React.forwardRef<
+const CardHeader = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
   const cardStyleProps = useCardContext()
 
-  const style = React.useMemo(
+  const style = useMemo(
     () => cn(cardHeaderVariants({ ...cardStyleProps }), className),
-    [className, ...Object.keys(cardStyleProps)]
+    [className, ...objectToDeps(cardStyleProps)],
   )
 
   return <div ref={ref} className={style} {...props} />
 })
 CardHeader.displayName = 'CardHeader'
 
-const CardTitle = React.forwardRef<
+const CardTitle = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
   const cardStyleProps = useCardContext()
 
-  const style = React.useMemo(
+  const style = useMemo(
     () => cn(cardTitleVariants({ ...cardStyleProps }), className),
-    [className, ...Object.keys(cardStyleProps)]
+    [className, ...objectToDeps(cardStyleProps)],
   )
 
   return <div ref={ref} className={style} {...props} />
 })
 CardTitle.displayName = 'CardTitle'
 
-const CardDescription = React.forwardRef<
+const CardDescription = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
   const cardStyleProps = useCardContext()
 
-  const style = React.useMemo(
+  const style = useMemo(
     () => cn(cardDescriptionVariants({ ...cardStyleProps }), className),
-    [className, ...Object.keys(cardStyleProps)]
+    [className, ...objectToDeps(cardStyleProps)],
   )
 
   return <div ref={ref} className={style} {...props} />
 })
 CardDescription.displayName = 'CardDescription'
 
-const CardContent = React.forwardRef<
+const CardContent = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
   const cardStyleProps = useCardContext()
 
-  const style = React.useMemo(
+  const style = useMemo(
     () => cn(cardContentVariants({ ...cardStyleProps }), className),
-    [className, ...Object.keys(cardStyleProps)]
+    [className, ...objectToDeps(cardStyleProps)],
   )
 
   return <div ref={ref} className={style} {...props} />
 })
 CardContent.displayName = 'CardContent'
 
-const CardFooter = React.forwardRef<
+const CardFooter = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
   const cardStyleProps = useCardContext()
 
-  const style = React.useMemo(
+  const style = useMemo(
     () => cn(cardFooterVariants({ ...cardStyleProps }), className),
-    [className, ...Object.keys(cardStyleProps)]
+    [className, ...objectToDeps(cardStyleProps)],
   )
 
   return <div ref={ref} className={style} {...props} />
 })
 CardFooter.displayName = 'CardFooter'
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }

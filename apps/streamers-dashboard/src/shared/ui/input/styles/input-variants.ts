@@ -1,14 +1,16 @@
-import { VariantProps, cva } from 'class-variance-authority'
+import type { VariantProps } from 'class-variance-authority'
 
-import { CvaClassValue } from '~shared/utils/types'
+import { cva } from 'class-variance-authority'
 
-export type InputSlots =
-  | 'base'
-  | 'input'
-  | 'wrapper'
-  | 'content'
-  | 'description'
-  | 'label'
+import type { CvaClassValue } from '~shared/utils/types'
+
+export type InputSlots
+  = | 'base'
+    | 'input'
+    | 'wrapper'
+    | 'content'
+    | 'description'
+    | 'label'
 
 type ErrorCvaVariants = {
   isError: {
@@ -28,15 +30,15 @@ type LabelVariants = SizesCvaVariants & ErrorCvaVariants
 type DescriptionVariants = SizesCvaVariants & ErrorCvaVariants
 
 type ContentBaseVariants = CvaClassValue
-type ContentWrapperVariants = SizesCvaVariants &
-  ErrorCvaVariants & {
+type ContentWrapperVariants = SizesCvaVariants
+  & ErrorCvaVariants & {
     isDisabled: {
       [Bool in 'true' | 'false']: CvaClassValue
     }
   }
 
-type InputVariants = SizesCvaVariants &
-  ErrorCvaVariants & {
+type InputVariants = SizesCvaVariants
+  & ErrorCvaVariants & {
     withLabel: {
       true: CvaClassValue
     }
@@ -84,7 +86,7 @@ export const descriptionVariants = cva<DescriptionVariants>(
       size: 'default',
       isError: false,
     },
-  }
+  },
 )
 
 export const contentVariants = cva<ContentBaseVariants>([
@@ -93,7 +95,7 @@ export const contentVariants = cva<ContentBaseVariants>([
 
 export const contentWrapperVariants = cva<ContentWrapperVariants>(
   [
-    'border border-1 border-gray/55 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden',
+    'border border-1 border-dark-accent/70 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden',
     'flex w-full items-center rounded-medium bg-dark ring-gray/55 transition-all',
   ],
   {
@@ -115,7 +117,7 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
       isError: false,
       isDisabled: false,
     },
-  }
+  },
 )
 
 export const inputVariants = cva<InputVariants>(
@@ -156,7 +158,7 @@ export const inputVariants = cva<InputVariants>(
       endContent: false,
       withLabel: false,
     },
-  }
+  },
 )
 
 export type InputVariantsProps = VariantProps<typeof inputVariants>
