@@ -1,7 +1,6 @@
-import { Auction } from '~entities/auction/model'
-
 import { splittedAuctionSlotsApi } from '~entities/auction-slot/api'
-import { AuctionSlot } from '~entities/auction-slot/model'
+import type { AuctionSlot } from '~entities/auction-slot/model'
+import type { Auction } from '~entities/auction/model'
 
 type CreateSlotsQueryArgs = {
   auctionUUID: Auction['auctionUUID']
@@ -9,10 +8,10 @@ type CreateSlotsQueryArgs = {
 }
 
 const createSlotsApi = splittedAuctionSlotsApi.injectEndpoints({
-  endpoints: (build) => ({
+  endpoints: build => ({
     createSlots: build.mutation<void, CreateSlotsQueryArgs>({
       query: ({ auctionUUID, slots }) => ({
-        url: `/${auctionUUID}/create-slots`,
+        url: `/${auctionUUID}/slots/create`,
         data: {
           slots,
         },

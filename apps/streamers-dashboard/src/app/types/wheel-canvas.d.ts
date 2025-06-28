@@ -1,4 +1,4 @@
-import { AuctionSlot } from '~entities/auction-slot/model'
+import type { AuctionSlot } from '~entities/auction-slot/model'
 
 type ResizeCanvasProperties = {
   canvas: HTMLCanvasElement
@@ -26,7 +26,7 @@ type SliceParameters = {
 type DrawSliceProperties = {
   context: CanvasRenderingContext2D
   sliceParameters: SliceParameters
-  onDraw?(slice: Path2D): void
+  onDraw?: (slice: Path2D) => void
   options?: DrawSliceOptions
 }
 

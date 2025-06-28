@@ -1,16 +1,18 @@
+import type { TransformedEditSlotFormData } from '../lib'
+import type { EditSlotFormData } from '../model'
+
 import { useForm, useFormState } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { AuctionSlot } from '~entities/auction-slot/model'
+import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import { formatNumberToIntlString } from '~shared/utils'
 
-import { TransformedEditSlotFormData, transformEditSlotFormData } from '../lib'
-import { EditSlotFormData } from '../model'
+import { transformEditSlotFormData } from '../lib'
 
 type UseEditSlotFormArgs = {
-  defaultValues?: Pick<AuctionSlot, 'name' | 'points'>
+  defaultValues?: Pick<AuctionSlot, 'title' | 'points'>
   target: AuctionSlot
 }
 
@@ -21,7 +23,7 @@ const useEditSlotForm = ({ defaultValues, target }: UseEditSlotFormArgs) => {
     TransformedEditSlotFormData
   >({
     defaultValues: {
-      name: defaultValues?.name ?? target.name,
+      title: defaultValues?.title ?? target.title,
       points: formatNumberToIntlString(defaultValues?.points ?? target.points),
     },
     resolver: zodResolver(transformEditSlotFormData()),

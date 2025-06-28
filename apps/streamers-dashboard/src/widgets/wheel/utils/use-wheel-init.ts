@@ -1,14 +1,15 @@
-import {
+import type {
   RefObject,
+} from 'react'
+import {
   useCallback,
   useLayoutEffect,
   useRef,
   useState,
 } from 'react'
 
-import { AuctionSlot } from '~entities/auction-slot/model'
-
-import { WheelSlot } from '~entities/wheel/model'
+import type { AuctionSlot } from '~entities/auction-slot/model'
+import type { WheelSlot } from '~entities/wheel/model'
 
 import { getMaxSizeCanvas, resizeCanvasWithRatio } from '~shared/utils/canvas'
 import { getHEXColor } from '~shared/utils/colors'
@@ -26,10 +27,10 @@ type WheelInit = {
     innerRef: RefObject<HTMLCanvasElement>
   }
   functions: {
-    drawWheel(): void
-    drawInner(): void
-    resizeWheel(): () => void
-    resizeInnerBackground(): void
+    drawWheel: () => void
+    drawInner: () => void
+    resizeWheel: () => () => void
+    resizeInnerBackground: () => void
   }
   properties: {
     wheelSize: number
@@ -38,7 +39,7 @@ type WheelInit = {
 
 export const useWheelInit = (
   items: AuctionSlot[] | WheelSlot[],
-  { isFullScreen = false }: WheelInitOptions
+  { isFullScreen = false }: WheelInitOptions,
 ): WheelInit => {
   const [wheelSize, setWheelSize] = useState(0)
 
@@ -47,8 +48,8 @@ export const useWheelInit = (
 
   const defaultWheelColor = useRef(getHEXColor())
 
-  const { drawBackground, resizeBackground } =
-    useWheelSelector(innerWheelCanvasRef)
+  const { drawBackground, resizeBackground }
+    = useWheelSelector(innerWheelCanvasRef)
 
   const draw = useCallback(() => {
     const wheelCanvas = wheelCanvasRef.current
@@ -56,7 +57,8 @@ export const useWheelInit = (
     if (wheelCanvas) {
       if (items && !!items.length) {
         drawSlicesItems(wheelCanvas, items)
-      } else {
+      }
+      else {
         drawEmptyWheel(wheelCanvas, {
           color: defaultWheelColor.current,
         })
@@ -75,9 +77,10 @@ export const useWheelInit = (
       const resize = () => {
         if (getMaxSizeCanvas(wrapperParent) > 300) {
           wrapper.style.width = wrapper.style.height = `${getMaxSizeCanvas(
-            wrapperParent
+            wrapperParent,
           )}px`
-        } else {
+        }
+        else {
           wrapper.style.width = wrapper.style.height = `${300}px`
         }
 
@@ -99,7 +102,7 @@ export const useWheelInit = (
     }
 
     return () => {}
-  }, [wheelCanvasRef, innerWheelCanvasRef, draw, isFullScreen])
+  }, [wheelCanvasRef, innerWheelCanvasRef, draw])
 
   useLayoutEffect(() => {
     drawBackground()

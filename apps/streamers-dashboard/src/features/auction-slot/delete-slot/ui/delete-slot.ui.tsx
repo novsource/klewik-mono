@@ -1,21 +1,19 @@
-import { ComponentPropsWithoutRef } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 
-import { Auction } from '~entities/auction/model'
-
-import { AuctionSlot } from '~entities/auction-slot/model'
+import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions } from '~entities/auction-slot/store'
+import type { Auction } from '~entities/auction/model'
 
 import { useActionCreators } from '~shared/lib/redux-toolkit'
-
 import { Button } from '~shared/ui/button'
-import { ButtonProps } from '~shared/ui/button/ui/Button'
+import type { ButtonProps } from '~shared/ui/button/ui/Button'
 import { Icons } from '~shared/ui/icons'
 import { toastPromiseNotification } from '~shared/ui/toaster/lib'
 
 import { useDeleteSlotMutation } from '../api'
 
-type DeleteSlotButtonProps = ComponentPropsWithoutRef<'button'> &
-  ButtonProps & {
+type DeleteSlotButtonProps = ComponentPropsWithoutRef<'button'>
+  & ButtonProps & {
     slotId: AuctionSlot['id']
     auctionUUID: Auction['auctionUUID']
   }
@@ -32,7 +30,8 @@ const DeleteSlotButton = (props: DeleteSlotButtonProps) => {
       deleteSlotMutation({ auctionUUID, slotId }).then((response) => {
         if (response.error) {
           reject(response.error)
-        } else {
+        }
+        else {
           resolve(response.data)
         }
       })
@@ -48,7 +47,7 @@ const DeleteSlotButton = (props: DeleteSlotButtonProps) => {
 
   return (
     <Button
-      variant={'ghost'}
+      variant="ghost"
       isIconOnly
       icon={<Icons.Bin />}
       className="h-full px-1 py-1 text-gray-accent transition-colors hover:text-red"

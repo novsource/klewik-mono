@@ -1,7 +1,7 @@
 import type { CreateSlotForm } from '../model'
 
 const CREATE_SLOT_FORM_DEFAULT_VALUE: CreateSlotForm['slots'][number] = {
-  name: '',
+  title: '',
   points: '1000',
 }
 

@@ -5,19 +5,21 @@ import { deleteAllSpacesFromString } from '~shared/utils/string-format'
 export const createSlotSchema = z.object({
   slots: z
     .object({
-      name: z
+      title: z
         .string()
         .refine((check) => {
           const strWithoutSpaces = deleteAllSpacesFromString(check)
 
-          if (strWithoutSpaces.length < 3) return false
+          if (strWithoutSpaces.length < 3)
+            return false
 
           return true
         }, 'Слишком короткое название слота. Минимальный размер - 3 символа')
         .refine((check) => {
           const strWithoutSpaces = deleteAllSpacesFromString(check)
 
-          if (strWithoutSpaces.length >= 120) return false
+          if (strWithoutSpaces.length >= 120)
+            return false
 
           return true
         }, 'Количество символов в названии слота не может быть больше 120-ти символов'),

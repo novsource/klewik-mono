@@ -1,20 +1,22 @@
-import { ComponentProps, ReactNode, forwardRef } from 'react'
+import type { ClassValue } from 'clsx'
 
-import { ClassValue } from 'clsx'
+import type { ComponentProps, ReactNode } from 'react'
+import { forwardRef } from 'react'
 
-import { AuctionSlot } from '~entities/auction-slot/model'
+import type { AuctionSlot } from '~entities/auction-slot/model'
 
+import type {
+  CardProps,
+} from '~shared/ui/card'
 import {
   Card,
   CardContent,
   CardHeader,
-  CardProps,
   CardTitle,
 } from '~shared/ui/card'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
-
 import { cn } from '~shared/utils'
 
 type AuctionCardChipProps = {
@@ -28,8 +30,8 @@ type AuctionCardChipProps = {
   }
 }
 
-type AuctionSlotCardProps = Omit<CardProps, 'id' | 'color' | 'className'> &
-  AuctionSlot & {
+type AuctionSlotCardProps = Omit<CardProps, 'id' | 'color' | 'className'>
+  & AuctionSlot & {
     percent?: string | number
     slotClassNames?: {
       base?: string
@@ -41,21 +43,21 @@ type AuctionSlotCardProps = Omit<CardProps, 'id' | 'color' | 'className'> &
 
 const AuctionSlotCard = forwardRef<HTMLDivElement, AuctionSlotCardProps>(
   (props, forwardRef) => {
-    const { id, percent, name, color, points, slotClassNames, ...cardProps } =
-      props
+    const { id, percent, title, color, points, slotClassNames, ...cardProps }
+      = props
     return (
       <Card
         ref={forwardRef}
         className={cn(
           'flex flex-col justify-between gap-y-3 border-1 border-dark py-2',
-          slotClassNames?.base
+          slotClassNames?.base,
         )}
         {...cardProps}
       >
         <CardHeader
           className={cn(
             'flex h-6 items-start justify-between',
-            slotClassNames?.header
+            slotClassNames?.header,
           )}
         >
           <CardTitle className={cn('w-full', slotClassNames?.title)}>
@@ -63,14 +65,14 @@ const AuctionSlotCard = forwardRef<HTMLDivElement, AuctionSlotCardProps>(
               tag="span"
               className="font-golos-f text-md tablet:text-title tablet:font-semibold"
             >
-              {name}
+              {title}
             </Typography>
           </CardTitle>
         </CardHeader>
         <CardContent
           className={cn(
             'flex w-full flex-col gap-y-2 pt-0',
-            slotClassNames?.content
+            slotClassNames?.content,
           )}
         >
           <Flex
@@ -102,14 +104,15 @@ const AuctionSlotCard = forwardRef<HTMLDivElement, AuctionSlotCardProps>(
               <AuctionCardChip
                 classNames={{ base: 'bg-green/20', text: 'text-green' }}
               >
-                {percent}%
+                {percent}
+                %
               </AuctionCardChip>
             )}
           </Flex>
         </CardContent>
       </Card>
     )
-  }
+  },
 )
 
 const AuctionCardChip = (props: AuctionCardChipProps) => {
@@ -119,7 +122,7 @@ const AuctionCardChip = (props: AuctionCardChipProps) => {
     <Flex
       className={cn(
         'gap-x-1 rounded-md bg-gray/30 px-1.5 py-1 tablet:gap-x-1.5 tablet:px-2 tablet:py-1',
-        classNames?.base
+        classNames?.base,
       )}
       direction="row"
       align="center"
@@ -128,7 +131,7 @@ const AuctionCardChip = (props: AuctionCardChipProps) => {
       <Typography
         className={cn(
           'font-golos-f text-sm font-medium text-gray-accent tablet:text-md',
-          classNames?.text
+          classNames?.text,
         )}
         tag="span"
       >
@@ -139,4 +142,4 @@ const AuctionCardChip = (props: AuctionCardChipProps) => {
   )
 }
 
-export { AuctionSlotCard, AuctionCardChip }
+export { AuctionCardChip, AuctionSlotCard }

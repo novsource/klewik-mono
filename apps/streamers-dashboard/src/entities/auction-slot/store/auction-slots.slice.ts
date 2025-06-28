@@ -1,11 +1,12 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { z } from 'zod'
+import type { PayloadAction } from '@reduxjs/toolkit'
+import type { z } from 'zod'
 
-import { HexColorSchema } from '~shared/lib/zod'
+import type { AuctionSlot } from '../model'
 
+import { createSlice } from '@reduxjs/toolkit'
+
+import type { HexColorSchema } from '~shared/lib/zod'
 import { getHEXColor } from '~shared/utils/colors'
-
-import { AuctionSlot } from '../model'
 
 type AuctionSlotsState = {
   slots: AuctionSlot[]
@@ -14,18 +15,18 @@ type AuctionSlotsState = {
   slotsPointsSum: number
 }
 
-const mockedAuctionSlots = Array(30)
+const mockedAuctionSlots = Array.from({ length: 30 })
   .fill(null)
   .map((_, index) => ({
     id: index + 1,
-    name: `Бэтмен ${index}`,
+    title: `Бэтмен ${index}`,
     points: Math.floor(Math.random() * 10000),
     color: getHEXColor() as z.infer<typeof HexColorSchema>,
   }))
 
 const slotsPointsSum = mockedAuctionSlots.reduce(
   (sum, slot) => sum + slot.points,
-  0
+  0,
 )
 
 const initialState: AuctionSlotsState = {
@@ -43,7 +44,7 @@ const slice = createSlice({
       const payload = action.payload
 
       const filtredSlots = state.slots.filter(
-        (slot) => !payload.find((item) => slot.id === item.id)
+        slot => !payload.find(item => slot.id === item.id),
       )
 
       state.slots = [...filtredSlots, ...payload]
@@ -53,40 +54,42 @@ const slice = createSlice({
       action: PayloadAction<{
         id: AuctionSlot['id']
         data: Partial<Omit<AuctionSlot, 'id'>>
-      }>
+      }>,
     ) {
       const id = action.payload.id
       const data = action.payload.data
 
-      const updatedSlot = state.slots.find((slot) => id === slot.id)
+      const updatedSlot = state.slots.find(slot => id === slot.id)
 
-      if (!updatedSlot) return
+      if (!updatedSlot)
+        return
 
-      updatedSlot.name = data.name ?? updatedSlot.name
+      updatedSlot.title = data.title ?? updatedSlot.title
       updatedSlot.color = data.color ?? updatedSlot.color
       updatedSlot.points = data.points ?? updatedSlot.points
     },
     deleteSlot(state, action: PayloadAction<{ id: AuctionSlot['id'] }>) {
       const payload = action.payload
 
-      state.slots = state.slots.filter((slot) => slot.id !== payload.id)
+      state.slots = state.slots.filter(slot => slot.id !== payload.id)
     },
     updateSlotsPointsSum(
       state,
-      action: PayloadAction<Omit<AuctionSlot, 'color' | 'name'>[]>
+      action: PayloadAction<Omit<AuctionSlot, 'color' | 'name'>[]>,
     ) {
       const payload = action.payload
 
       const filtredSlots = state.slots.filter(
-        (slot) => !payload.find((item) => slot.id === item.id)
+        slot => !payload.find(item => slot.id === item.id),
       )
 
       if (filtredSlots.length === state.slots.length) {
         state.slotsPointsSum += payload.reduce((a, slot) => a + slot.points, 0)
-      } else {
-        state.slotsPointsSum =
-          filtredSlots.reduce((a, b) => a + b.points, 0) +
-          payload.reduce((a, b) => a + b.points, 0)
+      }
+      else {
+        state.slotsPointsSum
+          = filtredSlots.reduce((a, b) => a + b.points, 0)
+            + payload.reduce((a, b) => a + b.points, 0)
       }
     },
     setSortedSlots(state, action: PayloadAction<AuctionSlot[]>) {
@@ -114,4 +117,4 @@ const {
   selectors: auctionSlotsSelectors,
 } = slice
 
-export { auctionSlotsActions, auctionSlotsSelectors, auctionSlotsReducer }
+export { auctionSlotsActions, auctionSlotsReducer, auctionSlotsSelectors }

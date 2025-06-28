@@ -1,6 +1,5 @@
-import { AuctionSlot } from '~entities/auction-slot/model'
-
-import { WheelMode, WheelSlot } from '~entities/wheel/model'
+import type { AuctionSlot } from '~entities/auction-slot/model'
+import type { WheelMode, WheelSlot } from '~entities/wheel/model'
 
 import {
   clearCanvas,
@@ -18,7 +17,7 @@ type DrawEmptyWheelOptions = {
 
 export const drawEmptyWheel = (
   canvas: HTMLCanvasElement,
-  options?: DrawEmptyWheelOptions
+  options?: DrawEmptyWheelOptions,
 ) => {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
   const radius = canvas.width / 2
@@ -46,7 +45,7 @@ export const drawEmptyWheel = (
 
 export const drawSlicesItems = (
   canvas: HTMLCanvasElement,
-  items: AuctionSlot[]
+  items: AuctionSlot[],
 ) => {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
   const radius = canvas.width / 2
@@ -55,19 +54,19 @@ export const drawSlicesItems = (
   const y = canvas.height / 2
 
   let startAngle = 0
-  const sumValues = items.reduce((acc, item) => acc + item['points'], 0)
+  const sumValues = items.reduce((acc, item) => acc + item.points, 0)
 
   for (const item of items) {
-    const sliceArcLength =
-      getMaxCircleLength(radius) * getPercentValue(sumValues, item.points)
-    const endAngle =
-      startAngle +
-      convertDegreesToRadians(getDegreeByArcLength(radius, sliceArcLength))
+    const sliceArcLength
+      = getMaxCircleLength(radius) * getPercentValue(sumValues, item.points)
+    const endAngle
+      = startAngle
+        + convertDegreesToRadians(getDegreeByArcLength(radius, sliceArcLength))
 
     drawSlice({
       context: ctx,
       sliceParameters: { x, y, radius, startAngle, endAngle },
-      options: { text: item.name, color: item.color },
+      options: { text: item.title, color: item.color },
     })
 
     startAngle = endAngle
@@ -91,7 +90,7 @@ export const drawWheelOverlay = (canvas: HTMLCanvasElement) => {
 
 export const drawSlicesAsPath2D = (
   canvas: HTMLCanvasElement,
-  items: WheelSlot[]
+  items: WheelSlot[],
 ) => {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
 
@@ -120,7 +119,7 @@ export const drawSlicesAsPath2D = (
 
 export const getSlicesPath2D = (
   canvas: HTMLCanvasElement,
-  items: WheelSlot[]
+  items: WheelSlot[],
 ) => {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
   const center = canvas.width / 2
@@ -145,13 +144,13 @@ export const getSlicesPath2D = (
 
       return acc
     },
-    [] as Array<{ path: Path2D; slot: WheelSlot }>
+    [] as Array<{ path: Path2D, slot: WheelSlot }>,
   )
 }
 
 export const drawSlicesItemsWithSelectedItem = (
   canvas: HTMLCanvasElement,
-  selectedItem: WheelSlot
+  selectedItem: WheelSlot,
 ) => {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
   const center = canvas.width / 2
@@ -166,7 +165,7 @@ export const drawSlicesItemsWithSelectedItem = (
       endAngle: convertDegreesToRadians(selectedItem.endAngle),
     },
     options: {
-      text: selectedItem.name,
+      text: selectedItem.title,
       color: selectedItem.color,
     },
   })
@@ -178,12 +177,12 @@ export const getSliceInfo = (
   mouse: {
     x: number
     y: number
-  }
+  },
 ) => {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
   const center = canvas.width / 2
 
-  return items.forEach((item) =>
+  return items.forEach(item =>
     drawSlice({
       context: ctx,
       sliceParameters: {
@@ -194,25 +193,27 @@ export const getSliceInfo = (
         endAngle: convertDegreesToRadians(item.endAngle),
       },
       options: {
-        text: item.name,
+        text: item.title,
         color: item.color,
       },
       onDraw: (slice: Path2D) => {
-        if (ctx.isPointInPath(slice, mouse.x, mouse.y)) console.log(item)
+        if (ctx.isPointInPath(slice, mouse.x, mouse.y))
+          console.log(item)
       },
-    })
+    }),
   )
 }
 
 export const getItemsWithAngles = <T extends AuctionSlot>(
   lots: T[] | null,
-  wheelMode?: WheelMode
+  wheelMode?: WheelMode,
 ): WheelSlot[] => {
-  if (!lots || lots.length === 0) return []
+  if (!lots || lots.length === 0)
+    return []
 
   const newLots = wheelMode === 'dropout' ? reverseLotsByValue(lots) : [...lots]
 
-  const sumItemsValue = newLots.reduce((acc, lot) => acc + lot['points'], 0)
+  const sumItemsValue = newLots.reduce((acc, lot) => acc + lot.points, 0)
 
   // Radius size not important
   const radius = 1
@@ -222,8 +223,8 @@ export const getItemsWithAngles = <T extends AuctionSlot>(
   let startAngle = 0
 
   return newLots.reduce((acc: WheelSlot[], item: AuctionSlot) => {
-    const itemArcLength =
-      maxWheelArcLength * getPercentValue(sumItemsValue, item['points'])
+    const itemArcLength
+      = maxWheelArcLength * getPercentValue(sumItemsValue, item.points)
 
     const degrees = getDegreeByArcLength(radius, itemArcLength)
     const endAngle = startAngle + degrees
@@ -243,32 +244,32 @@ export const getItemsWithAngles = <T extends AuctionSlot>(
 export const getSlotNameOnSelector = (
   currentRotateDegree: number,
   slots: WheelSlot[],
-  selectorDegree: number = 270
+  selectorDegree: number = 270,
 ) => {
-  const rotateAngle =
-    currentRotateDegree >= 360
+  const rotateAngle
+    = currentRotateDegree >= 360
       ? currentRotateDegree - 360 * Math.floor(currentRotateDegree / 360)
       : currentRotateDegree
 
   for (const slot of slots) {
-    const startAngle =
-      slot.startAngle + rotateAngle <= 360
+    const startAngle
+      = slot.startAngle + rotateAngle <= 360
         ? slot.startAngle + rotateAngle
-        : slot.startAngle +
-          rotateAngle -
-          360 * Math.floor((slot.startAngle + rotateAngle) / 360)
-    const endAngle =
-      slot.endAngle + rotateAngle <= 360
+        : slot.startAngle
+          + rotateAngle
+          - 360 * Math.floor((slot.startAngle + rotateAngle) / 360)
+    const endAngle
+      = slot.endAngle + rotateAngle <= 360
         ? slot.endAngle + rotateAngle
-        : slot.endAngle +
-          rotateAngle -
-          360 * Math.floor((slot.endAngle + rotateAngle) / 360)
+        : slot.endAngle
+          + rotateAngle
+          - 360 * Math.floor((slot.endAngle + rotateAngle) / 360)
 
     if (endAngle < startAngle && startAngle <= selectorDegree) {
-      return slot.name
+      return slot.title
     }
     if (selectorDegree >= startAngle && endAngle >= selectorDegree) {
-      return slot.name
+      return slot.title
     }
   }
   return ''
@@ -284,8 +285,8 @@ export const generateWinner = (slots: WheelSlot[]): WheelSlot => {
     const endAngleInRadians = convertDegreesToRadians(endAngle)
 
     if (
-      winnerRadians >= startAngleInRadians &&
-      endAngleInRadians >= winnerRadians
+      winnerRadians >= startAngleInRadians
+      && endAngleInRadians >= winnerRadians
     ) {
       return slot
     }
@@ -297,23 +298,24 @@ export const generateWinner = (slots: WheelSlot[]): WheelSlot => {
 export const calculateRotateWheelCSSValue = (
   slotWithAngles: WheelSlot,
   spinCount: number = 10,
-  selectorDegree: number = 270
+  selectorDegree: number = 270,
 ) => {
   const { startAngle, endAngle } = slotWithAngles
 
   let randomValueFromRange = null
 
-  if (endAngle >= startAngle)
+  if (endAngle >= startAngle) {
     randomValueFromRange = Math.random() * (endAngle - startAngle) + startAngle
+  }
   else {
-    randomValueFromRange =
-      Math.random() >= 0.5
+    randomValueFromRange
+      = Math.random() >= 0.5
         ? Math.random() * (360 - startAngle) + startAngle
         : Math.random() * endAngle
   }
 
-  const rotateCSSValue =
-    360 * spinCount + (selectorDegree - randomValueFromRange)
+  const rotateCSSValue
+    = 360 * spinCount + (selectorDegree - randomValueFromRange)
 
   return rotateCSSValue
 }
@@ -330,7 +332,7 @@ const reverseLotsByValue = (slots: AuctionSlot[]) => {
   // });
 
   const sortedLots = slots
-    .map((slot) => ({ ...slot }))
+    .map(slot => ({ ...slot }))
     .sort((a, b) => a.points - b.points)
 
   let leftPointer = 0
@@ -346,7 +348,7 @@ const reverseLotsByValue = (slots: AuctionSlot[]) => {
   }
 
   return slots.map((lot) => {
-    const findingLot = sortedLots.find((item) => item.id === lot.id)
+    const findingLot = sortedLots.find(item => item.id === lot.id)
 
     if (findingLot) {
       lot.points = findingLot.points
@@ -379,7 +381,7 @@ export const sliceMouse = ({
     const isPointInPath = ctx.isPointInPath(
       slice,
       ev.offsetX * window.devicePixelRatio,
-      ev.offsetY * window.devicePixelRatio
+      ev.offsetY * window.devicePixelRatio,
     )
     const isSameSlice = activeItem.item === item
 
@@ -401,7 +403,7 @@ export const sliceMouse = ({
 
 export const updateSlotsAnglesByRotateValue = (
   slots: WheelSlot[],
-  rotateValue: number
+  rotateValue: number,
 ): WheelSlot[] => {
   const newSlots: WheelSlot[] = []
 
@@ -410,17 +412,19 @@ export const updateSlotsAnglesByRotateValue = (
 
     const realRotate = rotateValue - Math.floor(rotateValue / 360) * 360
 
-    if (startAngle + rotateValue > 360)
-      startAngle =
-        startAngle +
-        realRotate -
-        Math.floor((startAngle + realRotate) / 360) * 360
+    if (startAngle + rotateValue > 360) {
+      startAngle
+        = startAngle
+          + realRotate
+          - Math.floor((startAngle + realRotate) / 360) * 360
+    }
     else {
       startAngle += realRotate
     }
-    if (endAngle + rotateValue > 360)
-      endAngle =
-        endAngle + realRotate - Math.floor((endAngle + realRotate) / 360) * 360
+    if (endAngle + rotateValue > 360) {
+      endAngle
+        = endAngle + realRotate - Math.floor((endAngle + realRotate) / 360) * 360
+    }
     else {
       endAngle += realRotate
     }
