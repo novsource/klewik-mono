@@ -1,15 +1,17 @@
-import { VariantProps, cva } from 'class-variance-authority'
+import type { VariantProps } from 'class-variance-authority'
 
-import { CvaClassValue } from '~shared/utils/types'
+import { cva } from 'class-variance-authority'
 
-type ButtonVariant =
-  | 'default'
-  | 'action'
-  | 'outline'
-  | 'error'
-  | 'ghost-outline'
-  | 'ghost'
-  | 'link'
+import type { CvaClassValue } from '~shared/utils/types'
+
+type ButtonVariant
+  = | 'default'
+    | 'action'
+    | 'outline'
+    | 'error'
+    | 'ghost-outline'
+    | 'ghost'
+    | 'link'
 
 type ButtonSize = 'sm' | 'default' | 'lg' | 'xs'
 
@@ -42,17 +44,17 @@ export const buttonVariants = cva<ButtonVariants>(
   {
     variants: {
       variant: {
-        default:
+        'default':
           'border-1 border-dark-accent/70 bg-dark text-gray-accent hover:border-gray/55 hover:bg-dark-accent/50 hover:text-white',
-        action:
+        'action':
           'bg-[#242A28] text-green-accent/80 hover:bg-[#2C3B33] hover:text-green-accent',
-        error: 'border-1 border-red/20 bg-red/10 text-red hover:bg-red/15',
-        outline:
+        'error': 'border-1 border-red/20 bg-red/10 text-red hover:bg-red/15 hover:border-red/30',
+        'outline':
           'border-1 border-dark-accent bg-dark text-gray-accent hover:border-gray hover:bg-dark/80 hover:text-white/80',
-        ghost: 'border-transparent bg-transparent',
+        'ghost': 'border-transparent bg-transparent',
         'ghost-outline':
           'border-1 border-dark-accent/70 bg-transparent hover:border-gray',
-        link: 'text-primary underline-offset-4 hover:underline',
+        'link': 'text-primary underline-offset-4 hover:underline',
       },
       isIconOnly: {
         true: '',
@@ -83,7 +85,7 @@ export const buttonVariants = cva<ButtonVariants>(
       { isIconOnly: true, size: 'default', className: 'px-2 py-2' },
       { isIconOnly: true, size: 'sm', className: 'h-8 px-2.5' },
     ],
-  }
+  },
 )
 
 export type ButtonVariantsProps = VariantProps<typeof buttonVariants>

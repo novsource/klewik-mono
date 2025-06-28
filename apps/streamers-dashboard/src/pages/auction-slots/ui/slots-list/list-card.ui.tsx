@@ -1,4 +1,5 @@
-import { RefObject, forwardRef, memo } from 'react'
+import type { RefObject } from 'react'
+import { forwardRef, memo } from 'react'
 
 import NumberFlow from '@number-flow/react'
 
@@ -6,10 +7,9 @@ import { ResponsiveEditSlotDialogue } from '~widgets/edit-slot-dialog/ui'
 
 import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
 
-import { Auction } from '~entities/auction/model'
-
-import { AuctionSlot } from '~entities/auction-slot/model'
+import type { AuctionSlot } from '~entities/auction-slot/model'
 import { AuctionCardChip } from '~entities/auction-slot/ui/card'
+import type { Auction } from '~entities/auction/model'
 
 import { Button } from '~shared/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~shared/ui/card'
@@ -39,23 +39,23 @@ const AuctionSlotCardWithControls = memo(
                 tag="span"
                 className="font-golos-f text-md font-semibold tablet:text-title"
               >
-                {slot.name}
+                {slot.title}
               </Typography>
             </CardTitle>
             <Flex className="h-6 gap-x-1" direction="row">
               <ResponsiveEditSlotDialogue
                 slot={slot}
-                trigger={
+                trigger={(
                   <Button
-                    variant={'ghost'}
+                    variant="ghost"
                     isIconOnly
                     icon={<Icons.Pencil size="xs" />}
                     className="h-full px-1 py-1 text-gray-accent transition-colors hover:text-white"
-                    size={'sm'}
+                    size="sm"
                   >
                     Изменить
                   </Button>
-                }
+                )}
               />
               <DeleteSlotButton
                 auctionUUID={auctionUUID}
@@ -95,7 +95,7 @@ const AuctionSlotCardWithControls = memo(
                   willChange
                   trend={0}
                   value={slot.points}
-                  locales={'ru-RU'}
+                  locales="ru-RU"
                 />
               </AuctionCardChip>
               <AuctionCardChip
@@ -109,7 +109,7 @@ const AuctionSlotCardWithControls = memo(
                     notation: 'compact',
                     compactDisplay: 'short',
                   }}
-                  locales={'ru-RU'}
+                  locales="ru-RU"
                 />
                 %
               </AuctionCardChip>
@@ -117,8 +117,8 @@ const AuctionSlotCardWithControls = memo(
           </CardContent>
         </Card>
       )
-    }
-  )
+    },
+  ),
 )
 
 export { AuctionSlotCardWithControls }

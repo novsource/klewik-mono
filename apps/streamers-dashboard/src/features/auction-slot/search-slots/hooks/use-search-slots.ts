@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
-import { AuctionSlot } from '~entities/auction-slot/model'
+import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import { removeSpaceDuplicatingFromString } from '~shared/utils/string-format'
 
 const useSearchAuctionSlots = (
   searchValue: string,
-  slots: AuctionSlot[]
+  slots: AuctionSlot[],
 ): AuctionSlot[] => {
   const [searchedSlots, setSearchedSlots] = useState(() => slots)
 
@@ -15,16 +15,17 @@ const useSearchAuctionSlots = (
   }, [searchValue])
 
   const filtredSlots = useMemo(() => {
-    if (cleanSearchValue.length === 0) return slots
+    if (cleanSearchValue.length === 0)
+      return slots
 
-    return slots.filter((slot) =>
-      slot.name.toLowerCase().includes(cleanSearchValue.toLowerCase())
+    return slots.filter(slot =>
+      slot.title.toLowerCase().includes(cleanSearchValue.toLowerCase()),
     )
   }, [slots, cleanSearchValue])
 
-  useEffect(() => {
+  if (searchedSlots !== filtredSlots) {
     setSearchedSlots(filtredSlots)
-  }, [filtredSlots])
+  }
 
   return searchedSlots
 }

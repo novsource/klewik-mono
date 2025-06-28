@@ -8,10 +8,6 @@ import { auctionSelectors } from '~entities/auction/store'
 
 import type { AxiosBaseQueryError } from '~shared/lib/redux-toolkit'
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-import {
-  toastErrorNotification,
-  toastSuccessNotification,
-} from '~shared/ui/toaster/lib'
 
 import { useCreateSlotsMutation } from '../api'
 import { CREATE_SLOT_FORM_DEFAULT_VALUE } from '../constants'
@@ -42,24 +38,20 @@ const useCreateSlotsForm = (listeners?: UseCreateSlotsFormListeners) => {
   const [createSlotsMutation, queryState] = useCreateSlotsMutation()
 
   const submitForm = async (formData: TransformedCreateSlotsFormData) => {
+    console.log(formData)
     const response = await createSlotsMutation({
       auctionUUID,
-      slots: formData.slots,
+      slots: formData,
     })
 
     if (response.error) {
       const error = response.error as AxiosBaseQueryError
 
-      toastErrorNotification(
-        'Не удалось добавить слот(-ы)',
-        error.reason || error.message,
-        { position: 'bottom-left' },
-      )
       listeners?.onError && listeners.onError(error)
     }
-
-    toastSuccessNotification('Слот успешно добавлен в аукцион!')
-    listeners?.onSuccess && listeners.onSuccess(formData)
+    else {
+      listeners?.onSuccess && listeners.onSuccess(formData)
+    }
   }
 
   return { form, state, submitForm, ...queryState }

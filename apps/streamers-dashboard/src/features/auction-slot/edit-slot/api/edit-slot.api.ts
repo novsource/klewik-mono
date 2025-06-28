@@ -1,5 +1,5 @@
 import { splittedAuctionSlotsApi } from '~entities/auction-slot/api'
-import { AuctionSlot } from '~entities/auction-slot/model'
+import type { AuctionSlot } from '~entities/auction-slot/model'
 
 type EditSlotApiArgs = {
   auctionUUID: string
@@ -7,7 +7,7 @@ type EditSlotApiArgs = {
 }
 
 const editSlotApi = splittedAuctionSlotsApi.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     editSlot: builder.mutation<void, EditSlotApiArgs>({
       query: ({ auctionUUID, slot }) => ({
         url: `/${auctionUUID}/update-slot`,

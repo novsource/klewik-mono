@@ -61,6 +61,7 @@ import { default as Telegram } from './Telegram';
 import { default as Timer } from './Timer';
 import { default as Tuning } from './Tuning';
 import { default as TwitchLogo } from './TwitchLogo';
+import { default as Undo } from './Undo';
 import { default as User } from './User';
 import { default as Warning } from './Warning';
 import { default as Wheel } from './Wheel';
@@ -130,6 +131,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Timer,
   Tuning,
   TwitchLogo,
+  Undo,
   User,
   Warning,
   Wheel,

@@ -40,14 +40,19 @@ SheetOverlay.displayName = SheetPrimitive.Overlay.displayName
 
 type SheetContentProps = ComponentPropsWithoutRef<typeof SheetPrimitive.Content>
   & VariantProps<typeof sheetVariants>
-  & { hideCloseButton?: boolean }
+  & { hideCloseButton?: boolean, shouldCloseOnOutsideClick?: boolean }
 
 const SheetContent = forwardRef<
   ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(({ side = 'right', className, children, hideCloseButton = false, ...props }, ref) => (
+>(({ side = 'right', className, children, hideCloseButton = false, shouldCloseOnOutsideClick = true, ...props }, ref) => (
   <SheetPortal>
-    <SheetOverlay />
+    <SheetOverlay onClick={(e) => {
+      if (!shouldCloseOnOutsideClick) {
+        return e.stopPropagation()
+      }
+    }}
+    />
     <SheetPrimitive.Content
       ref={ref}
       className={cn(sheetVariants({ side }), className)}

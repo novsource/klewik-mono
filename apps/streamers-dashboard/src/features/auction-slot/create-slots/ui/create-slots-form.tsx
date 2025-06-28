@@ -93,25 +93,14 @@ export type ControlledCreateSlotsFormProps = Omit<
 const ControlledCreateSlotForm = (props: ControlledCreateSlotsFormProps) => {
   const { form, maxCreatingSlotsCount, multiplySlots, onSuccess, onError, ...formProps } = props
 
-  const { control, trigger, handleSubmit } = form
-
-  const { submitForm, isLoading } = useCreateSlotsForm({ onSuccess, onError })
+  const { control, trigger } = form
 
   return (
     <form
       className="flex h-full w-full flex-col justify-between overflow-x-clip"
-      onSubmit={handleSubmit(submitForm)}
       {...formProps}
     >
       {multiplySlots && <SlotsTabs control={control} trigger={trigger} maxCreatingSlotsCount={maxCreatingSlotsCount} />}
-      <Button
-        type="submit"
-        variant="action"
-        className="w-full"
-        disabled={isLoading}
-      >
-        Добавить в аукцион
-      </Button>
     </form>
   )
 }
@@ -149,8 +138,8 @@ function SlotsTabs(props: SlotsTabsProps) {
         <m.li key={field.id} className="relative flex w-full flex-col gap-y-4">
           <SlotNameFormInput
             control={control}
-            name={`slots.${index}.name` as const}
-            errorMessage={getErrorMessageForField(state.errors, 'name', index)}
+            name={`slots.${index}.title` as const}
+            errorMessage={getErrorMessageForField(state.errors, 'title', index)}
           />
           <SlotPointsFormInput
             control={control}
@@ -188,7 +177,7 @@ function SlotsTabs(props: SlotsTabsProps) {
       className="space-y-6 px-0.25"
       defaultValue={tabValue}
       value={tabValue}
-      onValueChange={setTabValue}
+      onValueChange={setTabValue!}
     >
       <Flex align="center">
         <TabsList className="flex w-fit justify-between rounded-large bg-dark">
@@ -210,7 +199,7 @@ function SlotsTabs(props: SlotsTabsProps) {
           {fields.length < maxCreatingSlotsCount && (
             <Button
               variant="ghost"
-              className="transition-colors hover:text-white/80"
+              className="transition-colors text-gray-light hover:text-gray-accent"
               startContent={<Icons.Plus />}
               size="sm"
               onClick={() => {

@@ -1,14 +1,16 @@
-import { ComponentProps, forwardRef, useMemo, useState } from 'react'
-
-import { Typography } from '~shared/ui/typograghy'
-
-import { CvaClassValue } from '~shared/utils/types'
-
-import { cn } from '~shared/utils'
-
-import {
+import type {
   InputSlots,
   InputVariantsProps,
+} from '../styles/input-variants'
+
+import type { ComponentProps } from 'react'
+import { forwardRef, useMemo, useState } from 'react'
+
+import { Typography } from '~shared/ui/typograghy'
+import { cn } from '~shared/utils'
+import type { CvaClassValue } from '~shared/utils/types'
+
+import {
   contentVariants,
   contentWrapperVariants,
   descriptionVariants,
@@ -20,8 +22,8 @@ export type InputSlotsClassnames = {
   [Slot in InputSlots]?: CvaClassValue
 }
 
-export type InputProps = Omit<ComponentProps<'input'>, 'size' | 'className'> &
-  Omit<
+export type InputProps = Omit<ComponentProps<'input'>, 'size' | 'className'>
+  & Omit<
     InputVariantsProps,
     'withLabel' | 'startContent' | 'endContent' | 'isError'
   > & {
@@ -58,16 +60,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const labelStyle = useMemo(
     () =>
       cn(labelVariants({ size, isError: !!errorMessage }), classNames?.label),
-    [size, label, errorMessage, classNames?.label]
+    [classNames?.label, size, errorMessage],
   )
 
   const descriptionStyle = useMemo(
     () =>
       cn(
         descriptionVariants({ size, isError: !!errorMessage }),
-        classNames?.description
+        classNames?.description,
       ),
-    [size, label, errorMessage, classNames?.description]
+    [size, errorMessage, classNames?.description],
   )
 
   const baseInputStyle = useMemo(
@@ -80,9 +82,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           withLabel: Boolean(label),
           isError: Boolean(errorMessage),
         }),
-        classNames?.input
+        classNames?.input,
       ),
-    [size, startContent, endContent, label, errorMessage, classNames?.input]
+    [size, startContent, endContent, label, errorMessage, classNames?.input],
   )
 
   const baseInput = (
@@ -106,7 +108,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
   const contentBaseStyle = useMemo(
     () => cn(contentVariants(), classNames?.base),
-    [classNames?.base]
+    [classNames?.base],
   )
   const contentWrapperStyle = useMemo(
     () =>
@@ -116,9 +118,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           isError: !!errorMessage,
           isDisabled: disabled,
         }),
-        classNames?.wrapper
+        classNames?.wrapper,
       ),
-    [classNames?.wrapper, size, errorMessage, disabled]
+    [classNames?.wrapper, size, errorMessage, disabled],
   )
 
   return (

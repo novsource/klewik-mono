@@ -1,13 +1,17 @@
-import {
+import type {
   Dispatch,
   SetStateAction,
+} from 'react'
+import {
   createContext,
   useContext,
-  useEffect,
+  useMemo,
   useState,
 } from 'react'
 
-type TabsContext = {
+import { isStringEmpty } from '~shared/utils'
+
+type TabsContextState = {
   state: {
     defaultKey: string
     selectedKey: string
@@ -15,7 +19,6 @@ type TabsContext = {
     triggersData: TriggersData
   }
   dispatch: {
-    setDefaultKey: Dispatch<SetStateAction<string>>
     setSelectedKey: Dispatch<SetStateAction<string>>
     setKeys: Dispatch<SetStateAction<string[]>>
     setTriggersData: Dispatch<SetStateAction<TriggersData>>
@@ -34,53 +37,41 @@ type TriggersData = {
   startX: number
 }[]
 
-export const TabsContext = createContext<NullablePossible<TabsContext>>(null)
+export const TabsContext = createContext<NullablePossible<TabsContextState>>(null)
 
 export const TabsContextProvider = ({
   children,
   defaultValue,
   value,
 }: TabsContextProps) => {
+  const [triggersData, setTriggersData] = useState<TriggersData>([])
   const [keys, setKeys] = useState<string[]>([])
-  const [defaultKey, setDefaultKey] = useState<string>(defaultValue ?? '')
   const [selectedKey, setSelectedKey] = useState<string>(
-    () => value ?? defaultValue ?? ''
+    value ?? defaultValue ?? '',
   )
 
-  const [triggersData, setTriggersData] = useState<TriggersData>([])
+  if (keys.length !== 0 && isStringEmpty(defaultValue ?? '')) {
+    setSelectedKey(keys[0])
+  }
 
-  useEffect(() => {
-    if (keys.length !== 0 && defaultKey === '') {
-      setDefaultKey(keys[0])
-    }
-  }, [defaultValue, keys])
+  if (selectedKey !== value) {
+    setSelectedKey(value ?? '')
+  }
 
-  useEffect(() => {
-    if (selectedKey !== value) setSelectedKey(value ?? '')
-  }, [value])
+  if (defaultValue && isStringEmpty(selectedKey) && !isStringEmpty(defaultValue)) {
+    setSelectedKey(defaultValue)
+  }
 
-  useEffect(() => {
-    if (selectedKey === '' && defaultKey !== '') {
-      setSelectedKey(defaultKey)
-    }
-  }, [defaultKey, selectedKey])
+  const tabsContextValue = useMemo(() => {
+    return {
+      state: { defaultKey: defaultValue ?? selectedKey, selectedKey, keys, triggersData },
+      dispatch: { setKeys, setSelectedKey, setTriggersData },
+    } satisfies TabsContextState
+  }, [selectedKey, keys, triggersData, defaultValue])
 
   return (
     <TabsContext.Provider
-      value={{
-        state: {
-          defaultKey,
-          selectedKey,
-          keys,
-          triggersData,
-        },
-        dispatch: {
-          setKeys,
-          setDefaultKey,
-          setSelectedKey,
-          setTriggersData,
-        },
-      }}
+      value={tabsContextValue}
     >
       {children}
     </TabsContext.Provider>

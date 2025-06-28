@@ -1,25 +1,26 @@
-import { ChangeEvent, useCallback, useEffect, useState } from 'react'
-import {
+import type { ChangeEvent } from 'react'
+import { useCallback, useState } from 'react'
+
+import type {
   FieldPath,
   FieldValues,
   UseControllerProps,
+} from 'react-hook-form'
+import {
   useController,
-  useFormContext,
 } from 'react-hook-form'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import { Input, InputProps } from '~shared/ui/input'
+import type { InputProps } from '~shared/ui/input'
+import { Input } from '~shared/ui/input'
 import { NumberInput } from '~shared/ui/number-input'
 import { Typography } from '~shared/ui/typograghy'
-
-import { deleteAllSpacesFromString } from '~shared/utils/string-format'
-
 import { cn, formatNumberToIntlString } from '~shared/utils'
+import { deleteAllSpacesFromString } from '~shared/utils/string-format'
 
 type ControllerFormInputProps<
   FormFields extends FieldValues | Record<string, FieldValues>,
@@ -36,8 +37,8 @@ const SlotNameFormInput = <
   name,
   maxLength = 35,
   ...props
-}: InputProps &
-  ControllerFormInputProps<FormFields, Paths, TransformedValues> & {
+}: InputProps
+  & ControllerFormInputProps<FormFields, Paths, TransformedValues> & {
     maxLength?: number
   }) => {
   const [boundAnimationStatus, setBoundAnimationStatus] = useState<
@@ -53,11 +54,12 @@ const SlotNameFormInput = <
     if (event.target.value.length > maxLength) {
       field.onChange(event.target.value.slice(0, maxLength))
       setBoundAnimationStatus('active')
-    } else {
+    }
+    else {
       field.onChange(event.target.value)
       setBoundAnimationStatus('inactive')
     }
-  }, [])
+  }, [field, maxLength])
 
   return (
     <Input
@@ -66,14 +68,14 @@ const SlotNameFormInput = <
         description: 'text-wrap',
         input: 'font-semibold',
       }}
-      endContent={
+      endContent={(
         <Typography
           tag="span"
           className={cn(
             'text-md transition-colors select-none',
             boundAnimationStatus === 'active'
               ? 'animate-horizontal-shaking text-red'
-              : 'text-gray-light'
+              : 'text-gray-light',
           )}
           onAnimationEnd={() => {
             setBoundAnimationStatus('inactive')
@@ -81,7 +83,7 @@ const SlotNameFormInput = <
         >
           {`${field.value.toString().length}/${maxLength}`}
         </Typography>
-      }
+      )}
       label={{ id: `${name}`, value: 'Название слота' }}
       placeholder="Название слота"
       {...field}
@@ -100,17 +102,16 @@ const SlotPointsFormInput = <
   name,
   maxValue = 10000000,
   ...props
-}: Omit<InputProps, 'type'> &
-  ControllerFormInputProps<FormFields, Paths, TransformedValues> & {
+}: Omit<InputProps, 'type'>
+  & ControllerFormInputProps<FormFields, Paths, TransformedValues> & {
     maxValue?: number
   }) => {
-  // const { clearErrors, setError } = useFormContext()
   const {
     field: { value, ...field },
   } = useController({ name, control })
 
   const slotsPointsSum = useStoreSelector(
-    auctionSlotsSelectors.getSlotsPointsSum
+    auctionSlotsSelectors.getSlotsPointsSum,
   )
   const [pointsValue, setPointsValue] = useState(() => {
     return Number(deleteAllSpacesFromString(value))
@@ -120,7 +121,7 @@ const SlotPointsFormInput = <
   })
 
   const onWinPercentChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    const percent = parseFloat(deleteAllSpacesFromString(event.target.value))
+    const percent = Number.parseFloat(deleteAllSpacesFromString(event.target.value))
 
     if (percent === 0) {
       return field.onChange('10')
@@ -175,7 +176,8 @@ const SlotPointsFormInput = <
           const { floatValue } = values
           const maxPointsValue = Math.floor(slotsPointsSum * 99)
 
-          if (!floatValue) return true
+          if (!floatValue)
+            return true
 
           return floatValue <= maxPointsValue
         }}
@@ -189,15 +191,16 @@ const SlotPointsFormInput = <
         placeholder="Шанс"
         allowNegative={false}
         decimalScale={2}
-        endContent={
+        endContent={(
           <Typography tag="span" className="text-nowrap text-gray-light">
-            {'0.5-99%'}
+            0.5-99%
           </Typography>
-        }
+        )}
         isAllowed={(values) => {
           const { floatValue } = values
 
-          if (floatValue === undefined) return true
+          if (floatValue === undefined)
+            return true
 
           return floatValue <= 99
         }}

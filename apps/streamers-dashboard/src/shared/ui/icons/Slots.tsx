@@ -14,8 +14,8 @@ const sizes: Record<Sizes, number> = {
 const SvgSlots = (props: IconsProps) => {
   props = {
     ...props,
-    width: props.size ? sizes[props.size] : (props.width ?? sizes['default']),
-    height: props.size ? sizes[props.size] : (props.height ?? sizes['default']),
+    width: props.size ? sizes[props.size] : (props.width ?? sizes.default),
+    height: props.size ? sizes[props.size] : (props.height ?? sizes.default),
   }
   return (
     <svg
@@ -62,50 +62,21 @@ const SvgSlots = (props: IconsProps) => {
             result="shape"
           />
         </filter>
-        <linearGradient
-          id="paint0_linear_1424_1791"
-          x1="7.28138"
-          y1="10.3863"
-          x2="8.16539"
-          y2="5.44094"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#1D976C" stopOpacity="0.8" />
-          <stop offset="1" stopColor="#93F9B9" />
-        </linearGradient>
-        <linearGradient
-          id="paint1_linear_1424_1791"
-          x1="8.44201"
-          y1="5.71122"
-          x2="9.59988"
-          y2="0.866722"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#1D976C" stopOpacity="0.8" />
-          <stop offset="1" stopColor="#93F9B9" />
-        </linearGradient>
-        <linearGradient
-          id="paint2_linear_1424_1791"
-          x1="17.8603"
-          y1="12.2335"
-          x2="12.4243"
-          y2="25.1141"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#1D976C" stopOpacity="0.8" />
-          <stop offset="1" stopColor="#93F9B9" />
+        <linearGradient id="gradientSlotsMiddle" x1="13.6445" y1="3.15639" x2="4.25883" y2="3.15639" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#E4FFF6" />
+          <stop offset="1" stop-color="#DDFFE7" />
         </linearGradient>
       </defs>
       <g filter="url(#create-slot-filter)">
         <path
           fill={
-            !props.gradient ? 'currentColor' : 'url(#paint0_linear_1424_1791)'
+            !props.gradient ? 'currentColor' : 'url(#gradientSlotsMiddle)'
           }
           d="M20.272 10.465H3.598V9.313a2 2 0 0 1 2-2h12.674a2 2 0 0 1 2 2zM18.192 5.79H5.678V4.626a2 2 0 0 1 2-2h8.514a2 2 0 0 1 2 2z"
         />
         <path
           fill={
-            !props.gradient ? 'currentColor' : 'url(#paint2_linear_1424_1791)'
+            !props.gradient ? 'currentColor' : 'url(#gradientSlotsMiddle)'
           }
           fillRule="evenodd"
           d="M1.5 14a2 2 0 0 1 2-2h17a2 2 0 0 1 2 2v3.374a4 4 0 0 1-4 4h-13a4 4 0 0 1-4-4zm3.498 1.163c0-.47.38-.85.85-.85h12.35a.85.85 0 1 1 0 1.7H5.847a.85.85 0 0 1-.85-.85m.876 2.03a.85.85 0 0 0 0 1.7h8.274a.85.85 0 1 0 0-1.7z"
