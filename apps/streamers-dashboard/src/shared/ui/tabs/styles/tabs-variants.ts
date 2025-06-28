@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority'
 
 export const tabsListVariants = cva(
-  'relative inline-flex h-10 items-center justify-center rounded-medium bg-muted p-1 text-muted-foreground'
+  'relative inline-flex h-10 items-center justify-center rounded-large bg-muted p-1 text-muted-foreground',
 )
 
 export const tabsTriggerVariants = cva([
@@ -14,9 +14,9 @@ export const tabsTriggerVariants = cva([
 ])
 
 export const tabsContentVariants = cva(
-  'mt-2 ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+  'mt-2 ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
 )
 
 export const tabsTriggerRunnerVariants = cva(
-  'absolute h-8 rounded-md bg-dark-accent transition-all'
+  'absolute h-8 rounded-medium bg-dark-accent transition-all tabs-runner-shadow border-1 border-gray/20',
 )

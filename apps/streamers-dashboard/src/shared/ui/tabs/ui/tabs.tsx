@@ -55,22 +55,21 @@ const TabsTriggerRunner = () => {
   const [width, setWidth] = useState(0)
   const [x, setX] = useState(0)
 
-  // const isFirstWidthSettedRef = useRef(false)
+  // State for prevent width animation on tab trigger paint
+  const [isFirstWidthSetted, setIsFirstWidthSetted] = useState(false)
 
   const {
     state: { selectedKey, triggersData, defaultKey },
   } = useTabContext()
 
-  const [isFirstWidthSetted, setIsFirstWidthSetted] = useState(() => defaultKey === selectedKey)
+  if (!isFirstWidthSetted && width !== 0 && defaultKey !== selectedKey) {
+    setIsFirstWidthSetted(true)
+  }
 
   const styles = useMemo(
     () => cn(tabsTriggerRunnerVariants(), 'transition-none', isFirstWidthSetted && 'transition-all'),
     [isFirstWidthSetted],
   )
-
-  if (isFirstWidthSetted && width !== 0 && selectedKey !== defaultKey) {
-    setIsFirstWidthSetted(false)
-  }
 
   useLayoutEffect(() => {
     if (triggersData.length !== 0 && selectedKey.length !== 0) {
@@ -82,7 +81,6 @@ const TabsTriggerRunner = () => {
       setX(selectedTrigger.startX)
     }
     else {
-      setIsFirstWidthSetted(false)
       setWidth(0)
       setX(0)
     }
@@ -93,7 +91,7 @@ const TabsTriggerRunner = () => {
       className={styles}
       style={{
         width,
-        transform: `translateX(${x - 4}px)`,
+        transform: `translateX(calc(${x}px - var(--tabs-inner-padding)))`,
       }}
     />
   )
