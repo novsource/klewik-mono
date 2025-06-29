@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { useCreateSlotsForm } from '~features/auction-slot/create-slots/hooks'
 import { ControlledCreateSlotForm } from '~features/auction-slot/create-slots/ui'
@@ -9,7 +9,7 @@ import { auctionSlotsActions as storeAuctionSlotsActions } from '~entities/aucti
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 import { useActionCreators } from '~shared/lib/redux-toolkit'
-import { Divider } from '~shared/ui/divider'
+import { Button } from '~shared/ui/button'
 import {
   Drawer,
   DrawerContent,
@@ -28,6 +28,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '~shared/ui/sheet/ui/sheet'
+import { closeAllToasts, toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
 import { getRandomHEXColor } from '~shared/utils/colors'
 
@@ -44,48 +45,124 @@ function CreateSlotsDialog({
 }: CreateSlotsDialogProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
+  const [isSuccessCreated, setIsSuccessCreated] = useState(false)
+
   const auctionSlotsActions = useActionCreators(storeAuctionSlotsActions)
 
   const isMediaLargeThenTablet = useMediaQuery(
     `(min-width: ${tailwindScreens.tablet})`,
   )
 
-  const { form, state } = useCreateSlotsForm()
+  const { form, state, submitForm, isLoading } = useCreateSlotsForm({ onSuccess: ({ slots }) => {
+    auctionSlotsActions.addSlots(
+      slots.map(slot => ({
+        ...slot,
+        id: 1,
+        color: getRandomHEXColor(),
+      })),
+    )
+
+    setIsSuccessCreated(true)
+    setIsDialogOpen(false)
+  }, onError: (error) => {
+    toastErrorNotification(
+      'Не удалось добавить слот(-ы)',
+      error?.reason || error?.message,
+      { className: 'right-[calc(var(--dialog-width-desktop)+12px)]' },
+    )
+  } })
+
+  if (!isDialogOpen && state.isDirty) {
+    form.reset()
+    form.clearErrors()
+
+    closeAllToasts()
+
+    if (isSuccessCreated) {
+      toastSuccessNotification('Слот(ы) успешно добавлен(ы) в аукцион!')
+      setIsSuccessCreated(false)
+    }
+  }
+
+  const handleFormSubmit = () => {
+    const formSubmit = form.handleSubmit(submitForm)
+
+    return formSubmit()
+  }
 
   const dialogContent = useMemo(() => {
     return (
       <ControlledCreateSlotForm
         multiplySlots={multiplySlots}
         form={form}
-        onSuccess={({ slots }) => {
-          auctionSlotsActions.addSlots(
-            slots.map(slot => ({
-              ...slot,
-              id: 1,
-              color: getRandomHEXColor(),
-            })),
-          )
-          setIsDialogOpen(false)
-        }}
+        onSubmit={e => e.preventDefault()}
       />
     )
-  }, [multiplySlots, auctionSlotsActions, setIsDialogOpen, form])
-
-  useEffect(() => {
-    if (!isDialogOpen) {
-      form.reset()
-    }
-  }, [form, isDialogOpen])
+  }, [multiplySlots, form])
 
   if (isMediaLargeThenTablet) {
     return (
-      <CreateSlotsSheet
-        isOpen={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        trigger={trigger}
-      >
-        {dialogContent}
-      </CreateSlotsSheet>
+      <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <SheetTrigger>{trigger}</SheetTrigger>
+        <SheetContent hideCloseButton shouldCloseOnOutsideClick={false}>
+          <Flex
+            className="h-full w-full gap-y-4"
+            direction="column"
+            align="center"
+            justify="between"
+          >
+            <SheetHeader className="flex flex-col w-full gap-y-5">
+              <Flex className="w-full h-8" justify="between">
+                <Button
+                  className="size-8"
+                  disabled={isLoading || !state.isDirty}
+                  isIconOnly
+                  icon={<Icons.Reset size="sm" />}
+                  onClick={() => form.reset()}
+                />
+                <Flex className="gap-x-2" align="center">
+                  <Button
+                    className="h-full"
+                    size="sm"
+                    variant="action"
+                    disabled={isLoading || !state.isDirty}
+                    startContent={<Icons.Plus size="sm" />}
+                    onClick={handleFormSubmit}
+                  >
+                    Добавить
+                  </Button>
+                  <div className="h-2/3 w-0.25 bg-dark-accent mx-1" />
+                  <Button
+                    className="size-8"
+                    isIconOnly
+                    icon={<Icons.LargeCross width={14} height={14} />}
+                    onClick={() => setIsDialogOpen(false)}
+                  />
+                </Flex>
+              </Flex>
+              <Flex className="gap-x-4" direction="row" align="center">
+                <CreateSlotDialogIcon />
+                <Flex direction="column" align="start">
+                  <SheetTitle>Добавление слотов</SheetTitle>
+                  <SheetDescription asChild>
+                    <Typography
+                      className="leading-4 font-normal text-gray-accent"
+                      tag="p"
+                    >
+                      Увеличьте количество слотов в аукционе
+                    </Typography>
+                  </SheetDescription>
+                </Flex>
+
+              </Flex>
+
+            </SheetHeader>
+            {/* <Divider /> */}
+            <div className="w-full h-0.25 bg-dark-accent" />
+            {dialogContent}
+          </Flex>
+        </SheetContent>
+      </Sheet>
     )
   }
 
@@ -95,6 +172,7 @@ function CreateSlotsDialog({
       open={isDialogOpen}
       onOpenChange={setIsDialogOpen}
       dismissible={state.isDirty}
+      shouldScaleBackground={false}
     >
       <DrawerTrigger>{trigger}</DrawerTrigger>
       <DrawerContent className="px-4 pb-4" isFullPageHeight={isFullPageHeight}>
@@ -124,69 +202,19 @@ export { CreateSlotsDialog }
  */
 function CreateSlotDialogIcon() {
   return (
-    <div className="h-fit w-fit rounded-small bg-gradient-to-r from-[#1D976C]/30 to-[#93F9B9]/30 p-0.5 outline-2 outline-[#6FCF97]/10">
+    <div className="h-fit w-fit rounded-small bg-green-accent/50 p-0.5 outline-4 outline-green-accent/15">
       <Flex
-        className="relative h-10 w-10 rounded-small border-[0.5px] border-[#93F9B9]/30 p-1.25"
+        className="relative h-9 w-9 rounded-small p-1.25"
         align="center"
         justify="center"
       >
         <Icons.Slots
-          className="absolute bottom-1 left-1"
+          className="text-white-accent"
           width="26"
           height="26"
           gradient
         />
-
-        <Icons.Plus
-          className="absolute top-[2px] right-0"
-          width="16"
-          height="16"
-          strokeWidth={1}
-          gradient
-        />
       </Flex>
     </div>
-  )
-}
-
-type CreateSlotSheetProps = {
-  isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
-  trigger: ReactNode
-  children: ReactNode
-}
-
-function CreateSlotsSheet(props: CreateSlotSheetProps) {
-  const { isOpen, onOpenChange, trigger, children } = props
-
-  return (
-    <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetTrigger>{trigger}</SheetTrigger>
-      <SheetContent>
-        <Flex
-          className="h-full w-full gap-y-4"
-          direction="column"
-          align="center"
-          justify="between"
-        >
-          <SheetHeader className="flex w-full flex-row gap-x-4">
-            <CreateSlotDialogIcon />
-            <Flex direction="column" align="start">
-              <SheetTitle>Добавление слотов</SheetTitle>
-              <SheetDescription asChild>
-                <Typography
-                  className="leading-4 font-normal text-gray-accent"
-                  tag="p"
-                >
-                  Увеличьте количество слотов в аукционе
-                </Typography>
-              </SheetDescription>
-            </Flex>
-          </SheetHeader>
-          <Divider />
-          {children}
-        </Flex>
-      </SheetContent>
-    </Sheet>
   )
 }
