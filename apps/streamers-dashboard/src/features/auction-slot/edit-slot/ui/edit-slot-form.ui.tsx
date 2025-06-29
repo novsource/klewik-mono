@@ -1,105 +1,101 @@
-import { HTMLAttributes } from 'react'
-import {
+import type { TransformedEditSlotFormData } from '../lib'
+import type { EditSlotFormData } from '../model'
+
+import type { ComponentProps, HTMLAttributes } from 'react'
+
+import type {
   Control,
   DefaultValues,
   UseFormReturn,
+} from 'react-hook-form'
+import {
   useController,
   useFormState,
 } from 'react-hook-form'
 
 import { SlotPointsFormInput } from '~features/auction-slot/create-slots/ui/form-fields.ui'
 
-import { auctionSelectors } from '~entities/auction/store'
+import type { AuctionSlot } from '~entities/auction-slot/model'
 
-import {
-  AxiosBaseQueryError,
-  useStoreSelector,
-} from '~shared/lib/redux-toolkit'
-
+import type { AxiosBaseQueryError } from '~shared/lib/redux-toolkit'
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Input } from '~shared/ui/input'
-import {
-  toastErrorNotification,
-  toastSuccessNotification,
-} from '~shared/ui/toaster/lib'
+import { cn } from '~shared/utils'
 
-import { useEditSlotMutation } from '../api'
-import { TransformedEditSlotFormData } from '../lib'
-import type { EditSlotFormData } from '../model'
+import { useEditSlotForm } from '../hooks'
+
+type ControlledEditSlotFormProps = ComponentProps<'form'> & {
+  form: UseFormReturn<
+    EditSlotFormData,
+    unknown,
+    TransformedEditSlotFormData
+  >
+}
+
+export const ControlledEditSlotForm = (props: ControlledEditSlotFormProps) => {
+  const { form, className, ...formProps } = props
+
+  return (
+    <form
+      className={cn('flex h-full w-full flex-col justify-between', className)}
+      {...formProps}
+    >
+      <Flex className="w-full gap-y-6" direction="column" align="stretch">
+        <Flex className="w-full" component="ul" direction="column">
+          <Flex
+            className="h-full w-full gap-y-3 overflow-y-scroll p-1"
+            direction="column"
+          >
+            <EditSlotFormFields control={form.control} />
+          </Flex>
+        </Flex>
+      </Flex>
+    </form>
+  )
+}
 
 type EditSlotsFormStateProps = {
   defaultValues?: DefaultValues<EditSlotFormData>
 }
 
 type EditSlotsFormProps = Omit<HTMLAttributes<HTMLFormElement>, 'onSubmit'> & {
-  slotId: number
+  slot: AuctionSlot
   formMethods: UseFormReturn<
     EditSlotFormData,
     unknown,
     TransformedEditSlotFormData
   >
   onSuccess?: (formData: TransformedEditSlotFormData) => void
-  onError?: () => void
+  onError?: (error: AxiosBaseQueryError) => void
 } & EditSlotsFormStateProps
 
-export const EditSlotForm = ({
-  slotId,
-  formMethods,
-  onError,
-  onSuccess,
-  defaultValues,
-  ...props
-}: EditSlotsFormProps) => {
-  const formState = useFormState({ control: formMethods.control })
+export const EditSlotForm = (props: EditSlotsFormProps) => {
+  const { slot, onError, onSuccess, defaultValues, className, ...formProps } = props
 
-  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
-
-  const [editSlotMutation, { isLoading }] = useEditSlotMutation()
-
-  const submitForm = async (formData: TransformedEditSlotFormData) => {
-    const response = await editSlotMutation({
-      auctionUUID,
-      slot: { id: slotId, ...formData },
-    })
-
-    if (response.error) {
-      const error = response.error as AxiosBaseQueryError
-
-      toastErrorNotification(
-        'Не удалось изменить слот',
-        error.reason || error.message,
-        { position: 'bottom-left' }
-      )
-
-      return onError && onError()
-    }
-
-    toastSuccessNotification('Слот успешно изменен!')
-    onSuccess && onSuccess(formData)
-  }
+  const { submitForm, form, formState, isLoading } = useEditSlotForm(slot, { onSuccess, onError })
 
   const isFieldsChanges = formState.isDirty
 
   return (
     <form
-      className="flex h-full w-full flex-col justify-between"
-      onSubmit={formMethods.handleSubmit(submitForm)}
-      {...props}
+      className={cn('flex h-full w-full flex-col justify-between', className)}
+      onSubmit={form.handleSubmit(submitForm)}
+      {...formProps}
     >
       <Flex className="w-full gap-y-6" direction="column" align="stretch">
-        <Flex className="w-full" component={'ul'} direction={'column'}>
+        <Flex className="w-full" component="ul" direction="column">
           <Flex
             className="h-full w-full gap-y-3 overflow-y-scroll p-1"
             direction="column"
           >
-            <EditSlotFormFields control={formMethods.control} />
+            <EditSlotFormFields control={form.control} />
           </Flex>
         </Flex>
       </Flex>
       <Button
         type="submit"
-        variant={'action'}
+        variant="action"
         className="w-full"
         disabled={isLoading || !isFieldsChanges}
       >
@@ -113,13 +109,13 @@ type EditSlotFormFieldsProps = {
   control: Control<EditSlotFormData, unknown, TransformedEditSlotFormData>
 }
 
-const EditSlotFormFields = ({ control }: EditSlotFormFieldsProps) => {
+function EditSlotFormFields({ control }: EditSlotFormFieldsProps) {
   const formState = useFormState({ control })
 
-  const { field: slotNameField } = useController({ control, name: 'name' })
+  const { field: slotNameField } = useController({ control, name: 'title' })
 
   const getErrorMessageForField = (
-    fieldName: keyof EditSlotFormData
+    fieldName: keyof EditSlotFormData,
   ): string | undefined => {
     if (formState.errors[fieldName]) {
       return formState.errors[fieldName].message
@@ -135,29 +131,10 @@ const EditSlotFormFields = ({ control }: EditSlotFormFieldsProps) => {
         }}
         label={{ id: 'slotTitle', value: 'Новое название' }}
         placeholder="Название слота"
-        errorMessage={getErrorMessageForField('name')}
+        errorMessage={getErrorMessageForField('title')}
         {...slotNameField}
       />
-      {/* <Controller
-        render={({ field }) => (
-          <NumberInput
-            slotClassNames={{
-              base: 'font-golos-f basis-1/3 desktop-lg:basis-1/4',
-              description: 'text-wrap',
-            }}
-            label={{
-              id: 'slotPoints',
-              value: 'Новое количество очков',
-            }}
-            placeholder="Очки"
-            errorMessage={getErrorMessageForField('points')}
-            {...field}
-          />
-        )}
-        control={control}
-        name={'points'}
-      /> */}
-      <SlotPointsFormInput control={control} name={'points'} />
+      <SlotPointsFormInput control={control} name="points" />
     </div>
   )
 }

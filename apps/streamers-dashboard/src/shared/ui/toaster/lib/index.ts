@@ -1,13 +1,2 @@
-import {
-  toastBaseNotification,
-  toastErrorNotification,
-  toastPromiseNotification,
-  toastSuccessNotification,
-} from './toast-variants'
-
-export {
-  toastBaseNotification,
-  toastErrorNotification,
-  toastSuccessNotification,
-  toastPromiseNotification,
-}
+export * from './dismiss-toast'
+export * from './toast-variants'

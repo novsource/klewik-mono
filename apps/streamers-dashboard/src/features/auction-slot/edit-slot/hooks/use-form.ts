@@ -6,18 +6,25 @@ import { useForm, useFormState } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
+import { auctionSelectors } from '~entities/auction/store'
 
+import type { AxiosBaseQueryError } from '~shared/lib/redux-toolkit'
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { formatNumberToIntlString } from '~shared/utils'
 
+import { useEditSlotMutation } from '../api'
 import { transformEditSlotFormData } from '../lib'
 
-type UseEditSlotFormArgs = {
+type UseEditSlotFormOptions = {
   defaultValues?: Pick<AuctionSlot, 'title' | 'points'>
-  target: AuctionSlot
+  onSuccess?: (formData: TransformedEditSlotFormData) => void
+  onError?: (error: AxiosBaseQueryError) => void
 }
 
-const useEditSlotForm = ({ defaultValues, target }: UseEditSlotFormArgs) => {
-  const formMethods = useForm<
+const useEditSlotForm = (target: AuctionSlot, { defaultValues, onError, onSuccess }: UseEditSlotFormOptions) => {
+  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
+
+  const form = useForm<
     EditSlotFormData,
     unknown,
     TransformedEditSlotFormData
@@ -31,9 +38,26 @@ const useEditSlotForm = ({ defaultValues, target }: UseEditSlotFormArgs) => {
     reValidateMode: 'onChange',
   })
 
-  const formState = useFormState({ control: formMethods.control })
+  const formState = useFormState({ control: form.control })
 
-  return { formMethods, formState }
+  const [editSlotMutation, queryState] = useEditSlotMutation()
+
+  const submitForm = async (formData: TransformedEditSlotFormData) => {
+    const response = await editSlotMutation({
+      auctionUUID,
+      slot: { id: target.id, ...formData },
+    })
+
+    if (response.error) {
+      const error = response.error as AxiosBaseQueryError
+
+      return onError && onError(error)
+    }
+
+    onSuccess && onSuccess(formData)
+  }
+
+  return { form, formState, submitForm, ...queryState }
 }
 
 export { useEditSlotForm }

@@ -1,3 +1,3 @@
-import { ResponsiveEditSlotDialogue } from './edit-slot-dialog.ui'
+import { ResponsiveEditSlotDialog } from './edit-slot-dialog.ui'
 
-export { ResponsiveEditSlotDialogue }
+export { ResponsiveEditSlotDialog as ResponsiveEditSlotDialogue }

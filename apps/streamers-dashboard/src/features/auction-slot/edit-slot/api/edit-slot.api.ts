@@ -10,7 +10,7 @@ const editSlotApi = splittedAuctionSlotsApi.injectEndpoints({
   endpoints: builder => ({
     editSlot: builder.mutation<void, EditSlotApiArgs>({
       query: ({ auctionUUID, slot }) => ({
-        url: `/${auctionUUID}/update-slot`,
+        url: `/${auctionUUID}/slots/${slot.id}/update`,
         headers: { 'Content-Type': 'application/json' },
         method: 'POST',
         data: slot,
