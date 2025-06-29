@@ -1,11 +1,15 @@
 import { useRef } from 'react'
+
 import AutoSizer from 'react-virtualized-auto-sizer'
 
-import {
-  ShadowScrollArea,
+import type {
   ShadowScrollAreaProps,
 } from '~shared/ui/shadow-scroll-area'
-import { VirtualList, VirtualListProps } from '~shared/ui/virtual-list'
+import {
+  ShadowScrollArea,
+} from '~shared/ui/shadow-scroll-area'
+import type { VirtualListProps } from '~shared/ui/virtual-list'
+import { VirtualList } from '~shared/ui/virtual-list'
 
 export type ShadowVirtualListProps<
   Element extends HTMLElement,
@@ -19,7 +23,7 @@ const ShadowVirtualList = <
   Element extends HTMLElement,
   ListDataElement = unknown,
 >(
-  props: ShadowVirtualListProps<Element, ListDataElement>
+  props: ShadowVirtualListProps<Element, ListDataElement>,
 ) => {
   const { className, shadowScrollProps, ...virtualListProps } = props
 

@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import * as m from 'motion/react-m'
 
@@ -36,21 +36,18 @@ const AuctionSlotsList = (props: AuctionSlotsListProps) => {
     auctionSlotsSelectors.getSlotsPointsSum,
   )
 
-  const [showedSlots, setShowedSlots] = useState(
-    () => data ?? storedAuctionSlots,
-  )
+  const [showedSlots, setShowedSlots] = useState(data ?? storedAuctionSlots)
 
-  useLayoutEffect(() => {
-    if (data === undefined) {
-      setShowedSlots(storedAuctionSlots)
-    }
-    else {
-      setShowedSlots(data)
-    }
-  }, [storedAuctionSlots, data])
+  if (data !== undefined && showedSlots !== data) {
+    setShowedSlots(data)
+  }
+
+  if (data === undefined && showedSlots !== storedAuctionSlots) {
+    setShowedSlots(storedAuctionSlots)
+  }
 
   const renderAuctionCard = useCallback(
-    (item: AuctionSlot) => {
+    (item: AuctionSlot, index: number) => {
       let percent = ((item.points / storedSlotsPointsSum) * 100).toFixed(2)
 
       if (percent[-1] === '0' && percent[-2] === '0') {
@@ -81,14 +78,16 @@ const AuctionSlotsList = (props: AuctionSlotsListProps) => {
           )
 
       if (disableAnimation) {
-        return <div key={item.name}>{card}</div>
+        return <div key={item.title}>{card}</div>
       }
 
       return (
         <m.div
-          key={item.name}
-          initial={{ scaleY: 0.25, translate: [0, 50, 0] }}
-          animate={{ scaleY: 1, translate: [0, 0, 0] }}
+          layout
+          key={item.title}
+          initial={{ scale: 0, opacity: 1 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.7, opacity: 0 }}
           transition={{ ease: 'easeInOut', duration: 0.35 }}
         >
           {card}

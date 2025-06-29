@@ -1,20 +1,24 @@
-import { MutableRefObject, ReactNode, useEffect, useRef } from 'react'
-
-import {
+import type {
   VirtualItem,
   VirtualizerOptions,
+} from '@tanstack/react-virtual'
+
+import type { MutableRefObject, ReactNode } from 'react'
+import { useEffect, useRef } from 'react'
+
+import {
   useVirtualizer,
 } from '@tanstack/react-virtual'
 
-export type VirtualListSlots =
-  | 'content'
-  | 'contentWrapper'
-  | 'container'
-  | 'item'
+export type VirtualListSlots
+  = | 'content'
+    | 'contentWrapper'
+    | 'container'
+    | 'item'
 
 export type VirtualListProps<
   ListElementType extends Element,
-  ListDataElement extends unknown,
+  ListDataElement,
 > = Omit<
   VirtualizerOptions<HTMLDivElement, ListElementType>,
   | 'count'
@@ -43,9 +47,9 @@ export type VirtualListProps<
 
 const VirtualList = <
   Element extends HTMLElement,
-  ListDataElement extends unknown,
+  ListDataElement,
 >(
-  props: VirtualListProps<Element, ListDataElement>
+  props: VirtualListProps<Element, ListDataElement>,
 ) => {
   const {
     width,
@@ -75,7 +79,7 @@ const VirtualList = <
     if (scrollElementRef) {
       scrollElementRef.current = internalScrollElementRef.current
     }
-  }, [internalScrollElementRef])
+  }, [internalScrollElementRef, scrollElementRef])
 
   return (
     <div
@@ -84,7 +88,7 @@ const VirtualList = <
       className={slotsClassNames?.container}
       style={{
         width: width ?? '100%',
-        height: height,
+        height,
         position: 'relative',
         overflowY: 'auto',
         contain: 'strict',

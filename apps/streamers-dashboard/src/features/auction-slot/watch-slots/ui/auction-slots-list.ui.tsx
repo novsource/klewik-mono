@@ -1,7 +1,9 @@
 import type { VirtualItem } from '@tanstack/react-virtual'
 
 import type { ReactNode } from 'react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
+
+import { AnimatePresence } from 'motion/react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -29,15 +31,28 @@ const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) => {
   const { data, renderCard, className, ...virtualListProps } = props
 
   const storedSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-  const [slots, setSlots] = useState(() => data ?? storedSlots)
+  const [slots, setSlots] = useState(data ?? storedSlots)
 
-  useEffect(() => {
-    if (data === undefined) {
-      return setSlots(storedSlots)
-    }
+  if (data === undefined && slots !== storedSlots) {
+    setSlots(storedSlots)
+  }
 
+  if (slots !== data && data !== undefined) {
     setSlots(data)
-  }, [data, storedSlots, setSlots])
+  }
+
+  const renderVirtualListItem = useCallback(
+    (data: AuctionSlot[], virtualItem: VirtualItem, index: number) => {
+      const slot = data[index]
+
+      if (renderCard) {
+        return renderCard(slot, virtualItem.index)
+      }
+
+      return <AuctionSlotCard {...slot} />
+    },
+    [renderCard],
+  )
 
   if (slots.length === 0) {
     return (
@@ -58,29 +73,18 @@ const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) => {
     )
   }
 
-  const renderVirtualListItem = useCallback(
-    (data: AuctionSlot[], virtualItem: VirtualItem, index: number) => {
-      const slot = data[index]
-
-      if (renderCard) {
-        return renderCard(slot, virtualItem.index)
-      }
-
-      return <AuctionSlotCard {...slot} />
-    },
-    [renderCard],
-  )
-
   return (
     <Flex className={cn('h-full w-full', className)}>
-      <ShadowVirtualList
-        data={slots}
-        slotsClassNames={{ content: 'pb-4' }}
-        overscan={8}
-        {...virtualListProps}
-      >
-        {renderVirtualListItem}
-      </ShadowVirtualList>
+      <AnimatePresence>
+        <ShadowVirtualList
+          data={slots}
+          slotsClassNames={{ content: 'pb-4' }}
+          overscan={8}
+          {...virtualListProps}
+        >
+          {renderVirtualListItem}
+        </ShadowVirtualList>
+      </AnimatePresence>
     </Flex>
   )
 }
