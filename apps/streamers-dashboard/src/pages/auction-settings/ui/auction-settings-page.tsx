@@ -1,7 +1,6 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
-
 import { cn } from '~shared/utils'
 
 import { BaseAuctionSettingsContent } from './base-auction-settings'
@@ -44,14 +43,14 @@ const AuctionSettingsPage = () => {
     >
       <Tabs
         className="dark w-full h-full flex flex-col gap-y-8"
-        defaultValue={'base'}
+        defaultValue="base"
       >
         <TabsList className="dark flex justify-between rounded-large bg-dark w-fit">
           {(
             Object.keys(settingsAreas) as Array<keyof typeof settingsAreas>
-          ).map((area) => (
+          ).map(area => (
             <TabsTrigger
-              className="px-6 flex grow gap-x-1.5 text-md font-medium data-[state=active]:rounded-[8px] cursor-pointer text-gray-light/70 hover:text-gray-light leading-5"
+              className="px-3 tablet:px-4.5 flex grow gap-x-1.5 text-md font-medium data-[state=active]:rounded-[8px] cursor-pointer text-gray-light/70 hover:text-gray-light leading-5"
               value={area}
               key={area}
             >

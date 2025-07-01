@@ -1,9 +1,13 @@
-import { HTMLAttributes, ReactNode, useMemo } from 'react'
+import type {
+  TypographyVariantsProps,
+} from '../styles/typography-variants'
+
+import type { HTMLAttributes, ReactNode } from 'react'
+import { useMemo } from 'react'
 
 import { cn } from '~shared/utils'
 
 import {
-  TypographyVariantsProps,
   typographyVariants,
 } from '../styles/typography-variants'
 
@@ -14,8 +18,8 @@ type TypographyHTMLElements = Pick<HTMLElementTagNameMap, TypographyTags>
 type TypographyProps<T extends keyof TypographyHTMLElements> = {
   tag: T
   children: ReactNode
-} & Omit<TypographyVariantsProps, 'tag'> &
-  HTMLAttributes<TypographyHTMLElements[T]>
+} & Omit<TypographyVariantsProps, 'tag'>
+& HTMLAttributes<TypographyHTMLElements[T]>
 
 const Typography = <T extends keyof TypographyHTMLElements>({
   children,
@@ -27,7 +31,7 @@ const Typography = <T extends keyof TypographyHTMLElements>({
 
   const styles = useMemo(
     () => cn(typographyVariants({ tag }), className),
-    [className, tag]
+    [className, tag],
   )
 
   return (

@@ -32,7 +32,7 @@ const WizardCreateAuctionItem = (
       {...restProps}
     >
       <WizardTrigger type="back">
-        <Button startContent={<Icons.ReturnArrow />}>Назад</Button>
+        <Button startContent={<Icons.Undo size="sm" />} size="sm">Назад</Button>
       </WizardTrigger>
 
       <Flex className="gap-y-2" direction="column">

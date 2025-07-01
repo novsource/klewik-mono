@@ -1,7 +1,8 @@
-import { WheelTabs } from '~widgets/wheel-tabs/ui'
-import { WheelContainer } from '~widgets/wheel/ui'
+import { WheelContainer } from '~entities/wheel/ui'
 
 import { Flex } from '~shared/ui/flex'
+
+import { WheelTabs } from './wheel-tabs'
 
 const AuctionWheelPage = () => {
   return (

@@ -79,16 +79,15 @@ const CreateSlotsForm = (props: CreateSlotsFormProps) => {
 
 export { CreateSlotsForm }
 
-export type ControlledCreateSlotsFormProps = Omit<
-  HTMLAttributes<HTMLFormElement>,
-  'onSubmit'
-> & {
-  form: UseFormReturn<CreateSlotForm, unknown, TransformedCreateSlotsFormData>
-  maxCreatingSlotsCount?: number
-  multiplySlots?: boolean
-  onSuccess?: (formData: TransformedCreateSlotsFormData) => void
-  onError?: () => void
-}
+export type ControlledCreateSlotsFormProps
+  = HTMLAttributes<HTMLFormElement>
+    & {
+      form: UseFormReturn<CreateSlotForm, unknown, TransformedCreateSlotsFormData>
+      maxCreatingSlotsCount?: number
+      multiplySlots?: boolean
+      onSuccess?: (formData: TransformedCreateSlotsFormData) => void
+      onError?: () => void
+    }
 
 const ControlledCreateSlotForm = (props: ControlledCreateSlotsFormProps) => {
   const { form, maxCreatingSlotsCount, multiplySlots, onSuccess, onError, ...formProps } = props
@@ -132,6 +131,12 @@ function SlotsTabs(props: SlotsTabsProps) {
     [state.errors],
   )
 
+  const tabSlotNumber = Number(tabValue.split('-')[1])
+
+  if (fields.length - 1 < tabSlotNumber) {
+    setTabValue(`slot-${fields.length - 1}`)
+  }
+
   const renderFormFields = useCallback(
     (field: (typeof fields)[number], index: number) => {
       return (
@@ -153,13 +158,10 @@ function SlotsTabs(props: SlotsTabsProps) {
           {fields.length > 1 && (
             <Button
               variant="error"
-              startContent={<Icons.Bin className="text-red" size="sm" />}
+              startContent={<Icons.Bin className="text-red" size="xs" />}
               onClick={() => {
                 if (fields.length > 1) {
                   remove(index)
-                  if (index === fields.length - 1) {
-                    setTabValue(`slot-${index - 1}`)
-                  }
                 }
               }}
             >
@@ -175,9 +177,9 @@ function SlotsTabs(props: SlotsTabsProps) {
   return (
     <Tabs
       className="space-y-6 px-0.25"
-      defaultValue={tabValue}
+      defaultValue="slot-0"
       value={tabValue}
-      onValueChange={setTabValue!}
+      onValueChange={value => setTabValue(value as `slot-${number}`)}
     >
       <Flex align="center">
         <TabsList className="flex w-fit justify-between rounded-large bg-dark">
@@ -186,7 +188,7 @@ function SlotsTabs(props: SlotsTabsProps) {
               className={cn(
                 'flex cursor-pointer gap-x-1 text-md font-medium text-gray-light/70 hover:text-gray-light data-[state=active]:rounded-[8px] data-[state=active]:[&_button]:block',
                 checkIsTabHasError(index)
-                && 'text-red/80 hover:text-red data-[state=active]:text-red',
+                && 'text-red/40 hover:text-red/60 data-[state=active]:hover:text-red data-[state=active]:text-red',
               )}
               key={field.id}
               value={`slot-${index}`}

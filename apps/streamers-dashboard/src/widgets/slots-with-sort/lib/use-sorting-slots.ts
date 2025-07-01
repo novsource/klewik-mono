@@ -1,15 +1,14 @@
-import { useLayoutEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
-import { SlotsSortingOptions } from '~shared/store/model'
-
+import type { SlotsSortingOptions } from '~shared/store/model'
 import { deleteAllSpacesFromString } from '~shared/utils/string-format'
 
 const compareSlotsFields = (
   slotOne: AuctionSlot,
   slotTwo: AuctionSlot,
-  options: SlotsSortingOptions<AuctionSlot>
+  options: SlotsSortingOptions<AuctionSlot>,
 ) => {
   const field = options.field as keyof AuctionSlot
   const type = options.type
@@ -17,8 +16,8 @@ const compareSlotsFields = (
   let diff = 0
 
   if (typeof slotOne[field] === 'string') {
-    const slotOneNameFormatted = deleteAllSpacesFromString(slotOne.name.trim())
-    const slotTwoNameFormatted = deleteAllSpacesFromString(slotTwo.name.trim())
+    const slotOneNameFormatted = deleteAllSpacesFromString(slotOne.title.trim())
+    const slotTwoNameFormatted = deleteAllSpacesFromString(slotTwo.title.trim())
 
     diff = slotOneNameFormatted.localeCompare(slotTwoNameFormatted, undefined, {
       sensitivity: 'base',
@@ -41,17 +40,22 @@ const compareSlotsFields = (
 
 const useSortingSlots = (
   slots: AuctionSlot[],
-  options: SlotsSortingOptions<AuctionSlot>
+  options: SlotsSortingOptions<AuctionSlot>,
 ) => {
-  const [sortedSlots, setSortedSlots] = useState(() => slots)
+  const [sortingOptions, setSortingOptions] = useState<NullablePossible<SlotsSortingOptions<AuctionSlot>>>(null)
 
-  useLayoutEffect(() => {
-    setSortedSlots(() =>
-      [...slots].sort((itemOne, itemTwo) =>
-        compareSlotsFields(itemOne, itemTwo, options)
-      )
+  if (sortingOptions !== options) {
+    setSortingOptions(options)
+  }
+
+  const sortedSlots = useMemo(() => {
+    if (sortingOptions === null)
+      return slots
+
+    return [...slots].sort((itemOne, itemTwo) =>
+      compareSlotsFields(itemOne, itemTwo, sortingOptions),
     )
-  }, [options.field, options.type, slots])
+  }, [slots, sortingOptions])
 
   return sortedSlots
 }

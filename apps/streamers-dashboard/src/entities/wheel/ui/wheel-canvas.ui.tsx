@@ -1,8 +1,11 @@
-import {
-  CSSProperties,
+import type {
   ComponentPropsWithoutRef,
+  CSSProperties,
+} from 'react'
+import {
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
 } from 'react'
 
@@ -13,24 +16,27 @@ import {
 } from '~widgets/wheel/utils/wheel-canvas'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
-
 import { WheelEventsBus } from '~entities/wheel/events'
-import { WheelSlot } from '~entities/wheel/model'
+import type { WheelSlot } from '~entities/wheel/model'
 import {
   wheelActions as storeWheelActions,
   wheelSelectors,
 } from '~entities/wheel/store'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
-
 import { Flex } from '~shared/ui/flex'
 
 type WheelCanvasProps = Omit<ComponentPropsWithoutRef<'canvas'>, 'children'>
 
 const WheelCanvas = (props: WheelCanvasProps) => {
+  const storeIsWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
+  const storeSelectorTitle = useStoreSelector(wheelSelectors.getSelectorTargetTitle)
+
   const { spinTime } = useStoreSelector(wheelSelectors.getSettings)
-  const storedSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+
   const wheelActions = useActionCreators(storeWheelActions)
+
+  const storedSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
   const wheelWrapperRef = useRef<HTMLDivElement>(null)
 
@@ -46,35 +52,36 @@ const WheelCanvas = (props: WheelCanvasProps) => {
     wheelRef,
   })
 
+  const actualSlotsWithAngles = useMemo(() => {
+    return updateSlotsAnglesByRotateValue(
+      getItemsWithAngles(storedSlots),
+      wheelRotateCSSValue,
+    )
+  }, [wheelRotateCSSValue, storedSlots])
+
+  if (storedSlots !== actualSlotsWithAngles) {
+    wheelActions.setSlots(actualSlotsWithAngles)
+  }
+
+  if (storeIsWheelSpinning !== isWheelSpinning) {
+    wheelActions.setIsWheelSpinning(isWheelSpinning)
+  }
+
+  if (storeSelectorTitle !== selectorTargetTitle) {
+    wheelActions.setSelectorTitleName(selectorTargetTitle || 'Ожидание прокрутки колеса...')
+  }
+
   useLayoutEffect(() => {
     drawWheel()
+    drawInner()
+    resizeInnerBackground()
 
     const resizeWheelCb = resizeWheel()
 
     return () => {
       resizeWheelCb()
     }
-  }, [drawWheel, resizeWheel])
-
-  useLayoutEffect(() => {
-    drawInner()
-    resizeInnerBackground()
-  }, [drawInner, resizeInnerBackground])
-
-  useEffect(() => {
-    wheelActions.setSelectorTitleName(
-      selectorTargetTitle || 'Ожидание прокрутки колеса...'
-    )
-  }, [selectorTargetTitle])
-
-  useEffect(() => {
-    const slotsWithActualAngles = updateSlotsAnglesByRotateValue(
-      getItemsWithAngles(storedSlots),
-      wheelRotateCSSValue
-    )
-
-    wheelActions.setSlots(slotsWithActualAngles)
-  }, [wheelRotateCSSValue])
+  }, [drawWheel, resizeWheel, drawInner, resizeInnerBackground])
 
   useEffect(() => {
     const callback = (winner: WheelSlot) => {
@@ -83,17 +90,13 @@ const WheelCanvas = (props: WheelCanvasProps) => {
 
     const spinEventUnsubcribe = WheelEventsBus.getInstance().subscribe(
       'spin',
-      callback
+      callback,
     )
 
     return () => {
       spinEventUnsubcribe()
     }
-  }, [spinWheel])
-
-  useEffect(() => {
-    wheelActions.setIsWheelSpinning(isWheelSpinning)
-  }, [isWheelSpinning])
+  }, [spinWheel, spinTime])
 
   return (
     <Flex className="shrink h-full w-full" align="center" justify="center">
@@ -122,7 +125,7 @@ type WheelSelectorProps = {
   style?: CSSProperties
 }
 
-const WheelSelector = (props: WheelSelectorProps) => {
+function WheelSelector(props: WheelSelectorProps) {
   return (
     <svg
       width="29"

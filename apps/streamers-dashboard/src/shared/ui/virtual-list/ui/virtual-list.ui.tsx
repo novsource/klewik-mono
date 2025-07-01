@@ -1,20 +1,25 @@
-import { MutableRefObject, ReactNode, useEffect, useRef } from 'react'
+import type {
+  VirtualItem,
+  Virtualizer,
+  VirtualizerOptions,
+} from '@tanstack/react-virtual'
+
+import type { MutableRefObject, ReactNode } from 'react'
+import { useEffect, useRef } from 'react'
 
 import {
-  VirtualItem,
-  VirtualizerOptions,
   useVirtualizer,
 } from '@tanstack/react-virtual'
 
-export type VirtualListSlots =
-  | 'content'
-  | 'contentWrapper'
-  | 'container'
-  | 'item'
+export type VirtualListSlots
+  = | 'content'
+    | 'contentWrapper'
+    | 'container'
+    | 'item'
 
 export type VirtualListProps<
   ListElementType extends Element,
-  ListDataElement extends unknown,
+  ListDataElement,
 > = Omit<
   VirtualizerOptions<HTMLDivElement, ListElementType>,
   | 'count'
@@ -27,8 +32,9 @@ export type VirtualListProps<
   data: ListDataElement[]
   children: (
     data: ListDataElement[],
-    virtualizedItem: VirtualItem,
-    index: number
+    virtualItem: VirtualItem,
+    index: number,
+    virtualizer: Virtualizer<HTMLDivElement, ListElementType>
   ) => ReactNode
   estimateSize?: (index: number) => number
   slotsClassNames?: Partial<Record<VirtualListSlots, string>>
@@ -43,9 +49,9 @@ export type VirtualListProps<
 
 const VirtualList = <
   Element extends HTMLElement,
-  ListDataElement extends unknown,
+  ListDataElement,
 >(
-  props: VirtualListProps<Element, ListDataElement>
+  props: VirtualListProps<Element, ListDataElement>,
 ) => {
   const {
     width,
@@ -75,7 +81,7 @@ const VirtualList = <
     if (scrollElementRef) {
       scrollElementRef.current = internalScrollElementRef.current
     }
-  }, [internalScrollElementRef])
+  }, [internalScrollElementRef, scrollElementRef])
 
   return (
     <div
@@ -84,7 +90,7 @@ const VirtualList = <
       className={slotsClassNames?.container}
       style={{
         width: width ?? '100%',
-        height: height,
+        height,
         position: 'relative',
         overflowY: 'auto',
         contain: 'strict',
@@ -122,7 +128,7 @@ const VirtualList = <
                 data-index={virtualizedItem.index}
                 style={{ marginTop: virtualizedItem.index !== 0 ? gap : 0 }}
               >
-                {children(data, virtualizedItem, virtualizedItem.index)}
+                {children(data, virtualizedItem, virtualizedItem.index, virtualizer)}
               </div>
             )
           })}

@@ -20,6 +20,7 @@ const SearchInput = memo((props: SearchInputProps) => {
         />
       )}
       placeholder="Поиск по названию слота..."
+      size="sm"
       {...props}
     />
   )

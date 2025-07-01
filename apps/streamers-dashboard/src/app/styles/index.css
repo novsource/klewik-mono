@@ -22,7 +22,7 @@
     --color-dark-foreground: #141315;
     --color-yellow: #cfc56f;
 
-    --color-red: #ff746c;
+    --color-red: #F76B63;
 
     --color-gray: #5d5d5d;
     --color-gray-light: #818181;
@@ -113,6 +113,11 @@
     --spacing-4xl: 1.5rem;
 
     --border-width-1: 1px;
+
+    --dialog-width-desktop: var(--dialog-width-desktop);
+    --dialog-width-laptop: var(--dialog-width-laptop);
+
+    --tabs-inner-padding: var(--tabs-inner-padding);
 
     @keyframes horizontal-shaking {
         0%,
@@ -262,9 +267,14 @@
         -moz-osx-font-smoothing: grayscale;
 
         --header-height: 60px;
-        --footer-height: 52px;
+        --footer-height: 64px;
         --mobile-menu-bottom: 16px;
         --sheet-height: calc(100% - 20px);
+
+        --dialog-width-desktop: 550px;
+        --dialog-width-laptop: 500px;
+
+        --tabs-inner-padding: 4px;
 
         --background: 0 0% 100%;
         --foreground: 240 10% 3.9%;
@@ -329,7 +339,7 @@
     }
 
     #root {
-        @apply relative h-full w-full;
+        @apply relative h-full w-full overflow-hidden;
     }
 
     body {
@@ -383,12 +393,17 @@
         height: 100%;
         max-height: calc(100% - var(--header-height));
         overflow: hidden;
+
+        @media screen and (max-width: 1024px) {
+            max-height: calc(100% - var(--header-height) - var(--footer-height));
+        }
     }
 
     .border-divider {
         border: none;
         border-bottom: 3px dotted var(--color-dark-accent);
     }
+
 
     @container slider (300px <= height <= 768px) {
         .slider-content {
@@ -440,6 +455,11 @@
 
     .sheet-shadow {
         /* box-shadow: -1px 2px 8px 2px rgba(20, 19, 21, 0.4); */
-        box-shadow: -10px 2px 8px 2px rgba(20, 19, 21, 0.4);
+        /* box-shadow: -10px 2px 8px 2px rgba(20, 19, 21, 0.4); */
+        box-shadow: -6px 4px 12px 1px rgba(0, 0, 0, 0.4);
+    }
+
+    .toast-dialog__open {
+        righ
     }
 }

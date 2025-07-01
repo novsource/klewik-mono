@@ -11,12 +11,11 @@ const deleteSlotApi = splittedAuctionSlotsApi.injectEndpoints({
   endpoints: builder => ({
     deleteSlot: builder.mutation<void, DeleteSlotRequestArgs>({
       query: ({ auctionUUID, slotId }) => ({
-        url: `/${auctionUUID}/delete-slot`,
-        data: { id: slotId },
+        url: `/${auctionUUID}/slots/${slotId}`,
         headers: {
           'Content-Type': 'application/json',
         },
-        method: 'POST',
+        method: 'DELETE',
       }),
     }),
   }),

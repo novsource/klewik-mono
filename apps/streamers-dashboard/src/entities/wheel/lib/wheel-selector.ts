@@ -18,7 +18,7 @@ export const getSelectorPath2D = (selectorCanvas: HTMLCanvasElement) => {
     selectorX,
     selectorY - selectorHeight,
     selectorX,
-    selectorY
+    selectorY,
   )
 
   strokeGradient.addColorStop(0.075, '#6FCF97')
@@ -35,21 +35,21 @@ export const getSelectorPath2D = (selectorCanvas: HTMLCanvasElement) => {
     selectorY,
     selectorX - selectorWidth / 4,
     selectorY - selectorHeight / 2,
-    4
+    4,
   )
   selectorPath.arcTo(
     selectorX,
     selectorY - selectorHeight,
     selectorX + selectorWidth / 4,
     selectorY - selectorHeight / 2,
-    4
+    4,
   )
   selectorPath.arcTo(
     selectorX + selectorWidth / 2,
     selectorY,
     selectorX,
     selectorY,
-    4
+    4,
   )
 
   ctx.fill(selectorPath)
@@ -74,32 +74,21 @@ export const drawSelector = (selectorCanvas: HTMLCanvasElement) => {
 
   ctx.save()
 
-  // Draw circle those wrapping image in wheel center
-
-  // ctx.beginPath()
-  // ctx.arc(center, center, radius * wheelImageSize, 0, 2 * Math.PI)
-  // ctx.closePath()
-
-  // ctx.fill()
-
   ctx.restore()
 
   ctx.save()
-
-  // Draw selector
 
   const selectorWidth = Math.min(30, selectorCanvas.clientWidth * 0.045)
   const selectorHeight = Math.min(80, selectorCanvas.clientHeight * 0.03)
 
   const selectorX = center
   const selectorY = radius * 0.05 + selectorHeight
-  // const selectorY = center - (selectorCanvas.width * wheelImageSize) / 2
 
   const strokeGradient = ctx.createLinearGradient(
     selectorX,
     selectorY - selectorHeight,
     selectorX,
-    selectorY
+    selectorY,
   )
 
   strokeGradient.addColorStop(0.075, '#6FCF97')
@@ -117,14 +106,14 @@ export const drawSelector = (selectorCanvas: HTMLCanvasElement) => {
     selectorY,
     selectorX - selectorWidth / 4,
     selectorY - selectorHeight / 2,
-    3
+    3,
   )
   ctx.arcTo(
     selectorX,
     selectorY - selectorHeight,
     selectorX + selectorWidth / 4,
     selectorY - selectorHeight / 2,
-    3
+    3,
   )
   ctx.arcTo(selectorX + selectorWidth / 2, selectorY, selectorX, selectorY, 3)
   ctx.closePath()

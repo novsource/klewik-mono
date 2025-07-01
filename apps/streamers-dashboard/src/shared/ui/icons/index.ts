@@ -45,7 +45,9 @@ import { default as PointsSum } from './PointsSum';
 import { default as Preferences } from './Preferences';
 import { default as Programming } from './Programming';
 import { default as Refresh } from './Refresh';
+import { default as Reset } from './Reset';
 import { default as ReturnArrow } from './ReturnArrow';
+import { default as Save } from './Save';
 import { default as Settings } from './Settings';
 import { default as Signpost } from './Signpost';
 import { default as Slots } from './Slots';
@@ -115,7 +117,9 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Preferences,
   Programming,
   Refresh,
+  Reset,
   ReturnArrow,
+  Save,
   Settings,
   Signpost,
   Slots,

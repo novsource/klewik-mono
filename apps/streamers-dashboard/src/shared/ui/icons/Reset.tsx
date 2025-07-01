@@ -10,12 +10,12 @@ const sizes: Record<Sizes, number> = {
   default: 21,
   lg: 24
 };
-const SvgSort = (props: IconsProps) => {
+const SvgReset = (props: IconsProps) => {
   props = {
     ...props,
     width: props.size ? sizes[props.size] : props.width ?? sizes['default'],
     height: props.size ? sizes[props.size] : props.height ?? sizes['default']
   };
-  return <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M2.75 7a.75.75 0 0 1 .75-.75h17a.75.75 0 0 1 0 1.5h-17A.75.75 0 0 1 2.75 7M5.25 12a.75.75 0 0 1 .75-.75h12a.75.75 0 0 1 0 1.5H6a.75.75 0 0 1-.75-.75M7.75 17a.75.75 0 0 1 .75-.75h7a.75.75 0 0 1 0 1.5h-7a.75.75 0 0 1-.75-.75" /></svg>;
+  return <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M18.258 3.508a.75.75 0 0 1 .463.693v4.243a.75.75 0 0 1-.75.75h-4.243a.75.75 0 0 1-.53-1.28L14.8 6.31a7.25 7.25 0 1 0 4.393 5.783.75.75 0 0 1 1.488-.187A8.75 8.75 0 1 1 15.93 5.18l1.51-1.51a.75.75 0 0 1 .817-.162" /></svg>;
 };
-export default SvgSort;
+export default SvgReset;

@@ -1,13 +1,14 @@
-import { RefObject, useCallback, useState } from 'react'
+import type { RefObject } from 'react'
+import { useCallback, useState } from 'react'
 
 import { animate, useMotionValue } from 'motion/react'
 
-import { WheelSlot } from '~entities/wheel/model'
+import type { WheelSlot } from '~entities/wheel/model'
 
 import {
   calculateRotateWheelCSSValue,
   getSlotNameOnSelector,
-} from './wheel-canvas'
+} from '../utils/wheel-canvas'
 
 type WheelControlCallbacks = {
   onSpinStart: (winner: WheelSlot) => void
@@ -20,16 +21,16 @@ type WheelControlOptions = Partial<WheelControlCallbacks> & {
 
 export const useWheelControl = (
   wheelSlots: WheelSlot[],
-  { wheelRef, onSpinStart, onSpinComplete }: WheelControlOptions
+  { wheelRef, onSpinStart, onSpinComplete }: WheelControlOptions,
 ) => {
   const [selectorTargetTitle, setSelectorTargetTitle] = useState<string | null>(
-    null
+    null,
   )
   const [isWheelSpinning, setIsWheelSpinning] = useState(false)
   const framerMotionAnimationValue = useMotionValue(0)
 
   const [wheelRotateCSSValue, setWheelRotateCSSValue] = useState(() =>
-    framerMotionAnimationValue.get()
+    framerMotionAnimationValue.get(),
   )
 
   const rotateWheelAnimation = useCallback(
@@ -37,8 +38,8 @@ export const useWheelControl = (
       if (wheelRef.current) {
         const wheel = wheelRef.current
 
-        const targetRotateCSSValue =
-          wheelRotateCSSValue + calculateRotateWheelCSSValue(winner)
+        const targetRotateCSSValue
+          = wheelRotateCSSValue + calculateRotateWheelCSSValue(winner)
 
         animate(framerMotionAnimationValue, targetRotateCSSValue, {
           visualDuration: spinTime,
@@ -74,7 +75,7 @@ export const useWheelControl = (
       framerMotionAnimationValue,
       wheelRotateCSSValue,
       wheelSlots,
-    ]
+    ],
   )
 
   const spinWheel = (wheelWinner: WheelSlot, spinTime: number) => {

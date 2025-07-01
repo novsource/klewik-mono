@@ -1,8 +1,8 @@
 import { useCallback, useRef } from 'react'
 
-const useDebouncedCallback = <Args extends unknown>(
+const useDebouncedCallback = <Args>(
   callback: (...args: Args[]) => void,
-  ms: number
+  ms: number,
 ) => {
   const timerRef = useRef<NullablePossible<NodeJS.Timeout>>(null)
 
@@ -19,7 +19,7 @@ const useDebouncedCallback = <Args extends unknown>(
         return callback(...args)
       }, ms)
     },
-    [callback, timerRef.current, ms]
+    [callback, timerRef, ms],
   )
 
   return debouncedCallback

@@ -14,12 +14,8 @@ import type { WheelSlot } from '~entities/wheel/model'
 import { getMaxSizeCanvas, resizeCanvasWithRatio } from '~shared/utils/canvas'
 import { getHEXColor } from '~shared/utils/colors'
 
+import { drawEmptyWheel, drawSlicesItems } from '../utils/wheel-canvas'
 import { useWheelSelector } from './use-wheel-selector'
-import { drawEmptyWheel, drawSlicesItems } from './wheel-canvas'
-
-type WheelInitOptions = {
-  isFullScreen?: boolean
-}
 
 type WheelInit = {
   refs: {
@@ -39,7 +35,6 @@ type WheelInit = {
 
 export const useWheelInit = (
   items: AuctionSlot[] | WheelSlot[],
-  { isFullScreen = false }: WheelInitOptions,
 ): WheelInit => {
   const [wheelSize, setWheelSize] = useState(0)
 
