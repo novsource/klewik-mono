@@ -8,7 +8,7 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { TabsContent } from '~shared/ui/tabs'
 
-import { TABS_CONTENT_NAMES } from '../constants'
+import { TABS_CONTENT_NAMES } from '../../constants'
 
 const SlotsWheelTab = () => {
   const slots = useStoreSelector(auctionSlotsSelectors.getSlots)

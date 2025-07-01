@@ -4,7 +4,7 @@ import { SpinWheelButton } from '~features/wheel/spin-wheel/ui'
 import { Flex } from '~shared/ui/flex'
 import { TabsContent } from '~shared/ui/tabs'
 
-import { TABS_CONTENT_NAMES } from '../constants'
+import { TABS_CONTENT_NAMES } from '../../constants'
 
 const ControlWheelTab = () => {
   return (
