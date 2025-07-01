@@ -82,8 +82,8 @@ export const buttonVariants = cva<ButtonVariants>(
       isIconOnly: false,
     },
     compoundVariants: [
-      { isIconOnly: true, size: 'default', className: 'px-2 py-2' },
-      { isIconOnly: true, size: 'sm', className: 'h-8 px-2.5' },
+      { isIconOnly: true, size: 'default', className: 'size-10' },
+      { isIconOnly: true, size: 'sm', className: 'size-9 px-2 py-2' },
     ],
   },
 )

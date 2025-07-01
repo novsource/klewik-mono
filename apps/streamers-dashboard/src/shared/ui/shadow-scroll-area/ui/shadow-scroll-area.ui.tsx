@@ -90,6 +90,10 @@ const ShadowScrollArea = forwardRef<
     if (!forwardRef)
       return
 
+    if (typeof forwardRef === 'function') {
+      internalScrollElementRef.current = forwardRef(internalScrollElementRef)
+    }
+
     if (typeof forwardRef !== 'function' && typeof forwardRef !== 'string') {
       internalScrollElementRef.current = forwardRef.current
     }
@@ -113,27 +117,25 @@ const ShadowScrollArea = forwardRef<
     const contentAreaElement
       = externalContentRef?.current ?? internalContentAreaRef.current
 
-    if (!contentAreaElement || !scrollElement)
+    const [entry] = entries
+
+    if (!contentAreaElement || !scrollElement || !entry)
       return
 
-    for (const entry of entries) {
-      if (entry.target === contentAreaElement) {
-        const scrollValue = scrollYValue + scrollElement.clientHeight
+    const scrollValue = scrollYValue + scrollElement.clientHeight
 
-        const newScrollYProgress
+    const newScrollYProgress
           = scrollValue / contentAreaElement.scrollHeight >= 1
             ? 1
             : scrollValue / contentAreaElement.scrollHeight
 
-        if (scrollYProgress !== 0)
-          setScrollYProgress(newScrollYProgress)
-      }
+    if (scrollYProgress !== 0)
+      setScrollYProgress(newScrollYProgress)
 
-      if (entry.target.scrollHeight < scrollElement.clientHeight) {
-        setScrollYProgress(0)
-        setScrollYValue(0)
-        setIsShadowAnimated({ topShadow: false, bottomShadow: false })
-      }
+    if (entry.target.scrollHeight < scrollElement.clientHeight) {
+      setScrollYProgress(0)
+      setScrollYValue(0)
+      setIsShadowAnimated({ topShadow: false, bottomShadow: false })
     }
   }, [
     entries,

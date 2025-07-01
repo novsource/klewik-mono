@@ -1,6 +1,6 @@
-import { z } from 'zod'
+import type { z } from 'zod'
 
-import { DonationSchema, ProcessedDonationSchema } from './donation.contracts'
+import type { DonationSchema, ProcessedDonationSchema } from './donation.contracts'
 
 type Donation = z.infer<typeof DonationSchema>
 
@@ -8,13 +8,13 @@ type ProcessedDonation = z.infer<typeof ProcessedDonationSchema>
 
 type DonationSources = 'donationAlerts' | 'donatePay' | 'twitch' | 'userInput'
 
-type ProcessedDonationStatus =
-  | 'added'
-  | 'checkRequested'
-  | 'error'
-  | 'empty'
-  | 'rejected'
-  | 'inProgress'
+type ProcessedDonationStatus
+  = | 'added'
+    | 'checkRequested'
+    | 'error'
+    | 'empty'
+    | 'rejected'
+    | 'inProgress'
 
 type ProcessedDonationAction = 'createSlot' | 'updateSlot' | 'noAction'
 
@@ -37,14 +37,14 @@ type UserCustomDonation = Omit<ProcessedDonation, 'source'> & {
 }
 
 export type {
-  Donation,
-  TwitchDonation,
-  DonationSources,
-  ProcessedDonationStatus,
-  ProcessedDonationAction,
-  DonationMessageType,
-  UserCustomDonation,
-  DonationAlertsDonation,
   DonatePayDonation,
+  Donation,
+  DonationAlertsDonation,
+  DonationMessageType,
+  DonationSources,
   ProcessedDonation,
+  ProcessedDonationAction,
+  ProcessedDonationStatus,
+  TwitchDonation,
+  UserCustomDonation,
 }

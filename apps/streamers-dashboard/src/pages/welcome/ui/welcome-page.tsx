@@ -5,7 +5,6 @@ import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
 import { Wizard } from '~shared/ui/wizard'
-
 import { cn } from '~shared/utils'
 
 import {
@@ -22,9 +21,9 @@ import {
   WizardWelcomeItem,
 } from './wizard-content'
 
-const IS_CLOVER_CAN_BE_SAFEFULLY_RENDERED =
-  !!HTMLCanvasElement.prototype.transferControlToOffscreen &&
-  !navigator.userAgent.includes('Firefox')
+const IS_CLOVER_CAN_BE_SAFEFULLY_RENDERED
+  = !!HTMLCanvasElement.prototype.transferControlToOffscreen
+    && !navigator.userAgent.includes('Firefox')
 
 const WelcomePage = () => {
   return (
@@ -33,9 +32,9 @@ const WelcomePage = () => {
         <div
           className={cn(
             'container mx-auto h-full grow landtop:min-w-[450px]',
-            IS_CLOVER_CAN_BE_SAFEFULLY_RENDERED &&
-              'max-w-[650px] basis-1/4 landtop:basis-1/5',
-            !IS_CLOVER_CAN_BE_SAFEFULLY_RENDERED && 'max-w-[1200px]'
+            IS_CLOVER_CAN_BE_SAFEFULLY_RENDERED
+            && 'max-w-[650px] basis-1/4 landtop:basis-1/5',
+            !IS_CLOVER_CAN_BE_SAFEFULLY_RENDERED && 'max-w-[1200px]',
           )}
         >
           <div className="h-full w-full px-5 desktop:px-8 desktop-lg:px-10">
@@ -49,9 +48,10 @@ const WelcomePage = () => {
                 </Button>
               </div>
 
-              <div className="relative h-full w-full overflow-scroll">
+              <div className="h-full w-full">
+
                 <Wizard
-                  className="flex h-full w-full items-center justify-center px-0.5"
+                  className="relative h-full w-full px-0.5"
                   wizardMap={welcomePageWizardMap}
                   initialStepId={WELCOME_PAGE_WIZARD_ITEMS_IDS.WELCOME}
                 >
@@ -63,6 +63,7 @@ const WelcomePage = () => {
                   <WizardAuctionParametersItem />
                   <WizardSuccessCreatedItem />
                 </Wizard>
+
               </div>
 
               <div className="py-4">

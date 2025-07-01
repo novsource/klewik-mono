@@ -158,7 +158,7 @@ function SlotsTabs(props: SlotsTabsProps) {
           {fields.length > 1 && (
             <Button
               variant="error"
-              startContent={<Icons.Bin className="text-red" size="sm" />}
+              startContent={<Icons.Bin className="text-red" size="xs" />}
               onClick={() => {
                 if (fields.length > 1) {
                   remove(index)
@@ -188,7 +188,7 @@ function SlotsTabs(props: SlotsTabsProps) {
               className={cn(
                 'flex cursor-pointer gap-x-1 text-md font-medium text-gray-light/70 hover:text-gray-light data-[state=active]:rounded-[8px] data-[state=active]:[&_button]:block',
                 checkIsTabHasError(index)
-                && 'text-red/80 hover:text-red data-[state=active]:text-red',
+                && 'text-red/40 hover:text-red/60 data-[state=active]:hover:text-red data-[state=active]:text-red',
               )}
               key={field.id}
               value={`slot-${index}`}

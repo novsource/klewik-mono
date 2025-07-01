@@ -1,5 +1,6 @@
 import type {
   VirtualItem,
+  Virtualizer,
   VirtualizerOptions,
 } from '@tanstack/react-virtual'
 
@@ -31,8 +32,9 @@ export type VirtualListProps<
   data: ListDataElement[]
   children: (
     data: ListDataElement[],
-    virtualizedItem: VirtualItem,
-    index: number
+    virtualItem: VirtualItem,
+    index: number,
+    virtualizer: Virtualizer<HTMLDivElement, ListElementType>
   ) => ReactNode
   estimateSize?: (index: number) => number
   slotsClassNames?: Partial<Record<VirtualListSlots, string>>
@@ -126,7 +128,7 @@ const VirtualList = <
                 data-index={virtualizedItem.index}
                 style={{ marginTop: virtualizedItem.index !== 0 ? gap : 0 }}
               >
-                {children(data, virtualizedItem, virtualizedItem.index)}
+                {children(data, virtualizedItem, virtualizedItem.index, virtualizer)}
               </div>
             )
           })}

@@ -1,12 +1,12 @@
-import { z } from 'zod'
-
-import { zodEnum } from '~shared/lib/zod'
-
-import {
+import type {
   DonationMessageType,
   ProcessedDonationAction,
   ProcessedDonationStatus,
 } from './donation.types'
+
+import { z } from 'zod'
+
+import { zodEnum } from '~shared/lib/zod'
 
 const processedDonationStatuses = [
   'added',
@@ -45,18 +45,18 @@ const DonationSchema = z.object({
 
 const ProcessedDonationSchema = DonationSchema.extend({
   processedAction: z.enum(
-    zodEnum<ProcessedDonationAction>(processedDonationAction)
+    zodEnum<ProcessedDonationAction>(processedDonationAction),
   ),
   processedSlotsIds: z.number().array().nullable(),
   processedStatus: z.enum(
-    zodEnum<ProcessedDonationStatus>(processedDonationStatuses)
+    zodEnum<ProcessedDonationStatus>(processedDonationStatuses),
   ),
 })
 
 export {
-  DonationSchema,
-  ProcessedDonationSchema,
-  processedDonationAction,
-  processedDonationStatuses,
   donationMessageTypes,
+  DonationSchema,
+  processedDonationAction,
+  ProcessedDonationSchema,
+  processedDonationStatuses,
 }
