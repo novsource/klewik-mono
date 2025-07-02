@@ -22,7 +22,7 @@
     --color-dark-foreground: #141315;
     --color-yellow: #cfc56f;
 
-    --color-red: #F76B63;
+    --color-red: #f76b63;
 
     --color-gray: #5d5d5d;
     --color-gray-light: #818181;
@@ -33,34 +33,6 @@
     --color-orange: #f58c08;
 
     --color-transparent: rgba(255, 255, 255, 0);
-
-    /* --color-background: hsl(var(--background));
-    --color-foreground: hsl(var(--foreground));
-
-    --color-card: hsl(var(--card));
-    --color-card-foreground: hsl(var(--card-foreground));
-
-    --color-popover: hsl(var(--popover));
-    --color-popover-foreground: hsl(var(--popover-foreground));
-
-    --color-primary: hsl(var(--primary));
-    --color-primary-foreground: hsl(var(--primary-foreground));
-
-    --color-secondary: hsl(var(--secondary));
-    --color-secondary-foreground: hsl(var(--secondary-foreground));
-
-    --color-muted: hsl(var(--muted));
-    --color-muted-foreground: hsl(var(--muted-foreground));
-
-    --color-accent: hsl(var(--accent));
-    --color-accent-foreground: hsl(var(--accent-foreground));
-
-    --color-destructive: hsl(var(--destructive));
-    --color-destructive-foreground: hsl(var(--destructive-foreground));
-
-    --color-border: hsl(var(--border));
-    --color-input: hsl(var(--input));
-    --color-ring: hsl(var(--ring)); */
 
     --text-*: initial;
     --text-xs: 0.56rem;
@@ -105,7 +77,11 @@
 
     --height-sheet: var(--sheet-height);
     --height-footer: var(--footer-height);
+    --height-header: var(--header-height);
     --mobile-menu-bottom: calc(var(--mobile-menu-bottom)+var(--footer-height));
+
+    --grid-template-rows-dashboard-mobile: max-content 1fr max-content;
+    --grid-template-rows-dashboard-desktop: max-content 1fr;
 
     --grid-template-rows-slots-desktop: max(40px) 1fr;
     --grid-template-rows-slots-table: minmax(40px, 42px) 1fr;
@@ -368,10 +344,6 @@
         animation-name: onAutoFillCancel;
     }
 
-    footer {
-        height: var(--footer-height);
-    }
-
     section > header {
         height: auto;
     }
@@ -391,19 +363,18 @@
         position: relative;
         width: 100%;
         height: 100%;
-        max-height: calc(100% - var(--header-height));
+        /* max-height: calc(100% - var(--header-height)); */
         overflow: hidden;
 
-        @media screen and (max-width: 1024px) {
+        /* @media screen and (max-width: 1024px) {
             max-height: calc(100% - var(--header-height) - var(--footer-height));
-        }
+        } */
     }
 
     .border-divider {
         border: none;
         border-bottom: 3px dotted var(--color-dark-accent);
     }
-
 
     @container slider (300px <= height <= 768px) {
         .slider-content {
@@ -457,9 +428,5 @@
         /* box-shadow: -1px 2px 8px 2px rgba(20, 19, 21, 0.4); */
         /* box-shadow: -10px 2px 8px 2px rgba(20, 19, 21, 0.4); */
         box-shadow: -6px 4px 12px 1px rgba(0, 0, 0, 0.4);
-    }
-
-    .toast-dialog__open {
-        righ
     }
 }

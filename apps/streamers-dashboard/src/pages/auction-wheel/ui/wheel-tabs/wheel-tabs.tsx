@@ -1,40 +1,52 @@
+import type { TabsProps } from '@radix-ui/react-tabs'
+
 import { useMemo } from 'react'
 
-import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
+import { TABS_CONTENT_NAMES } from '~pages/auction-wheel/constants'
+import type { WheelTabsStylesSlots } from '~pages/auction-wheel/styles'
+import { wheelTabsStyles } from '~pages/auction-wheel/styles'
 
-import { TABS_CONTENT_NAMES } from '../constants'
+import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
+import { twSlotsStyles } from '~shared/utils'
+
 import { ControlWheelTab } from './wheel-tab-control'
 import { SlotsWheelTab } from './wheel-tab-slots'
 
-const triggersWithIcons = {
-  control: {
-    title: 'Управление',
-  },
-  slots: {
-    title: 'Слоты',
-  },
+const triggersNames = {
+  control: 'Управление',
+  slots: 'Слоты',
+} as const
+
+type WheelTabsProps = Omit<TabsProps, 'className'> & {
+  slotsClassnames?: Partial<Record<WheelTabsStylesSlots, string>>
 }
 
-const WheelTabs = () => {
+const WheelTabs = (props: WheelTabsProps) => {
+  const { slotsClassnames, ...tabsProps } = props
+
+  const tabsStyles = useMemo(() => twSlotsStyles(wheelTabsStyles, slotsClassnames), [slotsClassnames])
+
   const tabsTriggers = useMemo(() => {
     return (
-      Object.keys(triggersWithIcons) as Array<keyof typeof triggersWithIcons>
-    ).map((item) => (
+      Object.keys(triggersNames) as Array<keyof typeof triggersNames>
+    ).map(item => (
       <TabsTrigger
-        key={triggersWithIcons[item].title}
+        key={triggersNames[item]}
+        className={tabsStyles.tabTrigger}
         value={item.toLowerCase()}
-        className="flex grow cursor-pointer gap-x-2 text-md font-medium text-gray-light/70 hover:text-gray-light data-[state=active]:rounded-[8px]"
       >
-        {triggersWithIcons[item].title}
+        {triggersNames[item]}
       </TabsTrigger>
     ))
-  }, [])
+  }, [tabsStyles])
+
   return (
     <Tabs
-      className="flex h-full flex-col"
+      className={tabsStyles.base}
       defaultValue={TABS_CONTENT_NAMES.CONTROL}
+      {...tabsProps}
     >
-      <TabsList className="dark flex w-full justify-between rounded-large bg-dark">
+      <TabsList className={tabsStyles.tabList}>
         {tabsTriggers}
       </TabsList>
       <ControlWheelTab />

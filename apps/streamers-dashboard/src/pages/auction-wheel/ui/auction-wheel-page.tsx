@@ -1,15 +1,17 @@
 import { WheelContainer } from '~entities/wheel/ui'
 
 import { Flex } from '~shared/ui/flex'
+import { cn } from '~shared/utils'
 
+import { auctionWheelPageStyles } from '../styles'
 import { WheelTabs } from './wheel-tabs'
 
 const AuctionWheelPage = () => {
   return (
-    <div className="h-full desktop:max-w-[1950px] desktop-lg:max-w-[2150px] mx-auto pt-5">
-      <Flex className="shrink w-full h-full">
+    <div className={cn(auctionWheelPageStyles.pageWrapper)}>
+      <Flex className={cn(auctionWheelPageStyles.wheelWrapper)}>
         <WheelContainer />
-        <div className="h-full basis-[30%] tablet:basis-[50%] landtop:basis-[40%] desktop-lg:basis-[35%] max-tablet:hidden">
+        <div className={cn(auctionWheelPageStyles.wheelTabsWrapper)}>
           <WheelTabs />
         </div>
       </Flex>
