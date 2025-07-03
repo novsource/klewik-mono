@@ -1,7 +1,6 @@
-import { NonIndexRouteObject } from 'react-router-dom'
+import type { NonIndexRouteObject } from 'react-router-dom'
 
 import { lazyLoadModule } from '~shared/lib/react-router-dom'
-
 import { AnimatedRoute } from '~shared/router'
 
 import { AuctionSlotsPage } from '../ui'
@@ -16,7 +15,7 @@ type AuctionSlotsRouteProps = Partial<
 const AUCTION_SLOTS_ROUTE_PATH = 'slots'
 
 export const auctionSlotsPageRoute = (
-  options?: AuctionSlotsRouteProps
+  options?: AuctionSlotsRouteProps,
 ): NonIndexRouteObject => {
   if (options?.enableLazyLoading) {
     return {
@@ -28,13 +27,15 @@ export const auctionSlotsPageRoute = (
 
   return {
     path: AUCTION_SLOTS_ROUTE_PATH,
-    element: options?.disableTransition ? (
-      <AuctionSlotsPage />
-    ) : (
-      <AnimatedRoute>
-        <AuctionSlotsPage />
-      </AnimatedRoute>
-    ),
+    element: options?.disableTransition
+      ? (
+          <AuctionSlotsPage />
+        )
+      : (
+          <AnimatedRoute>
+            <AuctionSlotsPage />
+          </AnimatedRoute>
+        ),
     ...options,
   }
 }
