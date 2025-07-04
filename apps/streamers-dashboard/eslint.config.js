@@ -10,9 +10,105 @@ const perfectionistFSDImportsGroups = [
   'app',
   'pages',
   'widgets',
-  'features',
-  'entities',
-  'shared',
+  'features:auction',
+  'features:auction-slot',
+  'features:donations',
+  'features:integrations',
+  'features:wheel',
+  'entities:auction',
+  'entities:auction-slot',
+  'entities:donation',
+  'entities:integrations',
+  'entities:wheel',
+  'shared:api',
+  'shared:constants',
+  'shared:hooks',
+  'shared:lib',
+  'shared:router',
+  'shared:store',
+  'shared:ui',
+  'shared:utils',
+]
+
+const perfectionistFSDImportsFeaturesSlice = [
+  {
+    groupName: 'features:auction',
+    elementNamePattern: ['^~features/auction'],
+  },
+  {
+    groupName: 'features:auction-slot',
+    elementNamePattern: ['^~features/auction-slot'],
+  },
+  {
+    groupName: 'features:donations',
+    elementNamePattern: ['^~features/donations'],
+  },
+  {
+    groupName: 'features:integrations',
+    elementNamePattern: ['^~features/integrations'],
+  },
+  {
+    groupName: 'features:wheel',
+    elementNamePattern: ['^~features/wheel'],
+  },
+]
+
+const perfectionistFSDImportsEntitiesSlice = [
+  {
+    groupName: 'entities:auction',
+    elementNamePattern: ['^~entities/auction'],
+  },
+  {
+    groupName: 'entities:auction-slot',
+    elementNamePattern: ['^~entities/auction-slot'],
+  },
+  {
+    groupName: 'entities:donation',
+    elementNamePattern: ['^~entities/donation'],
+  },
+  {
+    groupName: 'entities:integrations',
+    elementNamePattern: ['^~entities/integrations'],
+  },
+  {
+    groupName: 'entities:wheel',
+    elementNamePattern: ['^~entities/wheel'],
+  },
+]
+
+const perfectionistFSDImportsSharedSlice = [
+  {
+    groupName: 'shared:api',
+    elementNamePattern: ['^~shared/api'],
+  },
+  {
+    groupName: 'shared:constants',
+    elementNamePattern: ['^~shared/constants'],
+  },
+  {
+    groupName: 'shared:hooks',
+    elementNamePattern: ['^~shared/hooks'],
+  },
+  {
+    groupName: 'shared:lib',
+    elementNamePattern: ['^~shared/lib'],
+  },
+  {
+    groupName: 'shared:router',
+    elementNamePattern: ['^~shared/router'],
+  },
+  {
+    groupName: 'shared:store',
+    elementNamePattern: ['^~shared/store'],
+  },
+  {
+    groupName: 'shared:ui',
+    elementNamePattern: ['^~shared/ui'],
+  },
+  {
+    groupName: 'shared:utils',
+    elementNamePattern: ['^~shared/utils'],
+  },
 ]
 
 const perfectionistFSDImportsCustomGroups = [
@@ -28,18 +124,9 @@ const perfectionistFSDImportsCustomGroups = [
     groupName: 'widgets',
     elementNamePattern: ['^~widgets'],
   },
-  {
-    groupName: 'features',
-    elementNamePattern: ['^~features'],
-  },
-  {
-    groupName: 'entities',
-    elementNamePattern: ['^~entities'],
-  },
-  {
-    groupName: 'shared',
-    elementNamePattern: ['^~shared'],
-  },
+  ...perfectionistFSDImportsFeaturesSlice,
+  ...perfectionistFSDImportsEntitiesSlice,
+  ...perfectionistFSDImportsSharedSlice,
 ]
 
 export default antfu({
