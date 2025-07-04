@@ -14,6 +14,8 @@ import { z } from 'zod'
 
 import { store } from '~app/store'
 
+import { ErrorPage } from '~pages/error/ui/error-page.ui'
+
 import type { Auction } from '~entities/auction/model'
 import { auctionActions } from '~entities/auction/store'
 
@@ -86,21 +88,37 @@ const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => {
 
         return response.data
       }
-      catch (err) {
-        if (err instanceof AxiosError) {
+      catch (error) {
+        if (error instanceof AxiosError) {
+          let reason = ''
+
+          switch (error.status) {
+            case 400: {
+              reason = 'Ошибка в номере аукциона. Попробуйте войти через главную страницу'
+              break
+            }
+            case 401: {
+              reason = 'Аукциона с таким номером не существует или у вас нет к нему доступа'
+              break
+            }
+            case 404: {
+              reason = 'Аукциона не существует или был удален'
+              break
+            }
+          }
+
           throw json(
             {
-              reason:
-                'Аукциона с таким номером не существует или у вас нет к нему доступа',
+              reason,
             },
             {
-              status: err.status,
+              status: error.status,
             },
           )
         }
       }
     },
-    errorElement: <PrepareRouteErrorBoundary />,
+    errorElement: <ErrorPage />,
     children: childrens,
   }
 }

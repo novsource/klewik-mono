@@ -8,4 +8,5 @@ export { canvasUtilities, chain, cn, colorsUtilities, stringUtils }
 export * from './local-storage'
 export * from './number-format'
 export * from './object-keys'
+export * from './object-to-styles'
 export * from './string'

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { CreateSlotsDialog } from '~widgets/create-slots-dialog/ui'
 import { SearchInput } from '~widgets/search-input/ui'
@@ -13,50 +13,45 @@ import { appSelectors } from '~shared/store/slices'
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import { cn } from '~shared/utils'
+import { twSlotsStyles } from '~shared/utils'
 
+import { auctionSlotsPageSearchInputStyles, auctionSlotsPageStyles } from '../styles'
 import { AuctionSlotsList } from './slots-list/slots-list.ui'
 import { SortingSlotsCombobox } from './sorting-slots-combobox'
 
 const AuctionSlotsPage = () => {
+  const [searchValue, setSearchValue] = useState<string>('')
+
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const sortOptions = useStoreSelector(appSelectors.getSlotsSortOptions)
-
-  const [searchValue, setSearchValue] = useState<string>('')
 
   const searchedSlots = useSearchAuctionSlots(searchValue, auctionSlots)
   const sortedSlots = useSortingSlots(searchedSlots, sortOptions)
 
+  const pageStyles = useMemo(() => twSlotsStyles(auctionSlotsPageStyles), [])
+  const searchInputStyles = useMemo(() => twSlotsStyles(auctionSlotsPageSearchInputStyles), [])
+
   return (
     <div
-      className={cn([
-        'mx-auto mb-4 grid h-full w-full grid-rows-slots-table gap-y-3 pt-5',
-        'small-mobile:pt-1.5',
-        'mobile:gap-y-5 mobile:pt-3',
-        'max-tablet:max-w-[1100px] tablet:grid-rows-slots-desktop tablet:gap-y-4 tablet:pl-10',
-        'desktop:max-w-[1750px] desktop-lg:max-w-[2100px]',
-        'landtop:max-w-[1600px]',
-      ])}
+      className={pageStyles.base}
     >
       <Flex
-        className="gap-x-4 pt-1"
+        className={pageStyles.contentWrapper}
         wrap="nowrap"
         align="center"
         justify="between"
       >
         <SearchInput
-          slotClassNames={{
-            base: 'w-full tablet:max-w-[400px] landtop:max-w-[450px] desktop:max-w-[500px]',
-          }}
+          slotClassNames={searchInputStyles}
           onChange={e => setSearchValue(e.target.value)}
         />
-        <Flex className="tablet:gap-x-2" align="center">
+        <Flex className={pageStyles.actionPanel} align="center">
           <SortingSlotsCombobox />
           <CreateSlotsDialog
             multiplySlots
             trigger={(
               <Button
-                className="z-50 w-full max-tablet:fixed max-tablet:bottom-[calc(var(--mobile-menu-bottom)+var(--footer-height)+12px)] max-tablet:left-1/2 max-tablet:-translate-x-1/2 max-tablet:rounded-pill"
+                className="z-50 w-full max-tablet:hidden"
                 variant="action"
                 startContent={<Icons.Plus />}
               >
@@ -66,9 +61,7 @@ const AuctionSlotsPage = () => {
           />
         </Flex>
       </Flex>
-      <div className="h-full w-full">
-        <AuctionSlotsList data={sortedSlots} disableAnimation />
-      </div>
+      <AuctionSlotsList data={sortedSlots} />
     </div>
   )
 }
