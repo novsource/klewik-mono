@@ -33,11 +33,11 @@ const perfectionistFSDImportsGroups = [
 const perfectionistFSDImportsFeaturesSlice = [
   {
     groupName: 'features:auction',
-    elementNamePattern: ['^~features/auction'],
+    elementNamePattern: ['^~features/auction/'],
   },
   {
     groupName: 'features:auction-slot',
-    elementNamePattern: ['^~features/auction-slot'],
+    elementNamePattern: ['^~features/auction-slot/'],
   },
   {
     groupName: 'features:donations',
@@ -56,15 +56,15 @@ const perfectionistFSDImportsFeaturesSlice = [
 const perfectionistFSDImportsEntitiesSlice = [
   {
     groupName: 'entities:auction',
-    elementNamePattern: ['^~entities/auction'],
+    elementNamePattern: ['^~entities/auction/'],
   },
   {
     groupName: 'entities:auction-slot',
-    elementNamePattern: ['^~entities/auction-slot'],
+    elementNamePattern: ['^~entities/auction-slot/'],
   },
   {
     groupName: 'entities:donation',
-    elementNamePattern: ['^~entities/donation'],
+    elementNamePattern: ['^~entities/donation/'],
   },
   {
     groupName: 'entities:integrations',
