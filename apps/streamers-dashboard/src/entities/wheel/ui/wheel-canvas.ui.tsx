@@ -9,12 +9,6 @@ import {
   useRef,
 } from 'react'
 
-import { useWheelControl, useWheelInit } from '~widgets/wheel/utils'
-import {
-  getItemsWithAngles,
-  updateSlotsAnglesByRotateValue,
-} from '~widgets/wheel/utils/wheel-canvas'
-
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 import { WheelEventsBus } from '~entities/wheel/events'
 import type { WheelSlot } from '~entities/wheel/model'
@@ -25,6 +19,9 @@ import {
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 import { Flex } from '~shared/ui/flex'
+
+import { useWheelControl, useWheelInit } from '../hooks'
+import { getItemsWithAngles, updateSlotsAnglesByRotateValue } from '../utils'
 
 type WheelCanvasProps = Omit<ComponentPropsWithoutRef<'canvas'>, 'children'>
 
@@ -43,7 +40,7 @@ const WheelCanvas = (props: WheelCanvasProps) => {
   const {
     refs: { wheelRef, innerRef },
     functions: { drawWheel, drawInner, resizeInnerBackground, resizeWheel },
-  } = useWheelInit(storedSlots, { isFullScreen: false })
+  } = useWheelInit(storedSlots)
 
   const {
     state: { wheelRotateCSSValue, selectorTargetTitle, isWheelSpinning },
@@ -99,7 +96,7 @@ const WheelCanvas = (props: WheelCanvasProps) => {
   }, [spinWheel, spinTime])
 
   return (
-    <Flex className="shrink h-full w-full" align="center" justify="center">
+    <Flex className="shrink h-full w-full" align="start" justify="center">
       <Flex
         className="relative w-full h-full"
         ref={wheelWrapperRef}
@@ -107,7 +104,7 @@ const WheelCanvas = (props: WheelCanvasProps) => {
         justify="center"
       >
         <WheelSelector className="absolute -top-3.5 landtop:-top-1.5 z-10 shadow-dark drop-shadow-md" />
-        <canvas ref={wheelRef} {...props} />
+        <canvas ref={wheelRef} {...props} style={{ willChange: 'transform' }} />
         <canvas
           ref={innerRef}
           className="absolute top-0"
