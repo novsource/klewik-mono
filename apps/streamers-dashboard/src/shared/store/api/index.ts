@@ -1,3 +1,4 @@
+import { splittedAuthApi } from './auth.api'
 import { splittedSSEApi } from './sse.api'
 
-export { splittedSSEApi }
+export { splittedAuthApi, splittedSSEApi }

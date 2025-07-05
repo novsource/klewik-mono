@@ -1,3 +1,1 @@
-import NumberInput from './ui/number-input'
-
-export { NumberInput }
+export * from './ui/number-input'

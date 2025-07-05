@@ -1,12 +1,11 @@
-import { ComponentProps, useCallback, useMemo } from 'react'
-
-import { generateWinner } from '~widgets/wheel/utils/wheel-canvas'
+import type { ComponentProps } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { WheelEventsBus } from '~entities/wheel/events'
 import { wheelSelectors } from '~entities/wheel/store'
+import { generateWinner } from '~entities/wheel/utils'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 
@@ -18,16 +17,17 @@ const SpinWheelButton = ({ className, ...props }: SpinWheelButtonProps) => {
 
   const isButtonShouldBeDisabled = useMemo(
     () => wheelSlots.length < 2 || isWheelSpinning,
-    [isWheelSpinning, wheelSlots]
+    [isWheelSpinning, wheelSlots],
   )
 
   const handleOnClick = useCallback(() => {
-    if (isButtonShouldBeDisabled) return
+    if (isButtonShouldBeDisabled)
+      return
 
     const winner = generateWinner(wheelSlots)
 
     WheelEventsBus.getInstance().notify('spin', winner)
-  }, [wheelSlots])
+  }, [wheelSlots, isButtonShouldBeDisabled])
 
   return (
     <Button

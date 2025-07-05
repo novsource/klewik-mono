@@ -53,9 +53,9 @@ type InputVariants = SizesCvaVariants
 export const labelVariants = cva<LabelVariants>('select-none', {
   variants: {
     size: {
-      default: 'text-md font-semibold',
-      lg: 'text-md font-semibold',
-      sm: 'text-sm font-medium',
+      default: 'text-sm tablet:text-md font-semibold',
+      lg: 'text-sm tablet:text-md font-semibold',
+      sm: 'text-xs tablet:text-sm font-medium',
     },
     isError: {
       true: 'text-red',
@@ -90,7 +90,7 @@ export const descriptionVariants = cva<DescriptionVariants>(
 )
 
 export const contentVariants = cva<ContentBaseVariants>([
-  'group flex flex-col gap-y-2',
+  'group flex flex-col gap-y-1.25 tablet:gap-y-2',
 ])
 
 export const contentWrapperVariants = cva<ContentWrapperVariants>(

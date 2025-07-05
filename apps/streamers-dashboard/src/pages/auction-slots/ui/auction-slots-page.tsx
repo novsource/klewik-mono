@@ -9,10 +9,13 @@ import { useSearchAuctionSlots } from '~features/auction-slot/search-slots/hooks
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { appSelectors } from '~shared/store/slices'
+
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
+
 import { twSlotsStyles } from '~shared/utils'
 
 import { auctionSlotsPageSearchInputStyles, auctionSlotsPageStyles } from '../styles'
@@ -43,6 +46,7 @@ const AuctionSlotsPage = () => {
       >
         <SearchInput
           slotClassNames={searchInputStyles}
+          value={searchValue}
           onChange={e => setSearchValue(e.target.value)}
         />
         <Flex className={pageStyles.actionPanel} align="center">

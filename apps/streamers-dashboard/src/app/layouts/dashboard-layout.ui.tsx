@@ -111,7 +111,7 @@ const DashboardLayout = () => {
   }
 
   return (
-    <>
+    <div className="w-full h-full grid max-tablet:grid-rows-dashboard-mobile grid-rows-dashboard-desktop">
       <DashboardHeader />
       <main className="main--dashboard">
         <Flex className="h-full w-full px-4">
@@ -120,7 +120,8 @@ const DashboardLayout = () => {
         </Flex>
       </main>
       {!isLargeThenTablet && <MobileNavbarMenu />}
-    </>
+    </div>
+
   )
 }
 

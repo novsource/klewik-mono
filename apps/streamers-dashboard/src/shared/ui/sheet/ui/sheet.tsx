@@ -6,6 +6,7 @@ import { forwardRef } from 'react'
 import * as SheetPrimitive from '@radix-ui/react-dialog'
 
 import { Icons } from '~shared/ui/icons'
+
 import { cn } from '~shared/utils'
 
 import {
@@ -45,17 +46,19 @@ type SheetContentProps = ComponentPropsWithoutRef<typeof SheetPrimitive.Content>
 const SheetContent = forwardRef<
   ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(({ side = 'right', className, children, hideCloseButton = false, shouldCloseOnOutsideClick = true, ...props }, ref) => (
+>(({ side = 'right', className, children, hideCloseButton = false, shouldCloseOnOutsideClick = true, onInteractOutside, ...props }, ref) => (
   <SheetPortal>
-    <SheetOverlay onClick={(e) => {
-      if (!shouldCloseOnOutsideClick) {
-        return e.stopPropagation()
-      }
-    }}
-    />
+    <SheetOverlay />
     <SheetPrimitive.Content
       ref={ref}
       className={cn(sheetVariants({ side }), className)}
+      onInteractOutside={(event) => {
+        if (!shouldCloseOnOutsideClick) {
+          event.preventDefault()
+        }
+
+        onInteractOutside && onInteractOutside(event)
+      }}
       {...props}
     >
       <div className="flex flex-col h-full w-full p-6">{children}</div>
