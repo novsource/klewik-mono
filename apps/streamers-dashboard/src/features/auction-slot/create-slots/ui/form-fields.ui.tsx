@@ -1,5 +1,5 @@
-import type { ChangeEvent } from 'react'
-import { useCallback, useState } from 'react'
+import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react'
+import { useMemo, useState } from 'react'
 
 import type {
   FieldPath,
@@ -9,18 +9,24 @@ import type {
 import {
   useController,
 } from 'react-hook-form'
+import type { NumberFormatValues } from 'react-number-format'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import type { InputProps } from '~shared/ui/input'
 import { Input } from '~shared/ui/input'
+import type { NumberInputProps } from '~shared/ui/number-input'
 import { NumberInput } from '~shared/ui/number-input'
 import { Typography } from '~shared/ui/typograghy'
-import { cn, formatNumberToIntlString } from '~shared/utils'
+
+import { cn, formatNumberToIntlString, mergeProps, twSlotsStyles } from '~shared/utils'
 import { deleteAllSpacesFromString } from '~shared/utils/string-format'
+
+import { createSlotsFormFieldsStyles } from '../styles'
 
 type ControllerFormInputProps<
   FormFields extends FieldValues | Record<string, FieldValues>,
@@ -28,45 +34,58 @@ type ControllerFormInputProps<
   TransformedValues extends FormFields,
 > = UseControllerProps<FormFields, Paths, TransformedValues>
 
+const preventEnterFn = (event: KeyboardEvent<HTMLInputElement>) => {
+  if (event.which === 13 /* Enter */) {
+    event.preventDefault()
+  }
+}
+
 const SlotNameFormInput = <
   FormFields extends FieldValues,
   Paths extends FieldPath<FormFields>,
   TransformedValues extends FormFields,
->({
-  control,
-  name,
-  maxLength = 35,
-  ...props
-}: InputProps
+>(props: InputProps
   & ControllerFormInputProps<FormFields, Paths, TransformedValues> & {
     maxLength?: number
   }) => {
+  const {
+    control,
+    name,
+    maxLength = 35,
+    ...inputProps
+  } = props
+
   const [boundAnimationStatus, setBoundAnimationStatus] = useState<
     'inactive' | 'active'
   >('inactive')
 
-  const { field } = useController({
+  const { field: { onChange: fieldOnChange, ...field } } = useController({
     name,
     control,
   })
 
-  const handleOnChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+  const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > maxLength) {
-      field.onChange(event.target.value.slice(0, maxLength))
+      fieldOnChange(event.target.value.slice(0, maxLength))
       setBoundAnimationStatus('active')
     }
     else {
-      field.onChange(event.target.value)
+      fieldOnChange(event.target.value)
       setBoundAnimationStatus('inactive')
     }
-  }, [field, maxLength])
+  }
+
+  const inputHandlers: InputProps = { onChange: handleOnChange, onKeyDown: preventEnterFn }
+
+  const mergedInputProps = mergeProps(inputHandlers, inputProps)
 
   return (
     <Input
+      label={{ id: `${name}`, value: 'Название слота' }}
+      placeholder="Название слота"
       slotClassNames={{
         base: 'w-full basis-1/2 grow',
         description: 'text-wrap',
-        input: 'font-semibold',
       }}
       endContent={(
         <Typography
@@ -84,105 +103,133 @@ const SlotNameFormInput = <
           {`${field.value.toString().length}/${maxLength}`}
         </Typography>
       )}
-      label={{ id: `${name}`, value: 'Название слота' }}
-      placeholder="Название слота"
       {...field}
-      {...props}
-      onChange={handleOnChange}
+      {...mergedInputProps}
     />
   )
 }
 
-const SlotPointsFormInput = <
+const SlotPointsFormInputs = <
   FormFields extends FieldValues,
   Paths extends FieldPath<FormFields>,
   TransformedValues extends FormFields,
->({
-  control,
-  name,
-  maxValue = 10000000,
-  ...props
-}: Omit<InputProps, 'type'>
-  & ControllerFormInputProps<FormFields, Paths, TransformedValues> & {
-    maxValue?: number
-  }) => {
+>(props: { pointsInputProps?: NumberInputProps, percentInputProps?: NumberInputProps, minPercent?: number }
+  & ControllerFormInputProps<FormFields, Paths, TransformedValues>) => {
   const {
-    field: { value, ...field },
-  } = useController({ name, control })
+    control,
+    name,
+    percentInputProps,
+    pointsInputProps,
+    minPercent = 0.1,
+    ...pointsControllerProps
+  } = props
+
+  const {
+    field: { value, onChange: fieldOnChange, ...field },
+  } = useController({ name, control, ...pointsControllerProps })
 
   const slotsPointsSum = useStoreSelector(
     auctionSlotsSelectors.getSlotsPointsSum,
   )
   const [pointsValue, setPointsValue] = useState(() => {
-    return Number(deleteAllSpacesFromString(value))
+    return deleteAllSpacesFromString(value)
   })
   const [percentInputValue, setPercentInputValue] = useState(() => {
-    return (pointsValue / (slotsPointsSum + pointsValue)) * 100
+    const pointsNumValue = Number(pointsValue)
+
+    return String((pointsNumValue / (slotsPointsSum + pointsNumValue)) * 100)
   })
 
-  const onWinPercentChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+  const handlePercentInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const percent = Number.parseFloat(deleteAllSpacesFromString(event.target.value))
-
-    if (percent === 0) {
-      return field.onChange('10')
-    }
 
     const percentToValue = (slotsPointsSum * percent) / (100 - percent)
 
-    field.onChange(formatNumberToIntlString(Math.floor(percentToValue)))
-    setPointsValue(Math.floor(percentToValue))
+    fieldOnChange(String(Math.floor(percentToValue)))
+    setPointsValue(Math.floor(percentToValue).toString())
   }
 
-  const onPointsChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+  const handlePointsInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const points = Number(deleteAllSpacesFromString(event.target.value))
 
     const pointsToPercents = (100 * points) / (points + slotsPointsSum)
 
-    field.onChange(event.target.value)
-    setPercentInputValue(pointsToPercents)
-    setPointsValue(points)
+    fieldOnChange(event.target.value)
+    setPercentInputValue(pointsToPercents.toString())
+    setPointsValue(points.toString())
   }
 
-  // useEffect(() => {
-  //   const minPointsValue = Math.floor(slotsPointsSum * 0.5)
+  const handlePercentInputBlur = (event: FocusEvent<HTMLInputElement>) => {
+    const clearCurrentValue = deleteAllSpacesFromString(event.target.value)
 
-  //   if (pointsValue < minPointsValue) {
-  //     setError(name, {
-  //       message: `Минимальное количество очков - ${minPointsValue} (0.5%)`,
-  //       type: 'custom',
-  //     })
-  //   } else {
-  //     clearErrors(name)
-  //   }
-  // }, [slotsPointsSum])
+    if (clearCurrentValue.length === 0 || Number(clearCurrentValue) < minPercent) {
+      const percentToValue = (slotsPointsSum * minPercent) / (100 - minPercent)
+
+      fieldOnChange(Math.floor(percentToValue).toString())
+      setPointsValue(Math.floor(percentToValue).toString())
+      setPercentInputValue(minPercent.toString())
+    }
+  }
+
+  const checkPointsBoundaries = (values: NumberFormatValues) => {
+    const { floatValue } = values
+
+    const maxPointsValue = Math.floor(slotsPointsSum * 99)
+
+    if (!floatValue)
+      return true
+
+    return floatValue <= maxPointsValue
+  }
+
+  const checkPercentBoundaries = (values: NumberFormatValues) => {
+    const { floatValue } = values
+
+    if (!floatValue)
+      return true
+
+    return floatValue <= 99
+  }
+
+  const pointsInputHandlers: NumberInputProps = {
+    onChange: handlePointsInputChange,
+    onKeyDown: preventEnterFn,
+  }
+  const percentsInputHandlers: NumberInputProps = {
+    onChange: handlePercentInputChange,
+    onBlur: handlePercentInputBlur,
+    onKeyDown: preventEnterFn,
+  }
+
+  const mergedPointsInputProps = mergeProps(pointsInputHandlers, pointsInputProps)
+  const mergedPercentsInputProps = mergeProps(percentsInputHandlers, percentInputProps)
+
+  const styles = useMemo(() => twSlotsStyles(createSlotsFormFieldsStyles), [])
 
   return (
-    <Flex className="w-full gap-x-2" align="start">
+    <Flex className={styles.pointsInputsWrapper} align="start">
       <NumberInput
         slotClassNames={{
           base: 'w-full grow',
           description: 'text-wrap',
           input: 'font-golos-f font-medium',
         }}
-        decimalScale={0}
-        thousandSeparator=" "
-        label={{ id: `slot-points-${name}`, value: 'Очки слота' }}
+        label={{ id: `${name}`, value: 'Очки слота' }}
         placeholder="Очки"
-        allowNegative={false}
-        startContent={<Icons.Coin className="text-gray-light" size="lg" />}
         value={value}
+        startContent={<Icons.Coin className="text-gray-light" size="lg" />}
+        endContent={(
+          <Typography tag="span" className="text-nowrap text-gray-light">
+            {'<'}
+            {formatNumberToIntlString(Math.floor(slotsPointsSum * 99))}
+          </Typography>
+        )}
+        thousandSeparator=" "
+        decimalScale={0}
+        allowNegative={false}
+        isAllowed={checkPointsBoundaries}
         {...field}
-        isAllowed={(values) => {
-          const { floatValue } = values
-          const maxPointsValue = Math.floor(slotsPointsSum * 99)
-
-          if (!floatValue)
-            return true
-
-          return floatValue <= maxPointsValue
-        }}
-        onChange={onPointsChangeHandler}
-        {...props}
+        {...mergedPointsInputProps}
       />
       <NumberInput
         value={percentInputValue}
@@ -193,21 +240,15 @@ const SlotPointsFormInput = <
         decimalScale={2}
         endContent={(
           <Typography tag="span" className="text-nowrap text-gray-light">
-            0.5-99%
+            {'<'}
+            99%
           </Typography>
         )}
-        isAllowed={(values) => {
-          const { floatValue } = values
-
-          if (floatValue === undefined)
-            return true
-
-          return floatValue <= 99
-        }}
-        onChange={onWinPercentChangeHandler}
+        isAllowed={checkPercentBoundaries}
+        {...mergedPercentsInputProps}
       />
     </Flex>
   )
 }
 
-export { SlotNameFormInput, SlotPointsFormInput }
+export { SlotNameFormInput, SlotPointsFormInputs as SlotPointsFormInput }
