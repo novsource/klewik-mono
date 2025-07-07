@@ -1,16 +1,20 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
+import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
-import type { SlotsSortingOptions } from '~shared/store/model'
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import type { SortingOptions } from '~shared/store/model'
+
 import { deleteAllSpacesFromString } from '~shared/utils/string-format'
 
 const compareSlotsFields = (
   slotOne: AuctionSlot,
   slotTwo: AuctionSlot,
-  options: SlotsSortingOptions<AuctionSlot>,
+  options: SortingOptions<AuctionSlot>,
 ) => {
-  const field = options.field as keyof AuctionSlot
+  const field = options.field
   const type = options.type
 
   let diff = 0
@@ -38,15 +42,10 @@ const compareSlotsFields = (
   return 0
 }
 
-const useSortingSlots = (
-  slots: AuctionSlot[],
-  options: SlotsSortingOptions<AuctionSlot>,
-) => {
-  const [sortingOptions, setSortingOptions] = useState<NullablePossible<SlotsSortingOptions<AuctionSlot>>>(null)
+const useSortingSlots = (slots: AuctionSlot[], options?: SortingOptions<AuctionSlot>) => {
+  const storeSortingOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
 
-  if (sortingOptions !== options) {
-    setSortingOptions(options)
-  }
+  const sortingOptions = options ?? storeSortingOptions
 
   const sortedSlots = useMemo(() => {
     if (sortingOptions === null)
