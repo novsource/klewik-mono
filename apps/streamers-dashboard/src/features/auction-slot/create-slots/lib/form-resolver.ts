@@ -36,19 +36,23 @@ const zodFormValidation: CreateSlotsFormZodResolver = (values: unknown) => {
       FieldErrors<CreateSlotForm>
     >(
       (acc, error) => {
+        const fieldIndex = Number(error.path[1])
         const fieldName = error.path[2]
-        const fieldIndex = error.path[1]
 
         const fieldError = {
-          [fieldIndex]: {
-            [fieldName]: {
-              message: error.message,
-              type: 'custom',
-            },
+          [fieldName]: {
+            message: error.message,
+            type: error.code,
           },
         }
 
-        acc.slots = { ...acc.slots, ...fieldError }
+        if (acc.slots && !acc.slots[fieldIndex]) {
+          acc.slots[fieldIndex] = fieldError
+        }
+
+        if (acc.slots && acc.slots[fieldIndex]) {
+          acc.slots[fieldIndex] = { ...acc.slots[fieldIndex], ...fieldError }
+        }
 
         return acc
       },

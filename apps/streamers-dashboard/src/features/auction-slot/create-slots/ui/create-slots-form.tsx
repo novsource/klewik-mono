@@ -248,12 +248,18 @@ function SlotsTabs(props: SlotsTabsProps) {
                 'points',
                 index,
               ),
+              onBlur: () => {
+                trigger('slots')
+              },
               onChange: () => {
                 trigger('slots')
               },
             }}
             percentInputProps={{
               onChange: () => {
+                trigger('slots')
+              },
+              onBlur: () => {
                 trigger('slots')
               },
             }}
@@ -290,8 +296,8 @@ function SlotsTabs(props: SlotsTabsProps) {
         <TabsList className={styles.tabsList}>
           {fields.map((field, index) => (
             <TabsTrigger
-              className={cn(styles.tabTrigger, checkIsTabHasError(index) && styles.isErrorTabTrigger)}
               key={field.id}
+              className={cn(styles.tabTrigger, checkIsTabHasError(index) && styles.isErrorTabTrigger)}
               value={`slot-${index}`}
               tabIndex={-1}
             >
@@ -304,8 +310,9 @@ function SlotsTabs(props: SlotsTabsProps) {
             <Button
               className={styles.addNewTabButton}
               variant="ghost"
-              size="sm"
-              startContent={<Icons.Plus />}
+              size="xs"
+              isIconOnly
+              icon={<Icons.Plus />}
               onClick={() => {
                 append(CREATE_SLOT_FORM_DEFAULT_VALUE)
                 trigger('slots')

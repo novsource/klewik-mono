@@ -23,9 +23,10 @@ import type { NumberInputProps } from '~shared/ui/number-input'
 import { NumberInput } from '~shared/ui/number-input'
 import { Typography } from '~shared/ui/typograghy'
 
-import { cn, formatNumberToIntlString, mergeProps, twSlotsStyles } from '~shared/utils'
+import { cn, mergeProps, twSlotsStyles } from '~shared/utils'
 import { deleteAllSpacesFromString } from '~shared/utils/string-format'
 
+import { CREATE_SLOT_FORM_DEFAULT_VALUE } from '../constants'
 import { createSlotsFormFieldsStyles } from '../styles'
 
 type ControllerFormInputProps<
@@ -147,6 +148,7 @@ const SlotPointsFormInputs = <
 
     fieldOnChange(String(Math.floor(percentToValue)))
     setPointsValue(Math.floor(percentToValue).toString())
+    setPercentInputValue(percent.toString())
   }
 
   const handlePointsInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -159,15 +161,29 @@ const SlotPointsFormInputs = <
     setPointsValue(points.toString())
   }
 
+  const handlePointsInputBlur = (event: ChangeEvent<HTMLInputElement>) => {
+    const clearCurrentValue = deleteAllSpacesFromString(event.target.value)
+
+    if (clearCurrentValue.length === 0 || Number(clearCurrentValue) < minPercent) {
+      const defaultPointsValue = Number(CREATE_SLOT_FORM_DEFAULT_VALUE.points)
+      const defaultPercents = (defaultPointsValue / (slotsPointsSum + defaultPointsValue)) * 100
+
+      fieldOnChange(Math.floor(defaultPointsValue).toString())
+      setPointsValue(Math.floor(defaultPointsValue).toString())
+      setPercentInputValue(defaultPercents.toString())
+    }
+  }
+
   const handlePercentInputBlur = (event: FocusEvent<HTMLInputElement>) => {
     const clearCurrentValue = deleteAllSpacesFromString(event.target.value)
 
     if (clearCurrentValue.length === 0 || Number(clearCurrentValue) < minPercent) {
-      const percentToValue = (slotsPointsSum * minPercent) / (100 - minPercent)
+      const defaultPointsValue = Number(CREATE_SLOT_FORM_DEFAULT_VALUE.points)
+      const defaultPercents = (defaultPointsValue / (slotsPointsSum + defaultPointsValue)) * 100
 
-      fieldOnChange(Math.floor(percentToValue).toString())
-      setPointsValue(Math.floor(percentToValue).toString())
-      setPercentInputValue(minPercent.toString())
+      fieldOnChange(Math.floor(defaultPointsValue).toString())
+      setPointsValue(Math.floor(defaultPointsValue).toString())
+      setPercentInputValue(defaultPercents.toString())
     }
   }
 
@@ -193,6 +209,7 @@ const SlotPointsFormInputs = <
 
   const pointsInputHandlers: NumberInputProps = {
     onChange: handlePointsInputChange,
+    onBlur: handlePointsInputBlur,
     onKeyDown: preventEnterFn,
   }
   const percentsInputHandlers: NumberInputProps = {
@@ -218,12 +235,6 @@ const SlotPointsFormInputs = <
         placeholder="Очки"
         value={value}
         startContent={<Icons.Coin className="text-gray-light" size="lg" />}
-        endContent={(
-          <Typography tag="span" className="text-nowrap text-gray-light">
-            {'<'}
-            {formatNumberToIntlString(Math.floor(slotsPointsSum * 99))}
-          </Typography>
-        )}
         thousandSeparator=" "
         decimalScale={0}
         allowNegative={false}
