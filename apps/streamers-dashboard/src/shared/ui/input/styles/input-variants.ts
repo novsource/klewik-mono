@@ -109,7 +109,7 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
       isDisabled: {
         true: 'ring-0 data-[hover=true]:ring-0',
         false:
-          'data-[focus=true]:bg-dark/50 data-[focus=true]:ring-1 data-[hover=true]:bg-dark/50 data-[hover=true]:ring-1',
+          'data-[focus=true]:bg-dark-foreground-light data-[focus=true]:ring-1 data-[hover=true]:bg-dark/50 data-[hover=true]:ring-1',
       },
     },
     defaultVariants: {

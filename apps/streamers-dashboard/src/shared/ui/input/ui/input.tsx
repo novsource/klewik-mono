@@ -7,6 +7,7 @@ import type { ComponentProps } from 'react'
 import { forwardRef, useMemo, useState } from 'react'
 
 import { Typography } from '~shared/ui/typograghy'
+
 import { cn } from '~shared/utils'
 import type { CvaClassValue } from '~shared/utils/types'
 
@@ -89,7 +90,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
   const baseInput = (
     <input
-      type={type}
+      type={type ?? 'text'}
       className={baseInputStyle}
       ref={ref}
       disabled={disabled}

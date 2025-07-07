@@ -4,6 +4,7 @@ import { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, u
 import * as TabsPrimitive from '@radix-ui/react-tabs'
 
 import { useResizeObserver } from '~shared/hooks/use-resize-observer'
+
 import { cn } from '~shared/utils/cn'
 
 import { TabsContextProvider, useTabContext } from '../context/tabs-context'
@@ -120,7 +121,9 @@ TabsList.displayName = TabsPrimitive.List.displayName
 const TabsTrigger = forwardRef<
   ElementRef<typeof TabsPrimitive.Trigger>,
   ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, value, ...props }, ref) => {
+>((props, ref) => {
+  const { className, value, onClick, ...restProps } = props
+
   const tabTriggerRef = useRef<NullablePossible<HTMLElement>>(null)
 
   const {
@@ -151,7 +154,8 @@ const TabsTrigger = forwardRef<
     const currentWidth = triggerData?.width
 
     if (currentWidth !== width) {
-      setTriggersData(curr => [...curr.filter(trigger => trigger.value !== value), { value, startX: start, width }])
+      setTriggersData(curr =>
+        [...curr.filter(trigger => trigger.value !== value), { value, startX: start, width }])
     }
   }, [entries, tabTriggerRef, value, setTriggersData, triggerData])
 
@@ -188,11 +192,11 @@ const TabsTrigger = forwardRef<
       }}
       value={value}
       className={styles}
-      {...props}
       onClick={(e) => {
-        props.onClick && props.onClick(e)
+        onClick && onClick(e)
         setSelectedKey(value)
       }}
+      {...restProps}
     />
   )
 })
