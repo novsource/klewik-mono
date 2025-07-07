@@ -2,15 +2,12 @@ import { useMemo, useState } from 'react'
 
 import { CreateSlotsDialog } from '~widgets/create-slots-dialog/ui'
 import { SearchInput } from '~widgets/search-input/ui'
-import { useSortingSlots } from '~widgets/slots-with-sort/lib'
 
 import { useSearchAuctionSlots } from '~features/auction-slot/search-slots/hooks'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import { appSelectors } from '~shared/store/slices'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
@@ -26,10 +23,8 @@ const AuctionSlotsPage = () => {
   const [searchValue, setSearchValue] = useState<string>('')
 
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-  const sortOptions = useStoreSelector(appSelectors.getSlotsSortOptions)
 
   const searchedSlots = useSearchAuctionSlots(searchValue, auctionSlots)
-  const sortedSlots = useSortingSlots(searchedSlots, sortOptions)
 
   const pageStyles = useMemo(() => twSlotsStyles(auctionSlotsPageStyles), [])
   const searchInputStyles = useMemo(() => twSlotsStyles(auctionSlotsPageSearchInputStyles), [])
@@ -65,7 +60,7 @@ const AuctionSlotsPage = () => {
           />
         </Flex>
       </Flex>
-      <AuctionSlotsList data={sortedSlots} />
+      <AuctionSlotsList data={searchedSlots} />
     </div>
   )
 }

@@ -3,13 +3,13 @@ import type { VariantProps } from 'class-variance-authority'
 import { cva } from 'class-variance-authority'
 
 const drawerOverlayVariants = cva([
-  'dark fixed inset-0 z-50 bg-black/50 backdrop-blur-xs',
+  'dark fixed z-50 inset-0 bg-black/50 backdrop-blur-xs',
   'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
 ])
 
 const drawerContentVariants = cva(
   [
-    'group/drawer-content fixed z-50 flex flex-col border-dark-accent bg-dark-foreground',
+    'group/drawer-content z-50 fixed flex flex-col border-dark-accent bg-dark-foreground',
     'data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0',
     'data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0',
     'data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0',

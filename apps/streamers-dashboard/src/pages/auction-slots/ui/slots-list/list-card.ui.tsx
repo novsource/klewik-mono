@@ -1,15 +1,14 @@
 import type { RefObject } from 'react'
-import { forwardRef, memo } from 'react'
+import { forwardRef, memo, useMemo } from 'react'
 
 import NumberFlow from '@number-flow/react'
 
 import { ResponsiveEditSlotDialogue } from '~widgets/edit-slot-dialog/ui'
 
-import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
+import type { Auction } from '~entities/auction/model'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { AuctionCardChip } from '~entities/auction-slot/ui/card'
-import type { Auction } from '~entities/auction/model'
 
 import { Button } from '~shared/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~shared/ui/card'
@@ -28,6 +27,20 @@ const AuctionSlotCardWithControls = memo(
     (props, forwardRef) => {
       const { percent, auctionUUID, ...slot } = props
 
+      const editSlotDialogeTrigger = useMemo(() => {
+        return (
+          <Button
+            variant="ghost"
+            isIconOnly
+            icon={<Icons.OpenArrow className="stroke-4 text-gray-accent" size="xs" />}
+            className="h-full px-1 py-1 text-gray-accent transition-colors hover:text-white"
+            size="sm"
+          >
+            Изменить
+          </Button>
+        )
+      }, [])
+
       return (
         <Card
           ref={forwardRef}
@@ -45,22 +58,7 @@ const AuctionSlotCardWithControls = memo(
             <Flex className="h-6 gap-x-1" direction="row">
               <ResponsiveEditSlotDialogue
                 slot={slot}
-                trigger={(
-                  <Button
-                    variant="ghost"
-                    isIconOnly
-                    icon={<Icons.Pencil size="xs" />}
-                    className="h-full px-1 py-1 text-gray-accent transition-colors hover:text-white"
-                    size="sm"
-                  >
-                    Изменить
-                  </Button>
-                )}
-              />
-              <DeleteSlotButton
-                auctionUUID={auctionUUID}
-                slotId={slot.id}
-                icon={<Icons.Bin size="xs" />}
+                trigger={editSlotDialogeTrigger}
               />
             </Flex>
           </CardHeader>
@@ -110,8 +108,8 @@ const AuctionSlotCardWithControls = memo(
                     compactDisplay: 'short',
                   }}
                   locales="ru-RU"
+                  suffix="%"
                 />
-                %
               </AuctionCardChip>
             </Flex>
           </CardContent>

@@ -18,13 +18,12 @@ type TimerSettings = {
 }
 
 type AppStoreState = {
-  slotsSortOptions: SortingOptions
   timerSettings: TimerSettings
 }
 
 export type {
-  SortingOptions as SlotsSortingOptions,
   AppStoreState,
+  SortingOptions,
   SortingTypes,
   TimerSettings,
 }
