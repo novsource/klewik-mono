@@ -5,7 +5,9 @@ import { CreateAuctionForm } from '~features/auction/create-auction/ui'
 import { auctionActions } from '~entities/auction/store'
 
 import { loginInAuction } from '~shared/api/http/auth'
+
 import { useActionCreators } from '~shared/lib/redux-toolkit'
+
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
@@ -14,6 +16,7 @@ import { Typography } from '~shared/ui/typograghy'
 import type { WizardItemProps } from '~shared/ui/wizard'
 import { WizardItem, WizardTrigger } from '~shared/ui/wizard'
 import { useWizardContext } from '~shared/ui/wizard/context'
+
 import { cn } from '~shared/utils'
 
 const WizardCreateAuctionItem = (

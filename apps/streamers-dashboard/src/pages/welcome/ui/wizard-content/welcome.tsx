@@ -12,11 +12,12 @@ import { Typography } from '~shared/ui/typograghy'
 import type { WizardItemProps } from '~shared/ui/wizard'
 import { WizardItem, WizardTrigger } from '~shared/ui/wizard'
 import { useWizardContext } from '~shared/ui/wizard/context'
+
 import { cn } from '~shared/utils'
 
 const nodesTitles = {
   createAuction: 'Создать аукцион',
-  chooseRoles: 'Войти в аукцион',
+  loginAdmin: 'Войти в аукцион',
 }
 
 const WizardWelcomeItem = (
@@ -57,7 +58,7 @@ const WizardWelcomeItem = (
   return (
     <WizardItem
       value={WELCOME_PAGE_WIZARD_ITEMS_IDS.WELCOME}
-      className={cn('absolute w-full space-y-4 top-1/5', className)}
+      className={cn('w-full space-y-4', className)}
       {...restProps}
     >
       <Flex className="relative gap-y-2" direction="column">

@@ -11,6 +11,7 @@ import { toastErrorNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
 import type { WizardItemProps } from '~shared/ui/wizard'
 import { WizardItem, WizardTrigger } from '~shared/ui/wizard'
+
 import { cn } from '~shared/utils'
 
 const WizardLoginAdminItem = (

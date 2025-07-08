@@ -5,6 +5,7 @@ import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
 import { Wizard } from '~shared/ui/wizard'
+
 import { cn } from '~shared/utils'
 
 import {
@@ -13,10 +14,8 @@ import {
 } from '../constants'
 import {
   WizardAuctionParametersItem,
-  WizardChooseRolesItem,
   WizardCreateAuctionItem,
   WizardLoginAdminItem,
-  WizardLoginGuestItem,
   WizardSuccessCreatedItem,
   WizardWelcomeItem,
 } from './wizard-content'
@@ -37,34 +36,33 @@ const WelcomePage = () => {
             !IS_CLOVER_CAN_BE_SAFEFULLY_RENDERED && 'max-w-[1200px]',
           )}
         >
-          <div className="h-full w-full px-5 desktop:px-8 desktop-lg:px-10">
-            <div className="relative grid h-full w-full grid-cols-1 grid-rows-slider justify-between">
-              <div className="mt-5">
+          <div className="h-full w-full px-4 desktop:px-8 desktop-lg:px-10">
+            <div className="relative grid h-full w-full grid-cols-1 grid-rows-slider justify-between overflow-scroll">
+              <div className="pt-5">
                 <Button
                   className="w-full bg-yellow/40 text-yellow hover:bg-yellow/30 tablet:text-nowrap"
-                  startContent={<Icons.Warning size="default" />}
+                  startContent={<Icons.Warning size="sm" />}
+                  size="sm"
                 >
                   Прочитать перед использованием!
                 </Button>
               </div>
 
-              <div className="h-full w-full">
-
-                <Wizard
-                  className="relative h-full w-full px-0.5"
-                  wizardMap={welcomePageWizardMap}
-                  initialStepId={WELCOME_PAGE_WIZARD_ITEMS_IDS.WELCOME}
-                >
+              <Wizard
+                className="relative flex flex-col items-center w-full h-full"
+                wizardMap={welcomePageWizardMap}
+                initialStepId={WELCOME_PAGE_WIZARD_ITEMS_IDS.WELCOME}
+              >
+                <div className="welcome-wizard__spacer" />
+                <div className="my-8 w-full px-0.25">
                   <WizardWelcomeItem />
                   <WizardCreateAuctionItem />
                   <WizardLoginAdminItem />
-                  <WizardLoginGuestItem />
-                  <WizardChooseRolesItem />
                   <WizardAuctionParametersItem />
                   <WizardSuccessCreatedItem />
-                </Wizard>
-
-              </div>
+                </div>
+                <div className="welcome-wizard__spacer" />
+              </Wizard>
 
               <div className="py-4">
                 <Flex

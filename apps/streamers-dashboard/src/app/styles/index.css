@@ -85,7 +85,7 @@
 
     --grid-template-rows-slots-desktop: max(40px) 1fr;
     --grid-template-rows-slots-table: minmax(40px, 42px) 1fr;
-    --grid-template-rows-slider: minmax(auto, 80px) 1fr minmax(auto, 60px);
+    --grid-template-rows-slider: max-content 1fr max-content;
     --spacing-4xl: 1.5rem;
 
     --border-width-1: 1px;
@@ -315,6 +315,7 @@
     }
 
     #root {
+        font-size: 16px;
         @apply relative h-full w-full overflow-hidden;
     }
 
@@ -357,6 +358,26 @@
     /* Firefox */
     input[type="number"] {
         -moz-appearance: textfield;
+    }
+
+    number-flow-react::part(left),
+    number-flow-react::part(right),
+    number-flow-react::part(left)::after,
+    number-flow-react::part(right)::after,
+    number-flow-react::part(symbol) {
+        padding: calc(var(--number-flow-mask-height, 0.25em) / 2) 0;
+    }
+
+    .welcome-wizard__spacer {
+        flex: 1;
+    }
+
+    .welcome-wizard__spacer:first-child {
+        flex: 0.6;
+    }
+
+    .welcome-wizard__spacer:last-child {
+        flex: 1.4;
     }
 
     .main--dashboard {
