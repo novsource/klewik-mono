@@ -25,6 +25,7 @@ import { default as Key } from './Key'
 import { default as LargeCross } from './LargeCross'
 import { default as LinkArrow } from './LinkArrow'
 import { default as List } from './List'
+import { default as Loading } from './Loading'
 import { default as Login } from './Login'
 import { default as Logo } from './Logo'
 import { default as MagicStick } from './MagicStick'
@@ -97,6 +98,7 @@ export const Icons = {
   LargeCross,
   LinkArrow,
   List,
+  Loading,
   Login,
   Logo,
   MagicStick,
