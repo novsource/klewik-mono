@@ -6,7 +6,7 @@ export const sheetVariants = cva(
   [
     'dark fixed z-50 gap-4 bg-dark-foreground',
     'transition ease-in-out data-[open]:animate-enter-sheet data-[closed]:animate-exit-sheet data-[closed]:duration-200 data-[open]:duration-300',
-    'data-[closed]:animate-fade-in sheet-shadow translate-none left-auto',
+    'data-[closed]:animate-fade-in sheet-shadow translate-none left-auto top-auto',
   ],
   {
     variants: {
@@ -21,9 +21,14 @@ export const sheetVariants = cva(
           'data-[closed]:slide-out-to-right data-[open]:slide-in-from-right',
         ],
       },
+      isFullPageSize: {
+        true: 'w-full h-full max-w-screen max-h-screen border-0 rounded-none',
+        false: '',
+      },
     },
     defaultVariants: {
       side: 'right',
+      isFullPageSize: false,
     },
   },
 )
@@ -31,7 +36,7 @@ export const sheetVariants = cva(
 export type SheetVariantsProps = VariantProps<typeof sheetVariants>
 
 export const sheetBackdropVariants = cva(
-  'fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] data-[open]:animate-in data-[closed]:animate-out data-[state=closed]:fade-out-0 data-[open]:fade-in-0',
+  'fixed inset-0 z-50 bg-black/35 backdrop-blur-[3px] data-[open]:animate-in data-[closed]:animate-out data-[state=closed]:fade-out-0 data-[open]:fade-in-0',
 )
 
 export const sheetHeaderVariants = cva('flex flex-col space-y-2 text-left')

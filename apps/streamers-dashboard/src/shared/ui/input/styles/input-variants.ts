@@ -133,7 +133,7 @@ export const inputVariants = cva<InputVariants>(
   {
     variants: {
       size: {
-        default: 'py-3 text-md',
+        default: 'text-md',
         lg: 'text-md',
         sm: 'text-sm',
       },

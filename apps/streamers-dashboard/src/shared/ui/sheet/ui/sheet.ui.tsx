@@ -42,14 +42,14 @@ export const SheetHeader = (props: SheetHeaderProps) => {
 export type SheetContentProps = DialogContentProps & SheetVariantsProps
 
 export const SheetContent = (props: SheetContentProps) => {
-  const { side = 'right', backdropProps, className, ...restProps } = props
+  const { side, isFullPageSize, backdropProps, className, ...restProps } = props
 
   const styles = useMemo(() => {
     return {
       backdrop: cn(sheetBackdropVariants(), backdropProps?.className),
-      content: cn(sheetVariants({ side }), typeof className === 'function' ? '' : className),
+      content: cn(sheetVariants({ side, isFullPageSize }), typeof className === 'function' ? '' : className),
     }
-  }, [side, className, backdropProps?.className])
+  }, [side, className, isFullPageSize, backdropProps?.className])
 
   return (
     <DialogContent

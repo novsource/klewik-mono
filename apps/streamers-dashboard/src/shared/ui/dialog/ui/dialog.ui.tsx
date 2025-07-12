@@ -7,7 +7,7 @@ import { Dialog as DialogPrimitive } from '@base-ui-components/react/dialog'
 
 import { cn } from '~shared/utils'
 
-import { dialogContentVariants, dialogHeaderVariants, dialogOverlayVariants, dialogTitleVariants } from '../styles'
+import { dialogContentVariants, dialogFooterVariants, dialogHeaderVariants, dialogOverlayVariants, dialogTitleVariants } from '../styles'
 
 type DialogProps = DialogPrimitive.Root.Props
 
@@ -83,5 +83,15 @@ const DialogClose = (props: DialogCloseProps) => {
   return <DialogPrimitive.Close className={cn(className)} data-slot="dialog-close" {...restProps} />
 }
 
-export { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger }
-export type { DialogCloseProps, DialogContentProps, DialogDescriptionProps, DialogHeaderProps, DialogProps, DialogTitleProps, DialogTriggerProps }
+type DialogFooterProps = ComponentPropsWithoutRef<'div'>
+
+const DialogFooter = (props: DialogFooterProps) => {
+  const { className, ...restProps } = props
+
+  const style = useMemo(() => cn(dialogFooterVariants(), className), [className])
+
+  return <div className={style} {...restProps} />
+}
+
+export { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger }
+export type { DialogCloseProps, DialogContentProps, DialogDescriptionProps, DialogFooterProps, DialogHeaderProps, DialogProps, DialogTitleProps, DialogTriggerProps }
