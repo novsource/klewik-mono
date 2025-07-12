@@ -2,6 +2,43 @@
 
 @plugin 'tailwindcss-animate';
 
+@font-face {
+    font-family: "Breeze Sans";
+    font-weight: 700;
+    font-style: normal;
+    src: url("../../shared/assets/fonts/BreezeSans-Bold.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Breeze Sans";
+    font-weight: 400;
+    font-style: normal;
+    src: url("../../shared/assets/fonts/BreezeSans-Regular.woff2")
+        format("woff2");
+}
+
+@font-face {
+    font-family: "Breeze Sans";
+    font-weight: 300;
+    font-style: normal;
+    src: url("../../shared/assets/fonts/BreezeSans-Light.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Breeze Sans";
+    font-weight: 200;
+    font-style: normal;
+    src: url("../../shared/assets/fonts/BreezeSans-Thin.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Breeze Sans";
+    font-weight: 500;
+    font-style: normal;
+    src: url("../../shared/assets/fonts/BreezeSans-Medium.woff2")
+        format("woff2");
+}
+
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -67,6 +104,7 @@
     --font-golos-f: "Golos Text", sans-serif;
     --font-azeret-mono: "Azeret Mono";
     --font-manrope: "Manrope", sans-serif;
+    --font-breeze: "Breeze Sans", sans-serif;
 
     --animate-fade-in: fadeIn 2s ease;
     --animate-fade-out: fadeIn 2s ease reverse;
