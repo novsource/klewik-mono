@@ -9,13 +9,13 @@ import { cn } from '~shared/utils'
 
 import { radioIndicatorVariants, radioLabelVariants, radioVariants } from '../styles'
 
-type RadioGroupProps = RadioGroupPrimitive.Props
+export type RadioGroupProps = RadioGroupPrimitive.Props
 
 const RadioGroup = (props: RadioGroupProps) => {
   return <RadioGroupPrimitive {...props} />
 }
 
-type RadioProps = Omit<RadioPrimitive.Root.Props, 'className'> & RadioVariantsProps & {
+export type RadioProps = Omit<RadioPrimitive.Root.Props, 'className'> & RadioVariantsProps & {
   slotsClassnames?: Record<'label' | 'root' | 'indicator', string>
   indicatorProps?: Omit<RadioPrimitive.Indicator.Props, 'className'>
   labelProps?: Omit<ComponentProps<'label'>, 'className'>

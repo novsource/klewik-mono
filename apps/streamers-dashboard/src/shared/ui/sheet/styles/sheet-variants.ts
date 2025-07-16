@@ -6,7 +6,7 @@ export const sheetVariants = cva(
   [
     'dark fixed z-50 gap-4 bg-dark-foreground',
     'transition ease-in-out data-[open]:animate-enter-sheet data-[closed]:animate-exit-sheet data-[closed]:duration-200 data-[open]:duration-300',
-    'data-[closed]:animate-fade-in sheet-shadow translate-none left-auto top-auto',
+    'data-[closed]:animate-fade-in translate-none left-auto top-auto',
   ],
   {
     variants: {

@@ -1,12 +1,14 @@
-import { ComponentProps, memo } from 'react'
+import type { ComponentProps } from 'react'
+import { memo } from 'react'
 
 import { DONATION_PROCESSED_STATUS } from '~entities/donation/constants'
-import {
+import type {
   ProcessedDonation,
   ProcessedDonationStatus,
 } from '~entities/donation/model'
 
-import { Badge, BadgeProps } from '~shared/ui/badge'
+import type { BadgeProps } from '~shared/ui/badge'
+import { Badge } from '~shared/ui/badge'
 import { Skeleton } from '~shared/ui/skeleton'
 
 import { cn } from '~shared/utils'
@@ -32,7 +34,7 @@ const DonationCardBadge = memo((props: DonationCardBadgeProps) => {
 
   return (
     <Badge
-      className="text-nowrap font-medium"
+      className="text-nowrap font-medium max-tablet:text-xs max-tablet:py-0.25"
       variant={donationStatusToBadgeVariants}
       {...badgeProps}
     >

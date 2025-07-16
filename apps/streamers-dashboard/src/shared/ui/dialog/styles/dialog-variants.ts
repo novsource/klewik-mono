@@ -3,7 +3,7 @@ import type { VariantProps } from 'class-variance-authority'
 import { cva } from 'class-variance-authority'
 
 const dialogBackdropVariants = cva([
-  'fixed inset-0 z-50 bg-black/35 backdrop-blur-[3px] data-[open]:animate-in data-[closed]:animate-out data-[state=closed]:fade-out-0 data-[open]:fade-in-0',
+  'fixed inset-0 z-50 bg-black/50 backdrop-blur-[4px] data-[open]:animate-in data-[closed]:animate-out data-[state=closed]:fade-out-0 data-[open]:fade-in-0',
 ], {
   variants: { disableAnimation: {
     true: '',

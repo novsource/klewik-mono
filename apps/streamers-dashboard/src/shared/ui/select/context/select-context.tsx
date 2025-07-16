@@ -1,10 +1,13 @@
-import { ReactNode, createContext, useContext } from 'react'
+import type { SelectPositions, SelectSizes } from '../styles'
 
-import { SelectPositions, SelectSizes } from '../styles'
+import type { ReactNode } from 'react'
+import { createContext, useContext, useMemo } from 'react'
+
+import { objectToDeps } from '~shared/utils'
 
 export type SelectContextState = Partial<
-  Record<'size', keyof SelectSizes['size']> &
-    Record<'position', keyof SelectPositions['position']>
+  Record<'size', keyof SelectSizes['size']>
+  & Record<'position', keyof SelectPositions['position']>
 >
 
 const SelectContext = createContext<SelectContextState>({
@@ -15,7 +18,8 @@ const SelectContext = createContext<SelectContextState>({
 const useSelectContext = () => {
   const context = useContext(SelectContext)
 
-  if (!context) throw new Error('You should use context inside provider!')
+  if (!context)
+    throw new Error('You should use context inside provider!')
 
   return context
 }
@@ -25,8 +29,10 @@ type SelectProviderProps = SelectContextState & {
 }
 
 const SelectProvider = ({ children, ...contextValue }: SelectProviderProps) => {
+  const value = useMemo(() => contextValue, [...objectToDeps(contextValue, ['position', 'size'])])
+
   return (
-    <SelectContext.Provider value={contextValue}>
+    <SelectContext.Provider value={value}>
       {children}
     </SelectContext.Provider>
   )

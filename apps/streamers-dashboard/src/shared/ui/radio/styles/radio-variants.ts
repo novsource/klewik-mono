@@ -9,7 +9,7 @@ const radioVariants = cva('flex items-center justify-center rounded-full outline
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800',
         'data-[checked]:bg-green-dark data-[unchecked]:border-1 data-[unchecked]:border-dark-accent',
       ],
-      ghost: 'hidden',
+      ghost: 'data-[checked]:bg-dark data-[checked]:border-green-accent data-[checked]:border-1 data-[unchecked]:border-1 data-[unchecked]:border-dark-accent',
     },
     size: {
       lg: 'size-5',
@@ -18,27 +18,32 @@ const radioVariants = cva('flex items-center justify-center rounded-full outline
     },
   },
   defaultVariants: {
-    variant: 'ghost',
+    variant: 'default',
     size: 'default',
   },
 })
 
-const radioIndicatorVariants = cva('', {
+const radioIndicatorVariants = cva('flex before:rounded-full', {
   variants: {
     variant: {
-      default: 'flex before:size-1.5 before:rounded-full before:bg-green-accent/60 data-[unchecked]:hidden',
-      ghost: '',
+      default: 'before:bg-green-accent/60 data-[unchecked]:hidden',
+      ghost: 'before:bg-green-accent/60 data-[unchecked]:hidden',
     },
     size: {
       lg: 'before:size-2.5',
-      default: 'size-2',
+      default: 'before:size-2',
       sm: 'before:size-1.5',
     },
   },
   defaultVariants: {
-    variant: 'ghost',
+    variant: 'default',
     size: 'default',
   },
+  compoundVariants: [
+    { variant: 'ghost', size: 'lg', className: 'before:size-2.5' },
+    { variant: 'ghost', size: 'default', className: 'before:size-2.25' },
+    { variant: 'ghost', size: 'sm', className: 'before:size-2' },
+  ],
 })
 
 const radioLabelVariants = cva('flex items-center font-breeze text-sm cursor-pointer transition-all', {
@@ -57,7 +62,7 @@ const radioLabelVariants = cva('flex items-center font-breeze text-sm cursor-poi
     },
   },
   defaultVariants: {
-    variant: 'ghost',
+    variant: 'default',
     size: 'default',
   },
 })
