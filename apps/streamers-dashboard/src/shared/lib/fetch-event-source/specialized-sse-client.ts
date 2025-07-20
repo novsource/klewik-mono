@@ -13,7 +13,7 @@ import { BaseSSEClient } from './base-sse-client'
 import { SSEEmiter } from './sse-emitter'
 
 class SpecializedSSEClient<
-  SourceMessage extends EventSourceMessage,
+  SourceMessage extends EventSourceMessage = EventSourceMessage,
   EventsMap extends Record<string, any> = Record<string, any>,
 > extends BaseSSEClient {
   private readonly _sseEventsEmitter = new SSEEmiter()

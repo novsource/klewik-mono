@@ -1,4 +1,5 @@
-import { BroadcastChannelOptions } from 'broadcast-channel'
+import type { BroadcastChannelOptions } from 'broadcast-channel'
+
 import { z } from 'zod'
 
 import { CommunicableSSEChannel } from '~shared/lib/broadcast-channel'
@@ -6,7 +7,7 @@ import { EventSourceMessageSchema } from '~shared/lib/fetch-event-source'
 
 type SSEClientsManagerEventsMap = {
   'manager/new': (data: { auctionId: string }) => void
-  'manager/status': (data: { auctionId: string; isConnected: boolean }) => void
+  'manager/status': (data: { auctionId: string, isConnected: boolean }) => void
   'manager/leader-changed': (data: { auctionId: string }) => void
   'manager/get-status': (data: { auctionId: string }) => void
 }
@@ -19,7 +20,7 @@ const SSEClientsManagerSourceMessageSchema = EventSourceMessageSchema.merge(
       'manager/leader-changed',
       'manager/get-status',
     ]),
-  })
+  }),
 )
 
 export type SSEApiEventSourceMessage = z.infer<
