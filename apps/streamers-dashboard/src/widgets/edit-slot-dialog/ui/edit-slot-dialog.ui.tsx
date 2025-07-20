@@ -10,8 +10,11 @@ import { auctionSlotsActions } from '~entities/auction-slot/store'
 import { AuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
+
 import { useMediaQuery } from '~shared/hooks/use-media-query'
+
 import { useActionCreators } from '~shared/lib/redux-toolkit'
+
 import { Button } from '~shared/ui/button'
 import {
   Drawer,
@@ -29,7 +32,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '~shared/ui/sheet/ui'
+} from '~shared/ui/sheet'
 import { closeAllToasts, toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
 
@@ -102,7 +105,7 @@ const EditSlotDialog = ({
     return (
       <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <SheetTrigger>{trigger}</SheetTrigger>
-        <SheetContent hideCloseButton>
+        <SheetContent>
           <Flex className="h-full w-full gap-y-4" direction="column">
             <SheetHeader className="flex flex-col w-full gap-y-5">
               <Flex className="w-full h-8" justify="between">

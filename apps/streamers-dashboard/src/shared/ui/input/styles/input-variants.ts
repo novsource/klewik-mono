@@ -53,9 +53,9 @@ type InputVariants = SizesCvaVariants
 export const labelVariants = cva<LabelVariants>('select-none', {
   variants: {
     size: {
-      default: 'text-sm tablet:text-md font-semibold',
-      lg: 'text-sm tablet:text-md font-semibold',
-      sm: 'text-xs tablet:text-sm font-medium',
+      default: 'text-sm tablet:text-md font-semibold font-superior',
+      lg: 'text-sm tablet:text-md font-semibold font-superior',
+      sm: 'text-xs tablet:text-sm font-medium font-superior',
     },
     isError: {
       true: 'text-red',
@@ -73,9 +73,9 @@ export const descriptionVariants = cva<DescriptionVariants>(
   {
     variants: {
       size: {
-        default: 'text-sm',
-        lg: 'text-sm',
-        sm: 'text-sm',
+        default: 'text-sm font-superior',
+        lg: 'text-sm font-superior',
+        sm: 'text-sm font-superior',
       },
       isError: {
         true: 'text-red',
@@ -133,9 +133,9 @@ export const inputVariants = cva<InputVariants>(
   {
     variants: {
       size: {
-        default: 'text-md',
-        lg: 'text-md',
-        sm: 'text-sm',
+        default: 'text-md font-superior',
+        lg: 'text-md font-superior',
+        sm: 'text-sm font-superior',
       },
       isError: {
         true: 'focus-visible:ring-red',

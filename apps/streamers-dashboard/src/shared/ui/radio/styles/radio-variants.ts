@@ -12,9 +12,9 @@ const radioVariants = cva('flex items-center justify-center rounded-full outline
       ghost: 'data-[checked]:bg-dark data-[checked]:border-green-accent data-[checked]:border-1 data-[unchecked]:border-1 data-[unchecked]:border-dark-accent',
     },
     size: {
-      lg: 'size-5',
-      default: 'size-4.5',
-      sm: 'size-4',
+      lg: 'size-4.5',
+      default: 'size-4',
+      sm: 'size-3.5',
     },
   },
   defaultVariants: {
