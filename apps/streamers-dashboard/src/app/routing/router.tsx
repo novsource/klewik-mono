@@ -14,10 +14,10 @@ import { Toaster } from '~shared/ui/toaster'
 import { prepareDashboardRoute } from './prepate-dashboard.route'
 
 const WelcomePageRouteObject = welcomePageRoute()
-const AuctionSlotsRouteObject = auctionSlotsPageRoute()
-const AuctionWheelRouteObject = auctionWheelPageRoute()
-const AuctionSettingsRouteObject = auctionSettingsPageRoute()
-const AuctionDonationsRouteObject = auctionDonationsPageRoute()
+const AuctionSlotsRouteObject = auctionSlotsPageRoute({ disableTransition: true })
+const AuctionWheelRouteObject = auctionWheelPageRoute({ disableTransition: true })
+const AuctionSettingsRouteObject = auctionSettingsPageRoute({ disableTransition: true })
+const AuctionDonationsRouteObject = auctionDonationsPageRoute({ disableTransition: true })
 const RedirectRouteObject = redirectPageRoute()
 
 const browserRouter = createBrowserRouter([
