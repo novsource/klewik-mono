@@ -61,12 +61,6 @@ const AuctionDonationsPage = () => {
         align="center"
         justify="between"
       >
-        <SearchInput
-          slotClassNames={{
-            base: 'w-full tablet:max-w-[400px] landtop:max-w-[450px] desktop:max-w-[500px]',
-          }}
-          size={!isMediaLargeThenTablet ? 'lg' : 'default'}
-        />
         <DonationsFilterSelect
           status={donationsFilterValue}
           onValueChange={(status: DonationProcessStatus) =>
