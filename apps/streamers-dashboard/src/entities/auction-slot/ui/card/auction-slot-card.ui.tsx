@@ -1,10 +1,14 @@
-import type { ClassValue } from 'clsx'
+import type { NumberFlowProps } from '@number-flow/react'
 
 import type { ComponentProps, ReactNode } from 'react'
 import { forwardRef } from 'react'
 
+import NumberFlow from '@number-flow/react'
+
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
+import type { BadgeProps } from '~shared/ui/badge'
+import { Badge } from '~shared/ui/badge'
 import type {
   CardProps,
 } from '~shared/ui/card'
@@ -17,129 +21,237 @@ import {
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
+
 import { cn } from '~shared/utils'
 
-type AuctionCardChipProps = {
-  children?: ReactNode
-  style?: ComponentProps<'div'>['style']
-  startContent?: JSX.Element
-  endContent?: JSX.Element
-  classNames?: {
-    base?: ClassValue
-    text?: ClassValue
-  }
-}
+export type AuctionSlotCardProps = CardProps
 
-type AuctionSlotCardProps = Omit<CardProps, 'id' | 'color' | 'className'>
-  & AuctionSlot & {
-    percent?: string | number
-    slotClassNames?: {
-      base?: string
-      header?: string
-      title?: string
-      content?: string
-    }
-  }
-
-const AuctionSlotCard = forwardRef<HTMLDivElement, AuctionSlotCardProps>(
+export const AuctionSlotCard = forwardRef<HTMLDivElement, AuctionSlotCardProps>(
   (props, forwardRef) => {
-    const { id, percent, title, color, points, slotClassNames, ...cardProps }
-      = props
+    const { className, ...restProps } = props
+
     return (
       <Card
         ref={forwardRef}
         className={cn(
-          'flex flex-col justify-between gap-y-3 border-1 border-dark py-2',
-          slotClassNames?.base,
+          'flex flex-col justify-between gap-y-2.5 border-1 border-dark-light py-1 tablet:py-2 tablet:gap-y-0',
+          className,
         )}
-        {...cardProps}
-      >
-        <CardHeader
-          className={cn(
-            'flex h-6 items-start justify-between',
-            slotClassNames?.header,
-          )}
-        >
-          <CardTitle className={cn('w-full', slotClassNames?.title)}>
-            <Typography
-              tag="span"
-              className="font-golos-f text-md tablet:text-title tablet:font-semibold"
-            >
-              {title}
-            </Typography>
-          </CardTitle>
-        </CardHeader>
-        <CardContent
-          className={cn(
-            'flex w-full flex-col gap-y-2 pt-0',
-            slotClassNames?.content,
-          )}
-        >
-          <Flex
-            className="w-full gap-x-1 tablet:gap-x-2"
-            direction="row"
-            align="center"
-          >
-            <div
-              className="h-7 w-8 rounded-md max-tablet:size-6"
-              style={{
-                backgroundColor: Array.isArray(color)
-                  ? `rgb(${color.join(',')})`
-                  : color,
-              }}
-            />
-            <AuctionCardChip
-              startContent={<Icons.Id className="text-gray-light" size="sm" />}
-            >
-              {id}
-            </AuctionCardChip>
-            <AuctionCardChip
-              startContent={
-                <Icons.Coin className="text-gray-light" size="sm" />
-              }
-            >
-              {Intl.NumberFormat('ru-Ru').format(points).toString()}
-            </AuctionCardChip>
-            {percent && (
-              <AuctionCardChip
-                classNames={{ base: 'bg-green/20', text: 'text-green' }}
-              >
-                {percent}
-                %
-              </AuctionCardChip>
-            )}
-          </Flex>
-        </CardContent>
-      </Card>
+        {...restProps}
+      />
     )
   },
 )
 
-const AuctionCardChip = (props: AuctionCardChipProps) => {
-  const { children, startContent, endContent, classNames } = props
+export type AuctionSlotCardHeaderProps = ComponentProps<'div'>
+
+export const AuctionSlotCardHeader = (props: AuctionSlotCardHeaderProps) => {
+  const { className, ...restProps } = props
+
+  return (
+    <CardHeader className={cn('flex flex-col gap-y-2.5 items-start justify-between', className)} {...restProps} />
+  )
+}
+
+export type AuctionSlotCardTitleInfoProps = {
+  slotTitle: string
+  className?: string
+}
+
+export const AuctionSlotCardTitleInfo = (props: AuctionSlotCardTitleInfoProps) => {
+  const { slotTitle, className } = props
+
+  return (
+    <Typography
+      tag="span"
+      className={cn('text-title font-bold tablet:text-title-lg', className)}
+    >
+      {slotTitle}
+    </Typography>
+  )
+}
+
+export type AuctionSlotCardTitleProps = ComponentProps<'div'>
+
+export const AuctionSlotCardTitle = (props: AuctionSlotCardTitleProps) => {
+  const { className, ...restProps } = props
+
+  return (
+    <CardTitle className={cn('w-full', className)} {...restProps} />
+  )
+}
+
+export type AuctionSlotCardContentProps = ComponentProps<'div'>
+
+export const AuctionSlotCardContent = (props: AuctionSlotCardContentProps) => {
+  const { className, ...restProps } = props
+
+  return <CardContent className={cn('flex flex-row w-full gap-y-2 pt-0 space-y-0', className)} {...restProps} />
+}
+
+export type AuctionSlotCardContentInfoProps = ComponentProps<'div'> & {
+  icon?: ReactNode
+}
+
+export const AuctionSlotCardContentInfo = (props: AuctionSlotCardContentInfoProps) => {
+  const { icon, children, className, ...restProps } = props
 
   return (
     <Flex
-      className={cn(
-        'gap-x-1 rounded-md bg-gray/30 px-1.5 py-1 tablet:gap-x-1.5 tablet:px-2 tablet:py-1',
-        classNames?.base,
-      )}
-      direction="row"
-      align="center"
+      className={cn('h-7 gap-y-0.5 tablet:flex-row tablet:gap-x-2 tablet:items-center tablet:justify-start', className)}
+      {...restProps}
     >
-      {startContent}
-      <Typography
-        className={cn(
-          'font-golos-f text-sm font-medium text-gray-accent tablet:text-md',
-          classNames?.text,
-        )}
-        tag="span"
-      >
-        {children}
-      </Typography>
-      {endContent}
+      {icon && (
+        <Flex className="text-gray-light gap-x-1" align="center">
+          {icon}
+        </Flex>
+      )}
+      {children}
     </Flex>
   )
 }
 
-export { AuctionCardChip, AuctionSlotCard }
+export type AuctionSlotCardWinPercentsProps = Omit<ComponentProps<'div'>, 'children'> & {
+  winPercents: number
+  numberFlowProps?: NumberFlowProps
+}
+
+export const AuctionSlotCardWinPercents = (props: AuctionSlotCardWinPercentsProps) => {
+  const { winPercents, numberFlowProps, ...restProps } = props
+
+  return (
+    <AuctionSlotCardContentInfo icon={<Icons.Crown size="lg" />} {...restProps}>
+      <NumberFlow
+        className="text-green font-golos-f font-semibold text-md tablet:text-title"
+        willChange
+        trend={0}
+        value={winPercents}
+        format={{
+          notation: 'compact',
+          compactDisplay: 'short',
+        }}
+        locales="ru-RU"
+        suffix="%"
+        {...numberFlowProps}
+      />
+    </AuctionSlotCardContentInfo>
+  )
+}
+
+export type AuctionSlotCardColorInfoProps = Omit<ComponentProps<'div'>, 'children'> & {
+  slotColor: AuctionSlot['color']
+}
+
+export const AuctionSlotCardColorInfo = (props: AuctionSlotCardColorInfoProps) => {
+  const { slotColor, ...restProps } = props
+
+  return (
+    <AuctionSlotCardContentInfo {...restProps}>
+      <div
+        className="rounded-full w-9 h-3.5"
+        style={{
+          backgroundColor: Array.isArray(slotColor)
+            ? `rgb(${slotColor.join(',')})`
+            : slotColor,
+        }}
+      />
+    </AuctionSlotCardContentInfo>
+  )
+}
+
+export type AuctionSlotCardPointsInfoProps = Omit<ComponentProps<'div'>, 'children'> & {
+  slotPoints: number
+  numberFlowProps?: NumberFlowProps
+}
+
+export const AuctionSlotCardPointsInfo = (props: AuctionSlotCardPointsInfoProps) => {
+  const { slotPoints, numberFlowProps, ...restProps } = props
+
+  return (
+    <AuctionSlotCardContentInfo icon={<Icons.Coin size="lg" />} {...restProps}>
+      <NumberFlow
+        className="font-golos-f font-semibold text-gray-accent text-md tablet:text-title tablet:leading-4"
+        willChange
+        trend={0}
+        value={slotPoints}
+        locales="ru-RU"
+        {...numberFlowProps}
+      />
+    </AuctionSlotCardContentInfo>
+  )
+}
+
+export type AuctionSlotCardIdBadgeProps = Omit<BadgeProps, 'children'> & {
+  slotId: AuctionSlot['id']
+}
+
+export const AuctionSlotCardIdBadge = (props: AuctionSlotCardIdBadgeProps) => {
+  const { className, slotId, ...restProps } = props
+
+  return (
+    <Badge className={cn('px-1.5 py-0.25 bg-dark-light border-1 border-dark-accent', className)} {...restProps}>
+      <Typography className="font-golos-f text-gray-light rounded-md text-sm" tag="span">
+        {`ID: ${slotId}`}
+      </Typography>
+    </Badge>
+  )
+}
+
+export type SolidAuctionSlotHeaderProps = AuctionSlotCardHeaderProps & {
+  slotId: AuctionSlot['id']
+  slotTitle: AuctionSlot['title']
+}
+
+export const SolidAuctionSlotHeader = (props: SolidAuctionSlotHeaderProps) => {
+  const { slotId, slotTitle, ...restProps } = props
+
+  return (
+    <AuctionSlotCardHeader {...restProps}>
+      <Flex className="w-full" justify="between">
+        <AuctionSlotCardIdBadge slotId={slotId} />
+      </Flex>
+      <AuctionSlotCardTitle>
+        <AuctionSlotCardTitleInfo slotTitle={slotTitle} />
+      </AuctionSlotCardTitle>
+    </AuctionSlotCardHeader>
+  )
+}
+
+export type SolidAuctionSlotContentProps = CardProps & {
+  auctionSlot: AuctionSlot
+  winPercents?: number
+}
+
+export const SolidAuctionSlotContent = (props: SolidAuctionSlotContentProps) => {
+  const { auctionSlot, winPercents, ...restProps } = props
+
+  return (
+    <AuctionSlotCardContent {...restProps}>
+      <Flex
+        className="w-full mobile:gap-x-5"
+        direction="row"
+        align="end"
+      >
+        <AuctionSlotCardColorInfo slotColor={auctionSlot.color} />
+        <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
+        {winPercents && <AuctionSlotCardWinPercents winPercents={winPercents} />}
+      </Flex>
+    </AuctionSlotCardContent>
+  )
+}
+
+export type SolidAuctionSlotCardProps = CardProps & {
+  auctionSlot: AuctionSlot
+  winPercents?: number
+}
+
+export const SolidAuctionSlotCard = (props: SolidAuctionSlotCardProps) => {
+  const { className, auctionSlot, winPercents, ...restProps } = props
+
+  return (
+    <AuctionSlotCard className={cn(className)} {...restProps}>
+      <SolidAuctionSlotHeader slotId={auctionSlot.id} slotTitle={auctionSlot.title} />
+      <SolidAuctionSlotContent className="min-h-11" auctionSlot={auctionSlot} winPercents={winPercents} />
+    </AuctionSlotCard>
+  )
+}

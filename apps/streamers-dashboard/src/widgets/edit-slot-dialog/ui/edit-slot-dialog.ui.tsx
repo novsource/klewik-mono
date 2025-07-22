@@ -7,7 +7,7 @@ import { ControlledEditSlotForm } from '~features/auction-slot/edit-slot/ui/edit
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions } from '~entities/auction-slot/store'
-import { AuctionSlotCard } from '~entities/auction-slot/ui/card'
+import { SolidAuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import { tailwindScreens } from '~shared/constants/tailwindcss'
 
@@ -88,10 +88,7 @@ const EditSlotDialog = ({
   const dialogContent = useMemo(() => {
     return (
       <Flex className="h-full gap-y-6" direction="column">
-        <AuctionSlotCard
-          slotClassNames={{ base: 'max-tablet:py-1' }}
-          {...inputSlot}
-        />
+        <SolidAuctionSlotCard auctionSlot={inputSlot} />
         <ControlledEditSlotForm
           form={form}
           onSubmit={e => e.preventDefault()}

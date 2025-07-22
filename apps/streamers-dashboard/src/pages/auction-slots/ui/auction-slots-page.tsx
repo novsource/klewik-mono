@@ -1,13 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import { CreateSlotsDialog } from '~widgets/create-slots-dialog/ui'
-import { SearchInput } from '~widgets/search-input/ui'
-
-import { useSearchAuctionSlots } from '~features/auction-slot/search-slots/hooks'
-
-import { auctionSlotsSelectors } from '~entities/auction-slot/store'
-
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
@@ -15,19 +8,12 @@ import { Icons } from '~shared/ui/icons'
 
 import { twSlotsStyles } from '~shared/utils'
 
-import { auctionSlotsPageSearchInputStyles, auctionSlotsPageStyles } from '../styles'
+import { auctionSlotsPageStyles } from '../styles'
 import { AuctionSlotsList } from './slots-list/slots-list.ui'
 import { SortingSlotsCombobox } from './sorting-slots-combobox'
 
 const AuctionSlotsPage = () => {
-  const [searchValue, setSearchValue] = useState<string>('')
-
-  const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-
-  const searchedSlots = useSearchAuctionSlots(searchValue, auctionSlots)
-
   const pageStyles = useMemo(() => twSlotsStyles(auctionSlotsPageStyles), [])
-  const searchInputStyles = useMemo(() => twSlotsStyles(auctionSlotsPageSearchInputStyles), [])
 
   return (
     <div
@@ -37,14 +23,9 @@ const AuctionSlotsPage = () => {
         className={pageStyles.contentWrapper}
         wrap="nowrap"
         align="center"
-        justify="between"
+        justify="end"
       >
-        <SearchInput
-          slotClassNames={searchInputStyles}
-          value={searchValue}
-          onChange={e => setSearchValue(e.target.value)}
-        />
-        <Flex className={pageStyles.actionPanel} align="center">
+        <Flex className={pageStyles.actionPanel} align="center" justify="between">
           <SortingSlotsCombobox />
           <CreateSlotsDialog
             multiplySlots
@@ -60,7 +41,7 @@ const AuctionSlotsPage = () => {
           />
         </Flex>
       </Flex>
-      <AuctionSlotsList data={searchedSlots} />
+      <AuctionSlotsList />
     </div>
   )
 }
