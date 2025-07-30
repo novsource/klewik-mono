@@ -177,10 +177,17 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
   ])
 
   const shadowScrollAreaStyle = useMemo(() => {
-    const getTopGradientValue = transform([0, 0.05], [0, shadowSize])
-    const getBottomGradientValue = transform([0.95, 1], [shadowSize, 0])
+    const getTopGradientValue = transform([0, 0.025], [0, shadowSize])
+    const getBottomGradientValue = transform([0.975, 1], [shadowSize, 0])
 
-    return `linear-gradient(#000, #000,transparent 0,#000 ${getTopGradientValue(scrollYProgress)}px,#000 calc(100% - ${getBottomGradientValue(scrollYProgress)}px),transparent)`
+    return `linear-gradient(
+      #000,
+      #000,
+      transparent 0,
+      #000 ${getTopGradientValue(scrollYProgress)}px,
+      #000 calc(100% - ${getBottomGradientValue(scrollYProgress)}px),
+      transparent
+    )`
   }, [scrollYProgress, shadowSize])
 
   const isTopShadowShouldBeRendered

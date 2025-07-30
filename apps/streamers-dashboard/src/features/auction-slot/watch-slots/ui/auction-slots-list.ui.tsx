@@ -1,5 +1,3 @@
-import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
-
 import type { ReactNode } from 'react'
 import { useCallback, useState } from 'react'
 
@@ -24,8 +22,11 @@ import { cn } from '~shared/utils'
 type AuctionSlotsListProps<DataSlotItem extends AuctionSlot> = {
   data?: DataSlotItem[]
   className?: string
-  renderCard?: (item: DataSlotItem, virtualItem: VirtualItem, index: number, virtualizer: Virtualizer<HTMLDivElement, HTMLDivElement>) => ReactNode
-} & Omit<ShadowVirtualListProps<HTMLDivElement, DataSlotItem>, 'children'>
+  renderCard?: (
+    item: DataSlotItem,
+    index: number,
+  ) => ReactNode
+} & Omit<ShadowVirtualListProps, 'children'>
 
 const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) => {
   const { data, renderCard, className, ...virtualListProps } = props
@@ -42,11 +43,11 @@ const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) => {
   }
 
   const renderVirtualListItem = useCallback(
-    (data: AuctionSlot[], virtualItem: VirtualItem, index: number, virtualizer: Virtualizer<HTMLDivElement, HTMLDivElement>) => {
+    (data: AuctionSlot[], index: number) => {
       const slot = data[index]
 
       if (renderCard) {
-        return renderCard(slot, virtualItem, index, virtualizer)
+        return renderCard(slot, index)
       }
 
       return <SolidAuctionSlotCard auctionSlot={slot} />
@@ -77,7 +78,7 @@ const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) => {
     <Flex className={cn('h-full w-full', className)}>
       <ShadowVirtualList
         data={slots}
-        slotsClassNames={{ content: 'pb-4' }}
+        slotsClassNames={{ container: 'pb-4' }}
         overscan={8}
         estimateSize={() => 125}
         {...virtualListProps}
