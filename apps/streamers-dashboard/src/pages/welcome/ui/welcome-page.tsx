@@ -87,8 +87,10 @@ const WelcomePage = () => {
           </div>
         </div>
         {IS_CLOVER_CAN_BE_SAFEFULLY_RENDERED && (
-          <Flex className="hidden h-full w-full shrink-[2] grow basis-2/3 border-l-[1px] border-dark bg-[#111] landtop:block">
-            <CloverAnimation />
+          <Flex className="hidden h-full w-full shrink-[2] grow basis-2/3 landtop:block">
+            <div className="w-full h-full p-5 overflow-clip">
+              <CloverAnimation />
+            </div>
           </Flex>
         )}
       </Flex>

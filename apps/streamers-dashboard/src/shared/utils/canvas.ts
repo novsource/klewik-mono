@@ -34,8 +34,8 @@ export const getMaxSizeCanvas = (wrapper: HTMLElement): number => {
  */
 
 export const getCenterCanvas = (
-  canvas: HTMLCanvasElement
-): { x: number; y: number } => {
+  canvas: HTMLCanvasElement,
+): { x: number, y: number } => {
   return { x: canvas.width / 2, y: canvas.height / 2 }
 }
 
@@ -46,7 +46,7 @@ export const getCenterCanvas = (
 
 export const resizeCanvasWithRatio = (
   canvas: HTMLCanvasElement,
-  wrapper?: HTMLElement
+  wrapper?: HTMLElement,
 ) => {
   const size = wrapper
     ? wrapper.getBoundingClientRect().width
@@ -57,6 +57,12 @@ export const resizeCanvasWithRatio = (
 
   canvas.style.width = `${size}px`
   canvas.style.height = `${size}px`
+
+  if (ratio >= 1) {
+    const canvaContext = canvas.getContext('2d') as CanvasRenderingContext2D
+
+    canvaContext.scale(ratio, ratio)
+  }
 }
 
 /**
@@ -108,15 +114,16 @@ export const drawSlice: DrawSlice = ({
   // TODO: Fix angle of text
   if (options?.text && !options?.disableText && false) {
     const metrics = ctx.measureText(options.text)
-    const textHeight =
-      metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+    const textHeight
+      = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
 
-    if (textHeight < arcLength * 0.125)
+    if (textHeight < arcLength * 0.125) {
       drawTextOnSlice(ctx, options?.text ?? 'untitled', {
         x,
         y,
         angle: (endAngle + startAngle) / 2,
       })
+    }
   }
 
   if (onDraw !== undefined) {
@@ -133,7 +140,7 @@ export const drawSlice: DrawSlice = ({
 export const drawTextOnSlice = (
   ctx: CanvasRenderingContext2D,
   text: string,
-  slice: { x: number; y: number; angle: number }
+  slice: { x: number, y: number, angle: number },
 ) => {
   ctx.fillStyle = 'white'
   ctx.textAlign = 'center'
@@ -143,8 +150,8 @@ export const drawTextOnSlice = (
   setFontSizeForCanvasText(ctx, radius, fitText)
 
   const metrics = ctx.measureText(text)
-  const textHeight =
-    metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+  const textHeight
+    = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
 
   ctx.translate(slice.x, slice.y)
   ctx.rotate(slice.angle)
@@ -201,10 +208,10 @@ export const wrapText = ({
   let str = ''
 
   for (let charIndex = 0; charIndex <= text.length - 1; charIndex++) {
-    const metrics = ctx.measureText(str + separator + '\n')
+    const metrics = ctx.measureText(`${str + separator}\n`)
 
     if (metrics.width >= maxWidth) {
-      result.push(str + separator + '\n')
+      result.push(`${str + separator}\n`)
       text = text.slice(charIndex, text.length)
       charIndex = 0
       str = separator
@@ -213,7 +220,8 @@ export const wrapText = ({
     str += text[charIndex]
   }
 
-  if (str.length !== 0) result.push(str)
+  if (str.length !== 0)
+    result.push(str)
 
   return result
 }
@@ -225,7 +233,7 @@ export const wrapText = ({
 export const fitTextEllipsis = (
   ctx: CanvasRenderingContext2D,
   text: string,
-  maxWidth: number
+  maxWidth: number,
 ) => {
   return fitText({ ctx, text, maxWidth, separator: '...' })
 }
@@ -248,7 +256,7 @@ export const clearCanvas = (canvas: HTMLCanvasElement) => {
 export const setFontSizeForCanvasText = (
   ctx: CanvasRenderingContext2D,
   radius: number,
-  text: string
+  text: string,
 ) => {
   const defaultFontSizeRem = 30
 
@@ -257,7 +265,8 @@ export const setFontSizeForCanvasText = (
 
     const measureText = ctx.measureText(text)
 
-    if (measureText.width < radius * 0.2) return
+    if (measureText.width < radius * 0.2)
+      return
   }
 }
 
@@ -289,7 +298,7 @@ export const getCoordsOfDotByVectorAngle = (
   centerX: number,
   centerY: number,
   radius: number,
-  angle: number
+  angle: number,
 ) => {
   const x = centerX + radius * Math.cos(angle)
   const y = centerY + radius * Math.sin(angle)
