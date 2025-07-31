@@ -1,3 +1,5 @@
+export * from './use-detect-device-by-media/use-detect-device-by-media'
 export * from './use-did-update/use-did-update'
 export * from './use-isomorphic-layout-effect/use-isomorphic-layout-effect'
+export * from './use-media-query/use-media-query'
 export * from './use-timer/use-timer'
