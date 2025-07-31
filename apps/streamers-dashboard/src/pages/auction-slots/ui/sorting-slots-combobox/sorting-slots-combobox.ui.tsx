@@ -8,9 +8,9 @@ import type { SortingDrawerStylesSlots } from '~pages/auction-slots/styles'
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions, auctionSlotsSelectors } from '~entities/auction-slot/store'
 
-import { tailwindScreens } from '~shared/constants/tailwindcss'
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useMediaQuery } from '~shared/hooks/use-media-query'
+import { useMediaQuery } from '~shared/hooks'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -74,7 +74,7 @@ const SortingSlotsCombobox = memo((props: SortingSlotsComboboxProps) => {
   const { setSlotsSortOptions } = useActionCreators(auctionSlotsActions)
 
   const isLargeThenTablet = useMediaQuery(
-    `(min-width: ${tailwindScreens.tablet})`,
+    greaterThenDeviceWidthMediaQueries.tablet,
   )
 
   const drawerStyles = useMemo(() => twSlotsStyles(sortingDrawerStyles, drawerClassnames), [drawerClassnames])

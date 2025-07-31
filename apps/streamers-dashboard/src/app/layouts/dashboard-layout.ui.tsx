@@ -6,26 +6,30 @@ import { DashboardHeader } from '~widgets/dashboard-header/ui'
 import { DesktopNavbarMenu } from '~widgets/navbar-menu/desktop-navbar-menu/ui'
 import { MobileNavbarMenu } from '~widgets/navbar-menu/mobile-navbar-menu/ui'
 
+import { auctionSelectors } from '~entities/auction/store'
+
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions as storeAuctionSlotsActions } from '~entities/auction-slot/store'
-import { auctionSelectors } from '~entities/auction/store'
+
 import type { ProcessedDonation } from '~entities/donation/model'
 import { donationsActions as storeDonationsActions } from '~entities/donation/store'
 
 import { SSEClientsManager } from '~shared/api/sse/clients-manager'
-import { tailwindScreens } from '~shared/constants/tailwindcss'
+
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { useMediaQuery } from '~shared/hooks'
 import { useLocalStorage } from '~shared/hooks/use-local-storage'
-import { useMediaQuery } from '~shared/hooks/use-media-query'
+
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { toastPromiseNotification } from '~shared/ui/toaster/lib'
 
 const DashboardLayout = () => {
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
-  const isLargeThenTablet = useMediaQuery(
-    `(min-width:${tailwindScreens.tablet})`,
-  )
+  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   const auctionSlotsActions = useActionCreators(storeAuctionSlotsActions)
   const donationActions = useActionCreators(storeDonationsActions)

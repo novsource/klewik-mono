@@ -1,3 +1,2 @@
-import { tailwindScreens } from './twScreens'
-
-export { tailwindScreens }
+export * from './media-queries'
+export * from './twScreens'

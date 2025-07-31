@@ -2,9 +2,9 @@ import { isRouteErrorResponse, Link, useRouteError } from 'react-router-dom'
 
 import * as m from 'motion/react-m'
 
-import { tailwindScreens } from '~shared/constants/tailwindcss'
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useMediaQuery } from '~shared/hooks/use-media-query'
+import { useMediaQuery } from '~shared/hooks'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
@@ -54,14 +54,12 @@ const ErrorPage = () => {
 }
 
 function AnimatedLogo() {
-  const isTablet = useMediaQuery(
-    `(min-width: ${tailwindScreens.tablet})`,
-  )
+  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   return (
     <m.svg
-      width={isTablet ? 126 : 100}
-      height={isTablet ? 108 : 82}
+      width={isLargeThenTablet ? 126 : 100}
+      height={isLargeThenTablet ? 108 : 82}
       viewBox="0 0 50 35"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

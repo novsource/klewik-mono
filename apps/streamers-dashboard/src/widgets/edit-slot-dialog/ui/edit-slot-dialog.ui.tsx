@@ -9,9 +9,9 @@ import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions } from '~entities/auction-slot/store'
 import { SolidAuctionSlotCard } from '~entities/auction-slot/ui/card'
 
-import { tailwindScreens } from '~shared/constants/tailwindcss'
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useMediaQuery } from '~shared/hooks/use-media-query'
+import { useMediaQuery } from '~shared/hooks'
 
 import { useActionCreators } from '~shared/lib/redux-toolkit'
 
@@ -63,7 +63,7 @@ const EditSlotDialog = ({
   })
 
   const isMediaLargeThenTablet = useMediaQuery(
-    `(min-width: ${tailwindScreens.tablet})`,
+    greaterThenDeviceWidthMediaQueries.tablet,
   )
 
   if (!isDialogOpen && formState.isDirty) {

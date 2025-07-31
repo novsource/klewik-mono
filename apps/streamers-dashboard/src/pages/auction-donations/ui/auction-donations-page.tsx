@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
 import { ProcessDonationSheet } from '~widgets/process-donation-dialogs/ui'
-import { SearchInput } from '~widgets/search-input/ui'
 
 import { DonationsList } from '~features/donations/watch-donations/ui'
 
@@ -17,8 +16,6 @@ import {
 } from '~entities/donation/ui/card'
 import { IntegrationBadge } from '~entities/integrations/ui/badge'
 
-import { tailwindScreens } from '~shared/constants/tailwindcss'
-import { useMediaQuery } from '~shared/hooks/use-media-query'
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
@@ -32,10 +29,6 @@ type DonationProcessStatus = ProcessedDonation['processedStatus'] | 'default'
 
 const AuctionDonationsPage = () => {
   const donations = useStoreSelector(donationsSelectors.getAllDonations)
-
-  const isMediaLargeThenTablet = useMediaQuery(
-    `(min-width: ${tailwindScreens.tablet})`,
-  )
 
   const [donationsFilterValue, setDonationsFilterValue]
     = useState<DonationProcessStatus>('default')
