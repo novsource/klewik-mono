@@ -371,7 +371,7 @@
     }
 
     body {
-        font-family: "Breeze Sans", sans-serif;
+        font-family: "Golos Text", sans-serif;
         @apply m-0 h-full w-full antialiased;
     }
 
