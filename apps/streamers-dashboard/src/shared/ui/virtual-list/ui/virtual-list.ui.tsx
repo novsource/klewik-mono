@@ -37,12 +37,12 @@ export type VirtualListSlots
   = | 'container'
     | 'item'
 
+export type VirtualListRenderFunction<DataItem>
+= (data: DataItem[], virtualizedItem: VirtualizedItem) => ReactNode
+
 export type VirtualListProps<ListDataElement = unknown> = VirtualizerProps & {
   data: ListDataElement[]
-  children: (
-    data: ListDataElement[],
-    virtualizedItem: VirtualizedItem,
-  ) => ReactNode
+  children: VirtualListRenderFunction<ListDataElement>
   estimateSize?: (index: number) => number
   slotsClassNames?: Partial<Record<VirtualListSlots, string>>
   scrollElementRef?: MutableRefObject<NullablePossible<HTMLDivElement>>

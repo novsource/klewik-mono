@@ -16,6 +16,7 @@ import {
   ShadowVirtualList,
 } from '~shared/ui/shadow-virtual-list'
 import { Typography } from '~shared/ui/typograghy'
+import type { VirtualListRenderFunction } from '~shared/ui/virtual-list'
 
 import { cn } from '~shared/utils'
 
@@ -42,12 +43,12 @@ const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) => {
     setSlots(data)
   }
 
-  const renderVirtualListItem = useCallback(
-    (data: AuctionSlot[], index: number) => {
-      const slot = data[index]
+  const renderVirtualListItem = useCallback<VirtualListRenderFunction<AuctionSlot>>(
+    (data, virtualizedItem) => {
+      const slot = data[virtualizedItem.index]
 
       if (renderCard) {
-        return renderCard(slot, index)
+        return renderCard(slot, virtualizedItem.index)
       }
 
       return <SolidAuctionSlotCard auctionSlot={slot} />
