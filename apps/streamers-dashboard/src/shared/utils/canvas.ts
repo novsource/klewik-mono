@@ -57,12 +57,6 @@ export const resizeCanvasWithRatio = (
 
   canvas.style.width = `${size}px`
   canvas.style.height = `${size}px`
-
-  if (ratio >= 1) {
-    const canvaContext = canvas.getContext('2d') as CanvasRenderingContext2D
-
-    canvaContext.scale(ratio, ratio)
-  }
 }
 
 /**
