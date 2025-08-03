@@ -5,6 +5,9 @@ import { animate, useMotionValue } from 'motion/react'
 
 import type { WheelSlot } from '~entities/wheel/model'
 
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import { wheelActions, wheelSelectors } from '../store'
 import {
   calculateRotateWheelCSSValue,
   getSlotNameOnSelector,
@@ -23,11 +26,15 @@ export const useWheelControl = (
   wheelSlots: WheelSlot[],
   { wheelRef, onSpinStart, onSpinComplete }: WheelControlOptions,
 ) => {
+  const storeWheelRotateValue = useStoreSelector(wheelSelectors.getRotateValue)
+
+  const storeWheelActions = useActionCreators(wheelActions)
+
   const [selectorTargetTitle, setSelectorTargetTitle] = useState<string | null>(
     null,
   )
   const [isWheelSpinning, setIsWheelSpinning] = useState(false)
-  const framerMotionAnimationValue = useMotionValue(0)
+  const framerMotionAnimationValue = useMotionValue(storeWheelRotateValue)
 
   const [wheelRotateCSSValue, setWheelRotateCSSValue] = useState(() =>
     framerMotionAnimationValue.get(),
@@ -48,6 +55,8 @@ export const useWheelControl = (
           visualDuration: spinTime,
           onPlay: () => {
             setIsWheelSpinning(true)
+
+            storeWheelActions.setRotateValue(targetRotateCSSValue)
 
             onSpinStart && onSpinStart(target)
             wheel.style.willChange = 'transform'

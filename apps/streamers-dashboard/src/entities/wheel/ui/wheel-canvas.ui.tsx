@@ -10,6 +10,7 @@ import {
 } from 'react'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+
 import { WheelEventsBus } from '~entities/wheel/events'
 import type { WheelSlot } from '~entities/wheel/model'
 import {
@@ -18,6 +19,7 @@ import {
 } from '~entities/wheel/store'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { Flex } from '~shared/ui/flex'
 
 import { useWheelControl, useWheelInit } from '../hooks'
@@ -28,6 +30,7 @@ type WheelCanvasProps = Omit<ComponentPropsWithoutRef<'canvas'>, 'children'>
 const WheelCanvas = (props: WheelCanvasProps) => {
   const storeIsWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
   const storeSelectorTitle = useStoreSelector(wheelSelectors.getSelectorTargetTitle)
+  const storeWheelRotateValue = useStoreSelector(wheelSelectors.getRotateValue)
 
   const { spinTime } = useStoreSelector(wheelSelectors.getSettings)
 
@@ -64,8 +67,8 @@ const WheelCanvas = (props: WheelCanvasProps) => {
     wheelActions.setIsWheelSpinning(isWheelSpinning)
   }
 
-  if (storeSelectorTitle !== selectorTargetTitle) {
-    wheelActions.setSelectorTitleName(selectorTargetTitle || 'Ожидание прокрутки колеса...')
+  if (isWheelSpinning && storeSelectorTitle !== selectorTargetTitle && selectorTargetTitle) {
+    wheelActions.setSelectorTitleName(selectorTargetTitle)
   }
 
   useLayoutEffect(() => {
@@ -104,7 +107,14 @@ const WheelCanvas = (props: WheelCanvasProps) => {
         justify="center"
       >
         <WheelSelector className="absolute -top-3.5 landtop:-top-1.5 z-10 shadow-dark drop-shadow-md" />
-        <canvas ref={wheelRef} {...props} style={{ willChange: 'transform' }} />
+        <canvas
+          ref={wheelRef}
+          {...props}
+          style={{
+            willChange: 'transform',
+            transform: `rotateZ(${storeWheelRotateValue}deg)`,
+          }}
+        />
         <canvas
           ref={innerRef}
           className="absolute top-0"
