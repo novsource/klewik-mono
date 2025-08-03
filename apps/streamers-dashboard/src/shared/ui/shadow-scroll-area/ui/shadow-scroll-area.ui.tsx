@@ -21,11 +21,11 @@ import {
   useMotionValueEvent,
   useScroll,
 } from 'motion/react'
-import * as m from 'motion/react-m'
 
 import { useDebouncedCallback } from '~shared/hooks/use-debounced-callback'
 import { useResizeObserver } from '~shared/hooks/use-resize-observer'
 
+import { MotionBox } from '~shared/ui/motion-box'
 import { ScrollArea } from '~shared/ui/scroll-area'
 
 import { cn, mergeProps } from '~shared/utils'
@@ -74,7 +74,8 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
   const contentRefElement
     = externalContentRef ?? internalContentAreaRef
 
-  const { scrollYProgress: motionScrollYProgress, scrollY } = useScroll({ container: scrollRefElement, axis: 'y' })
+  const { scrollYProgress: motionScrollYProgress, scrollY }
+    = useScroll({ container: scrollRefElement, axis: 'y' })
 
   const { entries } = useResizeObserver(contentRefElement)
 
@@ -214,7 +215,7 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
       <AnimatePresence>
         <>
           {isTopShadowShouldBeRendered && (
-            <m.div
+            <MotionBox
               className={cn(
                 'w-full bg-gradient-to-b from-transparent via-white/70 via-20% to-transparent to-80%',
               )}
@@ -240,7 +241,7 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
             />
           )}
           {isBottomShadowShouldBeRendered && (
-            <m.div
+            <MotionBox
               className={cn(
                 'bottom-0 w-full bg-gradient-to-t from-transparent via-white/70 via-20% to-transparent to-80%',
               )}
@@ -266,7 +267,11 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
           )}
         </>
       </AnimatePresence>
-      <ScrollArea ref={internalContentAreaRef} viewportProps={{ ref: internalScrollElementRef }} {...scrollAreaProps}>
+      <ScrollArea
+        ref={internalContentAreaRef}
+        viewportProps={{ ref: internalScrollElementRef }}
+        {...scrollAreaProps}
+      >
         {children}
       </ScrollArea>
     </div>

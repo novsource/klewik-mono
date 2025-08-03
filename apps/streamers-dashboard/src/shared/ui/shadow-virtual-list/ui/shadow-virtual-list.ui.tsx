@@ -10,14 +10,22 @@ import type { VirtualListProps } from '~shared/ui/virtual-list'
 import { VirtualList } from '~shared/ui/virtual-list'
 
 export type ShadowVirtualListProps = VirtualListProps & {
-  className?: string
-  shadowScrollProps?: ShadowScrollAreaProps
+  width?: number
+  height?: number
+  shadowScrollProps?: Omit<ShadowScrollAreaProps, 'width' | 'height'>
 }
 
 const ShadowVirtualList = (
   props: ShadowVirtualListProps,
 ) => {
-  const { className, shadowScrollProps, scrollElementRef, contentWrapperRef, ...virtualListProps } = props
+  const {
+    width,
+    height,
+    shadowScrollProps,
+    scrollElementRef,
+    contentWrapperRef,
+    ...virtualListProps
+  } = props
 
   const internalScrollElementRef = useRef<HTMLDivElement>(null)
   const internalContentElementRef = useRef<HTMLDivElement>(null)
@@ -26,19 +34,19 @@ const ShadowVirtualList = (
   const contentRef = contentWrapperRef ?? internalContentElementRef
 
   return (
-    <AutoSizer className={className}>
-      {({ width, height }) => {
+    <AutoSizer>
+      {({ width: autoWidth, height: autoHeight }) => {
         return (
           <ShadowScrollArea
-            width={width}
-            height={height}
+            width={width ?? autoWidth}
+            height={height ?? autoHeight}
             externalScrollRef={scrollRef}
             externalContentRef={contentRef}
             {...shadowScrollProps}
           >
             <VirtualList
-              width={width}
-              height={height}
+              width={width ?? autoWidth}
+              height={height ?? autoHeight}
               scrollElementRef={scrollRef}
               contentWrapperRef={contentRef}
               {...virtualListProps}
