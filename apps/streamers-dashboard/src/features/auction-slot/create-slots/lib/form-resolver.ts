@@ -159,7 +159,7 @@ const checkSlotsDublicated: CheckSlotsOnDublicates = (
     return { values: {}, errors }
   }
 
-  return { values: slotsFromForm, errors: {} }
+  return { values: { slots: slotsFromForm }, errors: {} }
 }
 
 const createSlotsFormResolver = (slots: AuctionSlot[]) => (values: unknown) => {
