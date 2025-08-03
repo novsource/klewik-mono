@@ -1,14 +1,19 @@
 import { useMemo, useState } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
+import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { removeSpaceDuplicatingFromString } from '~shared/utils/string-format'
 
 const useSearchAuctionSlots = (
   searchValue: string,
-  slots: AuctionSlot[],
+  slots?: AuctionSlot[],
 ): AuctionSlot[] => {
-  const [searchedSlots, setSearchedSlots] = useState(() => slots)
+  const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+
+  const [searchedSlots, setSearchedSlots] = useState(slots ?? storedAuctionSlots)
 
   const cleanSearchValue = useMemo(() => {
     return removeSpaceDuplicatingFromString(searchValue.trim())
@@ -16,12 +21,12 @@ const useSearchAuctionSlots = (
 
   const filtredSlots = useMemo(() => {
     if (cleanSearchValue.length === 0)
-      return slots
+      return []
 
-    return slots.filter(slot =>
+    return (slots ?? storedAuctionSlots).filter(slot =>
       slot.title.toLowerCase().includes(cleanSearchValue.toLowerCase()),
     )
-  }, [slots, cleanSearchValue])
+  }, [slots, cleanSearchValue, storedAuctionSlots])
 
   if (searchedSlots !== filtredSlots) {
     setSearchedSlots(filtredSlots)
