@@ -1,3 +1,4 @@
+import { default as ArrowRight } from './ArrowRight';
 import { default as Bill } from './Bill';
 import { default as Bin } from './Bin';
 import { default as CardSend } from './CardSend';
@@ -10,6 +11,7 @@ import { default as Crown } from './Crown';
 import { default as DonateMessage } from './DonateMessage';
 import { default as DonatePay } from './DonatePay';
 import { default as DonationAlerts } from './DonationAlerts';
+import { default as Dots } from './Dots';
 import { default as EyeClosed } from './EyeClosed';
 import { default as EyeOpen } from './EyeOpen';
 import { default as Face } from './Face';
@@ -25,6 +27,7 @@ import { default as Key } from './Key';
 import { default as LargeCross } from './LargeCross';
 import { default as LinkArrow } from './LinkArrow';
 import { default as List } from './List';
+import { default as Loading } from './Loading';
 import { default as Login } from './Login';
 import { default as Logo } from './Logo';
 import { default as MagicStick } from './MagicStick';
@@ -70,7 +73,8 @@ import { default as Wheel } from './Wheel';
 import { default as YoutubeLogo } from './YoutubeLogo';
 
     export const Icons = {
-      Bill,
+      ArrowRight,
+  Bill,
   Bin,
   CardSend,
   Check,
@@ -82,6 +86,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   DonateMessage,
   DonatePay,
   DonationAlerts,
+  Dots,
   EyeClosed,
   EyeOpen,
   Face,
@@ -97,6 +102,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   LargeCross,
   LinkArrow,
   List,
+  Loading,
   Login,
   Logo,
   MagicStick,

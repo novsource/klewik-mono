@@ -8,6 +8,7 @@ import { Typography } from '~shared/ui/typograghy'
 import type { WizardItemProps } from '~shared/ui/wizard'
 import { WizardItem, WizardTrigger } from '~shared/ui/wizard'
 import { useWizardContext } from '~shared/ui/wizard/context'
+
 import { cn } from '~shared/utils'
 
 const WizardAuctionParametersItem = (

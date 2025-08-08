@@ -20,6 +20,7 @@ import type { Auction } from '~entities/auction/model'
 import { auctionActions } from '~entities/auction/store'
 
 import { getAuctionInfo } from '~shared/api/http/auction/auction.api'
+
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
@@ -63,6 +64,11 @@ const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => {
   return {
     element: <Outlet />,
     loader: async ({ params }) => {
+      const isAlreadyLoaded = !!store.getState().auction.auctionInfo.id
+
+      if (isAlreadyLoaded)
+        return store.getState().auction.auctionInfo
+
       const validatedParams = z
         .object({ auctionId: z.string().uuid() })
         .safeParse(params)

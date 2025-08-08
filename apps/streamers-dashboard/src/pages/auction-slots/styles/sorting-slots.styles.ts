@@ -1,5 +1,3 @@
-import type { InputSlotsClassnames } from '~shared/ui/input'
-
 export type SortingDrawerStylesSlots = 'header' | 'headerTitleWrapper' | 'title' | 'content' | 'contentItem' | 'footer' | 'footerResetButton' | 'footerActionButton'
 
 export const sortingDrawerStyles: Record<SortingDrawerStylesSlots, string> = {
@@ -11,10 +9,4 @@ export const sortingDrawerStyles: Record<SortingDrawerStylesSlots, string> = {
   footer: /* tw */ 'w-full flex-row',
   footerResetButton: /* tw */ 'w-full',
   footerActionButton: /* tw */ 'w-full',
-}
-
-export type AuctionSlotsPageSearchInputStyles = InputSlotsClassnames
-
-export const auctionSlotsPageSearchInputStyles: SlotsStyles<keyof AuctionSlotsPageSearchInputStyles> = {
-  base: /* tw */ 'w-full tablet:max-w-[400px] landtop:max-w-[450px] desktop:max-w-[500px]',
 }

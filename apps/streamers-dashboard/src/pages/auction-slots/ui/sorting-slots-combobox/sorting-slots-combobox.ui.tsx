@@ -1,81 +1,38 @@
-import { memo, useLayoutEffect, useMemo } from 'react'
+import { memo, useMemo, useState } from 'react'
+
 import { shallowEqual } from 'react-redux'
 
-import { auctionSelectors } from '~entities/auction/store'
+import { sortingDrawerStyles } from '~pages/auction-slots/styles'
+import type { SortingDrawerStylesSlots } from '~pages/auction-slots/styles'
 
-import { AuctionSlot } from '~entities/auction-slot/model'
+import type { AuctionSlot } from '~entities/auction-slot/model'
+import { auctionSlotsActions, auctionSlotsSelectors } from '~entities/auction-slot/store'
 
-import { SlotsSortingOptions } from '~shared/store/model'
-import { appSelectors } from '~shared/store/slices'
-import { appActions as storeAppActions } from '~shared/store/slices'
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { useMediaQuery } from '~shared/hooks'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { useLocalStorage } from '~shared/hooks/use-local-storage'
+import type { SortingOptions } from '~shared/store/model'
 
-import { Combobox, ComboboxData } from '~shared/ui/combobox'
+import { Button } from '~shared/ui/button'
+import type { ComboboxData } from '~shared/ui/combobox'
+import { Combobox } from '~shared/ui/combobox'
+import { Command, CommandItem, CommandList } from '~shared/ui/command'
+import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '~shared/ui/drawer'
+import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 
-type SortingSlotsComboboxProps = {
-  onSortingChange?: (sortOptions: SlotsSortingOptions<AuctionSlot>) => void
-}
+import { cn, twSlotsStyles } from '~shared/utils'
 
-const SortingSlotsCombobox = memo(
-  ({ onSortingChange }: SortingSlotsComboboxProps) => {
-    const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
-    const slotsSortOptions = useStoreSelector(appSelectors.getSlotsSortOptions)
-
-    const appActions = useActionCreators(storeAppActions)
-
-    const { set, value } = useLocalStorage('slots-sorting-options')
-
-    useLayoutEffect(() => {
-      if (!value || !value[auctionId]) {
-        set({ [auctionId]: defaultOptions })
-        appActions.setSlotsSortOptions(defaultOptions)
-      } else {
-        appActions.setSlotsSortOptions(value[auctionId])
-      }
-    }, [])
-
-    const defaultSortValue = useMemo(() => {
-      const value = sortingSlotsVariants.find((variant) =>
-        shallowEqual(variant.sortingOptions, slotsSortOptions)
-      )?.value
-
-      return value
-    }, [slotsSortOptions])
-
-    return (
-      <Combobox
-        data={sortingSlotsVariants}
-        placeholder="По умолчанию"
-        defaultValue={defaultSortValue}
-        icon={<Icons.Sort size="sm" />}
-        onValueChanged={(sortValue) => {
-          const sortOptions =
-            sortingSlotsVariants.find((sort) => sort.value === sortValue)
-              ?.sortingOptions ?? defaultOptions
-
-          appActions.setSlotsSortOptions(sortOptions)
-          set({ [auctionId]: sortOptions })
-
-          onSortingChange && onSortingChange(sortOptions)
-        }}
-      />
-    )
-  }
-)
-
-export { SortingSlotsCombobox }
-
-const defaultOptions: SlotsSortingOptions<AuctionSlot> = {
+const defaultOptions: SortingOptions<AuctionSlot> = {
   field: 'points',
   type: 'descending',
 }
 
 const sortingSlotsVariants: Array<
-  ComboboxData[number] & { sortingOptions: SlotsSortingOptions<AuctionSlot> }
+  ComboboxData[number] & { sortingOptions: SortingOptions<AuctionSlot> }
 > = [
   {
     value: 'nameAscending',
@@ -102,3 +59,83 @@ const sortingSlotsVariants: Array<
     sortingOptions: { field: 'points', type: 'descending' },
   },
 ]
+
+type SortingSlotsComboboxProps = {
+  onSortingChange?: (sortOptions: SortingOptions<AuctionSlot>) => void
+  drawerClassnames?: Partial<Record<SortingDrawerStylesSlots, string>>
+}
+
+const SortingSlotsCombobox = memo((props: SortingSlotsComboboxProps) => {
+  const { onSortingChange, drawerClassnames } = props
+
+  const [isOpen, setIsOpen] = useState(false)
+  const storeSlotsSortOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
+
+  const { setSlotsSortOptions } = useActionCreators(auctionSlotsActions)
+
+  const isLargeThenTablet = useMediaQuery(
+    greaterThenDeviceWidthMediaQueries.tablet,
+  )
+
+  const drawerStyles = useMemo(() => twSlotsStyles(sortingDrawerStyles, drawerClassnames), [drawerClassnames])
+
+  const defaultSortValue = useMemo(() => {
+    const options = sortingSlotsVariants.find(variant =>
+      shallowEqual(variant.sortingOptions, storeSlotsSortOptions),
+    )
+
+    return options?.value
+  }, [storeSlotsSortOptions])
+
+  if (!isLargeThenTablet) {
+    return (
+      <Drawer noBodyStyles open={isOpen} onOpenChange={setIsOpen} dismissible={false}>
+        <DrawerTrigger asChild>
+          <Button isIconOnly icon={<Icons.Sort />} size="sm" />
+        </DrawerTrigger>
+        <DrawerContent hidePill>
+          <DrawerHeader className={drawerStyles.header}>
+            <Flex className={drawerStyles.headerTitleWrapper}>
+              <Icons.Sort />
+              <DrawerTitle className={drawerStyles.title}>Сортировать слоты</DrawerTitle>
+            </Flex>
+            <Button isIconOnly icon={<Icons.LargeCross size="sm" />} size="xs" onClick={() => setIsOpen(false)} />
+          </DrawerHeader>
+          <Command className={drawerStyles.content}>
+            <CommandList>
+              {sortingSlotsVariants.map(variant => (
+                <CommandItem key={variant.value} className={drawerStyles.contentItem}>
+                  {variant.label }
+                </CommandItem>
+              ))}
+            </CommandList>
+          </Command>
+          <DrawerFooter className={drawerStyles.footer}>
+            <Button className={drawerStyles.footerResetButton}>Сбросить</Button>
+            <Button className={drawerStyles.footerActionButton} variant="action">Применить</Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    )
+  }
+
+  return (
+    <Combobox
+      data={sortingSlotsVariants}
+      defaultValue={defaultSortValue}
+      placeholder="По умолчанию"
+      icon={<Icons.Sort className={cn(storeSlotsSortOptions.type === 'ascending' && 'rotate-180')} />}
+      triggerProps={{ onClick: () => setIsOpen(true) }}
+      onValueChanged={(value) => {
+        const sortOptions = sortingSlotsVariants.find(sort => sort.value === value)
+        const options = sortOptions?.sortingOptions ?? defaultOptions
+
+        setSlotsSortOptions(options)
+        onSortingChange && onSortingChange(options)
+      }}
+    />
+  )
+},
+)
+
+export { SortingSlotsCombobox }

@@ -22,10 +22,12 @@ type CreateSlotsFormZodResolver = (
 const zodFormValidation: CreateSlotsFormZodResolver = (values: unknown) => {
   const validationResult = createSlotSchema
     .transform<TransformedCreateSlotsFormData>((val) => {
-      return val.slots.map(slot => ({
+      const transformedValuesArray = val.slots.map(slot => ({
         ...slot,
         points: typeof slot.points === 'number' ? slot.points : Number(deleteAllSpacesFromString(slot.points)),
       }))
+
+      return { slots: transformedValuesArray }
     })
     .safeParse(values)
 
@@ -34,19 +36,23 @@ const zodFormValidation: CreateSlotsFormZodResolver = (values: unknown) => {
       FieldErrors<CreateSlotForm>
     >(
       (acc, error) => {
+        const fieldIndex = Number(error.path[1])
         const fieldName = error.path[2]
-        const fieldIndex = error.path[1]
 
         const fieldError = {
-          [fieldIndex]: {
-            [fieldName]: {
-              message: error.message,
-              type: 'custom',
-            },
+          [fieldName]: {
+            message: error.message,
+            type: error.code,
           },
         }
 
-        acc.slots = { ...acc.slots, ...fieldError }
+        if (acc.slots && !acc.slots[fieldIndex]) {
+          acc.slots[fieldIndex] = fieldError
+        }
+
+        if (acc.slots && acc.slots[fieldIndex]) {
+          acc.slots[fieldIndex] = { ...acc.slots[fieldIndex], ...fieldError }
+        }
 
         return acc
       },
@@ -62,13 +68,14 @@ const zodFormValidation: CreateSlotsFormZodResolver = (values: unknown) => {
 const checkSlotsNamesOnDublicates: (
   validatedFormData: ResolverSuccess<TransformedCreateSlotsFormData>
 ) => CreateSlotsFormResolverReturnValue = (validatedFormData) => {
+  const { values: { slots } } = validatedFormData
   const existedSlotsErrors = { slots: {} }
 
-  const formSlotsArrLength = validatedFormData.values.length
+  const formSlotsArrLength = validatedFormData.values.slots.length
 
   for (let index = 0; index < formSlotsArrLength; index++) {
-    const slot = validatedFormData.values[index]
-    const slicedArr = validatedFormData.values.slice(
+    const slot = slots[index]
+    const slicedArr = slots.slice(
       index + 1,
       formSlotsArrLength,
     )
@@ -84,7 +91,7 @@ const checkSlotsNamesOnDublicates: (
         ...existedSlotsErrors.slots,
         ...{
           [index]: {
-            name: {
+            title: {
               message: 'Слот с таким именем уже есть в форме',
               type: 'custom',
             },
@@ -108,10 +115,10 @@ const checkSlotsDublicated: CheckSlotsOnDublicates = (
   validatedFormData,
   slots,
 ) => {
-  const slotsFromForm = validatedFormData.values
+  const slotsFromForm = validatedFormData.values.slots
 
   const existedSlots = slotsFromForm.reduce<{
-    [key: number]: TransformedCreateSlotsFormData[number]
+    [key: number]: TransformedCreateSlotsFormData['slots'][number]
   }>((acc, slot, index) => {
     const findedSlot = slots.find(
       item =>
@@ -152,7 +159,7 @@ const checkSlotsDublicated: CheckSlotsOnDublicates = (
     return { values: {}, errors }
   }
 
-  return { values: slotsFromForm, errors: {} }
+  return { values: { slots: slotsFromForm }, errors: {} }
 }
 
 const createSlotsFormResolver = (slots: AuctionSlot[]) => (values: unknown) => {

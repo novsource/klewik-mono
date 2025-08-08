@@ -1,13 +1,17 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
+
+import type { WheelSlot } from '../model'
+
+import { createSlice } from '@reduxjs/toolkit'
 
 import { validateSlotsPayload } from '../lib/react-redux'
-import { WheelSlot } from '../model'
 
 type WheelSettings = {
   spinTime: number
 }
 
 export type WheelState = {
+  rotateValue: number
   selectorTargetTitle: string
   slots: WheelSlot[]
   settings: WheelSettings
@@ -15,6 +19,7 @@ export type WheelState = {
 }
 
 const initialState: WheelState = {
+  rotateValue: 0,
   selectorTargetTitle: 'Ожидание прокрутки колеса...',
   slots: [],
   settings: {
@@ -58,20 +63,16 @@ const wheelSlice = createSlice({
     setSettings: (state, action: PayloadAction<Partial<WheelSettings>>) => {
       state.settings = { ...state.settings, ...action.payload }
     },
+    setRotateValue: (state, action: PayloadAction<number>) => {
+      state.rotateValue = action.payload
+    },
   },
   selectors: {
-    getSlots: (state) => {
-      return state.slots
-    },
-    getSettings: (state) => {
-      return state.settings
-    },
-    getSelectorTargetTitle: (state) => {
-      return state.selectorTargetTitle
-    },
-    getIsWheelSpinning: (state) => {
-      return state.isWheelSpinning
-    },
+    getSlots: state => state.slots,
+    getSettings: state => state.settings,
+    getSelectorTargetTitle: state => state.selectorTargetTitle,
+    getIsWheelSpinning: state => state.isWheelSpinning,
+    getRotateValue: state => state.rotateValue,
   },
 })
 
@@ -81,4 +82,4 @@ const {
   reducer: wheelReducer,
 } = wheelSlice
 
-export { wheelActions, wheelSelectors, wheelReducer }
+export { wheelActions, wheelReducer, wheelSelectors }

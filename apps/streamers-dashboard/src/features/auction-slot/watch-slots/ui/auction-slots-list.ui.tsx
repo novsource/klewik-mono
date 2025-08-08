@@ -1,15 +1,12 @@
-import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
-
 import type { ReactNode } from 'react'
 import { useCallback, useState } from 'react'
 
-import { AnimatePresence } from 'motion/react'
-
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
-import { AuctionSlotCard } from '~entities/auction-slot/ui/card'
+import { SolidAuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import type {
@@ -19,13 +16,18 @@ import {
   ShadowVirtualList,
 } from '~shared/ui/shadow-virtual-list'
 import { Typography } from '~shared/ui/typograghy'
+import type { VirtualListRenderFunction } from '~shared/ui/virtual-list'
+
 import { cn } from '~shared/utils'
 
 type AuctionSlotsListProps<DataSlotItem extends AuctionSlot> = {
   data?: DataSlotItem[]
   className?: string
-  renderCard?: (item: DataSlotItem, virtualItem: VirtualItem, index: number, virtualizer: Virtualizer<HTMLDivElement, HTMLDivElement>) => ReactNode
-} & Omit<ShadowVirtualListProps<HTMLDivElement, DataSlotItem>, 'children'>
+  renderCard?: (
+    item: DataSlotItem,
+    index: number,
+  ) => ReactNode
+} & Omit<ShadowVirtualListProps, 'children'>
 
 const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) => {
   const { data, renderCard, className, ...virtualListProps } = props
@@ -41,15 +43,15 @@ const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) => {
     setSlots(data)
   }
 
-  const renderVirtualListItem = useCallback(
-    (data: AuctionSlot[], virtualItem: VirtualItem, index: number, virtualizer: Virtualizer<HTMLDivElement, HTMLDivElement>) => {
-      const slot = data[index]
+  const renderVirtualListItem = useCallback<VirtualListRenderFunction<AuctionSlot>>(
+    (data, virtualizedItem) => {
+      const slot = data[virtualizedItem.index]
 
       if (renderCard) {
-        return renderCard(slot, virtualItem, index, virtualizer)
+        return renderCard(slot, virtualizedItem.index)
       }
 
-      return <AuctionSlotCard {...slot} />
+      return <SolidAuctionSlotCard auctionSlot={slot} />
     },
     [renderCard],
   )
@@ -75,17 +77,15 @@ const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) => {
 
   return (
     <Flex className={cn('h-full w-full', className)}>
-      <AnimatePresence mode="popLayout" initial={false}>
-        <ShadowVirtualList
-          data={slots}
-          slotsClassNames={{ content: 'pb-4' }}
-          overscan={8}
-          estimateSize={() => 76}
-          {...virtualListProps}
-        >
-          {renderVirtualListItem}
-        </ShadowVirtualList>
-      </AnimatePresence>
+      <ShadowVirtualList
+        data={slots}
+        slotsClassNames={{ container: 'pb-4' }}
+        overscan={8}
+        estimateSize={() => 125}
+        {...virtualListProps}
+      >
+        {renderVirtualListItem}
+      </ShadowVirtualList>
     </Flex>
   )
 }

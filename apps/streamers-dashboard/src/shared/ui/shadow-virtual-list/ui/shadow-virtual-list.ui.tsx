@@ -2,49 +2,53 @@ import { useRef } from 'react'
 
 import AutoSizer from 'react-virtualized-auto-sizer'
 
-import type {
-  ShadowScrollAreaProps,
-} from '~shared/ui/shadow-scroll-area'
 import {
   ShadowScrollArea,
 } from '~shared/ui/shadow-scroll-area'
+import type { ShadowScrollAreaProps } from '~shared/ui/shadow-scroll-area'
 import type { VirtualListProps } from '~shared/ui/virtual-list'
 import { VirtualList } from '~shared/ui/virtual-list'
 
-export type ShadowVirtualListProps<
-  Element extends HTMLElement,
-  ListDataItem,
-> = VirtualListProps<Element, ListDataItem> & {
-  className?: string
-  shadowScrollProps?: ShadowScrollAreaProps
+export type ShadowVirtualListProps = VirtualListProps & {
+  width?: number
+  height?: number
+  shadowScrollProps?: Omit<ShadowScrollAreaProps, 'width' | 'height'>
 }
 
-const ShadowVirtualList = <
-  Element extends HTMLElement,
-  ListDataElement = unknown,
->(
-  props: ShadowVirtualListProps<Element, ListDataElement>,
+const ShadowVirtualList = (
+  props: ShadowVirtualListProps,
 ) => {
-  const { className, shadowScrollProps, ...virtualListProps } = props
+  const {
+    width,
+    height,
+    shadowScrollProps,
+    scrollElementRef,
+    contentWrapperRef,
+    ...virtualListProps
+  } = props
 
   const internalScrollElementRef = useRef<HTMLDivElement>(null)
   const internalContentElementRef = useRef<HTMLDivElement>(null)
 
+  const scrollRef = scrollElementRef ?? internalScrollElementRef
+  const contentRef = contentWrapperRef ?? internalContentElementRef
+
   return (
-    <AutoSizer className={className}>
-      {({ width, height }) => {
+    <AutoSizer>
+      {({ width: autoWidth, height: autoHeight }) => {
         return (
           <ShadowScrollArea
-            externalScrollRef={internalScrollElementRef}
-            externalContentRef={internalContentElementRef}
-            style={{ width, height }}
+            width={width ?? autoWidth}
+            height={height ?? autoHeight}
+            externalScrollRef={scrollRef}
+            externalContentRef={contentRef}
             {...shadowScrollProps}
           >
             <VirtualList
-              width={width}
-              height={height}
-              scrollElementRef={internalScrollElementRef}
-              contentWrapperRef={internalContentElementRef}
+              width={width ?? autoWidth}
+              height={height ?? autoHeight}
+              scrollElementRef={scrollRef}
+              contentWrapperRef={contentRef}
               {...virtualListProps}
             />
           </ShadowScrollArea>

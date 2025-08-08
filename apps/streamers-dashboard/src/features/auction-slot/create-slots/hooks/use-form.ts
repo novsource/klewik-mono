@@ -3,8 +3,9 @@ import type { CreateSlotForm } from '../model'
 
 import { useForm, useFormState } from 'react-hook-form'
 
-import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 import { auctionSelectors } from '~entities/auction/store'
+
+import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import type { AxiosBaseQueryError } from '~shared/lib/redux-toolkit'
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -38,10 +39,9 @@ const useCreateSlotsForm = (listeners?: UseCreateSlotsFormListeners) => {
   const [createSlotsMutation, queryState] = useCreateSlotsMutation()
 
   const submitForm = async (formData: TransformedCreateSlotsFormData) => {
-    console.log(formData)
     const response = await createSlotsMutation({
       auctionUUID,
-      slots: formData,
+      slots: formData.slots,
     })
 
     if (response.error) {

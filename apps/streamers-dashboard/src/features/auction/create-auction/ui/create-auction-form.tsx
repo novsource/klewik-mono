@@ -8,6 +8,7 @@ import { Controller } from 'react-hook-form'
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
+
 import { cn } from '~shared/utils'
 
 import { useCreateAuctionForm } from '../hooks'
@@ -19,7 +20,10 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
 
   const [isPasswordHidden, setIsPasswordHidden] = useState<boolean>(true)
 
-  const { form: { control, handleSubmit }, state: { errors }, submitForm, queryState: { isLoading } } = useCreateAuctionForm({ onSuccess, onError })
+  const { form: { control, handleSubmit }, state: { errors, isDirty, isValid }, submitForm, queryState: { isLoading } }
+    = useCreateAuctionForm({ onSuccess, onError })
+
+  const isSubmitButtonShouldBeBlocked = isLoading || !isDirty || !isValid
 
   return (
     <form
@@ -33,29 +37,35 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
         render={({ field }) => (
           <Input
             type={isPasswordHidden ? 'password' : 'text'}
+            slotClassNames={{ wrapper: 'pr-0.5' }}
             label={{
               id: 'password',
               value: 'Мастер-ключ',
             }}
             errorMessage={errors.key?.message}
             placeholder="••••••••"
-            endContent={
-              isPasswordHidden
-                ? (
-                    <Icons.EyeClosed
-                      className="cursor-pointer select-none text-gray transition-colors hover:text-gray-light"
-                      size="default"
-                      onClick={() => setIsPasswordHidden(false)}
-                    />
-                  )
-                : (
-                    <Icons.EyeOpen
-                      className="cursor-pointer select-none text-gray transition-colors hover:text-gray-light"
-                      size="default"
-                      onClick={() => setIsPasswordHidden(true)}
-                    />
-                  )
-            }
+            endContent={(
+              <Button
+                variant="ghost"
+                isIconOnly
+                icon={(
+                  isPasswordHidden
+                    ? (
+                        <Icons.EyeClosed
+                          className="cursor-pointer select-none text-gray transition-colors hover:text-gray-light"
+                          size="default"
+                        />
+                      )
+                    : (
+                        <Icons.EyeOpen
+                          className="cursor-pointer select-none text-gray transition-colors hover:text-gray-light"
+                          size="default"
+                        />
+                      )
+                )}
+                onClick={() => setIsPasswordHidden(curr => !curr)}
+              />
+            )}
             {...field}
           />
         )}
@@ -65,7 +75,7 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
         className={cn(isLoading && 'opacity-70 hover:bg-opacity-100')}
         variant="action"
         type={isLoading ? 'button' : 'submit'}
-        disabled={isLoading}
+        disabled={isSubmitButtonShouldBeBlocked}
       >
         {isLoading ? 'Создаем аукцион...' : 'Создать'}
       </Button>

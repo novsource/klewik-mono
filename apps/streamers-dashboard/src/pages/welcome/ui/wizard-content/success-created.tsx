@@ -7,7 +7,9 @@ import { WELCOME_PAGE_WIZARD_ITEMS_IDS } from '~pages/welcome/constants'
 import { auctionSelectors } from '~entities/auction/store'
 
 import { useCopyToClipboard } from '~shared/hooks/use-copy-to-clipboard'
+
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
@@ -16,6 +18,7 @@ import { toastSuccessNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
 import type { WizardItemProps } from '~shared/ui/wizard'
 import { WizardItem } from '~shared/ui/wizard'
+
 import { cn } from '~shared/utils'
 
 const WizardSuccessCreatedItem = (
@@ -33,7 +36,7 @@ const WizardSuccessCreatedItem = (
   return (
     <WizardItem
       value={WELCOME_PAGE_WIZARD_ITEMS_IDS.SUCCESS_CREATE}
-      className={cn(className)}
+      className={cn('flex flex-col gap-y-4', className)}
       {...restProps}
     >
       <Flex className="gap-y-2" direction="column">
@@ -97,7 +100,7 @@ const WizardSuccessCreatedItem = (
         <Button
           className="w-full"
           variant="action"
-          startContent={<Icons.LinkArrow size="default" />}
+          startContent={<Icons.LinkArrow size="sm" />}
         >
           Перейти в панель управления
         </Button>

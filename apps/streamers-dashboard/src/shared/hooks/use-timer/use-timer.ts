@@ -1,294 +1,212 @@
-import { useCallback, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-type TimerControl = {
-  start: () => void
-  pause: () => void
-  stop: () => void
-  addTime: (value?: number) => void
-  decreaseTime: (value?: number) => void
-}
+import { useDidUpdate } from '../use-did-update/use-did-update'
 
-type TimerHookCallbacks = Partial<{
-  onTick(time: string): void
-  onInitStart(time: string): void
-  onStartAfterPause(time: string): void
-  onPause(time: string): void
-  onStop(time: string): void
-  onEnd(): void
-}>
+export type PositiveInteger<Value extends number> = `${Value}` extends `-${any}` | `${any}.${any}`
+  ? never
+  : Value
 
-type TimerHookProperties = {
-  startTimeSec?: number
-  startTimeMin?: number
-  startTimeHours?: number
-}
-
-type TimerHookProps = TimerHookCallbacks & TimerHookProperties
-
-type TimerNumberValues = {
-  hours: number
-  seconds: number
-  minutes: number
-}
-
-type TimerHookReturn = {
-  control: TimerControl
-  state: {
-    formattedTimeString: string
-    timeValues: TimerNumberValues
-  }
-}
-
-const getTimeValuesFromMs = (ms: number) => {
-  let diffAsSeconds = ms / 1000
-
-  const hours = Math.floor(diffAsSeconds / 3600)
-
-  diffAsSeconds = diffAsSeconds % 3600
-
-  const minutes = Math.floor(diffAsSeconds / 60)
-  const seconds = Math.floor(diffAsSeconds % 60)
+export const getTimeFromSeconds = (timestamp: number) => {
+  const roundedTimestamp = Math.ceil(timestamp)
+  const days = Math.floor(roundedTimestamp / (60 * 60 * 24))
+  const hours = Math.floor((roundedTimestamp % (60 * 60 * 24)) / (60 * 60))
+  const minutes = Math.floor((roundedTimestamp % (60 * 60)) / 60)
+  const seconds = Math.floor(roundedTimestamp % 60)
 
   return {
-    hours,
-    minutes,
     seconds,
+    minutes,
+    hours,
+    days,
   }
 }
 
-const convertDiffToTimerValue = (diff: number) => {
-  const { hours, minutes, seconds } = getTimeValuesFromMs(diff)
-
-  return [hours, minutes, seconds].reduce((timeStr, curr, index) => {
-    if (curr >= 10) timeStr += curr
-    else timeStr += '0' + curr
-
-    if (index !== 2) timeStr += ':'
-
-    return timeStr
-  }, '')
+/** The use timer options type */
+export type UseTimerOptions = {
+  /** Whether the timer should start automatically */
+  immediately?: boolean
+  /** The function to be executed when the timer is expired */
+  onExpire?: () => void
+  /** The function to be executed when the timer is started */
+  onStart?: () => void
+  /** Callback function to be executed on each tick of the timer */
+  onTick?: (seconds: number) => void
 }
 
-const useTimer = (props: TimerHookProps): TimerHookReturn => {
-  const {
-    onTick,
-    onStartAfterPause,
-    onEnd,
-    onInitStart,
-    onStop,
-    onPause,
-    startTimeSec,
-    startTimeMin,
-    startTimeHours,
-  } = props
+/** The use timer return type */
+export type UseTimerReturn = {
+  /** flag to indicate if timer is active or not */
+  active: boolean
+  /** The total count of the timer */
+  count: number
+  /** The day count of the timer */
+  days: number
+  /** The hour count of the timer */
+  hours: number
+  /** The minute count of the timer */
+  minutes: number
+  /** The second count of the timer */
+  seconds: number
+  /** The function to clear the timer */
+  clear: () => void
+  /** The function to decrease the timer */
+  decrease: (seconds: PositiveInteger<number>) => void
+  /** The function to increase the timer */
+  increase: (seconds: PositiveInteger<number>) => void
+  /** The function to pause the timer */
+  pause: () => void
+  /** The function to restart the timer */
+  restart: (time: PositiveInteger<number>, immediately?: boolean) => void
+  /** The function to resume the timer */
+  resume: () => void
+  /** The function to start the timer */
+  start: () => void
+  /** The function to toggle the timer */
+  toggle: () => void
+}
 
-  const defaultTimerValueRef = useRef<number>(
-    (() => {
-      const hoursInMs =
-        startTimeHours !== undefined && startTimeHours >= 0
-          ? startTimeHours * 1000 * 3600
-          : 0
+export type UseTimer = {
+  (): UseTimerReturn
 
-      const minutesInMs =
-        startTimeMin !== undefined && startTimeMin >= 0
-          ? startTimeMin * 60 * 1000
-          : 0
+  (seconds: PositiveInteger<number>, callback: () => void): UseTimerReturn
 
-      const secondsInMs =
-        startTimeSec !== undefined && startTimeSec >= 0
-          ? startTimeSec * 1000
-          : 10000
+  (seconds: PositiveInteger<number>, options?: UseTimerOptions): UseTimerReturn
+}
 
-      return hoursInMs + minutesInMs + secondsInMs
-    })()
-  )
+/**
+ * @name useTimer
+ * @description - Hook that creates a timer functionality
+ * @category Time
+ *
+ * @overload
+ * @returns {UseTimerReturn} An object containing the timer properties and functions
+ *
+ * @example
+ * const { days, hours, minutes, seconds, toggle, pause, start, restart, resume, active, decrease, increase } = useTimer();
+ *
+ * @overload
+ * @param {number} seconds The seconds value that define for how long the timer will be running
+ * @param {() => void} callback The function to be executed once countdown timer is expired
+ * @returns {UseTimerReturn} An object containing the timer properties and functions
+ *
+ * @example
+ * const { days, hours, minutes, seconds, toggle, pause, start, restart, resume, active, decrease, increase } = useTimer(1000, () => console.log('ready'));
+ *
+ * @overload
+ * @param {number} seconds The seconds value that define for how long the timer will be running
+ * @param {boolean} [options.immediately] The flag to decide if timer should start automatically
+ * @param {() => void} [options.onExpire] The function to be executed when the timer is expired
+ * @param {(timestamp: number) => void} [options.onTick] The function to be executed on each tick of the timer
+ * @returns {UseTimerReturn} An object containing the timer properties and functions
+ *
+ * @example
+ * const { days, hours, minutes, seconds, toggle, pause, start, restart, resume, active, decrease, increase } = useTimer(1000);
+ */
+export const useTimer = ((...params: any[]) => {
+  const initialSeconds = Math.max((params[0] ?? 0) as PositiveInteger<number>, 0)
+  const options = (typeof params[1] === 'object' ? params[1] : { onExpire: params[1] }) as
+    | UseTimerOptions
+    | undefined
 
-  const [formattedTimeString, setFormattedTimeString] = useState<string>(() => {
-    return convertDiffToTimerValue(Date.now() + defaultTimerValueRef.current)
-  })
+  const [active, setActive] = useState(initialSeconds > 0 && (options?.immediately ?? true))
+  const [seconds, setSeconds] = useState(initialSeconds)
 
-  const [timeValues, setTimeValues] = useState<TimerNumberValues>(() => ({
-    seconds: startTimeSec ?? 0,
-    minutes: startTimeMin ?? 0,
-    hours: startTimeHours ?? 0,
-  }))
+  const intervalIdRef = useRef<ReturnType<typeof setInterval>>(undefined)
+  const optionsRef = useRef<UseTimerOptions>(options)
+  optionsRef.current = options ?? {}
 
-  const isStarted = useRef<boolean>(false)
-  const isOnPause = useRef<boolean>(false)
-
-  const currentTickID = useRef<number>(0)
-
-  const initTimeRef = useRef<number>(Date.now())
-  const targetTimeRef = useRef<number>(
-    Date.now() + defaultTimerValueRef.current
-  )
-  const stoppedTimeRef = useRef<number>(0)
-
-  const tick = useCallback(() => {
-    const currTime = targetTimeRef.current - initTimeRef.current
-
-    if (currTime < 0) {
-      cancelAnimationFrame(currentTickID.current)
-
-      isStarted.current = false
-      initTimeRef.current = Date.now()
-      targetTimeRef.current = Date.now() + defaultTimerValueRef.current
-
-      setFormattedTimeString(
-        convertDiffToTimerValue(defaultTimerValueRef.current)
-      )
-      setTimeValues({
-        seconds: startTimeSec ?? 0,
-        minutes: startTimeMin ?? 0,
-        hours: startTimeHours ?? 0,
-      })
-
-      onEnd && onEnd()
-
+  useDidUpdate(() => {
+    if (initialSeconds <= 0) {
+      setActive(false)
+      setSeconds(0)
       return
     }
 
-    currentTickID.current = requestAnimationFrame(tick)
-    initTimeRef.current = Date.now()
+    setActive(true)
+    setSeconds(initialSeconds)
+  }, [initialSeconds])
 
-    const formattedTime = convertDiffToTimerValue(currTime)
-    const { hours, minutes, seconds } = getTimeValuesFromMs(currTime)
+  useEffect(() => {
+    if (!active)
+      return
 
-    setFormattedTimeString(formattedTime)
-    setTimeValues({
-      seconds,
-      minutes,
-      hours,
-    })
-
-    onTick && onTick(convertDiffToTimerValue(currTime))
-  }, [defaultTimerValueRef.current])
-
-  const start = useCallback(() => {
-    if (isOnPause.current) {
-      targetTimeRef.current += Date.now() - stoppedTimeRef.current
-
-      stoppedTimeRef.current = 0
-      isOnPause.current = false
-
-      onStartAfterPause && onStartAfterPause(formattedTimeString)
-
-      tick()
-    }
-
-    if (!isStarted.current) {
-      onInitStart && onInitStart(formattedTimeString)
-
-      isStarted.current = true
-
-      // Time changed immedetiatly so we need to add 1 second to prevent it
-      targetTimeRef.current = Date.now() + defaultTimerValueRef.current + 1000
-
-      tick()
-    }
-  }, [defaultTimerValueRef.current])
-
-  const pause = useCallback(() => {
-    if (!isOnPause.current) {
-      stoppedTimeRef.current = Date.now()
-
-      isOnPause.current = true
-
-      cancelAnimationFrame(currentTickID.current)
-
-      onPause && onPause(formattedTimeString)
-    }
-  }, [])
-
-  const stop = useCallback(() => {
-    const tickId = currentTickID.current
-    cancelAnimationFrame(tickId)
-
-    stoppedTimeRef.current = 0
-    currentTickID.current = 0
-
-    isStarted.current = false
-    isOnPause.current = false
-
-    const initTime = convertDiffToTimerValue(defaultTimerValueRef.current)
-
-    setFormattedTimeString(initTime)
-    setTimeValues({
-      seconds: startTimeSec ?? 0,
-      minutes: startTimeMin ?? 0,
-      hours: startTimeHours ?? 0,
-    })
-
-    onStop && onStop(initTime)
-  }, [defaultTimerValueRef.current])
-
-  const addTime = useCallback(
-    (value: number = 1000) => {
-      const tickId = currentTickID.current
-      cancelAnimationFrame(tickId)
-
-      currentTickID.current = 0
-
-      targetTimeRef.current += value
-
-      const diff = targetTimeRef.current - initTimeRef.current
-
-      const formattedTime = convertDiffToTimerValue(diff)
-      const { hours, minutes, seconds } = getTimeValuesFromMs(diff)
-
-      setFormattedTimeString(formattedTime)
-      setTimeValues({
-        seconds,
-        minutes,
-        hours,
+    optionsRef.current?.onStart?.()
+    const onInterval = () => {
+      setSeconds((prevSeconds) => {
+        optionsRef.current?.onTick?.(prevSeconds)
+        const updatedSeconds = prevSeconds - 1
+        if (updatedSeconds === 0) {
+          setActive(false)
+          optionsRef.current?.onExpire?.()
+        }
+        return updatedSeconds
       })
+    }
 
-      if (!isOnPause.current) tick()
-    },
-    [targetTimeRef.current]
-  )
+    intervalIdRef.current = setInterval(onInterval, 1000)
+    return () => {
+      clearInterval(intervalIdRef.current)
+    }
+  }, [active])
 
-  const decreaseTime = useCallback(
-    (value: number = 1000) => {
-      if (targetTimeRef.current - value - initTimeRef.current >= 0) {
-        const tickId = currentTickID.current
-        cancelAnimationFrame(tickId)
+  const pause = () => setActive(false)
+  const resume = () => {
+    if (seconds <= 0)
+      return
+    setActive(true)
+  }
 
-        currentTickID.current = 0
+  const toggle = () => {
+    if (seconds <= 0)
+      return
+    setActive(!active)
+  }
 
-        targetTimeRef.current -= value
+  const restart = (seconds: PositiveInteger<number>, immediately = true) => {
+    setSeconds(seconds)
+    if (immediately)
+      setActive(true)
+  }
 
-        const diff = targetTimeRef.current - initTimeRef.current
+  const start = () => {
+    if (initialSeconds <= 0)
+      return
 
-        const formattedTime = convertDiffToTimerValue(diff)
-        const { hours, minutes, seconds } = getTimeValuesFromMs(diff)
+    setActive(true)
+    setSeconds(initialSeconds)
+  }
 
-        setFormattedTimeString(formattedTime)
-        setTimeValues({
-          seconds,
-          minutes,
-          hours,
-        })
+  const clear = () => {
+    setActive(false)
+    setSeconds(0)
+  }
+
+  const increase = (seconds: PositiveInteger<number>) =>
+    setSeconds(prevSeconds => prevSeconds + seconds)
+  const decrease = (seconds: PositiveInteger<number>) => {
+    setSeconds((prevSeconds) => {
+      const updatedSeconds = prevSeconds - seconds
+      if (updatedSeconds <= 0) {
+        setActive(false)
+        return 0
       }
-
-      if (!isOnPause.current) tick()
-    },
-    [targetTimeRef.current]
-  )
+      else {
+        return updatedSeconds
+      }
+    })
+  }
 
   return {
-    control: {
-      addTime,
-      decreaseTime,
-      start,
-      pause,
-      stop,
-    },
-    state: {
-      formattedTimeString,
-      timeValues,
-    },
+    ...getTimeFromSeconds(seconds),
+    count: seconds,
+    pause,
+    active,
+    resume,
+    toggle,
+    start,
+    restart,
+    clear,
+    increase,
+    decrease,
   }
-}
-
-export { useTimer }
+}) as UseTimer

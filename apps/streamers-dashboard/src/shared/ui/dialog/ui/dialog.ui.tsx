@@ -1,158 +1,97 @@
-'use client'
+import type { DialogBackdropVariantsProps, DialogContentVariantsProps, DialogTitleVariantsProps } from '../styles'
 
-import * as React from 'react'
+import type { ComponentPropsWithoutRef, ElementRef } from 'react'
+import { forwardRef, useMemo } from 'react'
 
-import * as DialogPrimitive from '@radix-ui/react-dialog'
-
-import { Icons } from '~shared/ui/icons'
+import { Dialog as DialogPrimitive } from '@base-ui-components/react/dialog'
 
 import { cn } from '~shared/utils'
 
-import {
-  DialogContentVariantsProps,
-  DialogHeaderVariantsProps,
-  DialogOverlayVariantsProps,
-  DialogTitleVariantsProps,
-  dialogContentVariants,
-  dialogHeaderVariants,
-  dialogOverlayVariants,
-  dialogTitleVariants,
-} from '../styles/dialog-variants'
+import { dialogContentVariants, dialogFooterVariants, dialogHeaderVariants, dialogOverlayVariants, dialogTitleVariants } from '../styles'
 
-function Dialog({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Root>) {
-  return <DialogPrimitive.Root data-slot="dialog" {...props} />
+type DialogProps = DialogPrimitive.Root.Props
+
+const Dialog = (props: DialogProps) => {
+  return <DialogPrimitive.Root data-slot="dialog-base" {...props} />
 }
 
-function DialogTrigger({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
+type DialogHeaderProps = ComponentPropsWithoutRef<'div'>
+
+const DialogHeader = (props: DialogHeaderProps) => {
+  const { className, ...restProps } = props
+
+  const styles = useMemo(() => cn(dialogHeaderVariants(), className), [className])
+
+  return <div className={styles} {...restProps} />
 }
 
-function DialogPortal({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Portal>) {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
+type DialogTriggerProps = DialogPrimitive.Trigger.Props
+
+const DialogTrigger = forwardRef<ElementRef<typeof DialogPrimitive.Trigger>, DialogTriggerProps>(
+  (props, ref) => {
+    const { className, ...restProps } = props
+
+    return <DialogPrimitive.Trigger ref={ref} className={cn(className)} data-slot="dialog-trigger" {...restProps} />
+  },
+)
+
+type DialogContentProps = DialogPrimitive.Popup.Props & DialogContentVariantsProps & {
+  portalProps?: DialogPrimitive.Portal.Props
+  backdropProps?: DialogPrimitive.Backdrop.Props & DialogBackdropVariantsProps
 }
 
-function DialogClose({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Close>) {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
-}
+const DialogContent = (props: DialogContentProps) => {
+  const { portalProps, backdropProps, className, disableAnimation, ...popupProps } = props
 
-function DialogOverlay({
-  className,
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Overlay> &
-  DialogOverlayVariantsProps) {
+  const styles = useMemo(() => {
+    return {
+      backdrop: cn(dialogOverlayVariants({ disableAnimation: backdropProps?.disableAnimation }), backdropProps?.className),
+      content: cn(dialogContentVariants({ disableAnimation }), className),
+    } as const
+  }, [className, backdropProps?.className, disableAnimation, backdropProps?.disableAnimation])
+
   return (
-    <DialogPrimitive.Overlay
-      data-slot="dialog-overlay"
-      className={cn(dialogOverlayVariants(), className)}
-      {...props}
-    />
+    <DialogPrimitive.Portal data-slot="dialog-portal" {...portalProps}>
+      <DialogPrimitive.Backdrop className={styles.backdrop} data-slot="dialog-backdrop" {...backdropProps} />
+      <DialogPrimitive.Popup className={styles.content} data-slot="dialog-content" {...popupProps} />
+    </DialogPrimitive.Portal>
   )
 }
 
-function DialogContent({
-  slotsClassNames,
-  children,
-  ...props
-}: Omit<React.ComponentProps<typeof DialogPrimitive.Content>, 'className'> &
-  DialogContentVariantsProps & {
-    slotsClassNames?: Partial<{
-      content: string
-      overlay: string
-      close: string
-    }>
-  }) {
-  return (
-    <DialogPortal data-slot="dialog-portal">
-      <DialogOverlay className={slotsClassNames?.overlay ?? ''} />
-      <DialogPrimitive.Content
-        data-slot="dialog-content"
-        className={cn(dialogContentVariants(), slotsClassNames?.content)}
-        {...props}
-      >
-        {children}
-        <DialogPrimitive.Close
-          className={cn(
-            "ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6.5",
-            slotsClassNames?.close
-          )}
-        >
-          <Icons.Close />
-          <span className="sr-only">Close</span>
-        </DialogPrimitive.Close>
-      </DialogPrimitive.Content>
-    </DialogPortal>
-  )
+type DialogTitleProps = DialogPrimitive.Title.Props & DialogTitleVariantsProps
+
+const DialogTitle = (props: DialogTitleProps) => {
+  const { className, ...restProps } = props
+
+  const style = useMemo(() => cn(dialogTitleVariants(), className), [className])
+
+  return <DialogPrimitive.Title className={style} data-slot="dialog-title" {...restProps} />
 }
 
-function DialogHeader({
-  className,
-  ...props
-}: React.ComponentProps<'div'> & DialogHeaderVariantsProps) {
-  return (
-    <div
-      data-slot="dialog-header"
-      className={cn(dialogHeaderVariants(), className)}
-      {...props}
-    />
-  )
+type DialogDescriptionProps = DialogPrimitive.Description.Props
+
+const DialogDescription = (props: DialogDescriptionProps) => {
+  const { className, ...restProps } = props
+
+  return <DialogPrimitive.Description className={cn(className)} data-slot="dialog-description" {...restProps} />
 }
 
-function DialogFooter({
-  className,
-  ...props
-}: React.ComponentProps<'div'> & DialogTitleVariantsProps) {
-  return (
-    <div
-      data-slot="dialog-footer"
-      className={cn(dialogTitleVariants(), className)}
-      {...props}
-    />
-  )
+type DialogCloseProps = DialogPrimitive.Close.Props
+
+const DialogClose = (props: DialogCloseProps) => {
+  const { className, ...restProps } = props
+  return <DialogPrimitive.Close className={cn(className)} data-slot="dialog-close" {...restProps} />
 }
 
-function DialogTitle({
-  className,
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Title>) {
-  return (
-    <DialogPrimitive.Title
-      data-slot="dialog-title"
-      className={cn('text-lg leading-none font-semibold', className)}
-      {...props}
-    />
-  )
+type DialogFooterProps = ComponentPropsWithoutRef<'div'>
+
+const DialogFooter = (props: DialogFooterProps) => {
+  const { className, ...restProps } = props
+
+  const style = useMemo(() => cn(dialogFooterVariants(), className), [className])
+
+  return <div className={style} {...restProps} />
 }
 
-function DialogDescription({
-  className,
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Description>) {
-  return (
-    <DialogPrimitive.Description
-      data-slot="dialog-description"
-      className={cn('text-muted-foreground text-sm', className)}
-      {...props}
-    />
-  )
-}
-
-export {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-  DialogTrigger,
-}
+export { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger }
+export type { DialogCloseProps, DialogContentProps, DialogDescriptionProps, DialogFooterProps, DialogHeaderProps, DialogProps, DialogTitleProps, DialogTriggerProps }

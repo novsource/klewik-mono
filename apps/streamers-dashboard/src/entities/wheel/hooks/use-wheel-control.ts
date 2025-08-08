@@ -5,6 +5,9 @@ import { animate, useMotionValue } from 'motion/react'
 
 import type { WheelSlot } from '~entities/wheel/model'
 
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import { wheelActions, wheelSelectors } from '../store'
 import {
   calculateRotateWheelCSSValue,
   getSlotNameOnSelector,
@@ -23,46 +26,53 @@ export const useWheelControl = (
   wheelSlots: WheelSlot[],
   { wheelRef, onSpinStart, onSpinComplete }: WheelControlOptions,
 ) => {
+  const storeWheelRotateValue = useStoreSelector(wheelSelectors.getRotateValue)
+
+  const storeWheelActions = useActionCreators(wheelActions)
+
   const [selectorTargetTitle, setSelectorTargetTitle] = useState<string | null>(
     null,
   )
   const [isWheelSpinning, setIsWheelSpinning] = useState(false)
-  const framerMotionAnimationValue = useMotionValue(0)
+  const framerMotionAnimationValue = useMotionValue(storeWheelRotateValue)
 
   const [wheelRotateCSSValue, setWheelRotateCSSValue] = useState(() =>
     framerMotionAnimationValue.get(),
   )
 
   const rotateWheelAnimation = useCallback(
-    (winner: WheelSlot, spinTime: number) => {
+    (target: WheelSlot, spinTime: number) => {
       if (wheelRef.current) {
         const wheel = wheelRef.current
 
         const targetRotateCSSValue
-          = wheelRotateCSSValue + calculateRotateWheelCSSValue(winner)
+          = wheelRotateCSSValue + calculateRotateWheelCSSValue(target)
 
         animate(framerMotionAnimationValue, targetRotateCSSValue, {
-          visualDuration: spinTime,
-          duration: spinTime,
           type: 'tween',
-          ease: [0.8, 0, 0.2, 1],
+          ease: [0.55, 0.65, 0, 1],
+          duration: spinTime,
+          visualDuration: spinTime,
           onPlay: () => {
             setIsWheelSpinning(true)
 
-            onSpinStart && onSpinStart(winner)
+            storeWheelActions.setRotateValue(targetRotateCSSValue)
+
+            onSpinStart && onSpinStart(target)
+            wheel.style.willChange = 'transform'
           },
           onComplete: () => {
             setIsWheelSpinning(false)
             setWheelRotateCSSValue(framerMotionAnimationValue.get())
 
-            onSpinComplete && onSpinComplete(winner)
+            onSpinComplete && onSpinComplete(target)
           },
           onUpdate(currentDegree) {
             const slotName = getSlotNameOnSelector(currentDegree, wheelSlots)
 
             setSelectorTargetTitle(slotName)
 
-            wheel.style.transform = `rotate(${currentDegree}deg)`
+            wheel.style.transform = `rotateZ(${currentDegree}deg)`
           },
         })
       }

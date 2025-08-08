@@ -28,7 +28,7 @@ export const createSlotSchema = z.object({
           .string()
           .min(1, 'Поле не может быть пустым')
           .max(20, 'Слишком большое количество очков'),
-        z.number().positive(),
+        z.number().positive().min(10),
       ]),
     })
     .array()

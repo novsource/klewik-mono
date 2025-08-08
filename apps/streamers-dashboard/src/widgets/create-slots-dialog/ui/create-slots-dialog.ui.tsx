@@ -6,18 +6,14 @@ import { ControlledCreateSlotForm } from '~features/auction-slot/create-slots/ui
 
 import { auctionSlotsActions as storeAuctionSlotsActions } from '~entities/auction-slot/store'
 
-import { tailwindScreens } from '~shared/constants/tailwindcss'
-import { useMediaQuery } from '~shared/hooks/use-media-query'
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { useMediaQuery } from '~shared/hooks'
+
 import { useActionCreators } from '~shared/lib/redux-toolkit'
+
 import { Button } from '~shared/ui/button'
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '~shared/ui/drawer'
+import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import {
@@ -27,20 +23,22 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '~shared/ui/sheet/ui/sheet'
+} from '~shared/ui/sheet'
 import { closeAllToasts, toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
+
+import { twSlotsStyles } from '~shared/utils'
 import { getRandomHEXColor } from '~shared/utils/colors'
+
+import { createSlotsDialogStyles, createSlotsSheetStyles } from '../styles'
 
 type CreateSlotsDialogProps = {
   multiplySlots?: boolean
   trigger: ReactNode
-  isFullPageHeight?: boolean
 }
 
 function CreateSlotsDialog({
   multiplySlots = true,
-  isFullPageHeight = true,
   trigger,
 }: CreateSlotsDialogProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -50,7 +48,7 @@ function CreateSlotsDialog({
   const auctionSlotsActions = useActionCreators(storeAuctionSlotsActions)
 
   const isMediaLargeThenTablet = useMediaQuery(
-    `(min-width: ${tailwindScreens.tablet})`,
+    greaterThenDeviceWidthMediaQueries.tablet,
   )
 
   const { form, state, submitForm, isLoading } = useCreateSlotsForm({ onSuccess: ({ slots }) => {
@@ -84,69 +82,76 @@ function CreateSlotsDialog({
     }
   }
 
-  const handleFormSubmit = () => {
-    const formSubmit = form.handleSubmit(submitForm)
+  const handleFormSubmit = form.handleSubmit(submitForm)
 
-    return formSubmit()
+  const resetForm = () => {
+    form.reset()
   }
+
+  const closeDialog = () => {
+    setIsDialogOpen(false)
+  }
+
+  const isShouldDisableSubmit = isLoading || !state.isValid || !state.isDirty
 
   const dialogContent = useMemo(() => {
     return (
       <ControlledCreateSlotForm
         multiplySlots={multiplySlots}
         form={form}
-        onSubmit={e => e.preventDefault()}
       />
     )
   }, [multiplySlots, form])
 
+  const sheetStyles = useMemo(() => twSlotsStyles(createSlotsSheetStyles), [])
+  const drawerStyles = useMemo(() => twSlotsStyles(createSlotsDialogStyles), [])
+
   if (isMediaLargeThenTablet) {
     return (
-      <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen} dismissible={!state.isDirty}>
         <SheetTrigger>{trigger}</SheetTrigger>
-        <SheetContent hideCloseButton shouldCloseOnOutsideClick={false}>
+        <SheetContent side="right">
           <Flex
-            className="h-full w-full gap-y-4"
+            className={sheetStyles.contentWrapper}
             direction="column"
             align="center"
-            justify="between"
           >
-            <SheetHeader className="flex flex-col w-full gap-y-5">
-              <Flex className="w-full h-8" justify="between">
+            <SheetHeader className={sheetStyles.header}>
+              <Flex className={sheetStyles.headerPanelWrapper} justify="between">
                 <Button
-                  className="size-8"
+                  className={sheetStyles.resetButton}
                   disabled={isLoading || !state.isDirty}
                   isIconOnly
                   icon={<Icons.Reset size="sm" />}
-                  onClick={() => form.reset()}
+                  onClick={resetForm}
                 />
-                <Flex className="gap-x-2" align="center">
+                <Flex className={sheetStyles.panelActionsButtons} align="center">
                   <Button
-                    className="h-full"
+                    className={sheetStyles.submitButton}
                     size="sm"
                     variant="action"
-                    disabled={isLoading || !state.isDirty}
+                    disabled={isShouldDisableSubmit}
                     startContent={<Icons.Plus size="sm" />}
                     onClick={handleFormSubmit}
                   >
                     Добавить
                   </Button>
-                  <div className="h-2/3 w-0.25 bg-dark-accent mx-1" />
+                  <Divider className="mx-1" orientation="vertical" />
                   <Button
-                    className="size-8"
+                    className={sheetStyles.closeButton}
                     isIconOnly
                     icon={<Icons.LargeCross width={14} height={14} />}
                     onClick={() => setIsDialogOpen(false)}
                   />
                 </Flex>
               </Flex>
-              <Flex className="gap-x-4" direction="row" align="center">
+              <Flex className={sheetStyles.titleWrapper} direction="row" align="center">
                 <CreateSlotDialogIcon />
                 <Flex direction="column" align="start">
                   <SheetTitle>Добавление слотов</SheetTitle>
-                  <SheetDescription asChild>
+                  <SheetDescription>
                     <Typography
-                      className="leading-4 font-normal text-gray-accent"
+                      className={sheetStyles.titleDescription}
                       tag="p"
                     >
                       Увеличьте количество слотов в аукционе
@@ -155,10 +160,8 @@ function CreateSlotsDialog({
                 </Flex>
 
               </Flex>
-
             </SheetHeader>
-            {/* <Divider /> */}
-            <div className="w-full h-0.25 bg-dark-accent" />
+            <Divider />
             {dialogContent}
           </Flex>
         </SheetContent>
@@ -167,31 +170,96 @@ function CreateSlotsDialog({
   }
 
   return (
-    <Drawer
-      noBodyStyles
-      open={isDialogOpen}
-      onOpenChange={setIsDialogOpen}
-      dismissible={state.isDirty}
-      shouldScaleBackground={false}
-    >
-      <DrawerTrigger>{trigger}</DrawerTrigger>
-      <DrawerContent className="px-4 pb-4" isFullPageHeight={isFullPageHeight}>
-        <DrawerHeader className="flex-row items-center gap-x-4 px-2">
-          <CreateSlotDialogIcon />
-          <Flex className="" direction="column">
-            <DrawerTitle className="leading-5 font-medium text-white">
-              Добавление слотов
-            </DrawerTitle>
-            <DrawerDescription asChild>
-              <Typography tag="p">
-                Увеличьте количество слотов в аукционе
-              </Typography>
-            </DrawerDescription>
-          </Flex>
-        </DrawerHeader>
-        {dialogContent}
-      </DrawerContent>
-    </Drawer>
+    <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen} dismissible={!state.isDirty}>
+      <SheetTrigger className="w-full">{trigger}</SheetTrigger>
+      <SheetContent className="px-0" side="bottom" isFullPageSize>
+        <div className={drawerStyles.contentWrapper}>
+          <SheetHeader className={drawerStyles.header}>
+            <CreateSlotDialogIcon />
+            <div className={drawerStyles.titleWrapper}>
+              <SheetTitle className={drawerStyles.title}>
+                Добавление слотов
+              </SheetTitle>
+              <SheetDescription>
+                <Typography tag="p">
+                  Добавьте нужные слоты
+                </Typography>
+              </SheetDescription>
+            </div>
+            <Button
+              className={drawerStyles.closeButton}
+              isIconOnly
+              icon={<Icons.LargeCross width={14} height={14} />}
+              onClick={closeDialog}
+            />
+          </SheetHeader>
+          <Divider className="mb-4" />
+          <div className="w-full h-full overflow-scroll">
+            {dialogContent}
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+    // <Drawer
+    //   noBodyStyles
+    //   open={isDialogOpen}
+    //   onOpenChange={setIsDialogOpen}
+    //   dismissible={false}
+    //   repositionInputs={false}
+    //   modal={false}
+    // >
+    //   <DrawerTrigger asChild>{trigger}</DrawerTrigger>
+    //   <DrawerContent isFullPageHeight={isFullPageHeight} hidePill>
+  // <div className={drawerStyles.contentWrapper}>
+  //   <DrawerHeader className={drawerStyles.header}>
+  //     <CreateSlotDialogIcon />
+  //     <div className={drawerStyles.titleWrapper}>
+  //       <DrawerTitle className={drawerStyles.title}>
+  //         Добавление слотов
+  //       </DrawerTitle>
+  //       <DrawerDescription asChild>
+  //         <Typography tag="p">
+  //           Добавьте нужные слоты
+  //         </Typography>
+  //       </DrawerDescription>
+  //     </div>
+  //     <Button
+  //       className={drawerStyles.closeButton}
+  //       isIconOnly
+  //       icon={<Icons.LargeCross width={14} height={14} />}
+  //       onClick={closeDialog}
+  //     />
+  //   </DrawerHeader>
+  //   <Divider className="mb-4" />
+  //   <div className="w-full h-full overflow-scroll">
+  //     {dialogContent}
+  //   </div>
+    //       <DrawerFooter className={drawerStyles.footer}>
+    //         <Button
+    //           className={drawerStyles.resetButton}
+    //           size="sm"
+    //           disabled={!state.isDirty}
+    //           startContent={<Icons.Reset size="xs" />}
+    //           onClick={resetForm}
+    //         >
+    //           Сбросить
+    //         </Button>
+    //         <Button
+    //           className={drawerStyles.submitButton}
+    //           variant="action"
+    //           size="sm"
+    //           disabled={isShouldDisableSubmit}
+    //           startContent={<Icons.Plus />}
+    //           onClick={handleFormSubmit}
+    //         >
+    //           Добавить
+    //         </Button>
+    //       </DrawerFooter>
+    //     </div>
+
+  //   </DrawerContent>
+
+  // </Drawer>
   )
 }
 
@@ -204,7 +272,7 @@ function CreateSlotDialogIcon() {
   return (
     <div className="h-fit w-fit rounded-small bg-green-accent/50 p-0.5 outline-4 outline-green-accent/15">
       <Flex
-        className="relative h-9 w-9 rounded-small p-1.25"
+        className="relative size-8 tablet:size-9 rounded-small p-1.25"
         align="center"
         justify="center"
       >

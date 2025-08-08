@@ -1,6 +1,6 @@
-import { HttpClientRequestOptions } from '~shared/lib/axios'
-
 import { AUCTION_ENDPOINTS } from '~shared/constants/api/http'
+
+import type { HttpClientRequestOptions } from '~shared/lib/axios'
 
 import { authHttpClient } from '../auth-instance'
 import { baseHttpClient } from '../base-api'
@@ -13,7 +13,7 @@ export type CreateAuctionResponse = {
 
 export const createAuction = async (
   key: string,
-  fetchOptions?: HttpClientRequestOptions
+  fetchOptions?: HttpClientRequestOptions,
 ) => {
   return baseHttpClient.post<CreateAuctionResponse>(AUCTION_ENDPOINTS.CREATE, {
     ...fetchOptions,
@@ -26,7 +26,7 @@ export const createAuction = async (
 
 export const getAuctionInfo = async <T>(
   auctionUUID: string,
-  fetchOptions?: HttpClientRequestOptions
+  fetchOptions?: HttpClientRequestOptions,
 ) => {
   return authHttpClient.get<T>(`/api/v1/auctions/${auctionUUID}`, {
     ...fetchOptions,

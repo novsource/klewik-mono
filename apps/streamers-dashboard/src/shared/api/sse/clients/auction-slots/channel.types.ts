@@ -1,6 +1,6 @@
-import { z } from 'zod'
+import type { z } from 'zod'
 
-import {
+import type {
   AuctionSlotDTOSchema,
   AuctionSlotsEventsMessageSchema,
 } from './channel.contracts'
@@ -20,8 +20,8 @@ type AuctionSlotsEventsCallbacks = {
 }
 
 export type {
-  AuctionSlotDTO,
-  AuctionSlotsEventsMap,
   AuctionEventSourceMessage,
+  AuctionSlotDTO,
   AuctionSlotsEventsCallbacks,
+  AuctionSlotsEventsMap,
 }

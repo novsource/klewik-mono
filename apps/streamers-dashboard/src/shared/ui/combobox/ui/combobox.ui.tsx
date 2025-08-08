@@ -1,11 +1,11 @@
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import type { ReactNode } from 'react'
+import { useRef, useState } from 'react'
 
 import { Check } from 'lucide-react'
 
-import { SlotsSortingOptions } from '~shared/store/model'
-
+import type { SlotsSortingOptions } from '~shared/store/model'
 import { Button } from '~shared/ui/button'
-import { ButtonProps } from '~shared/ui/button/ui/Button'
+import type { ButtonProps } from '~shared/ui/button/ui/Button'
 import {
   Command,
   CommandEmpty,
@@ -15,8 +15,7 @@ import {
   CommandList,
 } from '~shared/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '~shared/ui/popover'
-
-import { cn } from '~shared/utils'
+import { chain, cn } from '~shared/utils'
 
 export type ComboboxData = Array<
   {
@@ -37,6 +36,8 @@ type ComboboxProps<T extends ComboboxData = ComboboxData> = {
   }
   placeholder?: string
   enableSearchField?: boolean
+  open?: boolean
+  onOpenChange?: (value: boolean) => void
   onValueChanged?: (label: T[number]['label']) => void
   size?: ButtonProps['size']
   icon?: ReactNode
@@ -52,10 +53,17 @@ export function Combobox(props: ComboboxProps) {
     emptyMessage,
     slotClassnames,
     triggerProps,
+    onOpenChange,
+    open,
+    defaultValue,
   } = props
 
-  const [open, setOpen] = useState(false)
-  const [value, setValue] = useState(() => props.defaultValue ?? '')
+  const [isOpen, setIsOpen] = useState(open ?? false)
+  const [value, setValue] = useState(() => defaultValue ?? '')
+
+  if (open !== undefined && isOpen !== open) {
+    setIsOpen(open)
+  }
 
   /*
     This flag required for checking opportunity for setting a new default value
@@ -63,20 +71,19 @@ export function Combobox(props: ComboboxProps) {
   */
   const isValueChangeOnce = useRef(false)
 
-  useEffect(() => {
-    if (!isValueChangeOnce.current && props.defaultValue) {
-      setValue(props.defaultValue)
-    }
-  }, [props.defaultValue])
+  if (!isValueChangeOnce.current && defaultValue) {
+    setValue(defaultValue)
+    isValueChangeOnce.current = true
+  }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={isOpen} onOpenChange={onOpenChange ? chain(onOpenChange, setIsOpen) : setIsOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
           className={cn(
             'w-fit max-w-[400px] border-dark-accent/60 hover:border-dark-accent border-1 justify-start items-center gap-x-1.5 font-medium hover:text-white/80',
-            triggerProps?.className
+            triggerProps?.className,
           )}
           role="combobox"
           startContent={icon}
@@ -85,14 +92,14 @@ export function Combobox(props: ComboboxProps) {
           {...triggerProps}
         >
           {value
-            ? data.find((item) => item.value === value)?.label
+            ? data.find(item => item.value === value)?.label
             : placeholder}
         </Button>
       </PopoverTrigger>
       <PopoverContent
         className={cn(
           'w-fit max-w-[400px] p-0',
-          slotClassnames?.contentWrapper
+          slotClassnames?.contentWrapper,
         )}
         align="start"
       >
@@ -101,17 +108,17 @@ export function Combobox(props: ComboboxProps) {
           <CommandList>
             <CommandEmpty>{emptyMessage ?? 'Ничего не найдено'}</CommandEmpty>
             <CommandGroup>
-              {data.map((item) => (
+              {data.map(item => (
                 <CommandItem
                   className={cn(
                     'font-medium cursor-pointer',
-                    slotClassnames?.contentItem
+                    slotClassnames?.contentItem,
                   )}
                   key={item.value}
                   value={item.value}
                   onSelect={(currentValue: string) => {
                     setValue(currentValue === value ? '' : currentValue)
-                    setOpen(false)
+                    setIsOpen(false)
 
                     props.onValueChanged && props.onValueChanged(currentValue)
 
@@ -123,7 +130,7 @@ export function Combobox(props: ComboboxProps) {
                   <Check
                     className={cn(
                       'ml-auto',
-                      value === item.value ? 'opacity-100' : 'opacity-0'
+                      value === item.value ? 'opacity-100' : 'opacity-0',
                     )}
                   />
                 </CommandItem>

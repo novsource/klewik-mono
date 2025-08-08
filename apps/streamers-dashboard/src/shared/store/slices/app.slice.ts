@@ -1,12 +1,10 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
 
-import { AppStoreState, SlotsSortingOptions, TimerSettings } from '../model'
+import type { AppStoreState, TimerSettings } from '../model'
+
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState: AppStoreState = {
-  slotsSortOptions: {
-    field: 'points',
-    type: 'descending',
-  },
   timerSettings: {
     addedTimeValue: 10,
     decreaseTimeValue: 10,
@@ -21,17 +19,11 @@ export const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-    setSlotsSortOptions(state, action: PayloadAction<SlotsSortingOptions>) {
-      state.slotsSortOptions = action.payload
-    },
     setTimerSettings(state, action: PayloadAction<Partial<TimerSettings>>) {
       state.timerSettings = { ...state.timerSettings, ...action.payload }
     },
   },
   selectors: {
-    getSlotsSortOptions: (state) => {
-      return state.slotsSortOptions
-    },
     getTimerSettings: (state) => {
       return state.timerSettings
     },

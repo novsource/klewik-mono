@@ -53,9 +53,9 @@ type InputVariants = SizesCvaVariants
 export const labelVariants = cva<LabelVariants>('select-none', {
   variants: {
     size: {
-      default: 'text-md font-semibold',
-      lg: 'text-md font-semibold',
-      sm: 'text-sm font-medium',
+      default: 'text-sm tablet:text-md font-semibold font-superior',
+      lg: 'text-sm tablet:text-md font-semibold font-superior',
+      sm: 'text-xs tablet:text-sm font-medium font-superior',
     },
     isError: {
       true: 'text-red',
@@ -73,9 +73,9 @@ export const descriptionVariants = cva<DescriptionVariants>(
   {
     variants: {
       size: {
-        default: 'text-sm',
-        lg: 'text-sm',
-        sm: 'text-sm',
+        default: 'text-sm font-superior',
+        lg: 'text-sm font-superior',
+        sm: 'text-sm font-superior',
       },
       isError: {
         true: 'text-red',
@@ -90,7 +90,7 @@ export const descriptionVariants = cva<DescriptionVariants>(
 )
 
 export const contentVariants = cva<ContentBaseVariants>([
-  'group flex flex-col gap-y-2',
+  'group flex flex-col gap-y-1.25 tablet:gap-y-2',
 ])
 
 export const contentWrapperVariants = cva<ContentWrapperVariants>(
@@ -109,7 +109,7 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
       isDisabled: {
         true: 'ring-0 data-[hover=true]:ring-0',
         false:
-          'data-[focus=true]:bg-dark/50 data-[focus=true]:ring-1 data-[hover=true]:bg-dark/50 data-[hover=true]:ring-1',
+          'data-[focus=true]:bg-dark-foreground-light data-[focus=true]:ring-1 data-[hover=true]:bg-dark/50 data-[hover=true]:ring-1',
       },
     },
     defaultVariants: {
@@ -133,9 +133,9 @@ export const inputVariants = cva<InputVariants>(
   {
     variants: {
       size: {
-        default: 'py-3 text-md',
-        lg: 'text-md',
-        sm: 'text-sm',
+        default: 'text-md font-superior',
+        lg: 'text-md font-superior',
+        sm: 'text-sm font-superior',
       },
       isError: {
         true: 'focus-visible:ring-red',

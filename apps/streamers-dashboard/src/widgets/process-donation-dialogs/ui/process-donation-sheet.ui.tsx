@@ -1,6 +1,9 @@
-import { ReactNode, useState } from 'react'
+import type { ReactNode } from 'react'
+import { useState } from 'react'
 
-import { ProcessedDonation } from '~entities/donation/model'
+import type { ProcessedDonation } from '~entities/donation/model'
+
+import { tailwindScreens } from '~shared/constants/tailwindcss'
 
 import { useMediaQuery } from '~shared/hooks/use-media-query'
 
@@ -13,10 +16,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '~shared/ui/sheet/ui'
+} from '~shared/ui/sheet'
 import { Typography } from '~shared/ui/typograghy'
-
-import { tailwindScreens } from '~shared/constants/tailwindcss'
 
 import { ProcessDonationDialogIcon } from './dialog-icon'
 import { ProcessDonationDialogTabs } from './dialog-tabs'
@@ -32,7 +33,7 @@ const ProcessDonationSheet = (props: ProcessDonationSheetProps) => {
   const [isSheetOpened, setIsSheetOpened] = useState(false)
 
   const isMediaLargeThenTablet = useMediaQuery(
-    `(min-width: ${tailwindScreens.tablet})`
+    `(min-width: ${tailwindScreens.tablet})`,
   )
 
   return (
@@ -49,7 +50,7 @@ const ProcessDonationSheet = (props: ProcessDonationSheetProps) => {
               <ProcessDonationDialogIcon />
               <Flex direction="column" align="start">
                 <SheetTitle>Управление пожертвованием</SheetTitle>
-                <SheetDescription asChild>
+                <SheetDescription>
                   <Typography
                     className="text-gray-accent font-normal leading-4"
                     tag="p"

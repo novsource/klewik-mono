@@ -1,3 +1,7 @@
+import type {
+  SelectContextState,
+} from '../context'
+
 import * as React from 'react'
 
 import * as SelectPrimitive from '@radix-ui/react-select'
@@ -6,7 +10,6 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
 import { cn } from '~shared/utils'
 
 import {
-  SelectContextState,
   SelectProvider,
   useSelectContext,
 } from '../context'
@@ -21,8 +24,8 @@ import {
   selectViewportVariants,
 } from '../styles'
 
-export type SelectProps = React.ComponentProps<typeof SelectPrimitive.Root> &
-  Partial<SelectContextState>
+export type SelectProps = React.ComponentProps<typeof SelectPrimitive.Root>
+  & Partial<SelectContextState>
 
 function Select({ size, position, ...rootProps }: SelectProps) {
   return (
@@ -46,7 +49,6 @@ function SelectValue({
 
 function SelectTrigger({
   className,
-  size: propSize = 'default',
   children,
   ...triggerProps
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
@@ -55,13 +57,13 @@ function SelectTrigger({
   const { size } = useSelectContext()
 
   const style = React.useMemo(() => {
-    return cn(selectTriggerVariants({ size: propSize ?? size }), className)
-  }, [propSize, size])
+    return cn(selectTriggerVariants({ size }), className)
+  }, [size, className])
 
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
-      data-size={propSize ?? size}
+      data-size={size}
       className={style}
       {...triggerProps}
     >
@@ -82,8 +84,8 @@ function SelectContent({
   const { position } = useSelectContext()
 
   const style = React.useMemo(() => {
-    return cn(selectContentVariants({ position }), className)
-  }, [propPosition, position])
+    return cn(selectContentVariants({ position: propPosition ?? position }), className)
+  }, [propPosition, position, className])
 
   return (
     <SelectPrimitive.Portal>

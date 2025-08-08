@@ -1,21 +1,21 @@
 import type { ReactNode } from 'react'
 import { useMemo } from 'react'
 
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
-import { tailwindScreens } from '~shared/constants/tailwindcss'
-import { useMediaQuery } from '~shared/hooks/use-media-query'
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { useMediaQuery } from '~shared/hooks'
+
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~shared/ui/tooltip'
 import { Typography } from '~shared/ui/typograghy'
+
 import { cn } from '~shared/utils'
 
 const NavbarMenu = () => {
-  const { pathname } = useLocation()
-  const isLargeThenTablet = useMediaQuery(
-    `(min-width:${tailwindScreens.tablet})`,
-  )
+  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   const menuItems = useMemo(() => {
     const paths = [

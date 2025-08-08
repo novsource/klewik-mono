@@ -1,3 +1,3 @@
-import CloverAnimation from './clover-animation'
+import { CloverAnimation } from './clover-animation'
 
 export { CloverAnimation }

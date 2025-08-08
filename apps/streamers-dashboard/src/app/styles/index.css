@@ -2,6 +2,43 @@
 
 @plugin 'tailwindcss-animate';
 
+@font-face {
+    font-family: "Breeze Sans";
+    font-weight: 700;
+    font-style: normal;
+    src: url("../../shared/assets/fonts/BreezeSans-Bold.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Breeze Sans";
+    font-weight: 400;
+    font-style: normal;
+    src: url("../../shared/assets/fonts/BreezeSans-Regular.woff2")
+        format("woff2");
+}
+
+@font-face {
+    font-family: "Breeze Sans";
+    font-weight: 300;
+    font-style: normal;
+    src: url("../../shared/assets/fonts/BreezeSans-Light.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Breeze Sans";
+    font-weight: 200;
+    font-style: normal;
+    src: url("../../shared/assets/fonts/BreezeSans-Thin.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Breeze Sans";
+    font-weight: 500;
+    font-style: normal;
+    src: url("../../shared/assets/fonts/BreezeSans-Medium.woff2")
+        format("woff2");
+}
+
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -9,6 +46,7 @@
     --color-white-accent: #f8f8ff;
     --color-white: #f2f2f2;
 
+    --color-green-dark: #2c3b33;
     --color-green: #3f9663;
     --color-green-light: #2c3b33;
     --color-green-accent: #74dfa2;
@@ -67,6 +105,8 @@
     --font-golos-f: "Golos Text", sans-serif;
     --font-azeret-mono: "Azeret Mono";
     --font-manrope: "Manrope", sans-serif;
+    --font-breeze: "Breeze Sans", sans-serif;
+    --font-breeze: "Superior", sans-serif;
 
     --animate-fade-in: fadeIn 2s ease;
     --animate-fade-out: fadeIn 2s ease reverse;
@@ -80,12 +120,16 @@
     --height-header: var(--header-height);
     --mobile-menu-bottom: calc(var(--mobile-menu-bottom)+var(--footer-height));
 
+    --height-search-dialog-header: var(--height-search-dialog-header);
+    --height-search-dialog-content: var(--height-search-dialog-content);
+    --height-search-dialog-footer: var(--height-search-dialog-footer);
+
     --grid-template-rows-dashboard-mobile: max-content 1fr max-content;
     --grid-template-rows-dashboard-desktop: max-content 1fr;
 
     --grid-template-rows-slots-desktop: max(40px) 1fr;
     --grid-template-rows-slots-table: minmax(40px, 42px) 1fr;
-    --grid-template-rows-slider: minmax(auto, 80px) 1fr minmax(auto, 60px);
+    --grid-template-rows-slider: max-content 1fr max-content;
     --spacing-4xl: 1.5rem;
 
     --border-width-1: 1px;
@@ -247,6 +291,13 @@
         --mobile-menu-bottom: 16px;
         --sheet-height: calc(100% - 20px);
 
+        --height-search-dialog-header: 200px;
+        --height-search-dialog-footer: 40px;
+
+        --height-search-dialog-content: calc(
+            100% - var(--height-search-dialog-header)
+        );
+
         --dialog-width-desktop: 550px;
         --dialog-width-laptop: 500px;
 
@@ -315,10 +366,12 @@
     }
 
     #root {
+        font-size: 16px;
         @apply relative h-full w-full overflow-hidden;
     }
 
     body {
+        font-family: "Golos Text", sans-serif;
         @apply m-0 h-full w-full antialiased;
     }
 
@@ -357,6 +410,26 @@
     /* Firefox */
     input[type="number"] {
         -moz-appearance: textfield;
+    }
+
+    number-flow-react::part(left),
+    number-flow-react::part(right),
+    number-flow-react::part(left)::after,
+    number-flow-react::part(right)::after,
+    number-flow-react::part(symbol) {
+        padding: calc(var(--number-flow-mask-height, 0.25em) / 2) 0;
+    }
+
+    .welcome-wizard__spacer {
+        flex: 1;
+    }
+
+    .welcome-wizard__spacer:first-child {
+        flex: 0.6;
+    }
+
+    .welcome-wizard__spacer:last-child {
+        flex: 1.4;
     }
 
     .main--dashboard {

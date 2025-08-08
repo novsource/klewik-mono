@@ -7,11 +7,14 @@ import { ControlledEditSlotForm } from '~features/auction-slot/edit-slot/ui/edit
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions } from '~entities/auction-slot/store'
-import { AuctionSlotCard } from '~entities/auction-slot/ui/card'
+import { SolidAuctionSlotCard } from '~entities/auction-slot/ui/card'
 
-import { tailwindScreens } from '~shared/constants/tailwindcss'
-import { useMediaQuery } from '~shared/hooks/use-media-query'
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { useMediaQuery } from '~shared/hooks'
+
 import { useActionCreators } from '~shared/lib/redux-toolkit'
+
 import { Button } from '~shared/ui/button'
 import {
   Drawer,
@@ -29,7 +32,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '~shared/ui/sheet/ui'
+} from '~shared/ui/sheet'
 import { closeAllToasts, toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
 
@@ -60,7 +63,7 @@ const EditSlotDialog = ({
   })
 
   const isMediaLargeThenTablet = useMediaQuery(
-    `(min-width: ${tailwindScreens.tablet})`,
+    greaterThenDeviceWidthMediaQueries.tablet,
   )
 
   if (!isDialogOpen && formState.isDirty) {
@@ -85,10 +88,7 @@ const EditSlotDialog = ({
   const dialogContent = useMemo(() => {
     return (
       <Flex className="h-full gap-y-6" direction="column">
-        <AuctionSlotCard
-          slotClassNames={{ base: 'max-tablet:py-1' }}
-          {...inputSlot}
-        />
+        <SolidAuctionSlotCard auctionSlot={inputSlot} />
         <ControlledEditSlotForm
           form={form}
           onSubmit={e => e.preventDefault()}
@@ -102,7 +102,7 @@ const EditSlotDialog = ({
     return (
       <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <SheetTrigger>{trigger}</SheetTrigger>
-        <SheetContent hideCloseButton>
+        <SheetContent>
           <Flex className="h-full w-full gap-y-4" direction="column">
             <SheetHeader className="flex flex-col w-full gap-y-5">
               <Flex className="w-full h-8" justify="between">

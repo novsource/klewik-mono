@@ -1,3 +1,3 @@
 export enum AUCTION_ENDPOINTS {
-  CREATE = '/api/auction/create',
+  CREATE = '/api/v1/auction/create',
 }

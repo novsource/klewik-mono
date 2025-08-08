@@ -1,7 +1,8 @@
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import path from 'path'
 import { defineConfig } from 'vite'
+
+import path from 'node:path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,7 +14,7 @@ export default defineConfig({
       '~widgets': path.resolve(__dirname, './src/widgets'),
       '~features': path.resolve(__dirname, './src/features'),
       '~entities': path.resolve(__dirname, './src/entities'),
-      '~ui': path.resolve(__dirname, './src/shared/components/ui'),
+      '~ui': path.resolve(__dirname, './src/shared/ui'),
       '~shared': path.resolve(__dirname, './src/shared'),
       '~root': path.resolve(__dirname, './'),
       '~': path.resolve(__dirname, './src'),

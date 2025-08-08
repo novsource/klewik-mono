@@ -1,8 +1,8 @@
 import type { TransformedCreateSlotsFormData } from '../lib'
 import type { CreateSlotForm } from '../model'
 
-import type { HTMLAttributes } from 'react'
-import { useCallback, useState } from 'react'
+import type { ComponentProps } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import type { Control, FieldErrors, UseFormReturn, UseFormTrigger } from 'react-hook-form'
 import { useFieldArray, useFormState } from 'react-hook-form'
@@ -13,10 +13,12 @@ import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~shared/ui/tabs'
-import { cn } from '~shared/utils'
+
+import { chain, cn, twSlotsStyles } from '~shared/utils'
 
 import { CREATE_SLOT_FORM_DEFAULT_VALUE } from '../constants'
 import { useCreateSlotsForm } from '../hooks'
+import { createSlotsFormStyles } from '../styles'
 import { SlotNameFormInput, SlotPointsFormInput } from './form-fields.ui'
 
 function getErrorMessageForField(
@@ -33,7 +35,7 @@ function getErrorMessageForField(
 }
 
 type CreateSlotsFormProps = Omit<
-  HTMLAttributes<HTMLFormElement>,
+  ComponentProps<'form'>,
   'onSubmit'
 > & {
   maxCreatingSlotsCount?: number
@@ -54,21 +56,63 @@ const CreateSlotsForm = (props: CreateSlotsFormProps) => {
 
   const {
     form: { control, trigger, handleSubmit },
+    state,
     submitForm,
     isLoading,
   } = useCreateSlotsForm({ onError, onSuccess })
 
+  const styles = useMemo(() => twSlotsStyles(createSlotsFormStyles), [])
+
   return (
     <form
-      className="flex h-full w-full flex-col justify-between overflow-x-clip"
+      className={styles.form}
       onSubmit={handleSubmit(submitForm)}
       {...formProps}
     >
-      {multiplySlots && <SlotsTabs control={control} trigger={trigger} maxCreatingSlotsCount={maxCreatingSlotsCount} />}
+      {multiplySlots
+        && (
+          <SlotsTabs
+            control={control}
+            trigger={trigger}
+            maxCreatingSlotsCount={maxCreatingSlotsCount}
+          />
+        )}
+      {!multiplySlots
+        && (
+          <div className={styles.formInputsWrapper}>
+            <SlotNameFormInput
+              control={control}
+              name="slots.0.title"
+              errorMessage={getErrorMessageForField(state.errors, 'title', 0)}
+              onChange={() => {
+                trigger()
+              }}
+            />
+            <SlotPointsFormInput
+              control={control}
+              name="slots.0.points"
+              pointsInputProps={{
+                errorMessage: getErrorMessageForField(
+                  state.errors,
+                  'points',
+                  0,
+                ),
+                onChange: () => {
+                  trigger()
+                },
+              }}
+              percentInputProps={{
+                onChange: () => {
+                  trigger()
+                },
+              }}
+            />
+          </div>
+        )}
       <Button
         type="submit"
+        className={styles.submitButton}
         variant="action"
-        className="w-full"
         disabled={isLoading}
       >
         Добавить в аукцион
@@ -80,7 +124,7 @@ const CreateSlotsForm = (props: CreateSlotsFormProps) => {
 export { CreateSlotsForm }
 
 export type ControlledCreateSlotsFormProps
-  = HTMLAttributes<HTMLFormElement>
+  = ComponentProps<'form'>
     & {
       form: UseFormReturn<CreateSlotForm, unknown, TransformedCreateSlotsFormData>
       maxCreatingSlotsCount?: number
@@ -90,16 +134,60 @@ export type ControlledCreateSlotsFormProps
     }
 
 const ControlledCreateSlotForm = (props: ControlledCreateSlotsFormProps) => {
-  const { form, maxCreatingSlotsCount, multiplySlots, onSuccess, onError, ...formProps } = props
+  const { form, maxCreatingSlotsCount, multiplySlots, onSubmit, onSuccess, onError, ...formProps } = props
 
   const { control, trigger } = form
 
+  const state = useFormState({ control })
+
+  const styles = useMemo(() => twSlotsStyles(createSlotsFormStyles), [])
+
   return (
     <form
-      className="flex h-full w-full flex-col justify-between overflow-x-clip"
+      className={styles.form}
+      onSubmit={onSubmit ? chain(event => event.preventDefault(), onSubmit) : event => event.preventDefault()}
       {...formProps}
     >
-      {multiplySlots && <SlotsTabs control={control} trigger={trigger} maxCreatingSlotsCount={maxCreatingSlotsCount} />}
+      {multiplySlots
+        && (
+          <SlotsTabs
+            control={control}
+            trigger={trigger}
+            maxCreatingSlotsCount={maxCreatingSlotsCount}
+          />
+        )}
+      {!multiplySlots
+        && (
+          <div className={styles.formInputsWrapper}>
+            <SlotNameFormInput
+              control={control}
+              name="slots.0.title"
+              errorMessage={getErrorMessageForField(state.errors, 'title', 0)}
+              onChange={() => {
+                trigger()
+              }}
+            />
+            <SlotPointsFormInput
+              control={control}
+              name="slots.0.points"
+              pointsInputProps={{
+                errorMessage: getErrorMessageForField(
+                  state.errors,
+                  'points',
+                  0,
+                ),
+                onChange: () => {
+                  trigger()
+                },
+              }}
+              percentInputProps={{
+                onChange: () => {
+                  trigger()
+                },
+              }}
+            />
+          </div>
+        )}
     </form>
   )
 }
@@ -137,27 +225,49 @@ function SlotsTabs(props: SlotsTabsProps) {
     setTabValue(`slot-${fields.length - 1}`)
   }
 
+  const styles = useMemo(() => twSlotsStyles(createSlotsFormStyles), [])
+
   const renderFormFields = useCallback(
     (field: (typeof fields)[number], index: number) => {
       return (
-        <m.li key={field.id} className="relative flex w-full flex-col gap-y-4">
+        <m.li key={field.id} className={styles.formInputsWrapper}>
           <SlotNameFormInput
             control={control}
             name={`slots.${index}.title` as const}
             errorMessage={getErrorMessageForField(state.errors, 'title', index)}
+            onChange={() => {
+              trigger('slots')
+            }}
           />
           <SlotPointsFormInput
             control={control}
             name={`slots.${index}.points` as const}
-            errorMessage={getErrorMessageForField(
-              state.errors,
-              'points',
-              index,
-            )}
+            pointsInputProps={{
+              errorMessage: getErrorMessageForField(
+                state.errors,
+                'points',
+                index,
+              ),
+              onBlur: () => {
+                trigger('slots')
+              },
+              onChange: () => {
+                trigger('slots')
+              },
+            }}
+            percentInputProps={{
+              onChange: () => {
+                trigger('slots')
+              },
+              onBlur: () => {
+                trigger('slots')
+              },
+            }}
           />
           {fields.length > 1 && (
             <Button
               variant="error"
+              size="sm"
               startContent={<Icons.Bin className="text-red" size="xs" />}
               onClick={() => {
                 if (fields.length > 1) {
@@ -171,27 +281,25 @@ function SlotsTabs(props: SlotsTabsProps) {
         </m.li>
       )
     },
-    [fields, state.errors, control, remove],
+    /* eslint-disable react-hooks/exhaustive-deps */
+    [fields, state.errors, trigger, control, remove],
   )
 
   return (
     <Tabs
-      className="space-y-6 px-0.25"
+      className={styles.tabs}
       defaultValue="slot-0"
       value={tabValue}
       onValueChange={value => setTabValue(value as `slot-${number}`)}
     >
       <Flex align="center">
-        <TabsList className="flex w-fit justify-between rounded-large bg-dark">
+        <TabsList className={styles.tabsList}>
           {fields.map((field, index) => (
             <TabsTrigger
-              className={cn(
-                'flex cursor-pointer gap-x-1 text-md font-medium text-gray-light/70 hover:text-gray-light data-[state=active]:rounded-[8px] data-[state=active]:[&_button]:block',
-                checkIsTabHasError(index)
-                && 'text-red/40 hover:text-red/60 data-[state=active]:hover:text-red data-[state=active]:text-red',
-              )}
               key={field.id}
+              className={cn(styles.tabTrigger, checkIsTabHasError(index) && styles.isErrorTabTrigger)}
               value={`slot-${index}`}
+              tabIndex={-1}
             >
               Слот
               {' '}
@@ -200,10 +308,11 @@ function SlotsTabs(props: SlotsTabsProps) {
           ))}
           {fields.length < maxCreatingSlotsCount && (
             <Button
+              className={styles.addNewTabButton}
               variant="ghost"
-              className="transition-colors text-gray-light hover:text-gray-accent"
-              startContent={<Icons.Plus />}
-              size="sm"
+              size="xs"
+              isIconOnly
+              icon={<Icons.Plus />}
               onClick={() => {
                 append(CREATE_SLOT_FORM_DEFAULT_VALUE)
                 trigger('slots')

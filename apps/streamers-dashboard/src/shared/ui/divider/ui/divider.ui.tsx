@@ -11,7 +11,12 @@ const Divider = (props: DividerProps) => {
 
   return (
     <hr
-      className={cn('border-divider', orientation === 'horizontal' && 'w-full h-[1px]', orientation === 'vertical' && 'h-full w-[1px]', className)}
+      className={cn(
+        'border-dark-accent',
+        orientation === 'horizontal' && 'w-full border-b-0 tablet:border-t-1',
+        orientation === 'vertical' && 'h-2/3 border-l-0 tablet:border-r-1',
+        className,
+      )}
       {...restProps}
     />
   )
