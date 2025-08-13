@@ -5,6 +5,8 @@ import * as colorsUtilities from './colors'
 import * as stringUtils from './string-format'
 
 export { canvasUtilities, chain, cn, colorsUtilities, stringUtils }
+export * from './get-element'
+export * from './is-target'
 export * from './local-storage'
 export * from './merge-props'
 export * from './number-format'
