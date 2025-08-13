@@ -1,3 +1,3 @@
-import WheelContainer from './wheel'
+import { WheelCanvas } from './wheel-canvas.ui'
 
-export { WheelContainer }
+export { WheelCanvas }

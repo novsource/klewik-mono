@@ -1,16 +1,19 @@
 import { useRef } from 'react'
 
+import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+
 import { wheelSelectors } from '~entities/wheel/store'
+import { WheelCanvas } from '~entities/wheel/ui'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import type { FlexProps } from '~shared/ui/flex'
 import { Flex } from '~shared/ui/flex'
 
-import { WheelCanvas } from './wheel-canvas.ui'
+type WheelProps = FlexProps
 
-type WheelContainerProps = FlexProps
-
-const WheelContainer = (props: WheelContainerProps) => {
+export const Wheel = (props: WheelProps) => {
+  const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const selectorTargetTitle = useStoreSelector(
     wheelSelectors.getSelectorTargetTitle,
   )
@@ -25,9 +28,7 @@ const WheelContainer = (props: WheelContainerProps) => {
       >
         {selectorTargetTitle}
       </span>
-      <WheelCanvas />
+      <WheelCanvas auctionSlots={storedAuctionSlots} />
     </Flex>
   )
 }
-
-export default WheelContainer

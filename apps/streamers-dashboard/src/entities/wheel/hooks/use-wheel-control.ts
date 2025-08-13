@@ -42,49 +42,49 @@ export const useWheelControl = (
 
   const rotateWheelAnimation = useCallback(
     (target: WheelSlot, spinTime: number) => {
-      if (wheelRef.current) {
-        const wheel = wheelRef.current
+      const wheel = wheelRef.current
 
-        const targetRotateCSSValue
+      if (!wheel)
+        return
+
+      const targetRotateCSSValue
           = wheelRotateCSSValue + calculateRotateWheelCSSValue(target)
 
-        animate(framerMotionAnimationValue, targetRotateCSSValue, {
-          type: 'tween',
-          ease: [0.55, 0.65, 0, 1],
-          duration: spinTime,
-          visualDuration: spinTime,
-          onPlay: () => {
-            setIsWheelSpinning(true)
+      animate(framerMotionAnimationValue, targetRotateCSSValue, {
+        type: 'tween',
+        ease: [0.55, 0.65, 0, 1],
+        duration: spinTime,
+        visualDuration: spinTime,
+        onPlay: () => {
+          storeWheelActions.setWheelStatus('spinning')
+          storeWheelActions.setRotateValue(targetRotateCSSValue)
 
-            storeWheelActions.setRotateValue(targetRotateCSSValue)
+          onSpinStart && onSpinStart(target)
+          wheel.style.willChange = 'transform'
+        },
+        onUpdate(currentDegree) {
+          const slotName = getSlotNameOnSelector(currentDegree, wheelSlots)
 
-            onSpinStart && onSpinStart(target)
-            wheel.style.willChange = 'transform'
-          },
-          onComplete: () => {
-            setIsWheelSpinning(false)
-            setWheelRotateCSSValue(framerMotionAnimationValue.get())
+          storeWheelActions.setSelectorTitleName(slotName)
 
-            onSpinComplete && onSpinComplete(target)
-          },
-          onUpdate(currentDegree) {
-            const slotName = getSlotNameOnSelector(currentDegree, wheelSlots)
+          wheel.style.transform = `rotateZ(${currentDegree}deg)`
+        },
+        onComplete: () => {
+          storeWheelActions.setWheelStatus('idle')
+          storeWheelActions.setRotateValue(framerMotionAnimationValue.get())
 
-            setSelectorTargetTitle(slotName)
-
-            wheel.style.transform = `rotateZ(${currentDegree}deg)`
-          },
-        })
-      }
+          onSpinComplete && onSpinComplete(target)
+        },
+      })
     },
     [
-      setIsWheelSpinning,
       wheelRef,
       onSpinComplete,
       onSpinStart,
       framerMotionAnimationValue,
       wheelRotateCSSValue,
       wheelSlots,
+      storeWheelActions,
     ],
   )
 
