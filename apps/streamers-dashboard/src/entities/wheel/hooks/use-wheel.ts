@@ -7,6 +7,8 @@ import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import type { WheelSlot } from '~entities/wheel/model'
 
+import { useResizeObserver } from '~shared/hooks/use-resize-observer'
+
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { clearCanvas, getMaxSizeCanvas, resizeCanvasWithRatio } from '~shared/utils/canvas'
@@ -151,7 +153,7 @@ type UseWheelInitReturn = {
   functions: {
     drawWheel: () => void
     drawInner: () => void
-    resizeWheel: () => () => void
+    resizeWheel: () => void
     resizeInnerBackground: () => void
   }
   properties: {
@@ -160,10 +162,11 @@ type UseWheelInitReturn = {
 }
 
 export const useWheelInit = (
-  items: AuctionSlot[] | WheelSlot[],
+  slots: AuctionSlot[] | WheelSlot[],
 ): UseWheelInitReturn => {
   const [wheelSize, setWheelSize] = useState(0)
 
+  const documentBodyRef = useRef(document.body)
   const wheelCanvasRef = useRef<HTMLCanvasElement>(null)
   const innerWheelCanvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -176,8 +179,10 @@ export const useWheelInit = (
     const wheelCanvas = wheelCanvasRef.current
 
     if (wheelCanvas) {
-      if (items && !!items.length) {
-        drawSlicesItems(wheelCanvas, items)
+      const isSlotsArrEmpty = !slots.length
+
+      if (slots && !isSlotsArrEmpty) {
+        drawSlicesItems(wheelCanvas, slots)
       }
       else {
         drawEmptyWheel(wheelCanvas, {
@@ -185,50 +190,39 @@ export const useWheelInit = (
         })
       }
     }
-  }, [wheelCanvasRef, items])
+  }, [wheelCanvasRef, slots])
 
   const resizeWheel = useCallback(() => {
     const wheelCanvas = wheelCanvasRef.current
     const innerCanvas = innerWheelCanvasRef.current
 
-    if (wheelCanvas && innerCanvas) {
-      const wrapper = wheelCanvas.parentElement as HTMLDivElement
-      const wrapperParent = wrapper.parentElement as HTMLDivElement
+    if (!wheelCanvas || !innerCanvas)
+      return
 
-      const resize = () => {
-        if (getMaxSizeCanvas(wrapperParent) > 300) {
-          wrapper.style.width = wrapper.style.height = `${getMaxSizeCanvas(
-            wrapperParent,
-          )}px`
-        }
-        else {
-          wrapper.style.width = wrapper.style.height = `${300}px`
-        }
+    const wrapper = wheelCanvas.parentElement as HTMLDivElement
+    const wrapperParent = wrapper.parentElement as HTMLDivElement
 
-        resizeCanvasWithRatio(wheelCanvas, wrapper)
-        resizeCanvasWithRatio(innerCanvas, wrapper)
+    const maxWheelCanvasSize = getMaxSizeCanvas(wrapperParent)
 
-        setWheelSize(wheelCanvas.clientWidth)
-        draw()
-      }
-
-      resize()
-
-      window.removeEventListener('resize', resize)
-      window.addEventListener('resize', resize)
-
-      return () => {
-        window.removeEventListener('resize', resize)
-      }
+    if (maxWheelCanvasSize > 300) {
+      wrapper.style.width = wrapper.style.height = `${maxWheelCanvasSize}px`
+    }
+    else {
+      wrapper.style.width = wrapper.style.height = `${300}px`
     }
 
-    return () => {}
+    resizeCanvasWithRatio(wheelCanvas, wrapper)
+    resizeCanvasWithRatio(innerCanvas, wrapper)
+
+    setWheelSize(wheelCanvas.clientWidth)
+    draw()
   }, [wheelCanvasRef, innerWheelCanvasRef, draw])
 
-  useLayoutEffect(() => {
+  useResizeObserver(documentBodyRef, { onChange: () => {
     drawBackground()
+    resizeWheel()
     resizeBackground()
-  }, [drawBackground, resizeBackground])
+  } })
 
   return {
     refs: {
@@ -386,13 +380,9 @@ export const useWheel = (slots: AuctionSlot[]): UseWheelReturn => {
   useLayoutEffect(() => {
     drawWheel()
     drawInner()
+
     resizeInnerBackground()
-
-    const resizeWheelCb = resizeWheel()
-
-    return () => {
-      resizeWheelCb()
-    }
+    resizeWheel()
   }, [drawWheel, resizeWheel, drawInner, resizeInnerBackground])
 
   return {
