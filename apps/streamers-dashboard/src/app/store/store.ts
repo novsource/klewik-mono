@@ -1,7 +1,10 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import type { Config as ReduxStateSyncConfig } from 'redux-state-sync'
+
+import { combineReducers, configureStore, appl } from '@reduxjs/toolkit'
 import { persistReducer } from 'redux-persist'
 import persistStore from 'redux-persist/es/persistStore'
 import localStorage from 'redux-persist/es/storage'
+import { createStateSyncMiddleware, initMessageListener } from 'redux-state-sync'
 
 import { splittedAuctionApi as auctionApi } from '~entities/auction/api'
 import { auctionReducer } from '~entities/auction/store'
@@ -22,8 +25,6 @@ import { wheelReducer } from '~entities/wheel/store'
 
 import { splittedAuthApi as authApi, splittedSSEApi as sseApi } from '~shared/store/api'
 import { appReducer, sseReducer } from '~shared/store/slices'
-
-import { syncReduxStoreMiddleware } from './store-sync'
 
 const rootReducer = combineReducers({
   app: appReducer,
@@ -46,11 +47,17 @@ const persistedReducer = persistReducer(
   rootReducer,
 )
 
+const syncStoreConfig: ReduxStateSyncConfig = {
+  blacklist: ['persist/PERSIST', 'persist/REHYDRATE'],
+}
+
+const syncMiddleware = createStateSyncMiddleware(syncStoreConfig)
+
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
-      .prepend(syncReduxStoreMiddleware, ...auctionSlotsListenersMiddlewares)
+      .prepend(...auctionSlotsListenersMiddlewares)
       .concat(
         auctionApi.middleware,
         authApi.middleware,
@@ -58,10 +65,13 @@ export const store = configureStore({
         donationsApi.middleware,
         integrationsApi.middleware,
         sseApi.middleware,
+        syncMiddleware,
       ),
 })
 
 export const persistor = persistStore(store)
+
+initMessageListener(store)
 
 export type RootState = ReturnType<typeof store.getState>
 export type StoreDispatch = typeof store.dispatch
