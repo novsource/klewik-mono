@@ -1,9 +1,10 @@
-import type { ReactNode } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 import { useMemo } from 'react'
 
 import type { ProcessedDonation } from '~entities/donation/model'
 
 import { FORMATTED_INTEGRATIONS_PLATFORMS_NAMES } from '~shared/constants/integrations'
+
 import { Badge } from '~shared/ui/badge'
 import type {
   CardProps,
@@ -20,7 +21,8 @@ import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Skeleton } from '~shared/ui/skeleton'
 import { Typography } from '~shared/ui/typograghy'
-import { cn, formatNumberToIntlString, isStringEmpty } from '~shared/utils'
+
+import { cn, formatNumberToIntlString, isStringEmpty, objectToDeps, pickingFromObject } from '~shared/utils'
 
 import {
   DonationCardBadge,
@@ -45,7 +47,15 @@ export type DonationCardHeaderProps = FlexProps & {
 } & Pick<ProcessedDonation, 'source' | 'processedStatus'>
 
 const DonationCardHeader = (props: DonationCardHeaderProps) => {
-  const { className, source, processedStatus, hideIntegrationBadge = false, hideProcessedStatusBadge = false, children, ...restProps } = props
+  const {
+    className,
+    source,
+    processedStatus,
+    hideIntegrationBadge = false,
+    hideProcessedStatusBadge = false,
+    children,
+    ...restProps
+  } = props
 
   const integrationBadge = useMemo(() => {
     if (!hideIntegrationBadge) {
@@ -82,7 +92,17 @@ export type DonationCardContentProps = FlexProps & {
 } & Pick<ProcessedDonation, 'username' | 'amount' | 'currency'>
 
 const DonationCardContent = (props: DonationCardContentProps) => {
-  const { username, className, amount, currency, message, hideMessage, children, blurUsername, ...flexProps } = props
+  const {
+    className,
+    username,
+    amount,
+    currency,
+    message,
+    hideMessage,
+    children,
+    blurUsername,
+    ...flexProps
+  } = props
 
   const isShouldRenderMessage = !hideMessage && !isStringEmpty(message ?? '')
 
@@ -300,3 +320,258 @@ const SkeletonDonationCard = (props: SkeletonDonationCardProps) => {
 }
 
 export { DonationCard, SkeletonDonationCard }
+
+type BaseDonationCardProps = CardProps
+
+const BaseDonationCard = (props: BaseDonationCardProps) => {
+  const { className, ...restProps } = props
+
+  return (
+    <Card
+      className={cn(className)}
+      {...restProps}
+    />
+  )
+}
+
+type BaseDonationCardHeaderProps = ComponentProps<'div'>
+
+const BaseDonationCardHeader = (props: BaseDonationCardHeaderProps) => {
+  const { className, ...restProps } = props
+
+  return (
+    <CardHeader
+      className={cn('flex gap-x-2', className)}
+      {...restProps}
+    />
+  )
+}
+
+type BaseDonationCardContentProps = ComponentProps<'div'>
+
+const BaseDonationCardContent = (props: BaseDonationCardContentProps) => {
+  const { className, ...restProps } = props
+
+  return (
+    <CardContent
+      className={cn('w-full flex flex-col p-0', className)}
+      {...restProps}
+    />
+  )
+}
+
+type BaseDonationCardFooterProps = ComponentProps<'div'>
+
+const BaseDonationCardFooter = (props: BaseDonationCardFooterProps) => {
+  const { className, ...restProps } = props
+
+  return (
+    <CardFooter
+      className={cn('flex flex-row gap-x-1 mt-2 items-end justify-between', className)}
+      {...restProps}
+    />
+  )
+}
+
+type SolidDonationCardHeaderProps = BaseDonationCardHeaderProps & {
+  donationData: Pick<ProcessedDonation, 'processedStatus' | 'source'>
+}
+
+const SolidDonationCardHeader = (props: SolidDonationCardHeaderProps) => {
+  const {
+    donationData,
+    ...restProps
+  } = props
+
+  return (
+    <BaseDonationCardHeader {...restProps}>
+      <>
+        <Badge className="bg-orange/20 text-orange">
+          <Flex className="gap-x-1" align="center">
+            <Icons.DonationAlerts width={14} height={14} />
+            {FORMATTED_INTEGRATIONS_PLATFORMS_NAMES[donationData.source]}
+          </Flex>
+        </Badge>
+        <DonationCardBadge status={donationData.processedStatus} />
+      </>
+    </BaseDonationCardHeader>
+  )
+}
+
+type DonationCardUsernameInfoProps = ComponentProps<'div'> & {
+  donationData: Pick<ProcessedDonation, 'username' | 'amount' | 'currency'>
+}
+
+const DonationCardUsernameInfo = (props: DonationCardUsernameInfoProps) => {
+  const {
+    className,
+    donationData,
+    ...restProps
+  } = props
+
+  return (
+    <Flex
+      className={cn('gap-x-1.5', className)}
+      align="center"
+      {...restProps}
+    >
+      <Typography tag="span" className="text-title font-bold">
+        {donationData.username}
+      </Typography>
+      <Typography tag="span" className="text-md font-semibold">
+        отправил
+      </Typography>
+      <Typography
+        className="font-semibold text-green text-[17px] font-golos-f"
+        tag="span"
+      >
+        {formatNumberToIntlString(donationData.amount)}
+        {` ${donationData.currency.toUpperCase()}`}
+      </Typography>
+    </Flex>
+  )
+}
+
+type SolidDonationCardContentProps
+  = BaseDonationCardContentProps
+    & {
+      usernameInfoProps: Omit<DonationCardUsernameInfoProps, 'donationData'>
+      donationData:
+        Pick<ProcessedDonation, 'processedStatus' | 'message' | 'messageType'>
+        & Pick<DonationCardUsernameInfoProps, 'donationData'>
+    }
+
+const SolidDonationCardContent = (props: SolidDonationCardContentProps) => {
+  const {
+    usernameInfoProps,
+    donationData,
+    ...restProps
+  } = props
+
+  const cardMessage = useMemo(() => {
+    if (!donationData.message)
+      return undefined
+
+    if (donationData.message && donationData.messageType === 'audio') {
+      return (
+        <Flex
+          className="w-fit bg-dark-accent/70 px-2 py-1.5 rounded-md gap-x-1.5 whitespace-nowrap"
+          align="center"
+        >
+          <Icons.Sound className="text-gray-light" />
+          <Typography
+            className="text-gray-light text-sm font-medium font-golos-f"
+            tag="span"
+          >
+            Аудио-формат сообщений не поддерживается
+          </Typography>
+        </Flex>
+      )
+    }
+  }, [...objectToDeps(donationData, ['message', 'messageType'])])
+
+  const isShouldSkipFooterRendering = donationData.processedStatus !== 'added'
+
+  return (
+    <BaseDonationCardContent {...restProps}>
+      <Flex className="gap-y-2" direction="column">
+        <DonationCardUsernameInfo
+          donationData={pickingFromObject(donationData, [''])}
+          {...usernameInfoProps}
+        />
+      </Flex>
+      {!isShouldSkipFooterRendering
+        ? (
+            cardMessage
+          )
+        : (
+            <Flex align="end">
+              {cardMessage}
+              <Flex className="w-full justify-end text-gray">
+                <Typography tag="span">
+                  {new Intl.RelativeTimeFormat().format(-5, 'seconds')}
+                </Typography>
+              </Flex>
+            </Flex>
+          )}
+    </BaseDonationCardContent>
+  )
+}
+
+type SolidDonationCardFooterProps = ComponentProps<'div'> & {
+  donationData: Pick<ProcessedDonation, 'processedSlotsIds' | 'amount'>
+}
+
+const SolidDonationCardFooter = (props: SolidDonationCardFooterProps) => {
+  const { donationData, ...restProps } = props
+
+  return (
+    <BaseDonationCardFooter {...restProps}>
+      <>
+        <Flex className="gap-x-2">
+          <DonationCardChip
+            classNames={{
+              base: 'bg-dark-accent items-center',
+              text: 'text-gray-accent font-medium',
+            }}
+          >
+            <>
+              <Flex className="gap-x-1" align="center" justify="center">
+                <Icons.Id className="text-gray-accent" size="sm" />
+                <Typography
+                  tag="span"
+                  className="font-golos-f text-gray-accent"
+                >
+                  {formatNumberToIntlString(
+                    Math.floor(
+                      (donationData.processedSlotsIds && donationData.processedSlotsIds[0]) || 0,
+                    ),
+                  )}
+                </Typography>
+              </Flex>
+              <Divider className="border-1 h-3/4 border-gray mx-1.5" />
+              <Flex className="gap-x-1" align="center" justify="center">
+                <Icons.Coin className="text-gray-accent" size="sm" />
+                <Typography
+                  tag="span"
+                  className="font-golos-f text-gray-accent"
+                >
+                  {formatNumberToIntlString(Math.floor(donationData.amount))}
+                </Typography>
+              </Flex>
+            </>
+          </DonationCardChip>
+        </Flex>
+        <Typography className="text-gray" tag="span">
+          {new Intl.RelativeTimeFormat().format(-5, 'seconds')}
+        </Typography>
+      </>
+    </BaseDonationCardFooter>
+  )
+}
+
+type SolidDonationCardProps = BaseDonationCardProps & {
+  donation: ProcessedDonation
+}
+
+const SolidDonationCard = (props: SolidDonationCardProps) => {
+  const { donation, ...restProps } = props
+
+  const contentDonationData = pickingFromObject(donation, ['message', 'messageType', 'processedStatus'])
+  const headerDonationData = pickingFromObject(donation, ['processedStatus', 'source'])
+
+  return (
+    <BaseDonationCard {...restProps}>
+      <SolidDonationCardHeader
+        donationData={{
+          processedStatus: donation.processedStatus,
+          source: donation.source,
+        }}
+      />
+      <SolidDonationCardContent
+        donationData={{ message: donation.message }}
+      />
+      <SolidDonationCardFooter />
+    </BaseDonationCard>
+  )
+}

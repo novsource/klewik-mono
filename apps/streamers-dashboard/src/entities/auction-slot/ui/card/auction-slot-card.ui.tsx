@@ -1,11 +1,15 @@
 import type { NumberFlowProps } from '@number-flow/react'
 
 import type { ComponentProps, ReactNode } from 'react'
-import { forwardRef } from 'react'
+import { forwardRef, useMemo } from 'react'
 
 import NumberFlow from '@number-flow/react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
+
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { useMediaQuery } from '~shared/hooks'
 
 import type { BadgeProps } from '~shared/ui/badge'
 import { Badge } from '~shared/ui/badge'
@@ -23,18 +27,20 @@ import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
+import { hexToRgba } from '~shared/utils/colors'
 
-export type AuctionSlotCardProps = CardProps
+export type BaseAuctionSlotCardProps = CardProps
 
-export const AuctionSlotCard = forwardRef<HTMLDivElement, AuctionSlotCardProps>(
+export const BaseAuctionSlotCard = forwardRef<HTMLDivElement, BaseAuctionSlotCardProps>(
   (props, forwardRef) => {
     const { className, ...restProps } = props
 
     return (
       <Card
         ref={forwardRef}
+        data-slot="base"
         className={cn(
-          'flex flex-col justify-between gap-y-2.5 border-1 border-dark-light py-1 tablet:py-2 tablet:gap-y-0',
+          'flex flex-col justify-between gap-y-1 border-1 border-dark-light py-1 tablet:py-2 tablet:gap-y-0',
           className,
         )}
         {...restProps}
@@ -43,13 +49,17 @@ export const AuctionSlotCard = forwardRef<HTMLDivElement, AuctionSlotCardProps>(
   },
 )
 
-export type AuctionSlotCardHeaderProps = ComponentProps<'div'>
+export type BaseAuctionSlotCardHeaderProps = ComponentProps<'div'>
 
-export const AuctionSlotCardHeader = (props: AuctionSlotCardHeaderProps) => {
+export const BaseAuctionSlotCardHeader = (props: BaseAuctionSlotCardHeaderProps) => {
   const { className, ...restProps } = props
 
   return (
-    <CardHeader className={cn('flex flex-col gap-y-2.5 items-start justify-between', className)} {...restProps} />
+    <CardHeader
+      className={cn('flex flex-col gap-y-1 tablet:gap-y-2.5 items-center justify-between', className)}
+      data-slot="header"
+      {...restProps}
+    />
   )
 }
 
@@ -63,17 +73,17 @@ export const AuctionSlotCardTitleInfo = (props: AuctionSlotCardTitleInfoProps) =
 
   return (
     <Typography
+      className={cn('text-md font-bold tablet:text-title-lg', className)}
       tag="span"
-      className={cn('text-title font-bold tablet:text-title-lg', className)}
     >
       {slotTitle}
     </Typography>
   )
 }
 
-export type AuctionSlotCardTitleProps = ComponentProps<'div'>
+export type BaseAuctionSlotCardTitleProps = ComponentProps<'div'>
 
-export const AuctionSlotCardTitle = (props: AuctionSlotCardTitleProps) => {
+export const BaseAuctionSlotCardTitle = (props: BaseAuctionSlotCardTitleProps) => {
   const { className, ...restProps } = props
 
   return (
@@ -86,19 +96,28 @@ export type AuctionSlotCardContentProps = ComponentProps<'div'>
 export const AuctionSlotCardContent = (props: AuctionSlotCardContentProps) => {
   const { className, ...restProps } = props
 
-  return <CardContent className={cn('flex flex-row w-full gap-y-2 pt-0 space-y-0', className)} {...restProps} />
+  return (
+    <CardContent
+      className={cn('flex flex-row w-full gap-y-2 pt-0 space-y-0', className)}
+      data-slot="content"
+      {...restProps}
+    />
+  )
 }
 
-export type AuctionSlotCardContentInfoProps = ComponentProps<'div'> & {
+export type AuctionSlotCardContentInfoWrapperProps = ComponentProps<'div'> & {
   icon?: ReactNode
 }
 
-export const AuctionSlotCardContentInfo = (props: AuctionSlotCardContentInfoProps) => {
+export const AuctionSlotCardContentInfoWrapper = (props: AuctionSlotCardContentInfoWrapperProps) => {
   const { icon, children, className, ...restProps } = props
 
   return (
     <Flex
-      className={cn('h-7 gap-y-0.5 tablet:flex-row tablet:gap-x-2 tablet:items-center tablet:justify-start', className)}
+      className={cn('h-7 gap-y-0.5 tablet:flex-row gap-x-0.75 tablet:gap-x-2 tablet:items-center tablet:justify-start', className)}
+      justify="center"
+      align="center"
+      data-slot="content-item-wrapper"
       {...restProps}
     >
       {icon && (
@@ -119,8 +138,17 @@ export type AuctionSlotCardWinPercentsProps = Omit<ComponentProps<'div'>, 'child
 export const AuctionSlotCardWinPercents = (props: AuctionSlotCardWinPercentsProps) => {
   const { winPercents, numberFlowProps, ...restProps } = props
 
+  const isDeviceGreaterThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+
   return (
-    <AuctionSlotCardContentInfo icon={<Icons.Crown size="lg" />} {...restProps}>
+    <AuctionSlotCardContentInfoWrapper
+      icon={(
+        <Icons.Crown
+          size={isDeviceGreaterThenTablet ? 'lg' : 'default'}
+        />
+      )}
+      {...restProps}
+    >
       <NumberFlow
         className="text-green font-golos-f font-semibold text-md tablet:text-title"
         willChange
@@ -134,28 +162,7 @@ export const AuctionSlotCardWinPercents = (props: AuctionSlotCardWinPercentsProp
         suffix="%"
         {...numberFlowProps}
       />
-    </AuctionSlotCardContentInfo>
-  )
-}
-
-export type AuctionSlotCardColorInfoProps = Omit<ComponentProps<'div'>, 'children'> & {
-  slotColor: AuctionSlot['color']
-}
-
-export const AuctionSlotCardColorInfo = (props: AuctionSlotCardColorInfoProps) => {
-  const { slotColor, ...restProps } = props
-
-  return (
-    <AuctionSlotCardContentInfo {...restProps}>
-      <div
-        className="rounded-full w-9 h-3.5"
-        style={{
-          backgroundColor: Array.isArray(slotColor)
-            ? `rgb(${slotColor.join(',')})`
-            : slotColor,
-        }}
-      />
-    </AuctionSlotCardContentInfo>
+    </AuctionSlotCardContentInfoWrapper>
   )
 }
 
@@ -167,8 +174,13 @@ export type AuctionSlotCardPointsInfoProps = Omit<ComponentProps<'div'>, 'childr
 export const AuctionSlotCardPointsInfo = (props: AuctionSlotCardPointsInfoProps) => {
   const { slotPoints, numberFlowProps, ...restProps } = props
 
+  const isDeviceGreaterThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+
   return (
-    <AuctionSlotCardContentInfo icon={<Icons.Coin size="lg" />} {...restProps}>
+    <AuctionSlotCardContentInfoWrapper
+      icon={<Icons.Coin size={isDeviceGreaterThenTablet ? 'lg' : 'default'} />}
+      {...restProps}
+    >
       <NumberFlow
         className="font-golos-f font-semibold text-gray-accent text-md tablet:text-title tablet:leading-4"
         willChange
@@ -177,7 +189,7 @@ export const AuctionSlotCardPointsInfo = (props: AuctionSlotCardPointsInfoProps)
         locales="ru-RU"
         {...numberFlowProps}
       />
-    </AuctionSlotCardContentInfo>
+    </AuctionSlotCardContentInfoWrapper>
   )
 }
 
@@ -189,31 +201,49 @@ export const AuctionSlotCardIdBadge = (props: AuctionSlotCardIdBadgeProps) => {
   const { className, slotId, ...restProps } = props
 
   return (
-    <Badge className={cn('px-1.5 py-0.25 bg-dark-light border-1 border-dark-accent', className)} {...restProps}>
-      <Typography className="font-golos-f text-gray-light rounded-md text-sm" tag="span">
+    <Badge
+      className={cn('px-1.5 py-0.25 bg-dark-light border-1 border-dark-accent text-gray-light', className)}
+      {...restProps}
+    >
+      <Typography className="font-golos-f rounded-md text-xs tablet:text-sm" tag="span">
         {`ID: ${slotId}`}
       </Typography>
     </Badge>
   )
 }
 
-export type SolidAuctionSlotHeaderProps = AuctionSlotCardHeaderProps & {
+export type SolidAuctionSlotHeaderProps = BaseAuctionSlotCardHeaderProps & {
   slotId: AuctionSlot['id']
   slotTitle: AuctionSlot['title']
+  slotColor: AuctionSlot['color']
 }
 
 export const SolidAuctionSlotHeader = (props: SolidAuctionSlotHeaderProps) => {
-  const { slotId, slotTitle, ...restProps } = props
+  const { slotId, slotTitle, slotColor, ...restProps } = props
+
+  const badgeStyle = useMemo(() => {
+    const bgColor = hexToRgba(slotColor, 0.025) || ''
+    const borderColor = hexToRgba(slotColor, 0.35) || ''
+
+    return {
+      backgroundColor: bgColor,
+      borderColor,
+      color: slotColor,
+    }
+  }, [slotColor])
 
   return (
-    <AuctionSlotCardHeader {...restProps}>
-      <Flex className="w-full" justify="between">
-        <AuctionSlotCardIdBadge slotId={slotId} />
+    <BaseAuctionSlotCardHeader {...restProps}>
+      <Flex className="w-full gap-x-2" align="center">
+        <AuctionSlotCardIdBadge
+          slotId={slotId}
+          style={badgeStyle}
+        />
       </Flex>
-      <AuctionSlotCardTitle>
+      <BaseAuctionSlotCardTitle>
         <AuctionSlotCardTitleInfo slotTitle={slotTitle} />
-      </AuctionSlotCardTitle>
-    </AuctionSlotCardHeader>
+      </BaseAuctionSlotCardTitle>
+    </BaseAuctionSlotCardHeader>
   )
 }
 
@@ -228,11 +258,10 @@ export const SolidAuctionSlotContent = (props: SolidAuctionSlotContentProps) => 
   return (
     <AuctionSlotCardContent {...restProps}>
       <Flex
-        className="w-full mobile:gap-x-5"
+        className="w-full gap-x-3 tablet:gap-x-5"
         direction="row"
         align="end"
       >
-        <AuctionSlotCardColorInfo slotColor={auctionSlot.color} />
         <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
         {winPercents && <AuctionSlotCardWinPercents winPercents={winPercents} />}
       </Flex>
@@ -249,9 +278,17 @@ export const SolidAuctionSlotCard = (props: SolidAuctionSlotCardProps) => {
   const { className, auctionSlot, winPercents, ...restProps } = props
 
   return (
-    <AuctionSlotCard className={cn(className)} {...restProps}>
-      <SolidAuctionSlotHeader slotId={auctionSlot.id} slotTitle={auctionSlot.title} />
-      <SolidAuctionSlotContent className="min-h-11" auctionSlot={auctionSlot} winPercents={winPercents} />
-    </AuctionSlotCard>
+    <BaseAuctionSlotCard className={cn(className)} {...restProps}>
+      <SolidAuctionSlotHeader
+        slotId={auctionSlot.id}
+        slotTitle={auctionSlot.title}
+        slotColor={auctionSlot.color}
+      />
+      <SolidAuctionSlotContent
+        className="min-h-11"
+        auctionSlot={auctionSlot}
+        winPercents={winPercents}
+      />
+    </BaseAuctionSlotCard>
   )
 }
