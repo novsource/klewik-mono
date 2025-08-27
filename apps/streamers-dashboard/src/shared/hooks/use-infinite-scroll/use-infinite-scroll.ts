@@ -4,44 +4,40 @@
  */
 import { useCallback, useRef, useState } from 'react'
 
-type InfiniteScrollService<T> = (
-  scrollState: { currentPage: number, limit: number },
-  ...serviceArgs: unknown[]
-) => Promise<{ list: T[] }>
+type InfiniteScrollService<ListDataItem, ServiceArgs>
+= (serviceArgs: ServiceArgs) => Promise<{ list: ListDataItem[] }>
 
-type InfiniteScrollReturn<T> = {
+type InfiniteScrollReturn<ListDataItem, ServiceArgs> = {
   state: {
-    fetchedData: T[]
+    value: ListDataItem[]
     page: number
-    pageLimit: number
+    limit: number
     isPending: boolean
     isCanLoadMore: boolean
     isDisabled: boolean
   }
   functions: {
-    loadMore: (...args: Parameters<InfiniteScrollService<T>>) => Promise<void>
+    loadMore: (...args: Parameters<InfiniteScrollService<ListDataItem, ServiceArgs>>) => Promise<void>
     reset: () => void
     enable: () => void
     disable: () => void
-    updatePageLimit: (limit: number) => void
+    updateLimit: (limit: number) => void
   }
 }
 
 type InfiniteScrollOptions<T> = {
-  externalDataSource?: T[]
-  pageLimit: number
+  limit: number
+  initial?: T[]
 }
 
-const useInfiniteScroll = <T>(
-  serviceFn: InfiniteScrollService<T>,
-  options: InfiniteScrollOptions<T>,
-): InfiniteScrollReturn<T> => {
-  const [fetchedData, setFetchedData] = useState<
-    Awaited<ReturnType<typeof serviceFn>>['list']
-  >([])
+const useInfiniteScroll = <ListDataItem, ServiceArgs = void>(
+  serviceFn: InfiniteScrollService<ListDataItem, ServiceArgs>,
+  options: InfiniteScrollOptions<ListDataItem>,
+): InfiniteScrollReturn<ListDataItem, ServiceArgs> => {
+  const [value, setValue] = useState<ListDataItem[]>(options.initial ?? [])
 
   const [page, setPage] = useState(1)
-  const [pageLimit, setPageLimit] = useState(() => options.pageLimit)
+  const [limit, setLimit] = useState(options.limit)
   const [isCanLoadMore, setIsCanLoadMore] = useState(true)
   const [isPending, setIsPending] = useState(false)
   const [isDisabled, setIsDisabled] = useState(false)
@@ -59,20 +55,20 @@ const useInfiniteScroll = <T>(
       const newData = await serviceFn(...args)
 
       setIsPending(false)
-      setFetchedData(curr => [...curr, ...newData.list])
+      setValue(curr => [...curr, ...newData.list])
       setPage(currentPage => currentPage + 1)
-      setIsCanLoadMore(newData.list.length > pageLimit)
+      setIsCanLoadMore(newData.list.length >= limit)
 
       internalIsPendingRef.current = false
     },
-    [serviceFn, pageLimit, isCanLoadMore, isDisabled],
+    [serviceFn, limit, isCanLoadMore, isDisabled],
   )
 
   return {
     state: {
-      fetchedData,
+      value,
       page,
-      pageLimit,
+      limit,
       isPending,
       isCanLoadMore,
       isDisabled,
@@ -85,7 +81,7 @@ const useInfiniteScroll = <T>(
         setIsCanLoadMore(true)
         setPage(1)
       },
-      updatePageLimit: (limit: number) => setPageLimit(limit),
+      updateLimit: (limit: number) => setLimit(limit),
     },
   }
 }
