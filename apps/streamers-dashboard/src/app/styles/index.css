@@ -127,8 +127,8 @@
     --grid-template-rows-dashboard-mobile: max-content 1fr max-content;
     --grid-template-rows-dashboard-desktop: max-content 1fr;
 
-    --grid-template-rows-slots-desktop: max(40px) 1fr;
-    --grid-template-rows-slots-table: minmax(40px, 42px) 1fr;
+    --grid-template-rows-slots-desktop: max-content 1fr;
+    --grid-template-rows-slots-table: max-content 1fr;
     --grid-template-rows-slider: max-content 1fr max-content;
     --spacing-4xl: 1.5rem;
 
