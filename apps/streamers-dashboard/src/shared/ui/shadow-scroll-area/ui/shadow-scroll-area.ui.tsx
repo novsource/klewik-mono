@@ -9,7 +9,6 @@ import type {
 import {
   forwardRef,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -53,7 +52,7 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
     externalContentRef,
     shadowEnabled = true,
     disableAnimation = true,
-    shadowSize = 60,
+    shadowSize = 50,
     ...restProps
   } = props
 
@@ -65,7 +64,6 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
   const [scrollYProgress, setScrollYProgress] = useState(0)
   const [scrollYValue, setScrollYValue] = useState(0)
 
-  const shadowAreaRef = useRef<HTMLDivElement>(null)
   const internalScrollElementRef = useRef<HTMLDivElement>(null)
   const internalContentAreaRef = useRef<HTMLDivElement>(null)
 
@@ -90,18 +88,6 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
     },
     2500,
   )
-
-  useLayoutEffect(() => {
-    if (!forwardRef)
-      return
-
-    if (typeof forwardRef === 'function')
-      forwardRef(shadowAreaRef.current)
-
-    if (typeof forwardRef !== 'function' && typeof forwardRef !== 'string') {
-      shadowAreaRef.current = forwardRef.current
-    }
-  }, [forwardRef])
 
   useMotionValueEvent(motionScrollYProgress, 'change', (value) => {
     setIsShadowAnimated(() => {
@@ -178,8 +164,8 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
   ])
 
   const shadowScrollAreaStyle = useMemo(() => {
-    const getTopGradientValue = transform([0, 0.025], [0, shadowSize])
-    const getBottomGradientValue = transform([0.975, 1], [shadowSize, 0])
+    const getTopGradientValue = transform([0, 0.1], [0, shadowSize])
+    const getBottomGradientValue = transform([0.99, 1], [shadowSize, 0])
 
     return `linear-gradient(
       #000,
@@ -200,7 +186,7 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
 
   return (
     <div
-      ref={shadowAreaRef}
+      ref={forwardRef}
       data-slot="shadow-scroll-area"
       className={cn(className)}
       style={{
