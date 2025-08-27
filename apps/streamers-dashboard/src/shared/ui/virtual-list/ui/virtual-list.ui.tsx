@@ -5,15 +5,14 @@ import type {
   VirtualizerProps,
 } from 'virtua'
 
-import { forwardRef, useLayoutEffect, useMemo, useRef } from 'react'
+import type { VirtualizedItem } from '../hooks'
+
+import { forwardRef, useMemo, useRef } from 'react'
 import type { ComponentProps, MutableRefObject, ReactNode } from 'react'
 
 import { Virtualizer } from 'virtua'
 
-export type VirtualizedItem = {
-  id: string
-  index: number
-}
+import { isFunction } from '~shared/utils'
 
 export type VirtualListItemProps = ComponentProps<'div'> & CustomItemComponentProps
 
@@ -42,7 +41,7 @@ export type VirtualListRenderFunction<DataItem>
 
 export type VirtualListProps<ListDataElement = unknown> = VirtualizerProps & {
   data: ListDataElement[]
-  children: VirtualListRenderFunction<ListDataElement>
+  children: VirtualListRenderFunction<ListDataElement> | ReactNode | ReactNode[]
   estimateSize?: (index: number) => number
   slotsClassNames?: Partial<Record<VirtualListSlots, string>>
   scrollElementRef?: MutableRefObject<NullablePossible<HTMLDivElement>>
@@ -54,7 +53,7 @@ export type VirtualListProps<ListDataElement = unknown> = VirtualizerProps & {
   gap?: number
 }
 
-const VirtualList = (props: VirtualListProps) => {
+export const VirtualList = (props: VirtualListProps) => {
   const {
     width,
     height,
@@ -68,7 +67,10 @@ const VirtualList = (props: VirtualListProps) => {
     children,
     ...virtualizerOptions
   } = props
-  const internalScrollElementRef = useRef<HTMLDivElement>(null)
+
+  const internalScrollRef = useRef<HTMLDivElement>(null)
+
+  const scrollRef = scrollElementRef ?? internalScrollRef
 
   const virtualizedItems = useMemo<VirtualizedItem[]>(() => {
     return Array
@@ -76,17 +78,11 @@ const VirtualList = (props: VirtualListProps) => {
       .map((_, index) => ({ id: `virtual-item-${index}`, index }))
   }, [data])
 
-  useLayoutEffect(() => {
-    if (scrollElementRef) {
-      scrollElementRef.current = internalScrollElementRef.current
-    }
-  }, [internalScrollElementRef, scrollElementRef])
-
   return (
     <div
-      data-slot="virtual-list-container"
-      ref={internalScrollElementRef}
+      ref={scrollRef}
       className={slotsClassNames?.container}
+      data-slot="virtual-list-container"
       style={{
         width,
         height,
@@ -95,7 +91,7 @@ const VirtualList = (props: VirtualListProps) => {
         contain: 'strict',
       }}
     >
-      <div data-slot="virtual-list-wrapper" ref={contentWrapperRef}>
+      <div ref={contentWrapperRef} data-slot="virtual-list-wrapper">
         <Virtualizer
           ref={(ref) => {
             if (virtualListRef?.current === null) {
@@ -104,24 +100,23 @@ const VirtualList = (props: VirtualListProps) => {
           }}
           as={VirtualListContainer}
           item={VirtualListItem}
-          scrollRef={internalScrollElementRef}
+          scrollRef={scrollRef}
           {...virtualizerOptions}
         >
-          {virtualizedItems.map((vItem, index) => {
-            return (
-              <div
-                key={vItem.id}
-                style={{ marginTop: index === 0 ? 0 : gap }}
-              >
-                {children(data, vItem)}
-              </div>
-            )
-          })}
+          {isFunction(children)
+            ? virtualizedItems.map((vItem, index) => {
+                return (
+                  <div
+                    key={vItem.id}
+                    style={{ marginTop: index === 0 ? 0 : gap }}
+                  >
+                    {children(data, vItem)}
+                  </div>
+                )
+              })
+            : children}
         </Virtualizer>
       </div>
-
     </div>
   )
 }
-
-export { VirtualList }
