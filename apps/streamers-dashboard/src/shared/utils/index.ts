@@ -1,11 +1,9 @@
-import * as canvasUtilities from './canvas'
-import { chain } from './chain'
-import { cn } from './cn'
-import * as colorsUtilities from './colors'
-import * as stringUtils from './string-format'
-
-export { canvasUtilities, chain, cn, colorsUtilities, stringUtils }
+export * from './canvas'
+export * from './chain'
+export * from './cn'
+export * from './colors'
 export * from './get-element'
+export * from './is-function'
 export * from './is-target'
 export * from './local-storage'
 export * from './merge-props'
