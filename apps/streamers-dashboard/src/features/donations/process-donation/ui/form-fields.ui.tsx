@@ -18,18 +18,24 @@ import {
   SelectValue,
 } from '~shared/ui/select'
 
+type FormControllerProps<
+  FormFields extends FieldValues | Record<string, FieldValues>,
+  Paths extends FieldPath<FormFields>,
+  TransformedValues extends FormFields = FormFields,
+> = UseControllerProps<FormFields, Paths, TransformedValues>
+
 export type ProcessDonationStatusFieldProps<
   FormFields extends FieldValues | Record<string, FieldValues>,
   Paths extends FieldPath<FormFields>,
-  TransformedValues extends FormFields,
+  TransformedValues extends FormFields = FormFields,
 > = SelectProps & {
-  formControllerProps: UseControllerProps<FormFields, Paths, TransformedValues>
+  formControllerProps: FormControllerProps<FormFields, Paths, TransformedValues>
 }
 
 export const ProcessDonationStatusField = <
   FormFields extends FieldValues,
   Paths extends FieldPath<FormFields>,
-  TransformedValues extends FormFields,
+  TransformedValues extends FormFields = FormFields,
 >(props: ProcessDonationStatusFieldProps<FormFields, Paths, TransformedValues>) => {
   const { formControllerProps, ...selectProps } = props
 
@@ -68,7 +74,7 @@ export type ProcessDonationTitleFieldProps<
   Paths extends FieldPath<FormFields>,
   TransformedValues extends FormFields,
 > = InputProps & {
-  formControllerProps: UseControllerProps<FormFields, Paths, TransformedValues>
+  formControllerProps: FormControllerProps<FormFields, Paths, TransformedValues>
 }
 
 export const ProcessDonationTitleField = <

@@ -1,36 +1,37 @@
-import { Auction } from '~entities/auction/model'
+import type { Auction } from '~entities/auction/model'
 
 import { splittedDonationApi } from '~entities/donation/api'
-import { ProcessedDonation } from '~entities/donation/model'
+import type {
+  ProcessedDonation,
+  ProcessedDonationStatus,
+} from '~entities/donation/model'
 
-type LoadMoreDonationsQueryArgs = {
-  auctionUUID: Auction['auctionUUID']
+import type { SortingTypes } from '~shared/store/model'
+
+export type LoadMoreDonationsSearchParams = {
   limit: number
   after?: number
   before?: number
-  order?: 'asc' | 'desc'
+  order?: SortingTypes
+  status?: ProcessedDonationStatus | 'all'
+}
+
+export type LoadMoreDonationsQueryArgs = LoadMoreDonationsSearchParams & {
+  auctionUUID: Auction['auctionUUID']
 }
 
 type LoadMoreDonationsQueryReturnValue = ProcessedDonation[]
 
 const loadMoreDonationApi = splittedDonationApi.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     loadMoreDonations: builder.query<
       LoadMoreDonationsQueryReturnValue,
       LoadMoreDonationsQueryArgs
     >({
-      query: ({ auctionUUID, limit, after, before, order }) => {
-        const searchParams: Omit<LoadMoreDonationsQueryArgs, 'auctionUUID'> = {
-          order: order ?? 'asc',
-          limit,
-        }
-
-        if (Number.isInteger(before)) searchParams['before'] = before
-        if (Number.isInteger(after)) searchParams['after'] = after
-
+      query: ({ auctionUUID, ...params }) => {
         return {
           url: `/${auctionUUID}/donations`,
-          params: searchParams,
+          params,
           withCredentials: true,
         }
       },
@@ -39,5 +40,5 @@ const loadMoreDonationApi = splittedDonationApi.injectEndpoints({
   overrideExisting: false,
 })
 
-export const { useLazyLoadMoreDonationsQuery, useLoadMoreDonationsQuery } =
-  loadMoreDonationApi
+export const { useLazyLoadMoreDonationsQuery, useLoadMoreDonationsQuery }
+  = loadMoreDonationApi
