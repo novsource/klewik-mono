@@ -2,9 +2,7 @@ import { useState } from 'react'
 
 import { ProcessDonationSheet } from '~widgets/process-donation-dialogs/ui'
 
-import { DonationsList } from '~features/donations/watch-donations/ui'
-
-import type { ProcessedDonation } from '~entities/donation/model'
+import type { ProcessedDonationStatus } from '~entities/donation/model'
 import { donationsSelectors } from '~entities/donation/store'
 import type {
   DonationCardProps,
@@ -12,26 +10,30 @@ import type {
 import {
   DonationCard,
   DonationCardBadge,
-  SkeletonDonationCard,
 } from '~entities/donation/ui/card'
+
 import { IntegrationBadge } from '~entities/integrations/ui/badge'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
+import { Typography } from '~shared/ui/typograghy'
+
 import { cn } from '~shared/utils'
 
 import { useFiltredDonations } from '../lib'
-import { DonationsFilterSelect } from './donations-filter'
+import { DonationsFilterSelect } from './donations-filter-select.ui'
+import { DonationsInfinityList } from './donations-infinity-list.ui'
 
-type DonationProcessStatus = ProcessedDonation['processedStatus'] | 'default'
+type DonationProcessStatus = ProcessedDonationStatus | 'all'
 
-const AuctionDonationsPage = () => {
+export const AuctionDonationsPage = () => {
   const donations = useStoreSelector(donationsSelectors.getAllDonations)
 
   const [donationsFilterValue, setDonationsFilterValue]
-    = useState<DonationProcessStatus>('default')
+    = useState<DonationProcessStatus>('all')
 
   const filtredDonations = useFiltredDonations(donations, {
     status: donationsFilterValue,
@@ -41,9 +43,9 @@ const AuctionDonationsPage = () => {
     <div
       className={cn([
         'grid grid-rows-slots-table gap-y-3 tablet:grid-rows-slots-desktop',
-        'relative mx-auto w-full h-full pt-5 mb-4',
+        'relative mx-auto w-full h-full tablet:pt-5 mb-4',
         'mobile:gap-y-5',
-        'max-tablet:max-w-[1100px] tablet:gap-y-4 tablet:pl-10',
+        'max-tablet:max-w-[1100px] tablet:gap-y-7 tablet:pl-10',
         'desktop:max-w-[1750px] desktop-lg:max-w-[2100px]',
         'landtop:max-w-[1600px]',
       ])}
@@ -54,6 +56,12 @@ const AuctionDonationsPage = () => {
         align="center"
         justify="between"
       >
+        <Typography
+          className="tablet:text-title-xl"
+          tag="h1"
+        >
+          Пожертвования
+        </Typography>
         <DonationsFilterSelect
           status={donationsFilterValue}
           onValueChange={(status: DonationProcessStatus) =>
@@ -61,10 +69,9 @@ const AuctionDonationsPage = () => {
         />
       </Flex>
 
-      {/* <DonationsInfinityList data={filtredDonations} /> */}
-
-      <DonationsList
+      <DonationsInfinityList
         data={filtredDonations}
+        filterStatus={donationsFilterValue}
         renderDonation={(donation, index) => (
           <DonationCardWithControls
             data={donation}
@@ -78,15 +85,7 @@ const AuctionDonationsPage = () => {
   )
 }
 
-export { AuctionDonationsPage }
-
-function DonationCardWithControls({
-  showingSkeleton,
-  ...props
-}: DonationCardProps & { showingSkeleton?: boolean }) {
-  if (showingSkeleton)
-    return <SkeletonDonationCard {...props} />
-
+function DonationCardWithControls(props: DonationCardProps) {
   return (
     <DonationCard
       {...props}
@@ -94,7 +93,7 @@ function DonationCardWithControls({
         <Flex className="w-full h-6" justify="between">
           <Flex className="gap-x-1.5">
             <IntegrationBadge integration={donation.source} />
-            <DonationCardBadge status={donation.processedStatus} />
+            <DonationCardBadge status={donation.processData.status} />
           </Flex>
           <Flex>
             <ProcessDonationSheet

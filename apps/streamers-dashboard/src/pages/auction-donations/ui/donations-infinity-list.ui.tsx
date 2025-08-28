@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 
 import { isAxiosError } from 'axios'
@@ -9,7 +9,7 @@ import { useLazyLoadMoreDonationsQuery } from '~features/donations/watch-donatio
 import { auctionSelectors } from '~entities/auction/store'
 
 import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
-import { donationsActions, donationsSelectors } from '~entities/donation/store'
+import { donationsActions } from '~entities/donation/store'
 import { DonationCard, SkeletonDonationCard } from '~entities/donation/ui/card'
 
 import { useDidUpdate } from '~shared/hooks'
@@ -52,55 +52,71 @@ export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
 
   const { addDonation } = useActionCreators(donationsActions)
 
-  const donations = useStoreSelector(donationsSelectors.getAllDonations)
   const auctionInfo = useStoreSelector(auctionSelectors.getAuctionInfo)
 
   const isFirstRender = useIsFirstRender()
-  const isDataEmpty = donations.length === 0
-
   const [loadMoreDonationsQuery] = useLazyLoadMoreDonationsQuery()
 
   const {
     state: infinityScrollState,
-    functions: { loadMore: fetchMoreDonations },
+    functions: { loadMore: fetchMoreDonations, reset: resetInfinityListData },
   } = useInfiniteScroll<ProcessedDonation>(
     async () => {
-      return new Promise((resolve, reject) => {
-        return loadMoreDonationsQuery({
+      try {
+        await wait(2000)
+
+        const response = await loadMoreDonationsQuery({
           auctionUUID: auctionInfo.auctionUUID,
           limit: infinityScrollState.limit,
           order: 'descending',
           status: filterStatus ?? 'all',
-        }).then((result) => {
-          const responseData = result.data
-
-          wait(1000).then(() => {
-            if (!responseData || responseData.length === 0) {
-              return resolve({ list: [] })
-            }
-
-            responseData.forEach(addDonation)
-            resolve({ list: responseData })
-          })
-        }).catch((err) => {
-          const errorMessage = 'Ошибка загрузки пожертвований'
-
-          toastErrorNotification(errorMessage)
-          reject(isAxiosError(err) ? err.message : errorMessage)
         })
-      })
+
+        if (response.isError) {
+          throw response.error
+        }
+
+        if (!response || !response.data) {
+          return { list: [] }
+        }
+
+        response.data.forEach(addDonation)
+
+        return { list: response.data }
+      }
+      catch (err) {
+        if (isAxiosError(err)) {
+          toastErrorNotification(err.message)
+        }
+        return { list: [] }
+      }
     },
     {
-      initial: isDataEmpty && isFirstRender ? Array.from({ length: 15 }) : donations,
       limit: 15,
     },
   )
 
-  if (isDataEmpty && isFirstRender) {
+  const showedDonations = useMemo(() => {
+    return [...data, ...infinityScrollState.value]
+  }, [data, infinityScrollState.value])
+
+  const isListEmpty = showedDonations.length === 0
+
+  if (isListEmpty && isFirstRender) {
     fetchMoreDonations()
   }
 
-  const virtualizedItems = useVirtualizedItems(infinityScrollState.value)
+  const virtualizedItems = useVirtualizedItems(
+    showedDonations.length < infinityScrollState.limit
+      ? [...data, ...Array.from(
+          { length: infinityScrollState.limit - data.length },
+        ).fill(null)]
+      : showedDonations,
+  )
+
+  useDidUpdate(() => {
+    resetInfinityListData()
+  }, [filterStatus])
 
   useDidUpdate(() => {
     const scrollElement = scrollElementRef.current
@@ -132,7 +148,10 @@ export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
   ) => {
     const { isPending } = infinityScrollState
 
-    const isShouldRenderAsSkeleton = isPending && infinityScrollState.value.length <= infinityScrollState.limit
+    const isListLengthLessThenLimit = showedDonations.length < infinityScrollState.limit
+    const isVItemBlanked = !showedDonations[virtualizeItem.index]
+
+    const isShouldRenderAsSkeleton = isPending && isListLengthLessThenLimit && isVItemBlanked
 
     if (isShouldRenderAsSkeleton) {
       return (
@@ -145,14 +164,14 @@ export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
       )
     }
 
-    if (!infinityScrollState.value[virtualizeItem.index])
+    if (!isShouldRenderAsSkeleton && isVItemBlanked)
       return
 
-    const donation = infinityScrollState.value[virtualizeItem.index]
+    const donation = showedDonations[virtualizeItem.index]
 
     return (
       <MotionBox
-        key={donation.id}
+        key={virtualizeItem.id}
         initial={{ opacity: isScrolling ? 1 : 0, scaleY: 0.975, scaleX: 0.975 }}
         animate={{ opacity: 1, scaleY: 1, scaleX: 1 }}
         transition={{
@@ -169,11 +188,11 @@ export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
 
   const virtualListItemsCount
     = infinityScrollState.isPending
-      ? infinityScrollState.value.length + infinityScrollState.limit
-      : infinityScrollState.value.length
+      ? showedDonations.length + infinityScrollState.limit
+      : showedDonations.length
 
   const isShouldShowEmptyContent
-    = isDataEmpty && !infinityScrollState.isCanLoadMore && !infinityScrollState.isPending
+    = isListEmpty && !infinityScrollState.isCanLoadMore && !infinityScrollState.isPending
 
   const onScrollHandler = (scrollValue: number) => {
     setIsScrolling(true)
@@ -187,29 +206,34 @@ export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
         {!isShouldShowEmptyContent && (
           <ShadowVirtualList
             slotsClassNames={{ container: 'pb-4' }}
-            data={infinityScrollState.value}
+            data={virtualizedItems}
             count={virtualListItemsCount}
+            shadowScrollProps={{
+              shadowSize: 30,
+            }}
             scrollElementRef={scrollElementRef}
             onScroll={onScrollHandler}
             onScrollEnd={() => setIsScrolling(false)}
           >
             {virtualizedItems.map(renderVirtualListItem)}
-            {infinityScrollState.isPending && (
-              <MotionBox
-                className="flex w-full pt-10 gap-x-2 justify-center items-center text-gray"
-                initial={{ scale: 1.15, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ ease: 'easeInOut', duration: 0.3 }}
-              >
+            {infinityScrollState.isPending
+              && showedDonations.length >= infinityScrollState.limit
+              && (
                 <MotionBox
-                  initial={{ rotateZ: -180 }}
-                  animate={{ rotateZ: 0 }}
-                  transition={{ repeat: Infinity, type: 'spring', duration: 1.25 }}
+                  className="flex w-full pt-10 gap-x-2 justify-center items-center text-gray"
+                  initial={{ scale: 1.15, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ ease: 'easeInOut', duration: 0.3 }}
                 >
-                  <Icons.Logo width={38} height={38} />
+                  <MotionBox
+                    initial={{ rotateZ: -180 }}
+                    animate={{ rotateZ: 0 }}
+                    transition={{ repeat: Infinity, type: 'spring', duration: 1.25 }}
+                  >
+                    <Icons.Logo width={38} height={38} />
+                  </MotionBox>
                 </MotionBox>
-              </MotionBox>
-            )}
+              )}
           </ShadowVirtualList>
         )}
       </AnimatePresence>

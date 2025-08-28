@@ -1,35 +1,46 @@
 /** @todo Rework with all donations properties */
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-import type { ProcessedDonation } from '~entities/donation/model'
+import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
 
 type FiltredDonationsOptions = {
-  status: ProcessedDonation['processedStatus'] | 'default'
+  status: ProcessedDonationStatus | 'all'
 }
 
-/**
- *
- * @param data
- * @param options
- */
+type FiltredDonations = Record<ProcessedDonationStatus | 'all', ProcessedDonation[]>
+
+const initialFilterDonationsState: FiltredDonations = {
+  all: [],
+  added: [],
+  checkRequested: [],
+  empty: [],
+  error: [],
+  inProgress: [],
+  rejected: [],
+}
+
 const useFiltredDonations = (
   data: ProcessedDonation[],
   options: FiltredDonationsOptions,
 ) => {
-  const [filtredDonations, setFiltredDonations] = useState(() => data)
+  const [allFiltredDonations, setAllFiltredDonations]
+    = useState<FiltredDonations>(() => structuredClone(initialFilterDonationsState))
 
   useEffect(() => {
-    setFiltredDonations(() => {
-      if (options.status === 'default')
-        return data
+    const newDonations = structuredClone(initialFilterDonationsState)
 
-      return data.filter(
-        donation => donation.processedStatus === options.status,
-      )
-    })
-  }, [data, options.status])
+    for (const donation of data) {
+      newDonations.all.push(donation)
+      newDonations[donation.processData.status].push(donation)
+    }
 
-  return filtredDonations
+    setAllFiltredDonations(newDonations)
+  }, [data])
+
+  const donationsWithCurrentStatus = useMemo(() =>
+    allFiltredDonations[options.status], [allFiltredDonations, options.status])
+
+  return donationsWithCurrentStatus
 }
 
 export { useFiltredDonations }
