@@ -78,6 +78,7 @@ const useInfiniteScroll = <ListDataItem, ServiceArgs = void>(
       enable: () => setIsDisabled(false),
       disable: () => setIsDisabled(true),
       reset: () => {
+        setValue(() => options.initial ?? [])
         setIsCanLoadMore(true)
         setPage(1)
       },

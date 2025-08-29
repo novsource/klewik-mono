@@ -1,122 +1,51 @@
-import { useMemo, useRef, useState } from 'react'
-import type { ReactNode } from 'react'
+import { useRef, useState } from 'react'
 
-import { isAxiosError } from 'axios'
 import { AnimatePresence } from 'motion/react'
 
-import { useLazyLoadMoreDonationsQuery } from '~features/donations/watch-donations/api'
-
-import { auctionSelectors } from '~entities/auction/store'
-
 import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
-import { donationsActions } from '~entities/donation/store'
-import { DonationCard, SkeletonDonationCard } from '~entities/donation/ui/card'
+import { SkeletonDonationCard } from '~entities/donation/ui/card'
 
 import { useDidUpdate } from '~shared/hooks'
-import { useInfiniteScroll } from '~shared/hooks/use-infinite-scroll'
-import { useIsFirstRender } from '~shared/hooks/use-is-first-render'
-
-import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { MotionBox } from '~shared/ui/motion-box'
 import { ShadowVirtualList } from '~shared/ui/shadow-virtual-list'
-import { toastErrorNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
-import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
 import { useVirtualizedItems } from '~shared/ui/virtual-list/hooks'
+import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
+
+import { useDonationsInfinityList } from '../lib'
+import { InfinityDonationsListCard } from './donations-list-card.ui'
 
 type DonationsInfinityListProps = {
   data: ProcessedDonation[]
-  renderDonation?: (donation: ProcessedDonation, index: number) => ReactNode
-  filterStatus?: ProcessedDonationStatus | 'all'
+  filterStatus: NullablePossible<ProcessedDonationStatus>
   offset?: number
 }
 
-const wait = (ms: number = 1000) => new Promise(resolve => setTimeout(resolve, ms))
-
 export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
-  const {
-    data,
-    renderDonation,
-    filterStatus,
-    offset,
-    ...restProps
-  } = props
+  const { data, filterStatus, offset, ...restProps } = props
 
   const [isScrolling, setIsScrolling] = useState(false)
   const [scrollYValue, setScrollYValue] = useState(0)
 
   const scrollElementRef = useRef<HTMLDivElement>(null)
 
-  const { addDonation } = useActionCreators(donationsActions)
+  const { listItems, loadMore, infinityScrollState } = useDonationsInfinityList(data, filterStatus)
 
-  const auctionInfo = useStoreSelector(auctionSelectors.getAuctionInfo)
-
-  const isFirstRender = useIsFirstRender()
-  const [loadMoreDonationsQuery] = useLazyLoadMoreDonationsQuery()
-
-  const {
-    state: infinityScrollState,
-    functions: { loadMore: fetchMoreDonations, reset: resetInfinityListData },
-  } = useInfiniteScroll<ProcessedDonation>(
-    async () => {
-      try {
-        await wait(2000)
-
-        const response = await loadMoreDonationsQuery({
-          auctionUUID: auctionInfo.auctionUUID,
-          limit: infinityScrollState.limit,
-          order: 'descending',
-          status: filterStatus ?? 'all',
-        })
-
-        if (response.isError) {
-          throw response.error
-        }
-
-        if (!response || !response.data) {
-          return { list: [] }
-        }
-
-        response.data.forEach(addDonation)
-
-        return { list: response.data }
-      }
-      catch (err) {
-        if (isAxiosError(err)) {
-          toastErrorNotification(err.message)
-        }
-        return { list: [] }
-      }
-    },
-    {
-      limit: 15,
-    },
-  )
-
-  const showedDonations = useMemo(() => {
-    return [...data, ...infinityScrollState.value]
-  }, [data, infinityScrollState.value])
-
-  const isListEmpty = showedDonations.length === 0
-
-  if (isListEmpty && isFirstRender) {
-    fetchMoreDonations()
-  }
-
+  /*
+      Here we check if we can fit a screen full of cards equal to or greater than the list limit
+I     If the length of donations is less than the limit, we fill them with empty ones,
+      which will subsequently be displayed as skeletons
+  */
   const virtualizedItems = useVirtualizedItems(
-    showedDonations.length < infinityScrollState.limit
-      ? [...data, ...Array.from(
-          { length: infinityScrollState.limit - data.length },
+    listItems.length < infinityScrollState.limit
+      ? [...listItems, ...Array.from(
+          { length: infinityScrollState.limit - listItems.length },
         ).fill(null)]
-      : showedDonations,
+      : listItems,
   )
-
-  useDidUpdate(() => {
-    resetInfinityListData()
-  }, [filterStatus])
 
   useDidUpdate(() => {
     const scrollElement = scrollElementRef.current
@@ -133,11 +62,11 @@ export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
       = infinityScrollState.isCanLoadMore && !infinityScrollState.isPending
 
     if (isEndOfList && isPossibleToFetchMore) {
-      fetchMoreDonations()
+      loadMore()
     }
   }, [
     scrollYValue,
-    fetchMoreDonations,
+    loadMore,
     infinityScrollState.isCanLoadMore,
     infinityScrollState.isPending,
     offset,
@@ -148,8 +77,8 @@ export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
   ) => {
     const { isPending } = infinityScrollState
 
-    const isListLengthLessThenLimit = showedDonations.length < infinityScrollState.limit
-    const isVItemBlanked = !showedDonations[virtualizeItem.index]
+    const isListLengthLessThenLimit = listItems.length < infinityScrollState.limit
+    const isVItemBlanked = !listItems[virtualizeItem.index]
 
     const isShouldRenderAsSkeleton = isPending && isListLengthLessThenLimit && isVItemBlanked
 
@@ -167,7 +96,7 @@ export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
     if (!isShouldRenderAsSkeleton && isVItemBlanked)
       return
 
-    const donation = showedDonations[virtualizeItem.index]
+    const donation = listItems[virtualizeItem.index]
 
     return (
       <MotionBox
@@ -179,25 +108,28 @@ export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
           ease: 'easeInOut',
         }}
       >
-        {renderDonation
-          ? renderDonation(donation, virtualizeItem.index)
-          : <DonationCard data={donation} />}
+        <InfinityDonationsListCard
+          donation={donation}
+          style={{
+            marginTop: virtualizeItem.index !== 0 ? '8px' : '0',
+          }}
+        />
       </MotionBox>
     )
   }
-
-  const virtualListItemsCount
-    = infinityScrollState.isPending
-      ? showedDonations.length + infinityScrollState.limit
-      : showedDonations.length
-
-  const isShouldShowEmptyContent
-    = isListEmpty && !infinityScrollState.isCanLoadMore && !infinityScrollState.isPending
 
   const onScrollHandler = (scrollValue: number) => {
     setIsScrolling(true)
     setScrollYValue(scrollValue)
   }
+
+  const virtualListItemsCount
+    = infinityScrollState.isPending
+      ? listItems.length + infinityScrollState.limit
+      : listItems.length
+
+  const isShouldShowEmptyContent
+    = !listItems.length && !infinityScrollState.isCanLoadMore && !infinityScrollState.isPending
 
   return (
     <Flex className="h-full w-full" {...restProps}>
@@ -206,7 +138,7 @@ export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
         {!isShouldShowEmptyContent && (
           <ShadowVirtualList
             slotsClassNames={{ container: 'pb-4' }}
-            data={virtualizedItems}
+            data={listItems}
             count={virtualListItemsCount}
             shadowScrollProps={{
               shadowSize: 30,
@@ -217,7 +149,7 @@ export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
           >
             {virtualizedItems.map(renderVirtualListItem)}
             {infinityScrollState.isPending
-              && showedDonations.length >= infinityScrollState.limit
+              && listItems.length >= infinityScrollState.limit
               && (
                 <MotionBox
                   className="flex w-full pt-10 gap-x-2 justify-center items-center text-gray"
@@ -237,7 +169,6 @@ export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
           </ShadowVirtualList>
         )}
       </AnimatePresence>
-
     </Flex>
   )
 }

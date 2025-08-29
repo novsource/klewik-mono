@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
 
 type FiltredDonationsOptions = {
-  status: ProcessedDonationStatus | 'all'
+  status: NullablePossible<ProcessedDonationStatus>
 }
 
 type FiltredDonations = Record<ProcessedDonationStatus | 'all', ProcessedDonation[]>
@@ -19,26 +19,36 @@ const initialFilterDonationsState: FiltredDonations = {
   rejected: [],
 }
 
+const filterDonations = (donations: ProcessedDonation[]) => {
+  const filtredDonations = structuredClone(initialFilterDonationsState)
+
+  for (const donation of donations) {
+    filtredDonations.all.push(donation)
+    filtredDonations[donation.processData.status].push(donation)
+  }
+
+  return filtredDonations
+}
+
 const useFiltredDonations = (
   data: ProcessedDonation[],
   options: FiltredDonationsOptions,
 ) => {
-  const [allFiltredDonations, setAllFiltredDonations]
-    = useState<FiltredDonations>(() => structuredClone(initialFilterDonationsState))
+  const [filtredDonations, setFiltredDonations]
+    = useState<FiltredDonations>(() => filterDonations(data))
 
   useEffect(() => {
-    const newDonations = structuredClone(initialFilterDonationsState)
+    const filtredDonation = filterDonations(data)
 
-    for (const donation of data) {
-      newDonations.all.push(donation)
-      newDonations[donation.processData.status].push(donation)
-    }
-
-    setAllFiltredDonations(newDonations)
+    setFiltredDonations(filtredDonation)
   }, [data])
 
-  const donationsWithCurrentStatus = useMemo(() =>
-    allFiltredDonations[options.status], [allFiltredDonations, options.status])
+  const donationsWithCurrentStatus = useMemo(() => {
+    if (!options.status)
+      return filtredDonations.all
+
+    return filtredDonations[options.status]
+  }, [filtredDonations, options.status])
 
   return donationsWithCurrentStatus
 }
