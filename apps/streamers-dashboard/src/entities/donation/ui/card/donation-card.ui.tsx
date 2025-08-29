@@ -67,7 +67,7 @@ export type BaseDonationCardProps = CardProps
 export const BaseDonationCard = (props: BaseDonationCardProps) => {
   const { className, ...restProps } = props
 
-  return <Card className={cn(className)} {...restProps} />
+  return <Card className={cn('max-tablet:py-0 max-tablet:pt-1 max-tablet:pb-2.5', className)} {...restProps} />
 }
 
 export type BaseDonationCardHeaderProps = ComponentProps<'div'>

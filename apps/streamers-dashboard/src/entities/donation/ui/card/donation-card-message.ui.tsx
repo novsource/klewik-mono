@@ -4,7 +4,6 @@ import type { ComponentProps } from 'react'
 import { useLayoutEffect, useRef, useState } from 'react'
 
 import { AnimatePresence } from 'motion/react'
-import * as m from 'motion/react-m'
 
 import {
   Accordion,
@@ -12,6 +11,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '~shared/ui/accordion/ui/accordion'
+import { MotionBox } from '~shared/ui/motion-box'
+import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
@@ -48,7 +49,7 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
   return (
     <div
       ref={messageContainerRef}
-      className="rounded-md bg-dark-accent/70 px-2 transition-[width] duration-500"
+      className="rounded-md bg-dark-light px-2 transition-[width] duration-500"
       style={{ width: isMessageOpened ? width : 300 }}
       onAnimationStart={() => setAccordionAnimatinoStatus('animating')}
       onAnimationEnd={() => setAccordionAnimatinoStatus('animated')}
@@ -57,7 +58,7 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
       <Accordion type="single" collapsible>
         <AccordionItem value="message">
           <AccordionTrigger
-            className="flex-row-reverse justify-end gap-x-1.5 py-1.5 text-gray-accent"
+            className="flex-row-reverse justify-end gap-x-1.5 py-1.5 text-gray-light hover:text-gray-accent"
             onClick={() => setIsMessageOpened(curr => !curr)}
             {...triggerProps}
           >
@@ -65,7 +66,7 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
               ? 'Скрыть текст пожертвования'
               : 'Показать текст пожертвования'}
           </AccordionTrigger>
-          <AccordionContent className="relative pb-2 px-1 font-golos-f text-md font-medium tracking-normal text-white/85">
+          <AccordionContent className="relative pb-2 px-1 font-golos-f text-md font-medium tracking-normal">
             {accordionAnimationStatus === 'animating' && (
               <span
                 ref={textRef}
@@ -75,7 +76,7 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
               </span>
             )}
             <AnimatePresence>
-              <m.span
+              <MotionBox
                 className={cn(`text-nowrap`)}
                 initial={{
                   opacity: 0,
@@ -93,8 +94,10 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
                 }}
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
               >
-                {value}
-              </m.span>
+                <Typography className="max-mobile:text-sm max-mobile:font-normal text-white/80" tag="p">
+                  {value}
+                </Typography>
+              </MotionBox>
             </AnimatePresence>
           </AccordionContent>
         </AccordionItem>
