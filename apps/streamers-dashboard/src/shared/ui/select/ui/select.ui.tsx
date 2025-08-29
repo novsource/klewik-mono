@@ -49,6 +49,7 @@ function SelectValue({
 
 function SelectTrigger({
   className,
+  asChild = false,
   children,
   ...triggerProps
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
@@ -65,12 +66,17 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={style}
+      asChild={asChild}
       {...triggerProps}
     >
-      {children}
-      <SelectPrimitive.Icon asChild>
-        <ChevronDownIcon className="size-4 opacity-50" />
-      </SelectPrimitive.Icon>
+      <>
+        {children}
+        {!asChild && (
+          <SelectPrimitive.Icon asChild>
+            <ChevronDownIcon className="size-4 opacity-50" />
+          </SelectPrimitive.Icon>
+        )}
+      </>
     </SelectPrimitive.Trigger>
   )
 }
