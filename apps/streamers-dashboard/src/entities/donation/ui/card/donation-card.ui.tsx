@@ -203,23 +203,6 @@ export const SolidDonationCardContent = (props: SolidDonationCardContentProps) =
     if (isEmptyMessage)
       return
 
-    if (donationData.messageType === 'empty') {
-      return (
-        <Flex
-          className="w-fit bg-dark-accent/70 px-2 py-1.5 rounded-md gap-x-1.5 whitespace-nowrap text-gray-light"
-          align="center"
-        >
-          <Icons.Message size="sm" />
-          <Typography
-            className="text-sm font-medium font-golos-f"
-            tag="span"
-          >
-            Текстовое сообщение отсутствует
-          </Typography>
-        </Flex>
-      )
-    }
-
     if (donationData.messageType === 'text') {
       return <DonationCardMessage value={donationData.message!} />
     }
@@ -232,10 +215,10 @@ export const SolidDonationCardContent = (props: SolidDonationCardContentProps) =
         >
           <Icons.Sound className="text-gray-light" />
           <Typography
-            className="text-gray-light text-sm font-medium font-golos-f"
+            className="text-gray-light text-sm font-medium font-golos-f text-wrap"
             tag="span"
           >
-            Аудио-формат сообщений не поддерживается
+            Аудио-сообщения не поддерживаются
           </Typography>
         </Flex>
       )
