@@ -4,116 +4,61 @@ import type {
 } from 'react'
 import {
   useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
 } from 'react'
 
-import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+import type { AuctionSlot } from '~entities/auction-slot/model'
 
-import { WheelEventsBus } from '~entities/wheel/events'
-import type { WheelSlot } from '~entities/wheel/model'
-import {
-  wheelActions as storeWheelActions,
-  wheelSelectors,
-} from '~entities/wheel/store'
-
-import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Flex } from '~shared/ui/flex'
 
-import { useWheelControl, useWheelInit } from '../hooks'
-import { getItemsWithAngles, updateSlotsAnglesByRotateValue } from '../utils'
+import { useWheel } from '../hooks/use-wheel'
+import { wheelSelectors } from '../store'
+import { generateWinner } from '../utils'
 
-type WheelCanvasProps = Omit<ComponentPropsWithoutRef<'canvas'>, 'children'>
+export type WheelCanvasProps = Omit<ComponentPropsWithoutRef<'canvas'>, 'children'> & {
+  auctionSlots: AuctionSlot[]
+}
 
-const WheelCanvas = (props: WheelCanvasProps) => {
-  const storeIsWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
-  const storeSelectorTitle = useStoreSelector(wheelSelectors.getSelectorTargetTitle)
-  const storeWheelRotateValue = useStoreSelector(wheelSelectors.getRotateValue)
+export const WheelCanvas = (props: WheelCanvasProps) => {
+  const { auctionSlots, style, ...restProps } = props
 
+  const wheelSpinStatus = useStoreSelector(wheelSelectors.getWheelStatus)
+  const wheelRotateValue = useStoreSelector(wheelSelectors.getRotateValue)
   const { spinTime } = useStoreSelector(wheelSelectors.getSettings)
-
-  const wheelActions = useActionCreators(storeWheelActions)
-
-  const storedSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-
-  const wheelWrapperRef = useRef<HTMLDivElement>(null)
 
   const {
     refs: { wheelRef, innerRef },
-    functions: { drawWheel, drawInner, resizeInnerBackground, resizeWheel },
-  } = useWheelInit(storedSlots)
-
-  const {
-    state: { wheelRotateCSSValue, selectorTargetTitle, isWheelSpinning },
     functions: { spinWheel },
-  } = useWheelControl(getItemsWithAngles(storedSlots), {
-    wheelRef,
-  })
-
-  const actualSlotsWithAngles = useMemo(() => {
-    return updateSlotsAnglesByRotateValue(
-      getItemsWithAngles(storedSlots),
-      wheelRotateCSSValue,
-    )
-  }, [wheelRotateCSSValue, storedSlots])
-
-  if (storedSlots !== actualSlotsWithAngles) {
-    wheelActions.setSlots(actualSlotsWithAngles)
-  }
-
-  if (storeIsWheelSpinning !== isWheelSpinning) {
-    wheelActions.setIsWheelSpinning(isWheelSpinning)
-  }
-
-  if (isWheelSpinning && storeSelectorTitle !== selectorTargetTitle && selectorTargetTitle) {
-    wheelActions.setSelectorTitleName(selectorTargetTitle)
-  }
-
-  useLayoutEffect(() => {
-    drawWheel()
-    drawInner()
-    resizeInnerBackground()
-
-    const resizeWheelCb = resizeWheel()
-
-    return () => {
-      resizeWheelCb()
-    }
-  }, [drawWheel, resizeWheel, drawInner, resizeInnerBackground])
+    state: { wheelSlots },
+  } = useWheel(auctionSlots)
 
   useEffect(() => {
-    const callback = (winner: WheelSlot) => {
+    const isShouldSpinWheel = wheelSpinStatus === 'prepare'
+
+    if (isShouldSpinWheel) {
+      const winner = generateWinner(wheelSlots)
+
       spinWheel(winner, spinTime)
     }
-
-    const spinEventUnsubcribe = WheelEventsBus.getInstance().subscribe(
-      'spin',
-      callback,
-    )
-
-    return () => {
-      spinEventUnsubcribe()
-    }
-  }, [spinWheel, spinTime])
+  }, [wheelSpinStatus, spinTime, spinWheel, wheelSlots])
 
   return (
     <Flex className="shrink h-full w-full" align="start" justify="center">
       <Flex
         className="relative w-full h-full"
-        ref={wheelWrapperRef}
         align="start"
         justify="center"
       >
         <WheelSelector className="absolute -top-3.5 landtop:-top-1.5 z-10 shadow-dark drop-shadow-md" />
         <canvas
           ref={wheelRef}
-          {...props}
           style={{
+            ...style,
             willChange: 'transform',
-            transform: `rotateZ(${storeWheelRotateValue}deg)`,
+            transform: `rotateZ(${wheelRotateValue}deg)`,
           }}
+          {...restProps}
         />
         <canvas
           ref={innerRef}
@@ -124,8 +69,6 @@ const WheelCanvas = (props: WheelCanvasProps) => {
     </Flex>
   )
 }
-
-export { WheelCanvas }
 
 type WheelSelectorProps = {
   className?: string

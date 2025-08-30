@@ -1,12 +1,10 @@
-import { ProcessedDonationStatus } from '../model'
+import type { ProcessedDonationStatus } from '../model'
 
-const DONATION_PROCESSED_STATUS: Record<ProcessedDonationStatus, string> = {
+export const DONATION_PROCESSED_STATUS: Record<ProcessedDonationStatus, string> = {
   added: 'Добавлено',
   inProgress: 'Обрабатывается',
-  checkRequested: 'Необходима проверка',
-  error: 'Ошибка обработки',
-  empty: 'Данные не найдены',
+  checkRequested: 'Ожидание проверки',
+  error: 'Ошибка',
+  empty: 'Не найдено',
   rejected: 'Отклонено',
 }
-
-export { DONATION_PROCESSED_STATUS }

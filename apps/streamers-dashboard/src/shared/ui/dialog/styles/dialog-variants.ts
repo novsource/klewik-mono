@@ -15,7 +15,7 @@ const dialogBackdropVariants = cva([
 })
 
 const dialogContentVariants = cva([
-  'bg-dark z-50 grid w-full max-w-[calc(100%-2rem)] gap-4 rounded-lg border p-6 shadow-lg sm:max-w-lg',
+  'bg-dark z-50 grid w-full max-w-[calc(100%-2rem)] gap-4 rounded-lg border py-3.5 pl-4 pr-3.5 shadow-lg sm:max-w-lg',
   'fixed translate-x-[-50%] translate-y-[-50%] top-[50%] left-[50%] shadow-md',
 ], {
   variants: {

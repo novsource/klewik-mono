@@ -1,49 +1,49 @@
 import { useState } from 'react'
 
-import { ProcessDonationSheet } from '~widgets/process-donation-dialogs/ui'
-
-import { DonationsList } from '~features/donations/watch-donations/ui'
-
-import type { ProcessedDonation } from '~entities/donation/model'
+import type { ProcessedDonationStatus } from '~entities/donation/model'
 import { donationsSelectors } from '~entities/donation/store'
-import type {
-  DonationCardProps,
-} from '~entities/donation/ui/card'
-import {
-  DonationCard,
-  DonationCardBadge,
-  SkeletonDonationCard,
-} from '~entities/donation/ui/card'
-import { IntegrationBadge } from '~entities/integrations/ui/badge'
+
+import { useDidUpdate } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-import { Button } from '~shared/ui/button'
+
+import { sseSelectors } from '~shared/store/slices'
+
 import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
+import { toastErrorNotification } from '~shared/ui/toaster/lib'
+import { Typography } from '~shared/ui/typograghy'
+
 import { cn } from '~shared/utils'
 
 import { useFiltredDonations } from '../lib'
-import { DonationsFilterSelect } from './donations-filter'
+import { DonationsFilterSelect } from './donations-filter-select.ui'
+import { DonationsInfinityList } from './donations-infinity-list.ui'
 
-type DonationProcessStatus = ProcessedDonation['processedStatus'] | 'default'
+export const AuctionDonationsPage = () => {
+  const { isConnected: isDonationsSSEEventConnected } = useStoreSelector(store => sseSelectors.getEventStatus(store, 'auctionSlots'))
 
-const AuctionDonationsPage = () => {
   const donations = useStoreSelector(donationsSelectors.getAllDonations)
 
   const [donationsFilterValue, setDonationsFilterValue]
-    = useState<DonationProcessStatus>('default')
+    = useState<NullablePossible<ProcessedDonationStatus>>(null)
 
   const filtredDonations = useFiltredDonations(donations, {
     status: donationsFilterValue,
   })
 
+  useDidUpdate(() => {
+    if (!isDonationsSSEEventConnected) {
+      toastErrorNotification('Auction slots not connected!!!')
+    }
+  }, [isDonationsSSEEventConnected])
+
   return (
     <div
       className={cn([
         'grid grid-rows-slots-table gap-y-3 tablet:grid-rows-slots-desktop',
-        'relative mx-auto w-full h-full pt-5 mb-4',
+        'relative mx-auto w-full h-full tablet:pt-5 mb-4',
         'mobile:gap-y-5',
-        'max-tablet:max-w-[1100px] tablet:gap-y-4 tablet:pl-10',
+        'max-tablet:max-w-[1100px] tablet:gap-y-7 tablet:pl-10',
         'desktop:max-w-[1750px] desktop-lg:max-w-[2100px]',
         'landtop:max-w-[1600px]',
       ])}
@@ -54,64 +54,20 @@ const AuctionDonationsPage = () => {
         align="center"
         justify="between"
       >
+        <Typography
+          className="tablet:text-title-xl"
+          tag="h1"
+        >
+          Пожертвования
+        </Typography>
         <DonationsFilterSelect
           status={donationsFilterValue}
-          onValueChange={(status: DonationProcessStatus) =>
+          onValueChange={(status: ProcessedDonationStatus) =>
             setDonationsFilterValue(status)}
         />
       </Flex>
 
-      {/* <DonationsInfinityList data={filtredDonations} /> */}
-
-      <DonationsList
-        data={filtredDonations}
-        renderDonation={(donation, index) => (
-          <DonationCardWithControls
-            data={donation}
-            style={{
-              marginTop: index !== 0 ? '8px' : '0',
-            }}
-          />
-        )}
-      />
+      <DonationsInfinityList data={filtredDonations} filterStatus={donationsFilterValue} />
     </div>
-  )
-}
-
-export { AuctionDonationsPage }
-
-function DonationCardWithControls({
-  showingSkeleton,
-  ...props
-}: DonationCardProps & { showingSkeleton?: boolean }) {
-  if (showingSkeleton)
-    return <SkeletonDonationCard {...props} />
-
-  return (
-    <DonationCard
-      {...props}
-      renderHeader={donation => (
-        <Flex className="w-full h-6" justify="between">
-          <Flex className="gap-x-1.5">
-            <IntegrationBadge integration={donation.source} />
-            <DonationCardBadge status={donation.processedStatus} />
-          </Flex>
-          <Flex>
-            <ProcessDonationSheet
-              donation={donation}
-              trigger={(
-                <Button
-                  className="h-full text-gray-accent hover:text-white/80 transition-colors z-50"
-                  variant="ghost"
-                  size="xs"
-                  isIconOnly
-                  icon={<Icons.OpenArrow size="xs" />}
-                />
-              )}
-            />
-          </Flex>
-        </Flex>
-      )}
-    />
   )
 }

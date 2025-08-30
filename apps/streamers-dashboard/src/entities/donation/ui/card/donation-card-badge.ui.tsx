@@ -1,11 +1,4 @@
 import type { ComponentProps } from 'react'
-import { memo } from 'react'
-
-import { DONATION_PROCESSED_STATUS } from '~entities/donation/constants'
-import type {
-  ProcessedDonation,
-  ProcessedDonationStatus,
-} from '~entities/donation/model'
 
 import type { BadgeProps } from '~shared/ui/badge'
 import { Badge } from '~shared/ui/badge'
@@ -13,37 +6,18 @@ import { Skeleton } from '~shared/ui/skeleton'
 
 import { cn } from '~shared/utils'
 
-type DonationCardBadgeProps = BadgeProps & {
-  status: ProcessedDonation['processedStatus']
-}
+export type DonationCardBadgeProps = BadgeProps
 
-const DonationCardBadge = memo((props: DonationCardBadgeProps) => {
-  const { status, variant, ...badgeProps } = props
-
-  const donationStatusToBadgeVariants: Record<
-    ProcessedDonationStatus,
-    NonNullable<BadgeProps['variant']>
-  >[ProcessedDonationStatus] = {
-    added: 'success',
-    inProgress: 'warning',
-    checkRequested: 'warning',
-    empty: 'default',
-    error: 'error',
-    rejected: 'error',
-  }[status]
-
+export const DonationCardBadge = (props: DonationCardBadgeProps) => {
   return (
     <Badge
-      className="text-nowrap font-medium max-tablet:text-xs max-tablet:py-0.25"
-      variant={donationStatusToBadgeVariants}
-      {...badgeProps}
-    >
-      {DONATION_PROCESSED_STATUS[status]}
-    </Badge>
+      className="text-nowrap font-medium max-tablet:text-[10px] max-tablet:h-5 transition-none"
+      {...props}
+    />
   )
-})
+}
 
-const SkeletonDonationCardBadge = ({
+export const SkeletonDonationCardBadge = ({
   className,
   ...props
 }: ComponentProps<'div'>) => {
@@ -51,5 +25,3 @@ const SkeletonDonationCardBadge = ({
     <Skeleton className={cn('rounded-pill h-6 w-32', className)} {...props} />
   )
 }
-
-export { DonationCardBadge, SkeletonDonationCardBadge }

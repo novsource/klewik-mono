@@ -1,6 +1,6 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit'
 
-const createStoreListenerMiddleware = () => {
+export const createStoreListenerMiddleware = () => {
   const instance = createListenerMiddleware()
 
   instance.startListening.withTypes<RootState, StoreDispatch>()
@@ -8,5 +8,3 @@ const createStoreListenerMiddleware = () => {
 
   return instance
 }
-
-export { createStoreListenerMiddleware }

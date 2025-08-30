@@ -1,5 +1,5 @@
 declare type RootState = ReturnType<
-  typeof import('../providers/store/store').store.getState
+  typeof import('../store/store').store.getState
 >
-declare type StoreDispatch =
-  typeof import('../providers/store/store').store.dispatch
+declare type StoreDispatch
+  = typeof import('../store/store').store.dispatch

@@ -1,3 +1,1 @@
-import AnimatedRoute from './animated-route'
-
-export { AnimatedRoute }
+export * from './animated-route'

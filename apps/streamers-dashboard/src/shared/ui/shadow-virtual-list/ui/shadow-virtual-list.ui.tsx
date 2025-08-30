@@ -27,11 +27,11 @@ const ShadowVirtualList = (
     ...virtualListProps
   } = props
 
-  const internalScrollElementRef = useRef<HTMLDivElement>(null)
-  const internalContentElementRef = useRef<HTMLDivElement>(null)
+  const internalScrollRef = useRef<HTMLDivElement>(null)
+  const internalListWrapperRef = useRef<HTMLDivElement>(null)
 
-  const scrollRef = scrollElementRef ?? internalScrollElementRef
-  const contentRef = contentWrapperRef ?? internalContentElementRef
+  const scrollRef = scrollElementRef ?? internalScrollRef
+  const contentRef = contentWrapperRef ?? internalListWrapperRef
 
   return (
     <AutoSizer>

@@ -1,4 +1,5 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
+
 import { useLocation } from 'react-router-dom'
 
 import * as m from 'motion/react-m'
@@ -10,7 +11,7 @@ type Props = {
   className?: string
 }
 
-const AnimatedRoute = ({ children, className }: Props) => {
+export const AnimatedRoute = ({ children, className }: Props) => {
   const location = useLocation()
 
   return (
@@ -24,5 +25,3 @@ const AnimatedRoute = ({ children, className }: Props) => {
     </m.div>
   )
 }
-
-export default AnimatedRoute

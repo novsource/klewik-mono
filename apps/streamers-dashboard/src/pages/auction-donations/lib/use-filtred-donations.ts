@@ -1,35 +1,56 @@
 /** @todo Rework with all donations properties */
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-import type { ProcessedDonation } from '~entities/donation/model'
+import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
 
 type FiltredDonationsOptions = {
-  status: ProcessedDonation['processedStatus'] | 'default'
+  status: NullablePossible<ProcessedDonationStatus>
 }
 
-/**
- *
- * @param data
- * @param options
- */
+type FiltredDonations = Record<ProcessedDonationStatus | 'all', ProcessedDonation[]>
+
+const initialFilterDonationsState: FiltredDonations = {
+  all: [],
+  added: [],
+  checkRequested: [],
+  empty: [],
+  error: [],
+  inProgress: [],
+  rejected: [],
+}
+
+const filterDonations = (donations: ProcessedDonation[]) => {
+  const filtredDonations = structuredClone(initialFilterDonationsState)
+
+  for (const donation of donations) {
+    filtredDonations.all.push(donation)
+    filtredDonations[donation.processData.status].push(donation)
+  }
+
+  return filtredDonations
+}
+
 const useFiltredDonations = (
   data: ProcessedDonation[],
   options: FiltredDonationsOptions,
 ) => {
-  const [filtredDonations, setFiltredDonations] = useState(() => data)
+  const [filtredDonations, setFiltredDonations]
+    = useState<FiltredDonations>(() => filterDonations(data))
 
   useEffect(() => {
-    setFiltredDonations(() => {
-      if (options.status === 'default')
-        return data
+    const filtredDonation = filterDonations(data)
 
-      return data.filter(
-        donation => donation.processedStatus === options.status,
-      )
-    })
-  }, [data, options.status])
+    setFiltredDonations(filtredDonation)
+  }, [data])
 
-  return filtredDonations
+  const donationsWithCurrentStatus = useMemo(() => {
+    if (!options.status)
+      return filtredDonations.all
+
+    return filtredDonations[options.status]
+  }, [filtredDonations, options.status])
+
+  return donationsWithCurrentStatus
 }
 
 export { useFiltredDonations }

@@ -1,7 +1,9 @@
+import type { AccordionTriggerProps } from '@radix-ui/react-accordion'
+
+import type { ComponentProps } from 'react'
 import { useLayoutEffect, useRef, useState } from 'react'
 
 import { AnimatePresence } from 'motion/react'
-import * as m from 'motion/react-m'
 
 import {
   Accordion,
@@ -9,80 +11,73 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '~shared/ui/accordion/ui/accordion'
+import { MotionBox } from '~shared/ui/motion-box'
+import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
-type DonationCardMessageProps = {
+export type DonationCardMessageProps = ComponentProps<'div'> & {
   value: string
+  triggerProps?: AccordionTriggerProps
 }
 
-const DonationCardMessage = ({ value, ...props }: DonationCardMessageProps) => {
-  const [width, setWidth] = useState(0)
-  const [messageTextLinesCount, setMessageTextLinesCount] = useState(1)
+export const DonationCardMessage = (props: DonationCardMessageProps) => {
+  const { value, triggerProps, ...restProps } = props
 
+  const [width, setWidth] = useState(0)
+  const [isMessageOpened, setIsMessageOpened] = useState(false)
   const [accordionAnimationStatus, setAccordionAnimatinoStatus] = useState<
     'animating' | 'animated'
   >('animated')
-  const [isMessageOpened, setIsMessageOpened] = useState(false)
 
   const messageContainerRef = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
-    if (!messageContainerRef.current) return
+    if (!messageContainerRef.current)
+      return
 
     let containerWrapper = messageContainerRef.current.parentElement
 
-    if (!containerWrapper) containerWrapper = document.body
+    if (!containerWrapper)
+      containerWrapper = document.body
 
     setWidth(containerWrapper.clientWidth)
-  }, [messageContainerRef.current])
+  }, [messageContainerRef])
 
   const textRef = useRef<HTMLSpanElement>(null)
-
-  useLayoutEffect(() => {
-    if (!textRef.current || !messageContainerRef.current) return
-
-    const textWidth = textRef.current.getBoundingClientRect().width
-
-    let containerWrapper = messageContainerRef.current.parentElement
-
-    if (!containerWrapper) containerWrapper = document.body
-
-    const containerWidth = containerWrapper.getBoundingClientRect().width
-
-    setMessageTextLinesCount(Math.ceil(textWidth / containerWidth))
-  }, [accordionAnimationStatus, textRef.current, messageContainerRef.current])
 
   return (
     <div
       ref={messageContainerRef}
-      className="rounded-md bg-dark-accent/70 px-2 transition-[width] duration-500"
+      className="rounded-md bg-dark-light px-2 transition-[width] duration-500"
       style={{ width: isMessageOpened ? width : 300 }}
       onAnimationStart={() => setAccordionAnimatinoStatus('animating')}
       onAnimationEnd={() => setAccordionAnimatinoStatus('animated')}
+      {...restProps}
     >
       <Accordion type="single" collapsible>
-        <AccordionItem value="message" {...props}>
+        <AccordionItem value="message">
           <AccordionTrigger
-            className="flex-row-reverse justify-end gap-x-1.5 py-1.5 text-gray-accent"
-            onClick={() => setIsMessageOpened((curr) => !curr)}
+            className="flex-row-reverse justify-end gap-x-1.5 py-1.5 text-gray-light hover:text-gray-accent"
+            onClick={() => setIsMessageOpened(curr => !curr)}
+            {...triggerProps}
           >
             {isMessageOpened
               ? 'Скрыть текст пожертвования'
               : 'Показать текст пожертвования'}
           </AccordionTrigger>
-          <AccordionContent className="relative pb-2 pl-1 font-golos-f text-md font-medium tracking-normal text-white/85">
+          <AccordionContent className="relative pb-2 px-1 font-golos-f text-md font-medium tracking-normal">
             {accordionAnimationStatus === 'animating' && (
               <span
                 ref={textRef}
-                className="invisible absolute inline text-nowrap"
+                className="invisible absolute inline text-wrap"
               >
                 {value}
               </span>
             )}
             <AnimatePresence>
-              <m.span
-                className={cn(`line-clamp-${messageTextLinesCount}`)}
+              <MotionBox
+                className={cn(`text-nowrap`)}
                 initial={{
                   opacity: 0,
                   translate: [0, 3, 0],
@@ -99,8 +94,10 @@ const DonationCardMessage = ({ value, ...props }: DonationCardMessageProps) => {
                 }}
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
               >
-                {value}
-              </m.span>
+                <Typography className="max-mobile:text-sm max-mobile:font-normal text-white/80" tag="p">
+                  {value}
+                </Typography>
+              </MotionBox>
             </AnimatePresence>
           </AccordionContent>
         </AccordionItem>
@@ -108,5 +105,3 @@ const DonationCardMessage = ({ value, ...props }: DonationCardMessageProps) => {
     </div>
   )
 }
-
-export { DonationCardMessage }

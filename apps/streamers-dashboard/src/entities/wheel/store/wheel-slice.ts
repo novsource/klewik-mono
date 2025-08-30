@@ -10,22 +10,32 @@ type WheelSettings = {
   spinTime: number
 }
 
+type WheelSpinStatus = 'idle' | 'prepare' | 'spinning'
+
+type WheelRotateValues = {
+  current: number
+  final: number
+}
+
 export type WheelState = {
-  rotateValue: number
+  wheelSpinStatus: WheelSpinStatus
+  rotateValue: WheelRotateValues
   selectorTargetTitle: string
   slots: WheelSlot[]
   settings: WheelSettings
-  isWheelSpinning: boolean
 }
 
 const initialState: WheelState = {
-  rotateValue: 0,
+  wheelSpinStatus: 'idle',
+  rotateValue: {
+    current: 0,
+    final: 0,
+  },
   selectorTargetTitle: 'Ожидание прокрутки колеса...',
   slots: [],
   settings: {
     spinTime: 2,
   },
-  isWheelSpinning: false,
 }
 
 const wheelSlice = createSlice({
@@ -57,13 +67,13 @@ const wheelSlice = createSlice({
     setSelectorTitleName: (state, action: PayloadAction<string>) => {
       state.selectorTargetTitle = action.payload
     },
-    setIsWheelSpinning: (state, action: PayloadAction<boolean>) => {
-      state.isWheelSpinning = action.payload
+    setWheelStatus: (state, action: PayloadAction<WheelSpinStatus>) => {
+      state.wheelSpinStatus = action.payload
     },
     setSettings: (state, action: PayloadAction<Partial<WheelSettings>>) => {
       state.settings = { ...state.settings, ...action.payload }
     },
-    setRotateValue: (state, action: PayloadAction<number>) => {
+    setRotateValue: (state, action: PayloadAction<WheelRotateValues>) => {
       state.rotateValue = action.payload
     },
   },
@@ -71,8 +81,9 @@ const wheelSlice = createSlice({
     getSlots: state => state.slots,
     getSettings: state => state.settings,
     getSelectorTargetTitle: state => state.selectorTargetTitle,
-    getIsWheelSpinning: state => state.isWheelSpinning,
+    getIsWheelSpinning: state => state.wheelSpinStatus === 'spinning',
     getRotateValue: state => state.rotateValue,
+    getWheelStatus: state => state.wheelSpinStatus,
   },
 })
 

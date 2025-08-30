@@ -51,7 +51,6 @@ type AxiosQueryFn = BaseQueryFn<
 
 const axiosBaseQuery
   = (options: AxiosBaseQueryOptions): AxiosQueryFn =>
-  /* @ts-ignore */
     async ({ url, method, data, headers, params, rewriteBaseURL = false }) => {
       const isDev = import.meta.env.VITE_DEV
       try {
@@ -122,19 +121,20 @@ const axiosAuthBaseQuery
 
       if (result.error && result.error.status === 401) {
         const refreshResult = await baseQuery(
-          { url: '/api/v1/auth/refresh', method: 'POST' },
+          { url: '/api/v1/auth/refresh', method: 'POST', rewriteBaseURL: true },
           api,
           extraOptions,
         )
 
         if (refreshResult.error === undefined) {
           result = await baseQuery(
-            { ...args, ...options, url },
+            { ...args, ...options, url, rewriteBaseURL: true },
             api,
             extraOptions,
           )
         }
         else {
+
         // TODO: Add method for logout user
         }
       }

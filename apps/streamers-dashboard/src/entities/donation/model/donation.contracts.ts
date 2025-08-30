@@ -44,13 +44,15 @@ const DonationSchema = z.object({
 })
 
 const ProcessedDonationSchema = DonationSchema.extend({
-  processedAction: z.enum(
-    zodEnum<ProcessedDonationAction>(processedDonationAction),
-  ),
-  processedSlotsIds: z.number().array().nullable(),
-  processedStatus: z.enum(
-    zodEnum<ProcessedDonationStatus>(processedDonationStatuses),
-  ),
+  processData: z.object({
+    action: z.enum(
+      zodEnum<ProcessedDonationAction>(processedDonationAction),
+    ),
+    slotsIds: z.number().array().nullable(),
+    status: z.enum(
+      zodEnum<ProcessedDonationStatus>(processedDonationStatuses),
+    ),
+  }),
 })
 
 export {
