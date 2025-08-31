@@ -7,14 +7,16 @@ import type {
 
 import type { VirtualizedItem } from '../hooks'
 
-import { forwardRef, useMemo, useRef } from 'react'
-import type { ComponentProps, MutableRefObject, ReactNode } from 'react'
+import { forwardRef, useRef } from 'react'
+import type { ComponentProps, MutableRefObject, ReactNode, RefCallback } from 'react'
 
 import { Virtualizer } from 'virtua'
 
 import { isFunction } from '~shared/utils'
 
-export type VirtualListItemProps = ComponentProps<'div'> & CustomItemComponentProps
+import { useVirtualizedItems } from '../hooks'
+
+type VirtualListItemProps = ComponentProps<'div'> & CustomItemComponentProps
 
 const VirtualListItem = forwardRef(
   (props: VirtualListItemProps, extRef: any) => {
@@ -39,12 +41,12 @@ export type VirtualListSlots
 export type VirtualListRenderFunction<DataItem>
 = (data: DataItem[], virtualizedItem: VirtualizedItem) => ReactNode
 
-export type VirtualListProps<ListDataElement = unknown> = VirtualizerProps & {
+export type VirtualListProps<ListDataElement> = Omit<VirtualizerProps, 'children'> & {
   data: ListDataElement[]
   children: VirtualListRenderFunction<ListDataElement> | ReactNode | ReactNode[]
   estimateSize?: (index: number) => number
   slotsClassNames?: Partial<Record<VirtualListSlots, string>>
-  scrollElementRef?: MutableRefObject<NullablePossible<HTMLDivElement>>
+  scrollElementRef?: MutableRefObject<NullablePossible<HTMLDivElement>> | RefCallback<HTMLDivElement>
   contentWrapperRef?: MutableRefObject<NullablePossible<HTMLDivElement>>
   virtualListRef?: MutableRefObject<NullablePossible<VirtualizerHandle>>
   count?: number
@@ -53,7 +55,7 @@ export type VirtualListProps<ListDataElement = unknown> = VirtualizerProps & {
   gap?: number
 }
 
-export const VirtualList = (props: VirtualListProps) => {
+export const VirtualList = <T = unknown>(props: VirtualListProps<T>) => {
   const {
     width,
     height,
@@ -70,28 +72,27 @@ export const VirtualList = (props: VirtualListProps) => {
 
   const internalScrollRef = useRef<HTMLDivElement>(null)
 
-  const scrollRef = scrollElementRef ?? internalScrollRef
+  const virtualizedItems = useVirtualizedItems(data)
 
-  const virtualizedItems = useMemo<VirtualizedItem[]>(() => {
-    return Array
-      .from({ length: data.length })
-      .map((_, index) => ({ id: `virtual-item-${index}`, index }))
-  }, [data])
+  const scrollRef = scrollElementRef ?? internalScrollRef
 
   return (
     <div
-      ref={scrollRef}
-      className={slotsClassNames?.container}
+      ref={contentWrapperRef}
       data-slot="virtual-list-container"
-      style={{
-        width,
-        height,
-        position: 'relative',
-        overflowY: 'auto',
-        contain: 'strict',
-      }}
+      style={{ position: 'relative' }}
     >
-      <div ref={contentWrapperRef} data-slot="virtual-list-wrapper">
+      <div
+        ref={scrollRef}
+        className={slotsClassNames?.container}
+        data-slot="virtual-list-wrapper"
+        style={{
+          width,
+          height,
+          overflowY: 'auto',
+          contain: 'strict',
+        }}
+      >
         <Virtualizer
           ref={(ref) => {
             if (virtualListRef?.current === null) {
@@ -100,7 +101,6 @@ export const VirtualList = (props: VirtualListProps) => {
           }}
           as={VirtualListContainer}
           item={VirtualListItem}
-          scrollRef={scrollRef}
           {...virtualizerOptions}
         >
           {isFunction(children)

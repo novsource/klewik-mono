@@ -3,10 +3,10 @@ import type { MutableRefObject, Ref } from 'react'
 
 import { isFunction } from '~shared/utils'
 
-export const useMergedRefs = <T>(...refs: Array<NullablePossible<Ref<T>>>) => {
+export const useMergedRefs = <T>(...refs: Array<Ref<T> | undefined>) => {
   return useCallback((instance: NullablePossible<T>) => {
     for (const ref of refs) {
-      updateRef(ref, instance)
+      ref && updateRef(ref, instance)
     }
   }, [refs])
 }
