@@ -1,6 +1,7 @@
 export * from './use-click-outside/use-click-outside'
 export * from './use-detect-device-by-media/use-detect-device-by-media'
 export * from './use-did-update/use-did-update'
+export * from './use-hover/use-hover'
 export * from './use-infinite-scroll/use-infinite-scroll'
 export * from './use-is-first-render/use-is-first-render'
 export * from './use-isomorphic-layout-effect/use-isomorphic-layout-effect'
