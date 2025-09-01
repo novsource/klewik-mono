@@ -1,4 +1,5 @@
 export * from './use-click-outside/use-click-outside'
+export * from './use-debounced-callback/use-debounced-callback'
 export * from './use-detect-device-by-media/use-detect-device-by-media'
 export * from './use-did-update/use-did-update'
 export * from './use-hover/use-hover'
