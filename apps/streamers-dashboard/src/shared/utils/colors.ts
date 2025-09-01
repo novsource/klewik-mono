@@ -35,16 +35,11 @@ export const isRGBAColor = (str: string): str is RGBAColor => {
   return true
 }
 
-export const hexToRgba = (hex: string, alpha = 1): NullablePossible<RGBAColor> => {
-  const isHexNotValid = !isHexColor(hex)
-
-  if (isHexNotValid)
-    return null
-
+export const hexToRgba = (hex: HexColor, alpha = 1): RGBAColor => {
   const matchesArr = hex.match(/\w\w/g)
 
   if (!matchesArr)
-    return null
+    return `rgba(0,0,0,${alpha})` as RGBAColor
 
   const [r, g, b] = matchesArr.map(x => Number.parseInt(x, 16))
 
