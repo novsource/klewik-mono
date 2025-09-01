@@ -54,7 +54,7 @@ export const SheetContent = (props: SheetContentProps) => {
   return (
     <DialogContent
       className={styles.content}
-      backdropProps={{ ...backdropProps, className: styles.backdrop, disableAnimation: true }}
+      backdropProps={{ ...backdropProps, className: styles.backdrop }}
       disableAnimation
       {...restProps}
     />
