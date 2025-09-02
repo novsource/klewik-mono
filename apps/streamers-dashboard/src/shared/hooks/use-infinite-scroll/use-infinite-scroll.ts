@@ -1,90 +1,120 @@
+import type { StateRef } from '../use-ref-state/use-ref-state'
+
+import { useEffect, useRef, useState } from 'react'
+
+import type { HookTarget } from '~shared/utils'
+import { getElement, isTarget } from '~shared/utils'
+
+import { useRefState } from '../use-ref-state/use-ref-state'
+
+/** The use infinite scroll options type */
+export type UseInfiniteScrollOptions = {
+  /** The direction to trigger the callback */
+  direction?: 'bottom' | 'left' | 'right' | 'top'
+  /** The distance in pixels to trigger the callback */
+  distance?: number
+}
+
+export type UseInfiniteScroll = {
+  (
+    target: HookTarget,
+    callback: (event: Event) => void,
+    options?: UseInfiniteScrollOptions
+  ): boolean
+
+  <Target extends Element>(
+    callback: (event: Event) => void,
+    options?: UseInfiniteScrollOptions,
+    target?: never
+  ): {
+    ref: StateRef<Target>
+    loading: boolean
+  }
+}
+
 /**
-  The concept of how this hook works was taken from the "ahooks" library.
-  Resource: https://ahooks.js.org/hooks/use-infinite-scroll/
+ * @name useInfiniteScroll
+ * @description - Hook that defines the logic for infinite scroll
+ * @category Sensors
+ * @usage medium
+ *
+ * @overload
+ * @template Target The target element
+ * @param {(event: Event) => void} callback The callback to execute when a click outside the target is detected
+ * @param {number} [options.distance] The distance in pixels to trigger the callback
+ * @param {string} [options.direction] The direction to trigger the callback
+ * @returns {{ ref: StateRef<Target>, loading: boolean }} An object containing the ref and loading
+ *
+ * @example
+ * const { ref, loading } = useInfiniteScroll(() => console.log('infinite scroll'));
+ *
+ * @overload
+ * @param {HookTarget} target The target element to detect infinite scroll for
+ * @param {(event: Event) => void} callback The callback to execute when a click outside the target is detected
+ * @param {number} [options.distance] The distance in pixels to trigger the callback
+ * @param {string} [options.direction] The direction to trigger the callback
+ * @returns {boolean} A loading indicator of the infinite scroll
+ *
+ * @example
+ * const loading = useInfiniteScroll(ref, () => console.log('infinite scroll'));
  */
-import { useCallback, useRef, useState } from 'react'
+export const useInfiniteScroll = ((...params: any[]) => {
+  const target = (isTarget(params[0]) ? params[0] : undefined) as HookTarget | undefined
+  const callback = (target ? params[1] : params[0]) as (event: Event) => void
+  const options = (target ? params[2] : params[1]) as UseInfiniteScrollOptions | undefined
 
-type InfiniteScrollService<ListDataItem, ServiceArgs>
-= (serviceArgs: ServiceArgs) => Promise<{ list: ListDataItem[] }>
+  const direction = options?.direction ?? 'bottom'
+  const distance = options?.distance ?? 10
 
-type InfiniteScrollReturn<ListDataItem, ServiceArgs> = {
-  state: {
-    value: ListDataItem[]
-    page: number
-    limit: number
-    isPending: boolean
-    isCanLoadMore: boolean
-    isDisabled: boolean
-  }
-  functions: {
-    loadMore: (...args: Parameters<InfiniteScrollService<ListDataItem, ServiceArgs>>) => Promise<void>
-    reset: () => void
-    enable: () => void
-    disable: () => void
-    updateLimit: (limit: number) => void
-  }
-}
+  const [loading, setIsLoading] = useState(false)
 
-type InfiniteScrollOptions<T> = {
-  limit: number
-  initial?: T[]
-}
+  const internalRef = useRefState<Element>()
+  const internalCallbackRef = useRef(callback)
+  internalCallbackRef.current = callback
+  const internalLoadingRef = useRef(loading)
+  internalLoadingRef.current = loading
 
-const useInfiniteScroll = <ListDataItem, ServiceArgs = void>(
-  serviceFn: InfiniteScrollService<ListDataItem, ServiceArgs>,
-  options: InfiniteScrollOptions<ListDataItem>,
-): InfiniteScrollReturn<ListDataItem, ServiceArgs> => {
-  const [value, setValue] = useState<ListDataItem[]>(options.initial ?? [])
+  useEffect(() => {
+    if (!target && !internalRef.state)
+      return
+    const element = (target ? getElement(target) : internalRef.current) as Element
+    if (!element)
+      return
 
-  const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(options.limit)
-  const [isCanLoadMore, setIsCanLoadMore] = useState(true)
-  const [isPending, setIsPending] = useState(false)
-  const [isDisabled, setIsDisabled] = useState(false)
-
-  const internalIsPendingRef = useRef(false)
-
-  const loadMore = useCallback(
-    async (...args: Parameters<typeof serviceFn>) => {
-      if (internalIsPendingRef.current || !isCanLoadMore || isDisabled)
+    const onLoadMore = async (event: Event) => {
+      if (internalLoadingRef.current)
         return
 
-      internalIsPendingRef.current = true
-      setIsPending(true)
+      const { clientHeight, scrollHeight, scrollTop, clientWidth, scrollWidth, scrollLeft }
+        = event.target as Element
+      const scrollBottom = scrollHeight - (scrollTop + clientHeight)
+      const scrollRight = scrollWidth - (scrollLeft + clientWidth)
 
-      const newData = await serviceFn(...args)
+      const distances = {
+        bottom: scrollBottom,
+        top: scrollTop,
+        right: scrollRight,
+        left: scrollLeft,
+      }
 
-      setIsPending(false)
-      setValue(curr => [...curr, ...newData.list])
-      setPage(currentPage => currentPage + 1)
-      setIsCanLoadMore(newData.list.length >= limit)
+      if (distances[direction] <= distance) {
+        setIsLoading(true)
+        await internalCallbackRef.current(event)
+        setIsLoading(false)
+      }
+    }
 
-      internalIsPendingRef.current = false
-    },
-    [serviceFn, limit, isCanLoadMore, isDisabled],
-  )
+    element.addEventListener('scroll', onLoadMore)
 
+    return () => {
+      element.removeEventListener('scroll', onLoadMore)
+    }
+  }, [target, internalRef.state, direction, distance])
+
+  if (target)
+    return loading
   return {
-    state: {
-      value,
-      page,
-      limit,
-      isPending,
-      isCanLoadMore,
-      isDisabled,
-    },
-    functions: {
-      loadMore,
-      enable: () => setIsDisabled(false),
-      disable: () => setIsDisabled(true),
-      reset: () => {
-        setValue(() => options.initial ?? [])
-        setIsCanLoadMore(true)
-        setPage(1)
-      },
-      updateLimit: (limit: number) => setLimit(limit),
-    },
+    ref: internalRef,
+    loading,
   }
-}
-
-export { useInfiniteScroll }
+}) as UseInfiniteScroll
