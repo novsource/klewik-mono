@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 import { isAxiosError } from 'axios'
 
+import type { LoadMoreDonationsQueryArgs } from '~features/donations/watch-donations/api'
 import { useLazyLoadMoreDonationsQuery } from '~features/donations/watch-donations/api'
 
 import { auctionSelectors } from '~entities/auction/store'
@@ -9,10 +10,14 @@ import { auctionSelectors } from '~entities/auction/store'
 import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
 import { donationsActions } from '~entities/donation/store'
 
+import type {
+  UseInfiniteListOptions,
+} from '~shared/hooks'
 import {
   useDidUpdate,
-  useInfiniteScroll,
+  useInfiniteList,
   useIsFirstRender,
+  useUnmount,
 } from '~shared/hooks'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -22,34 +27,42 @@ import { toastErrorNotification } from '~shared/ui/toaster/lib'
 const wait = (ms: number = 1000) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const useDonationsInfinityList
-  = (donations: ProcessedDonation[], status: NullablePossible<ProcessedDonationStatus>) => {
-    const { addDonation } = useActionCreators(donationsActions)
+  = (
+    donations: ProcessedDonation[],
+    status: NullablePossible<ProcessedDonationStatus>,
+    options: UseInfiniteListOptions<ProcessedDonation>,
+  ) => {
+    const [isListReseted, setIsListReseted] = useState(false)
 
+    const { addDonation } = useActionCreators(donationsActions)
     const auctionInfo = useStoreSelector(auctionSelectors.getAuctionInfo)
 
-    const isFirstRender = useIsFirstRender()
     const [loadMoreDonationsQuery] = useLazyLoadMoreDonationsQuery()
 
+    const isFirstRender = useIsFirstRender()
+
+    const previousStatusRef = useRef(status)
     const queryRef = useRef<NullablePossible<ReturnType<typeof loadMoreDonationsQuery>>>(null)
 
     const {
-      state: infinityScrollState,
-      functions: { loadMore, reset: resetList },
-    } = useInfiniteScroll<ProcessedDonation>(
+      ref,
+      state: infiniteListState,
+      functions: { loadMore, reset: resetList, clearList },
+    } = useInfiniteList<ProcessedDonation, Pick<LoadMoreDonationsQueryArgs, 'after'>>(
       async () => {
         try {
           await wait(2000)
 
           const request = loadMoreDonationsQuery({
             auctionUUID: auctionInfo.auctionUUID,
-            limit: infinityScrollState.limit,
+            limit: infiniteListState.limit,
             order: 'descending',
             status: status || 'all',
           })
 
           queryRef.current = request
-
           const response = await request
+          queryRef.current = null
 
           if (response.isError) {
             throw response.error
@@ -73,29 +86,45 @@ export const useDonationsInfinityList
           return { list: [] }
         }
       },
-      {
-        limit: 15,
-      },
+      options,
     )
 
     const listItems = useMemo(() => {
-      return [...donations, ...infinityScrollState.value]
-    }, [donations, infinityScrollState.value])
+      return [...donations, ...infiniteListState.value]
+    }, [donations, infiniteListState.value])
 
     const isListEmpty = listItems.length === 0
+    const isStatusSynced = previousStatusRef.current === status
 
     if (isListEmpty && isFirstRender) {
       loadMore()
     }
 
     useDidUpdate(() => {
-      if (queryRef.current)
+      if (!isStatusSynced && !isListReseted) {
+        resetList()
+        setIsListReseted(true)
+      }
+    }, [status, isListReseted])
+
+    useDidUpdate(() => {
+      if (!isStatusSynced && queryRef.current) {
         queryRef.current.abort()
+        queryRef.current = null
+      }
 
-      resetList()
-    }, [status])
+      const isListItemsLessThenLimit = listItems.length < infiniteListState.limit
+      const isPossibleToLoadMore = infiniteListState.isCanLoadMore && !infiniteListState.isPending
 
-    useEffect(() => () => queryRef.current?.abort())
+      if (isListItemsLessThenLimit && isPossibleToLoadMore && !isStatusSynced && isListReseted) {
+        previousStatusRef.current = status
 
-    return { listItems, infinityScrollState, loadMore, reset: resetList }
+        loadMore()
+        setIsListReseted(false)
+      }
+    }, [status, listItems, isListReseted, infiniteListState.isCanLoadMore, infiniteListState.isPending])
+
+    useUnmount(() => queryRef.current?.abort())
+
+    return { ref, listItems, infiniteListState, loadMore, reset: resetList }
   }

@@ -19,7 +19,6 @@ export type UseInfiniteListServiceFunction<ListDataItem, Args> = ServiceFunction
 export type UseInfiniteListState = {
   page: number
   limit: number
-  isPending: boolean
   isCanLoadMore: boolean
   isDisabled: boolean
 }
@@ -28,6 +27,7 @@ export type UseInfiniteListReturn<ListDataItem, ServiceArgs> = {
   ref: StateRef<Element>
   state: UseInfiniteListState & {
     value: ListDataItem[]
+    isPending: boolean
   }
   functions: {
     loadMore: ServiceFunction<ServiceArgs, void>
@@ -40,20 +40,19 @@ export type UseInfiniteListReturn<ListDataItem, ServiceArgs> = {
 }
 
 export type UseInfiniteListOptions<T> = {
-  onListEnd: () => Promise<void> | void
   limit?: number
   initial?: T[]
 }
 
 export const useInfiniteList = <ListDataItem, ServiceArgs = unknown>(
   serviceFn: UseInfiniteListServiceFunction<ListDataItem, ServiceArgs>,
-  options: UseInfiniteListOptions<ListDataItem>,
+  options?: UseInfiniteListOptions<ListDataItem>,
 ): UseInfiniteListReturn<ListDataItem, ServiceArgs> => {
   const [value, setValue] = useState<ListDataItem[]>(options?.initial ?? [])
+  const [isPending, setIsPending] = useState(false)
   const [listState, setListState] = useState<UseInfiniteListState>({
     page: 1,
     limit: options?.limit ?? 15,
-    isPending: false,
     isCanLoadMore: true,
     isDisabled: false,
   })
@@ -69,34 +68,36 @@ export const useInfiniteList = <ListDataItem, ServiceArgs = unknown>(
           return
 
         internalIsPendingRef.current = true
-
-        setListState(curr => ({ ...curr, isPending: true }))
-
+        setIsPending(true)
         const newData = await serviceFn(args)
+        setIsPending(false)
+        internalIsPendingRef.current = false
 
         setListState(curr => ({
           ...curr,
           page: curr.page++,
           isCanLoadMore: newData.list.length >= curr.limit,
-          isPending: false,
         }))
         setValue(curr => [...curr, ...newData.list])
-
-        internalIsPendingRef.current = false
       }
       catch (_) {
-        setListState(curr => ({ ...curr, isPending: false }))
+        setIsPending(false)
         internalIsPendingRef.current = false
       }
     },
     [serviceFn, listState],
   )
 
-  const infiniteScroll = useInfiniteScroll(options.onListEnd)
+  const infiniteScroll = useInfiniteScroll(_ => loadMore())
 
-  const isLoading = infiniteScroll.loading || listState.isPending
+  const isLoading = infiniteScroll.loading || isPending
 
-  console.log(isLoading)
+  const resetList = () => {
+    internalIsPendingRef.current = false
+
+    setValue(() => options?.initial ?? [])
+    setListState(curr => ({ ...curr, isCanLoadMore: true, page: 1 }))
+  }
 
   return {
     ref: infiniteScroll.ref,
@@ -110,13 +111,10 @@ export const useInfiniteList = <ListDataItem, ServiceArgs = unknown>(
     },
     functions: {
       loadMore,
+      reset: resetList,
       clearList: () => setValue([]),
       enable: () => setListState(curr => ({ ...curr, isDisabled: false })),
       disable: () => setListState(curr => ({ ...curr, isDisabled: true })),
-      reset: () => {
-        setValue(() => options?.initial ?? [])
-        setListState(curr => ({ ...curr, isCanLoadMore: true, page: 1 }))
-      },
       updateLimit: (limit: number) => setListState(curr => ({ ...curr, limit })),
     },
   }
