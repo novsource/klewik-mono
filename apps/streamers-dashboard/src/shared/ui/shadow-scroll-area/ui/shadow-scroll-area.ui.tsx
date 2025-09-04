@@ -21,8 +21,7 @@ import {
   useScroll,
 } from 'motion/react'
 
-import { useDebouncedCallback } from '~shared/hooks/use-debounced-callback'
-import { useResizeObserver } from '~shared/hooks/use-resize-observer'
+import { useDebounceCallback, useResizeObserver } from '~shared/hooks'
 
 import { MotionBox } from '~shared/ui/motion-box'
 import { ScrollArea } from '~shared/ui/scroll-area'
@@ -33,8 +32,8 @@ export type ShadowScrollAreaProps = ComponentPropsWithoutRef<'div'> & {
   width: string | number
   height: string | number
   contentAreaHTMLProps?: ScrollAreaProps
-  externalScrollRef?: RefObject<HTMLElement>
-  externalContentRef?: RefObject<HTMLElement>
+  externalScrollRef?: RefObject<HTMLDivElement>
+  externalContentRef?: RefObject<HTMLDivElement>
   shadowEnabled?: boolean
   shadowSize?: number
   disableAnimation?: boolean
@@ -77,7 +76,7 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
 
   const { entries } = useResizeObserver(contentRefElement)
 
-  const debouncedShadowAnimation = useDebouncedCallback(
+  const debouncedShadowAnimation = useDebounceCallback(
     (
       values: { topShadow: boolean, bottomShadow: boolean } = {
         topShadow: true,

@@ -17,7 +17,7 @@ import { cn } from '~shared/utils'
 
 import { useFiltredDonations } from '../lib'
 import { DonationsFilterSelect } from './donations-filter-select.ui'
-import { DonationsInfinityList } from './donations-infinity-list.ui'
+import { AuctionDonationsInfiniteList } from './donations-infinity-list.ui'
 
 export const AuctionDonationsPage = () => {
   const { isConnected: isDonationsSSEEventConnected } = useStoreSelector(store => sseSelectors.getEventStatus(store, 'auctionSlots'))
@@ -67,7 +67,7 @@ export const AuctionDonationsPage = () => {
         />
       </Flex>
 
-      <DonationsInfinityList data={filtredDonations} filterStatus={donationsFilterValue} />
+      <AuctionDonationsInfiniteList data={filtredDonations} filterStatus={donationsFilterValue} />
     </div>
   )
 }

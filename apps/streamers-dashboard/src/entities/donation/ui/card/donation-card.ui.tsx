@@ -31,36 +31,34 @@ import { cn, formatNumberToIntlString } from '~shared/utils'
 
 import {
   DonationCardBadge,
-  SkeletonDonationCardBadge,
 } from './donation-card-badge.ui'
 import {
   DonationCardChip,
-  SkeletonDonationCardChip,
 } from './donation-card-chip.ui'
 import { DonationCardMessage } from './donation-card-message.ui'
 
-export type SkeletonDonationCardProps = CardProps
+// export type SkeletonDonationCardProps = CardProps
 
-export const SkeletonDonationCard = (props: SkeletonDonationCardProps) => {
-  return (
-    <Card {...props}>
-      <CardHeader className="flex gap-x-2">
-        <SkeletonDonationCardBadge />
-        <SkeletonDonationCardBadge />
-      </CardHeader>
-      <CardContent className="w-full flex flex-col p-0 py-2">
-        <Skeleton className="max-w-[280px] h-6 rounded-md" />
-      </CardContent>
-      <CardFooter className="flex flex-row gap-x-1 mt-2 items-end justify-between">
-        <Flex className="gap-x-2">
-          <SkeletonDonationCardChip />
-          <SkeletonDonationCardChip />
-        </Flex>
-        <SkeletonDonationCardChip className="h-5" />
-      </CardFooter>
-    </Card>
-  )
-}
+// export const SkeletonDonationCard = (props: SkeletonDonationCardProps) => {
+//   return (
+//     <Card {...props}>
+//       <CardHeader className="flex gap-x-2">
+//         <SkeletonDonationCardBadge />
+//         <SkeletonDonationCardBadge />
+//       </CardHeader>
+//       <CardContent className="w-full flex flex-col p-0 py-2">
+//         <Skeleton className="max-w-[280px] h-6 rounded-md" />
+//       </CardContent>
+//       <CardFooter className="flex flex-row gap-x-1 mt-2 items-end justify-between">
+//         <Flex className="gap-x-2">
+//           <SkeletonDonationCardChip />
+//           <SkeletonDonationCardChip />
+//         </Flex>
+//         <SkeletonDonationCardChip className="h-5" />
+//       </CardFooter>
+//     </Card>
+//   )
+// }
 
 export type BaseDonationCardProps = CardProps
 
@@ -311,6 +309,29 @@ export const SolidDonationCard = (props: SolidDonationCardProps) => {
       <SolidDonationCardHeader donationData={donation} {...headerProps} />
       <SolidDonationCardContent donationData={donation} {...contentProps} />
       <SolidDonationCardFooter donationData={donation} {...footerProps} />
+    </BaseDonationCard>
+  )
+}
+
+export type SkeletonDonationCardProps = BaseDonationCardProps
+
+export const SkeletonDonationCard = (props: SkeletonDonationCardProps) => {
+  return (
+    <BaseDonationCard {...props}>
+      <BaseDonationCardHeader className="h-6.25">
+        <Flex className="gap-x-1" align="center">
+          <Skeleton className="w-28 h-full rounded-pill" />
+          <Skeleton className="w-20 h-full rounded-pill" />
+        </Flex>
+      </BaseDonationCardHeader>
+      <BaseDonationCardContent className="gap-y-1 tablet:pt-3">
+        <Flex className="h-6.25 gap-x-2">
+          <Skeleton className="w-32 h-full" />
+          <Skeleton className="w-18 h-full" />
+          <Skeleton className="w-24 h-full" />
+        </Flex>
+        <Skeleton className="min-w-20 w-full max-w-[300px] h-7" />
+      </BaseDonationCardContent>
     </BaseDonationCard>
   )
 }

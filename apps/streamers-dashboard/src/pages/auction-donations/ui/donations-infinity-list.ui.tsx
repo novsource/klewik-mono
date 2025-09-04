@@ -1,79 +1,109 @@
-import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
-import { SkeletonDonationCard } from '~entities/donation/ui/card'
+import { useRef } from 'react'
 
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
+import { isAxiosError } from 'axios'
+
+import { useLazyLoadMoreDonationsQuery } from '~features/donations/watch-donations/api'
+import { useDonationsInfiniteList } from '~features/donations/watch-donations/hooks'
+import type { DonationsInfiniteListProps } from '~features/donations/watch-donations/ui'
+import { DonationsInfiniteList } from '~features/donations/watch-donations/ui'
+
+import { auctionSelectors } from '~entities/auction/store'
+
+import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
+
+import { useDidUpdate } from '~shared/hooks'
+
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { MotionBox } from '~shared/ui/motion-box'
-import { ShadowVirtualList } from '~shared/ui/shadow-virtual-list'
-import { Typography } from '~shared/ui/typograghy'
-import { useVirtualizedItems } from '~shared/ui/virtual-list/hooks'
+import { toastErrorNotification } from '~shared/ui/toaster/lib'
 import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
 
-import { useDonationsInfinityList } from '../lib'
 import { InfinityDonationsListCard } from './donations-list-card.ui'
 
-type DonationsInfinityListProps = {
+type AuctionDonationsInfiniteListProps
+  = Omit<
+    DonationsInfiniteListProps,
+'data' | 'listRef' | 'isCanBeLoadMore' | 'isPending' | 'children'
+> & {
   data: ProcessedDonation[]
   filterStatus: NullablePossible<ProcessedDonationStatus>
   offset?: number
 }
 
-export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
-  const { data, filterStatus, offset, ...restProps } = props
+const wait = (ms: number = 1000) => new Promise(resolve => setTimeout(resolve, ms))
+
+export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteListProps) => {
+  const {
+    data,
+    filterStatus,
+    offset,
+    limit = 15,
+    ...restProps
+  } = props
+
+  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
+
+  const [loadMoreDonationsQuery] = useLazyLoadMoreDonationsQuery()
+
+  const previousStatusRef = useRef(filterStatus)
+  const queryRef = useRef<NullablePossible<ReturnType<typeof loadMoreDonationsQuery>>>(null)
+
+  const loadDonations = async () => {
+    try {
+      await wait(2000)
+
+      const request = loadMoreDonationsQuery({
+        auctionUUID,
+        limit,
+        order: 'descending',
+        status: filterStatus || 'all',
+      })
+
+      queryRef.current = request
+      const response = await request
+      queryRef.current = null
+
+      if (response.isError) {
+        throw response.error
+      }
+
+      if (!response || !response.data) {
+        return { list: [] }
+      }
+
+      return { list: response.data }
+    }
+    catch (err) {
+      if (isAxiosError(err)) {
+        toastErrorNotification(err.message)
+      }
+
+      queryRef.current = null
+
+      return { list: [] }
+    }
+  }
 
   const {
-    ref: scrollElementRef,
+    ref,
     infiniteListState,
     listItems,
-  } = useDonationsInfinityList(data, filterStatus, { limit: 15 })
+    reset,
+  } = useDonationsInfiniteList(loadDonations, data, { limit: 15 })
 
-  /*
-    Here we check if we can fit a screen full of cards equal to or greater than the list limit
-    If the length of donations is less than the limit, we fill them with empty ones,
-    which will subsequently be displayed as skeletons
-  */
-  const virtualizedItems = useVirtualizedItems(
-    listItems.length < infiniteListState.limit
-      ? [...listItems, ...Array.from(
-          { length: infiniteListState.limit - listItems.length },
-        ).fill(null)]
-      : listItems,
-  )
+  useDidUpdate(() => {
+    if (filterStatus !== previousStatusRef.current) {
+      previousStatusRef.current = filterStatus
 
-  const renderVirtualListItem = (
+      reset()
+    }
+  }, [filterStatus])
+
+  const renderListItem = (
+    donation: ProcessedDonation,
     virtualizeItem: VirtualizedItem,
   ) => {
-    const { isPending } = infiniteListState
-
-    const isListLengthLessThenLimit = listItems.length < infiniteListState.limit
-    const isVItemBlanked = !listItems[virtualizeItem.index]
-
-    const isShouldRenderAsSkeleton = isPending && isListLengthLessThenLimit && isVItemBlanked
-
-    if (isShouldRenderAsSkeleton) {
-      return (
-        <MotionBox
-          key={virtualizeItem.id}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          withAnimatePresense
-        >
-          <SkeletonDonationCard
-            key={virtualizeItem.id}
-            style={{
-              marginTop: virtualizeItem.index !== 0 ? '8px' : '0',
-            }}
-          />
-        </MotionBox>
-      )
-    }
-
-    if (!isShouldRenderAsSkeleton && isVItemBlanked)
-      return
-
-    const donation = listItems[virtualizeItem.index]
-
     return (
       <MotionBox
         key={virtualizeItem.id}
@@ -94,63 +124,16 @@ export const DonationsInfinityList = (props: DonationsInfinityListProps) => {
     )
   }
 
-  const virtualListItemsCount
-    = infiniteListState.isPending
-      ? listItems.length + infiniteListState.limit
-      : listItems.length
-
-  const isShouldShowEmptyContent
-    = !listItems.length && !infiniteListState.isCanLoadMore && !infiniteListState.isPending
-
   return (
-    <Flex className="h-full w-full" {...restProps}>
-      <ShadowVirtualList
-        slotsClassNames={{ container: 'pb-4' }}
-        data={listItems}
-        count={virtualListItemsCount}
-        scrollElementRef={scrollElementRef}
-        shadowScrollProps={{
-          shadowSize: 30,
-        }}
-      >
-        {isShouldShowEmptyContent && <EmptyDonationsList />}
-        {virtualizedItems.map(renderVirtualListItem)}
-        {infiniteListState.isPending
-          && listItems.length >= infiniteListState.limit
-          && (
-            <MotionBox
-              className="flex w-full pt-10 gap-x-2 justify-center items-center text-gray"
-              initial={{ scale: 1.15, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ ease: 'easeInOut', duration: 0.3 }}
-            >
-              <MotionBox
-                initial={{ rotateZ: -180 }}
-                animate={{ rotateZ: 0 }}
-                transition={{ repeat: Infinity, type: 'spring', duration: 1.25 }}
-              >
-                <Icons.Logo width={38} height={38} />
-              </MotionBox>
-            </MotionBox>
-          )}
-      </ShadowVirtualList>
-    </Flex>
-  )
-}
-
-function EmptyDonationsList() {
-  return (
-    <Flex className="fixed w-full h-full top-0 left-0 -z-40" align="center" justify="center">
-      <MotionBox
-        className="flex flex-col items-center gap-y-1"
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-      >
-        <Icons.Logo width={32} height={32} className="text-gray" />
-        <Typography tag="span" className="font-medium text-gray">
-          Донаты не были найдены
-        </Typography>
-      </MotionBox>
-    </Flex>
+    <DonationsInfiniteList
+      data={listItems}
+      listRef={ref}
+      isCanBeLoadMore={infiniteListState.isCanLoadMore}
+      isPending={infiniteListState.isPending}
+      limit={infiniteListState.limit}
+      {...restProps}
+    >
+      { renderListItem }
+    </DonationsInfiniteList>
   )
 }

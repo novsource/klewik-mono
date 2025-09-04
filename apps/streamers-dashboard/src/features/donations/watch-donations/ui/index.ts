@@ -1,3 +1,1 @@
-import { DonationsList } from './watch-donations.ui'
-
-export { DonationsList }
+export * from './donations-infinite-list.ui'

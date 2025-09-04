@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { useRef } from 'react'
 
 import AutoSizer from 'react-virtualized-auto-sizer'
 
@@ -30,12 +30,10 @@ const ShadowVirtualList = <T = unknown>(
   } = props
 
   const internalScrollRef = useRef<HTMLDivElement>(null)
-  const internalListWrapperRef = useRef<HTMLDivElement>(null)
+  const internalContentRef = useRef<HTMLDivElement>(null)
 
-  const contentRef = contentWrapperRef ?? internalListWrapperRef
-
-  const scrollRefs = useMemo(() => [internalScrollRef, scrollElementRef], [scrollElementRef])
-  const scrollRefCallback = useMergedRefs(...scrollRefs)
+  const contentMergedRef = useMergedRefs(internalContentRef, contentWrapperRef)
+  const scrollMergedRef = useMergedRefs(internalScrollRef, scrollElementRef)
 
   return (
     <AutoSizer>
@@ -45,14 +43,14 @@ const ShadowVirtualList = <T = unknown>(
             width={width ?? autoWidth}
             height={height ?? autoHeight}
             externalScrollRef={internalScrollRef}
-            externalContentRef={contentRef}
+            externalContentRef={internalContentRef}
             {...shadowScrollProps}
           >
             <VirtualList
               width={width ?? autoWidth}
               height={height ?? autoHeight}
-              scrollElementRef={scrollRefCallback}
-              contentWrapperRef={contentRef}
+              scrollElementRef={scrollMergedRef}
+              contentWrapperRef={contentMergedRef}
               {...virtualListProps}
             />
           </ShadowScrollArea>

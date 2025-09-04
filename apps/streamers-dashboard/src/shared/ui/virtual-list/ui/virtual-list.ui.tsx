@@ -8,7 +8,7 @@ import type {
 import type { VirtualizedItem } from '../hooks'
 
 import { forwardRef, useRef } from 'react'
-import type { ComponentProps, MutableRefObject, ReactNode, RefCallback } from 'react'
+import type { ComponentProps, MutableRefObject, ReactNode, Ref, RefCallback } from 'react'
 
 import { Virtualizer } from 'virtua'
 
@@ -46,8 +46,8 @@ export type VirtualListProps<ListDataElement> = Omit<VirtualizerProps, 'children
   children: VirtualListRenderFunction<ListDataElement> | ReactNode | ReactNode[]
   estimateSize?: (index: number) => number
   slotsClassNames?: Partial<Record<VirtualListSlots, string>>
-  scrollElementRef?: MutableRefObject<NullablePossible<HTMLDivElement>> | RefCallback<HTMLDivElement>
-  contentWrapperRef?: MutableRefObject<NullablePossible<HTMLDivElement>>
+  scrollElementRef?: Ref<HTMLDivElement> | RefCallback<HTMLDivElement>
+  contentWrapperRef?: Ref<HTMLDivElement> | RefCallback<HTMLDivElement>
   virtualListRef?: MutableRefObject<NullablePossible<VirtualizerHandle>>
   count?: number
   width?: number

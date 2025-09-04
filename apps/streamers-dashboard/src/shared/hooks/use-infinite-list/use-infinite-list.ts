@@ -24,7 +24,7 @@ export type UseInfiniteListState = {
 }
 
 export type UseInfiniteListReturn<ListDataItem, ServiceArgs> = {
-  ref: StateRef<Element>
+  ref: StateRef<HTMLDivElement>
   state: UseInfiniteListState & {
     value: ListDataItem[]
     isPending: boolean
@@ -88,7 +88,7 @@ export const useInfiniteList = <ListDataItem, ServiceArgs = unknown>(
     [serviceFn, listState],
   )
 
-  const infiniteScroll = useInfiniteScroll(_ => loadMore())
+  const infiniteScroll = useInfiniteScroll<HTMLDivElement>(_ => loadMore())
 
   const isLoading = infiniteScroll.loading || isPending
 
