@@ -10,18 +10,18 @@ import { DonationsInfiniteList } from '~features/donations/watch-donations/ui'
 import { auctionSelectors } from '~entities/auction/store'
 
 import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
+import { donationsActions } from '~entities/donation/store'
 
-import { useDidUpdate } from '~shared/hooks'
+import { useDidUpdate, useUnmount } from '~shared/hooks'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { MotionBox } from '~shared/ui/motion-box'
-import { toastErrorNotification } from '~shared/ui/toaster/lib'
 import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
 
 import { InfinityDonationsListCard } from './donations-list-card.ui'
 
-type AuctionDonationsInfiniteListProps
+export type AuctionDonationsInfiniteListProps
   = Omit<
     DonationsInfiniteListProps,
 'data' | 'listRef' | 'isCanBeLoadMore' | 'isPending' | 'children'
@@ -30,8 +30,6 @@ type AuctionDonationsInfiniteListProps
   filterStatus: NullablePossible<ProcessedDonationStatus>
   offset?: number
 }
-
-const wait = (ms: number = 1000) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteListProps) => {
   const {
@@ -42,20 +40,21 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
     ...restProps
   } = props
 
+  const { addDonation } = useActionCreators(donationsActions)
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const [loadMoreDonationsQuery] = useLazyLoadMoreDonationsQuery()
 
   const previousStatusRef = useRef(filterStatus)
+  const lastDonationIdRef = useRef<NullablePossible<number>>(data[data.length - 1]?.id ?? null)
   const queryRef = useRef<NullablePossible<ReturnType<typeof loadMoreDonationsQuery>>>(null)
 
   const loadDonations = async () => {
     try {
-      await wait(2000)
-
       const request = loadMoreDonationsQuery({
         auctionUUID,
         limit,
+        after: lastDonationIdRef.current,
         order: 'descending',
         status: filterStatus || 'all',
       })
@@ -68,20 +67,28 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
         throw response.error
       }
 
-      if (!response || !response.data) {
+      const responseData = response.data
+
+      if (!response || !responseData) {
         return { list: [] }
       }
 
-      return { list: response.data }
+      responseData.forEach(addDonation)
+      lastDonationIdRef.current
+        = responseData[responseData.length - 1] ? responseData[responseData.length - 1].id : lastDonationIdRef.current
+
+      return { list: responseData }
     }
     catch (err) {
-      if (isAxiosError(err)) {
-        toastErrorNotification(err.message)
-      }
-
       queryRef.current = null
 
-      return { list: [] }
+      if (isAxiosError(err)) {
+        throw new Error(err.message)
+      }
+
+      if (err instanceof Error) {
+        throw err
+      }
     }
   }
 
@@ -95,10 +102,15 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
   useDidUpdate(() => {
     if (filterStatus !== previousStatusRef.current) {
       previousStatusRef.current = filterStatus
+      lastDonationIdRef.current = data[data.length - 1]?.id
+
+      queryRef.current?.abort()
 
       reset()
     }
   }, [filterStatus])
+
+  useUnmount(() => queryRef.current?.abort())
 
   const renderListItem = (
     donation: ProcessedDonation,
