@@ -78,14 +78,6 @@ export class BaseHttpClient implements BaseHttpClientMethods {
   }
 
   request<T>(url: string, options?: HttpClientRequestOptions) {
-    const isAlreadyFetching = this._requestPromisesCollection.has(url)
-
-    if (isAlreadyFetching) {
-      return this._requestPromisesCollection.get(url) as Promise<
-        AxiosResponse<T>
-      >
-    }
-
     const fetchOptions = { url, ...options, method: options?.method ?? 'GET' }
 
     if (fetchOptions.retry) {
@@ -154,12 +146,6 @@ export class BaseHttpClient implements BaseHttpClientMethods {
   }
 
   protected _internalRequest<T>(url: string, config: HttpClientRequestOptions) {
-    const request = this._axiosInstance
-      .request<T>(config)
-      .finally(() => this._requestPromisesCollection.delete(url))
-
-    this._requestPromisesCollection.set(url, request)
-
-    return request
+    return this._axiosInstance.request<T>({ url, ...config })
   }
 }

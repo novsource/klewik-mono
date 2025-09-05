@@ -51,7 +51,7 @@ type AxiosQueryFn = BaseQueryFn<
 
 const axiosBaseQuery
   = (options: AxiosBaseQueryOptions): AxiosQueryFn =>
-    async ({ url, method, data, headers, params, rewriteBaseURL = false }) => {
+    async ({ url, method, data, headers, params, rewriteBaseURL = false }, api) => {
       const isDev = import.meta.env.VITE_DEV
       try {
         const axios = new BaseHttpClient({
@@ -72,6 +72,7 @@ const axiosBaseQuery
           data,
           params,
           headers,
+          signal: api.signal,
         })
 
         return { data: result.data }

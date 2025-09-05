@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 
 import type { ProcessedDonation } from '~entities/donation/model'
-import { donationsActions } from '~entities/donation/store'
 
 import type {
   UseInfiniteListOptions,
@@ -13,8 +12,6 @@ import {
   useIsFirstRender,
 } from '~shared/hooks'
 
-import { useActionCreators } from '~shared/lib/redux-toolkit'
-
 import { objectToDeps } from '~shared/utils'
 
 export const useDonationsInfiniteList
@@ -25,27 +22,13 @@ export const useDonationsInfiniteList
   ) => {
     const [isListReseted, setIsListReseted] = useState(false)
 
-    const { addDonation } = useActionCreators(donationsActions)
-
     const isFirstRender = useIsFirstRender()
 
     const {
       ref,
       state: infiniteListState,
       functions: { loadMore, reset },
-    } = useInfiniteList<ProcessedDonation, Args>(async (args: Args) => {
-      try {
-        const response = await query(args)
-
-        response.list.forEach(addDonation)
-
-        return response
-      }
-      catch (err) {
-        if (err instanceof Error)
-          console.log(err.message)
-      }
-    }, options)
+    } = useInfiniteList<ProcessedDonation, Args>(query, options)
 
     const listItems = useMemo(() => {
       return [...donations, ...infiniteListState.value]

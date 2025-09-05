@@ -28,10 +28,18 @@ const loadMoreDonationApi = splittedDonationApi.injectEndpoints({
       LoadMoreDonationsQueryReturnValue,
       LoadMoreDonationsQueryArgs
     >({
-      query: ({ auctionUUID, ...params }) => {
+      query: ({ auctionUUID, status, ...params }) => {
+        if (status === 'all') {
+          return {
+            url: `/${auctionUUID}/donations`,
+            params,
+            withCredentials: true,
+          }
+        }
+
         return {
           url: `/${auctionUUID}/donations`,
-          params,
+          params: { status, ...params },
           withCredentials: true,
         }
       },
