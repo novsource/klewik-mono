@@ -24,6 +24,7 @@ import {
 } from '~shared/ui/card'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
+import { Skeleton } from '~shared/ui/skeleton'
 import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
@@ -91,9 +92,9 @@ export const BaseAuctionSlotCardTitle = (props: BaseAuctionSlotCardTitleProps) =
   )
 }
 
-export type AuctionSlotCardContentProps = ComponentProps<'div'>
+export type BaseAuctionSlotCardContentProps = ComponentProps<'div'>
 
-export const AuctionSlotCardContent = (props: AuctionSlotCardContentProps) => {
+export const BaseAuctionSlotCardContent = (props: BaseAuctionSlotCardContentProps) => {
   const { className, ...restProps } = props
 
   return (
@@ -256,7 +257,7 @@ export const SolidAuctionSlotContent = (props: SolidAuctionSlotContentProps) => 
   const { auctionSlot, winPercents, ...restProps } = props
 
   return (
-    <AuctionSlotCardContent {...restProps}>
+    <BaseAuctionSlotCardContent {...restProps}>
       <Flex
         className="w-full gap-x-3 tablet:gap-x-5"
         direction="row"
@@ -265,7 +266,7 @@ export const SolidAuctionSlotContent = (props: SolidAuctionSlotContentProps) => 
         <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
         {winPercents && <AuctionSlotCardWinPercents winPercents={winPercents} />}
       </Flex>
-    </AuctionSlotCardContent>
+    </BaseAuctionSlotCardContent>
   )
 }
 
@@ -289,6 +290,49 @@ export const SolidAuctionSlotCard = (props: SolidAuctionSlotCardProps) => {
         auctionSlot={auctionSlot}
         winPercents={winPercents}
       />
+    </BaseAuctionSlotCard>
+  )
+}
+
+export type SkeletonAuctionSlotCardProps = BaseAuctionSlotCardProps & {
+  headerProps?: BaseAuctionSlotCardHeaderProps
+  contentProps?: BaseAuctionSlotCardContentProps
+}
+
+export const SkeletonAuctionSlotCard = (props: SkeletonAuctionSlotCardProps) => {
+  const { headerProps, contentProps, ...restProps } = props
+
+  const isDeviceGreaterThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+
+  return (
+    <BaseAuctionSlotCard {...restProps}>
+      <BaseAuctionSlotCardHeader {...headerProps}>
+        <Flex className="w-full gap-x-2" align="center">
+          <Skeleton className="w-8.5 h-5.5 max-tablet:h-4.5" />
+        </Flex>
+      </BaseAuctionSlotCardHeader>
+      <BaseAuctionSlotCardContent {...contentProps}>
+        <Flex
+          className="w-full gap-x-3 tablet:gap-x-5"
+          direction="row"
+          align="end"
+        >
+          <AuctionSlotCardContentInfoWrapper
+            icon={<Icons.Coin size={isDeviceGreaterThenTablet ? 'lg' : 'default'} />}
+          >
+            <Skeleton className="w-20 h-6" />
+          </AuctionSlotCardContentInfoWrapper>
+          <AuctionSlotCardContentInfoWrapper
+            icon={(
+              <Icons.Crown
+                size={isDeviceGreaterThenTablet ? 'lg' : 'default'}
+              />
+            )}
+          >
+            <Skeleton className="w-9 h-6.5 max-tablet:w-16 max-tablet:h-5.25" />
+          </AuctionSlotCardContentInfoWrapper>
+        </Flex>
+      </BaseAuctionSlotCardContent>
     </BaseAuctionSlotCard>
   )
 }
