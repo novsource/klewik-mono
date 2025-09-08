@@ -1,9 +1,7 @@
 import { useMemo } from 'react'
 import type { ReactNode, SVGProps } from 'react'
 
-import type { ProcessedDonation } from '~entities/donation/model'
-
-import type { StateRef } from '~shared/hooks'
+import type { StateRef, UseInfiniteListReturn } from '~shared/hooks'
 
 import type { FlexProps } from '~shared/ui/flex'
 import { Flex } from '~shared/ui/flex'
@@ -24,35 +22,40 @@ export type ExtendedListState = {
   shouldRenderAsSkeleton: boolean
 }
 
-export type InfiniteListProps<T> = Omit<
-  ShadowVirtualListProps<ProcessedDonation>,
-  'data' | 'count' | 'scrollElementRef'
-> & {
-  data: T[]
-  children: (donation: T, virtualizedItem: VirtualizedItem, extendedListState: ExtendedListState) => ReactNode
+export type InfiniteListRenderFunction<T> = (item: T, virtualizedItem: VirtualizedItem, extendedListState: ExtendedListState) => ReactNode
+
+export type InfiniteListProps<DataItem> = Omit<
+  ShadowVirtualListProps<DataItem>,
+  'data' | 'count' | 'scrollElementRef' | 'children'
+> & Pick<UseInfiniteListReturn<DataItem, undefined>, 'state'> & {
+  data: DataItem[]
+  children: InfiniteListRenderFunction<DataItem>
   listRef: StateRef<HTMLDivElement>
   limit?: number
+  placeholder?: ReactNode
+  showPlaceholders?: boolean
+  showEmptyContent?: boolean
   offset?: number
-  isPending?: boolean
-  isCanBeLoadMore?: boolean
-  blankFillingOnPending?: boolean
   emptyContentProps?: InfiniteListEmptyContentProps
   loaderProps?: InfiniteListLoaderProps
 }
 
-export const InfiniteList = <T = unknown>(props: InfiniteListProps<T>) => {
+export const InfiniteList = <DataItem = unknown>(props: InfiniteListProps<DataItem>) => {
   const {
     data,
-    limit = 15,
-    offset,
-    isPending = false,
-    isCanBeLoadMore = false,
-    blankFillingOnPending: blankFillingByLimit = true,
     children,
     listRef,
+    state: listState,
+    offset,
+    placeholder,
+    limit = 15,
+    showPlaceholders = false,
+    showEmptyContent = true,
     emptyContentProps,
     ...restProps
   } = props
+
+  const preparedItems = useMemo(() => [...data, ...listState.value], [data, listState.value])
 
   /*
     Here we check if we can fit a screen full of cards equal to or greater than the list limit
@@ -60,43 +63,47 @@ export const InfiniteList = <T = unknown>(props: InfiniteListProps<T>) => {
     which will subsequently be displayed as skeletons
   */
   const showedItems = useMemo(() => {
-    const isDataSizeLessThenLimit = data.length < limit
+    const isDataSizeLessThenLimit = preparedItems.length < limit
 
-    if (blankFillingByLimit && isDataSizeLessThenLimit) {
-      const blankItems = Array.from({ length: limit - data.length }).fill(null)
+    if (showPlaceholders && isDataSizeLessThenLimit) {
+      const blankItems = Array.from({ length: limit - preparedItems.length }).fill(null) as Array<null>
 
-      return [...data, ...blankItems]
+      return [...preparedItems, ...blankItems]
     }
 
-    return data
-  }, [blankFillingByLimit, data, limit])
+    return preparedItems
+  }, [showPlaceholders, preparedItems, limit])
 
   const virtualizedItems = useVirtualizedItems(showedItems)
 
   const renderVirtualListItem = (
     virtualizeItem: VirtualizedItem,
   ) => {
-    const isListLengthLessThenLimit = data.length < limit
-    const isVirtualizedItemBlanked = !data[virtualizeItem.index]
+    const dataItem = showedItems[virtualizeItem.index]
+    const isPlaceholderItem = !dataItem
 
-    const isShouldRenderItemAsSkeleton = isPending && isListLengthLessThenLimit && isVirtualizedItemBlanked
+    if (isPlaceholderItem)
+      return placeholder
 
-    if (!isShouldRenderItemAsSkeleton && isVirtualizedItemBlanked)
-      return
-
-    const donation = data[virtualizeItem.index]
-
-    return children(donation, virtualizeItem, { shouldRenderAsSkeleton: isShouldRenderItemAsSkeleton })
+    return children(dataItem!, virtualizeItem, { shouldRenderAsSkeleton: isPlaceholderItem })
   }
 
-  const virtualListItemsCount = isPending ? data.length + limit : data.length
+  const virtualListItemsCount
+    = listState.isPending && preparedItems.length < limit
+      ? showedItems.length + limit
+      : showedItems.length
 
-  const isShouldShowEmptyContent = !data.length && !isCanBeLoadMore && !isPending
-  const isShouldShowLoader = isPending && data.length >= limit
+  const isShouldShowEmptyContent
+    = !showedItems.length
+      && !listState.isCanLoadMore
+      && !listState.isPending
+      && showEmptyContent
+
+  const isShouldShowLoader = listState.isPending && preparedItems.length >= limit
 
   return (
     <ShadowVirtualList
-      data={data}
+      data={showedItems}
       count={virtualListItemsCount}
       scrollElementRef={listRef}
       {...restProps}

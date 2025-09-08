@@ -14,7 +14,7 @@ type ServiceFunction<Args, Return>
     ? (...serviceArgs: Args) => Promise<Return>
     : (serviceArgs: Args) => Promise<Return>
 
-export type UseInfiniteListServiceFunction<ListDataItem, Args> = ServiceFunction<Args, Maybe<{ list: ListDataItem[] }>>
+export type UseInfiniteListServiceFunction<ListDataItem, Args = undefined> = ServiceFunction<Args, Maybe<{ list: ListDataItem[] }>>
 
 export type UseInfiniteListState = {
   page: number
@@ -64,8 +64,6 @@ export const useInfiniteList = <ListDataItem, ServiceArgs = unknown>(
       try {
         const { isCanLoadMore, isDisabled } = listState
 
-        console.log(internalIsPendingRef.current)
-
         if (internalIsPendingRef.current || !isCanLoadMore || isDisabled)
           return
 
@@ -85,7 +83,6 @@ export const useInfiniteList = <ListDataItem, ServiceArgs = unknown>(
         }
       }
       catch (_) {
-        console.log('here')
         setIsPending(false)
         internalIsPendingRef.current = false
       }

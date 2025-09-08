@@ -8,7 +8,6 @@ import type {
 } from 'react'
 import {
   forwardRef,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -21,7 +20,7 @@ import {
   useScroll,
 } from 'motion/react'
 
-import { useDebounceCallback, useResizeObserver } from '~shared/hooks'
+import { useDebounceCallback, useDidUpdate, useResizeObserver } from '~shared/hooks'
 
 import { MotionBox } from '~shared/ui/motion-box'
 import { ScrollArea } from '~shared/ui/scroll-area'
@@ -100,7 +99,7 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
     setScrollYValue(value)
   })
 
-  useEffect(() => {
+  useDidUpdate(() => {
     const scrollElement = scrollRefElement.current
 
     const [entry] = entries
@@ -131,7 +130,7 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
     scrollYValue,
   ])
 
-  useEffect(() => {
+  useDidUpdate(() => {
     const scrollElement = scrollRefElement.current
     const contentElement = contentRefElement.current
 
