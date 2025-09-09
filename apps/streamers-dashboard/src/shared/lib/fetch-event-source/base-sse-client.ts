@@ -14,8 +14,12 @@ import { refreshTokens } from '~shared/api/http/auth/auth.api'
 
 import { EventSourceMessageSchema } from './models'
 
-abstract class BaseSSEClient {
-  protected async connect(
+type RetrySSEConnectOptions = Omit<SSEClientConnectOptions, 'retry'> & {
+  retry: NonNullable<SSEClientConnectOptions['retry']>
+}
+
+export class BaseSSEClient {
+  async connect(
     url: string,
     inputListeners: SSEClientListeners,
     inputOptions?: SSEClientConnectOptions,
@@ -100,7 +104,10 @@ abstract class BaseSSEClient {
 
     params.set('lastMessageId', String(options?.lastMessageId ?? 0))
 
-    if (Reflect.has(options, 'retry')) {
+    const isRetryInOptions = Reflect.has(options, 'retry')
+
+    if (isRetryInOptions) {
+      // @ts-expect-error - reflect checking
       return this._retryConnect(`/api/v1/sse/${url}`, listeners, options)
     }
 
@@ -110,9 +117,7 @@ abstract class BaseSSEClient {
   private async _retryConnect(
     url: string,
     listeners: SSEClientListeners,
-    options: Omit<SSEClientConnectOptions, 'retry'> & {
-      retry: NonNullable<SSEClientConnectOptions['retry']>
-    },
+    options: RetrySSEConnectOptions,
   ): Promise<void> {
     const reconnect = async (err: Error): Promise<void> => {
       options.retry.counts -= 1
@@ -141,5 +146,3 @@ abstract class BaseSSEClient {
     })
   }
 }
-
-export { BaseSSEClient }

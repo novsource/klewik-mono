@@ -7,7 +7,12 @@ import type {
 } from 'axios'
 import type { rateLimitOptions as RateLimitOptions } from 'axios-rate-limit'
 
+import type { SSEClientConnectOptions, SSEClientListeners } from '../fetch-event-source'
+
+import { chain } from '~shared/utils'
+
 import { BaseHttpClient } from '../axios'
+import { BaseSSEClient } from '../fetch-event-source'
 
 type AxiosBaseQueryOptions = {
   baseUrl: string
@@ -24,8 +29,6 @@ type AxiosBaseQueryArgs = {
   withCredentials?: AxiosRequestConfig['withCredentials']
 }
 
-type AxiosBaseQueryResult = AxiosResponse<unknown, unknown>
-
 type ServerErrorData = {
   message: string
   hint?: string
@@ -39,6 +42,8 @@ type AxiosBaseQueryError = {
   hint?: string
 }
 
+type AxiosBaseQueryResult = AxiosResponse<unknown, any>['data']
+
 type AxiosQueryArgs = AxiosBaseQueryArgs & {
   rewriteBaseURL?: boolean
 }
@@ -49,9 +54,18 @@ type AxiosQueryFn = BaseQueryFn<
   AxiosBaseQueryError
 >
 
-const axiosBaseQuery
+export const axiosBaseQuery
   = (options: AxiosBaseQueryOptions): AxiosQueryFn =>
-    async ({ url, method, data, headers, params, rewriteBaseURL = false }, api) => {
+    async (args, api) => {
+      const {
+        url,
+        method,
+        data,
+        headers,
+        params,
+        rewriteBaseURL = false,
+      } = args
+
       const isDev = import.meta.env.VITE_DEV
       try {
         const axios = new BaseHttpClient({
@@ -83,7 +97,7 @@ const axiosBaseQuery
         return {
           error: {
             status: err.response?.status || 400,
-            message: err.response?.data.message,
+            message: err.response?.data.message ?? '',
             reason: err.response?.data?.reason || '',
             hint: err.response?.data.hint || '',
           },
@@ -91,7 +105,7 @@ const axiosBaseQuery
       }
     }
 
-const axiosAuthBaseQuery
+export const axiosAuthBaseQuery
   = (options: AxiosBaseQueryOptions): AxiosQueryFn =>
     async (args, api, extraOptions) => {
       const isDev = import.meta.env.VITE_DEV
@@ -142,5 +156,36 @@ const axiosAuthBaseQuery
       return result
     }
 
-export { axiosAuthBaseQuery, axiosBaseQuery }
-export type { AxiosBaseQueryError }
+export type SSEQueryArgs = {
+  url: string
+  listeners: SSEClientListeners
+  options?: SSEClientConnectOptions
+}
+
+type SSEQueryFn = BaseQueryFn<SSEQueryArgs>
+
+export const sseBaseQuery = (): SSEQueryFn =>
+  async (args) => {
+    const { url, listeners, options } = args
+
+    const sseClient = new BaseSSEClient()
+
+    const errorHandler = (error: unknown) => {
+      console.log('SSE Error: ', error)
+      throw error
+    }
+
+    try {
+      await sseClient.connect(url, listeners, {
+        ...options,
+        onerror: options?.onerror
+          ? chain(errorHandler, options.onerror)
+          : errorHandler,
+      })
+
+      return { data: null }
+    }
+    catch (error) {
+      return { error }
+    }
+  }

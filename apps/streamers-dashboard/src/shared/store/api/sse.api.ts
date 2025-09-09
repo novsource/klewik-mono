@@ -1,10 +1,29 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 
-import { axiosAuthBaseQuery } from '~shared/lib/redux-toolkit'
+import type { SSEQueryArgs } from '~shared/lib/redux-toolkit'
+import { sseBaseQuery } from '~shared/lib/redux-toolkit'
 
-const splittedSSEApi = createApi({
-  baseQuery: axiosAuthBaseQuery({ baseUrl: '/sse' }),
-  endpoints: () => ({}),
+export type ConnectSSEQueryArgs = Omit<SSEQueryArgs, 'url'> & {
+  auctionUUID: string
+}
+
+export const splittedSSEApi = createApi({
+  baseQuery: sseBaseQuery(),
+  endpoints: builder => ({
+    connectSlotsSSE: builder.query<void, ConnectSSEQueryArgs>({
+      query: ({ auctionUUID, ...sseConnectionOptions }) =>
+        ({ url: `${auctionUUID}/slots-events`, ...sseConnectionOptions }),
+    }),
+    connectDonationsSSE: builder.query<void, ConnectSSEQueryArgs>({
+      query: ({ auctionUUID, ...sseConnectionOptions }) =>
+        ({ url: `${auctionUUID}/donations-events`, ...sseConnectionOptions }),
+    }),
+  }),
 })
 
-export { splittedSSEApi }
+export const {
+  useConnectDonationsSSEQuery,
+  useConnectSlotsSSEQuery,
+  useLazyConnectDonationsSSEQuery,
+  useLazyConnectSlotsSSEQuery,
+} = splittedSSEApi
