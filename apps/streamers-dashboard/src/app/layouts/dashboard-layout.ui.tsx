@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Outlet } from 'react-router-dom'
 
@@ -8,97 +8,61 @@ import { MobileNavbarMenu } from '~widgets/navbar-menu/mobile-navbar-menu/ui'
 
 import { auctionSelectors } from '~entities/auction/store'
 
-import type { AuctionSlot } from '~entities/auction-slot/model'
-import { auctionSlotsActions as storeAuctionSlotsActions } from '~entities/auction-slot/store'
-
-import type { ProcessedDonation } from '~entities/donation/model'
-import { donationsActions as storeDonationsActions } from '~entities/donation/store'
-
-import { SSEClientsManager } from '~shared/api/sse/clients-manager'
-
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useMediaQuery } from '~shared/hooks'
-import { useLocalStorage } from '~shared/hooks/use-local-storage'
+import { useAppSSE, useDidUpdate, useMediaQuery, useUnmount } from '~shared/hooks'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
+import { sseActions } from '~shared/store/slices'
+
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import { toastPromiseNotification } from '~shared/ui/toaster/lib'
 
-const DashboardLayout = () => {
+export const DashboardLayout = () => {
+  const [isSSEStateReseted, setIsSSEStateReseted] = useState(false)
+
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
+
+  const { setAllConnected, resetState } = useActionCreators(sseActions)
+
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
-  const auctionSlotsActions = useActionCreators(storeAuctionSlotsActions)
-  const donationActions = useActionCreators(storeDonationsActions)
+  const { isAllConnected, connectToAllEvents, isPending, isTabLeader } = useAppSSE()
 
-  const [isConnected, setIsConnected] = useState(false)
+  const isTabLeaderRef = useRef(isTabLeader)
 
-  const slotsLastMessageId = useLocalStorage('slots:last-message-id')
-  const donationsLastMessageId = useLocalStorage('donations:last-message-id')
+  useDidUpdate(() => {
+    const isBecomeLeader = !isTabLeaderRef.current && isTabLeader
+
+    if (isBecomeLeader && !isSSEStateReseted) {
+      resetState()
+      setIsSSEStateReseted(true)
+    }
+
+    if (isBecomeLeader && !isPending && isSSEStateReseted) {
+      isTabLeaderRef.current = true
+
+      connectToAllEvents(auctionUUID).then(() => {
+        setAllConnected(true)
+      })
+    }
+  }, [isPending, isAllConnected, auctionUUID, isTabLeader])
 
   useEffect(() => {
-    if (slotsLastMessageId.value === undefined) {
-      slotsLastMessageId.set(0)
-    }
+    if (isAllConnected || isPending || !isTabLeader)
+      return
 
-    if (donationsLastMessageId.value === undefined) {
-      donationsLastMessageId.set(0)
-    }
+    connectToAllEvents(auctionUUID).then(() => {
+      setAllConnected(true)
+    })
+  }, [isPending, isAllConnected, auctionUUID, isTabLeader])
+
+  useUnmount(() => {
+    setAllConnected(false)
   })
 
-  useEffect(() => {
-    if (!isConnected) {
-      const connectSSERequest = SSEClientsManager.init(
-        auctionUUID,
-      ).connectToAllEvents({
-        slotsLastMessageId: slotsLastMessageId.value,
-        donationsLastMessageId: donationsLastMessageId.value,
-      })
-
-      toastPromiseNotification(connectSSERequest, 'Подключение к серверу...', {
-        successText: 'Подключение к серверу',
-        errorText: 'Ошибка подключения к серверу',
-        onSuccess: () => {
-          setIsConnected(true)
-        },
-      })
-    }
-  }, [auctionUUID, isConnected, slotsLastMessageId.value, donationsLastMessageId.value])
-
-  useEffect(() => {
-    const dispatchSlots = (slots: AuctionSlot[]) =>
-      auctionSlotsActions.addSlots(slots)
-    const dispatchDonation = (donation: ProcessedDonation) =>
-      donationActions.addDonation(donation)
-
-    SSEClientsManager.getInstance().auctionSlots.onSSEEvent(
-      'onmessage',
-      ({ id }) => {
-        slotsLastMessageId.set(Number(id))
-      },
-    )
-
-    SSEClientsManager.getInstance().donations.onSSEEvent(
-      'onmessage',
-      ({ id }) => {
-        slotsLastMessageId.set(Number(id))
-      },
-    )
-
-    SSEClientsManager.getInstance().auctionSlots.onEvent(
-      'auction-slots/add',
-      dispatchSlots,
-    )
-    SSEClientsManager.getInstance().donations.onEvent(
-      'donations/add',
-      dispatchDonation,
-    )
-  }, [auctionSlotsActions, donationActions, slotsLastMessageId])
-
-  if (!isConnected) {
+  if (!isAllConnected) {
     return (
       <Flex
         className="w-full h-full animate-fade-in duration-[3s]"
@@ -128,5 +92,3 @@ const DashboardLayout = () => {
 
   )
 }
-
-export { DashboardLayout }

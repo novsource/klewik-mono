@@ -1,24 +1,25 @@
-import { SSEEvents } from './models/base-sse-client.types'
+import type { SSEEvents } from './models/base-sse-client.types'
 
 class SSEEmiter {
   private _subscriptions = new Map<
     keyof SSEEvents,
     Array<(...args: unknown[]) => void>
-  >([])
+      >([])
 
   subscribe<T extends keyof SSEEvents>(
     event: T,
-    callback: (arg: Parameters<NonNullable<SSEEvents[T]>>[number]) => void
+    callback: (arg: Parameters<NonNullable<SSEEvents[T]>>[number]) => void,
   ) {
     const listeners = this._subscriptions.get(event)
 
-    if (!listeners) this._subscriptions.set(event, [callback])
+    if (!listeners)
+      this._subscriptions.set(event, [callback])
     else listeners.push(callback)
   }
 
   subscribeOnce<T extends keyof SSEEvents>(
     event: T,
-    callback: (arg: Parameters<NonNullable<SSEEvents[T]>>[number]) => void
+    callback: (arg: Parameters<NonNullable<SSEEvents[T]>>[number]) => void,
   ) {
     const listeners = this._subscriptions.get(event)
 
@@ -27,31 +28,33 @@ class SSEEmiter {
         callback,
         () => this.unsubscribe(event, callback),
       ])
-    } else {
+    }
+    else {
       listeners.push(...[callback, () => this.unsubscribe(event, callback)])
     }
   }
 
   notify<T extends keyof SSEEvents>(
     eventName: T,
-    value?: Parameters<NonNullable<SSEEvents[T]>>[number]
+    value?: Parameters<NonNullable<SSEEvents[T]>>[number],
   ) {
     this._subscriptions
       .get(eventName)
-      ?.forEach((callbackfn) => callbackfn(value))
+      ?.forEach(callbackfn => callbackfn(value))
   }
 
   unsubscribe<T extends keyof SSEEvents>(
     eventName: T,
-    callback: (arg: Parameters<NonNullable<SSEEvents[T]>>[number]) => void
+    callback: (arg: Parameters<NonNullable<SSEEvents[T]>>[number]) => void,
   ) {
     const listeners = this._subscriptions.get(eventName)
 
-    if (!listeners) return
+    if (!listeners)
+      return
 
     this._subscriptions.set(
       eventName,
-      listeners.filter((cb) => cb !== callback)
+      listeners.filter(cb => cb !== callback),
     )
   }
 }

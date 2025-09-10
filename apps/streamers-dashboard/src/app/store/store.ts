@@ -1,7 +1,8 @@
 import type { Config as ReduxStateSyncConfig } from 'redux-state-sync'
 
-import { combineReducers, configureStore, appl } from '@reduxjs/toolkit'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { persistReducer } from 'redux-persist'
+import createMigrate from 'redux-persist/es/createMigrate'
 import persistStore from 'redux-persist/es/persistStore'
 import localStorage from 'redux-persist/es/storage'
 import { createStateSyncMiddleware, initMessageListener } from 'redux-state-sync'
@@ -42,13 +43,39 @@ const rootReducer = combineReducers({
   [sseApi.reducerPath]: sseApi.reducer,
 })
 
+const migrations = {
+  0: (state) => {
+    return { ...state, sse: {
+      auctionSlots: {
+        isConnected: false,
+        lastMessageId: 0,
+      },
+      donations: {
+        isConnected: false,
+        lastMessageId: 0,
+      },
+    } }
+  },
+}
+
 const persistedReducer = persistReducer(
-  { key: '-persist', storage: localStorage, keyPrefix: 'store' },
+  {
+    key: '-persist',
+    storage: localStorage,
+    keyPrefix: 'store',
+    migrate: createMigrate(migrations),
+    blacklist: ['sse', 'sseApi'],
+  },
   rootReducer,
 )
 
 const syncStoreConfig: ReduxStateSyncConfig = {
-  blacklist: ['persist/PERSIST', 'persist/REHYDRATE'],
+  blacklist: [
+    'persist/PERSIST',
+    'persist/REHYDRATE',
+    'sseApi/endpoints/connectSlotsSSE',
+    'sseApi/endpoints/connectDonationsSSE',
+  ],
 }
 
 const syncMiddleware = createStateSyncMiddleware(syncStoreConfig)

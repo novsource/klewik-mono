@@ -2,7 +2,7 @@ export const isFunction = (target: unknown) => {
   return typeof target === 'function'
 }
 
-export const notUndefined = (value: unknown) => {
+export const notUndefined = (value: unknown): boolean => {
   return value !== undefined
 }
 

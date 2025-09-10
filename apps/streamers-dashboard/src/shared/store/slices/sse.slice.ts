@@ -2,28 +2,27 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
 import { createSlice } from '@reduxjs/toolkit'
 
-type SSEEvents = 'auctionSlots' | 'donations'
+import { SSE_CHANNELS } from '~shared/constants/api'
+import type { SSEChannels } from '~shared/constants/api'
 
 type SSESliceState = {
-  [key in SSEEvents]: {
+  [key in SSEChannels]: {
     isConnected: boolean
     lastMessageId: number
   }
 }
 
-const initialState: SSESliceState = {
-  auctionSlots: {
+const initialState = SSE_CHANNELS.reduce((state, channel) => {
+  state[channel] = {
     isConnected: false,
     lastMessageId: 0,
-  },
-  donations: {
-    isConnected: false,
-    lastMessageId: 0,
-  },
-}
+  }
 
-type UpdateConnectStatus = { isConnected: boolean, eventType: SSEEvents }
-type UpdateMessageId = { eventType: SSEEvents, id: number }
+  return state
+}, {} as SSESliceState)
+
+type UpdateConnectStatus = { isConnected: boolean, eventType: SSEChannels }
+type UpdateMessageId = { eventType: SSEChannels, id: number }
 
 const sseSlice = createSlice({
   name: 'sse',
@@ -47,16 +46,17 @@ const sseSlice = createSlice({
         state[key].isConnected = action.payload
       })
     },
+    resetState() {
+      return initialState
+    },
   },
   selectors: {
-    getEventStatus: (state, eventType: SSEEvents) => {
+    getState: state => state,
+    getEventStatus: (state, eventType: SSEChannels) => {
       return state[eventType]
     },
     getIsAllEventsConnected: (state) => {
       return (Object.keys(state) as Array<keyof typeof state>).every(key => state[key].isConnected)
-    },
-    getLastMessageIds: (state) => {
-
     },
   },
 })

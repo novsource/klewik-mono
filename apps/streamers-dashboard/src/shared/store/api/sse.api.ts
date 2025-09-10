@@ -9,6 +9,7 @@ export type ConnectSSEQueryArgs = Omit<SSEQueryArgs, 'url'> & {
 
 export const splittedSSEApi = createApi({
   baseQuery: sseBaseQuery(),
+  reducerPath: 'sseApi',
   endpoints: builder => ({
     connectSlotsSSE: builder.query<void, ConnectSSEQueryArgs>({
       query: ({ auctionUUID, ...sseConnectionOptions }) =>
