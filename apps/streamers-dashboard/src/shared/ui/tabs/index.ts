@@ -1,3 +1,2 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
-
-export { Tabs, TabsContent, TabsList, TabsTrigger }
+export * from './styles/tabs-variants'
+export * from './ui/tabs'
