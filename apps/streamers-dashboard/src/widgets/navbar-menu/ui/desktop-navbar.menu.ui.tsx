@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 
 import { NavLink } from 'react-router-dom'
 
+import { DASHBOARD_ROUTES } from '~shared/constants/router'
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { useMediaQuery } from '~shared/hooks'
@@ -14,16 +15,16 @@ import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
+const paths = [
+  { path: DASHBOARD_ROUTES.WHEEL },
+  { path: DASHBOARD_ROUTES.SLOTS },
+  { path: DASHBOARD_ROUTES.DONATIONS },
+]
+
 const NavbarMenu = () => {
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   const menuItems = useMemo(() => {
-    const paths = [
-      { path: '/wheel' },
-      { path: '/slots' },
-      { path: '/donations' },
-      { path: '/settings' },
-    ]
     return paths.reduce<ReactNode[]>((acc, curr: (typeof paths)[number]) => {
       const menuIcon = {
         '/wheel': <Icons.Wheel size={isLargeThenTablet ? 'sm' : 'default'} />,
