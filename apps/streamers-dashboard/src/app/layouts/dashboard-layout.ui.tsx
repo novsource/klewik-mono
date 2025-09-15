@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
 import { DashboardHeader } from '~widgets/dashboard-header/ui'
-import { DesktopNavbarMenu } from '~widgets/navbar-menu/desktop-navbar-menu/ui'
-import { MobileNavbarMenu } from '~widgets/navbar-menu/mobile-navbar-menu/ui'
+import { DesktopNavbarMenu, MobileNavbarMenu } from '~widgets/navbar-menu/ui'
 
 import { auctionSelectors } from '~entities/auction/store'
 

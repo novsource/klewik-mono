@@ -136,7 +136,7 @@ export const axiosAuthBaseQuery
 
       if (result.error && result.error.status === 401) {
         const refreshResult = await baseQuery(
-          { url: '/api/v1/auth/refresh', method: 'POST', rewriteBaseURL: true },
+          { url: '/api/v1/auth/refresh2', method: 'POST', rewriteBaseURL: true },
           api,
           extraOptions,
         )
@@ -149,8 +149,8 @@ export const axiosAuthBaseQuery
           )
         }
         else {
-
-        // TODO: Add method for logout user
+          const errorURLParams = new URLSearchParams({ reason: 'auth' })
+          window.location.replace(`/error?${errorURLParams.toString()}`)
         }
       }
       return result
