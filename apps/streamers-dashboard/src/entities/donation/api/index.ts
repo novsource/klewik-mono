@@ -1,3 +1,1 @@
-import { splittedDonationApi } from './donation.api'
-
-export { splittedDonationApi }
+export * from './donation.api'

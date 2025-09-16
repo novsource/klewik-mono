@@ -13,10 +13,7 @@ import { store } from '~app/store'
 
 import { ErrorPage } from '~pages/error/ui/error-page.ui'
 
-import type { Auction } from '~entities/auction/model'
-import { auctionActions } from '~entities/auction/store'
-
-import { getAuctionInfo } from '~shared/api/http/auction/auction.api'
+import { getAuctionInfoThunk } from '~entities/auction/api'
 
 import type { ErrorStatusesWithReason } from '~shared/constants/router'
 import { errorStatusReasons } from '~shared/constants/router'
@@ -47,13 +44,10 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
       try {
         const dispatch = store.dispatch
 
-        const response = await getAuctionInfo<Auction>(
-          validatedParams.data.auctionId,
-        )
+        const auctionUUID = validatedParams.data.auctionId
+        const auctionInfo = await dispatch(getAuctionInfoThunk(auctionUUID))
 
-        dispatch(auctionActions.setAuction(response.data))
-
-        return response.data
+        return json(auctionInfo, { status: 200 })
       }
       catch (error) {
         if (error instanceof AxiosError) {
