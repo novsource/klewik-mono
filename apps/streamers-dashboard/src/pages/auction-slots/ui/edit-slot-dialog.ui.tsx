@@ -41,7 +41,7 @@ type ResponsiveEditSlotDialogueProps = {
   trigger: ReactNode
 }
 
-const EditSlotDialog = ({
+export const EditSlotDialog = ({
   slot: inputSlot,
   trigger,
 }: ResponsiveEditSlotDialogueProps) => {
@@ -205,10 +205,4 @@ function EditSlotDialogsIcon() {
       </Flex>
     </div>
   )
-}
-
-export const ResponsiveEditSlotDialog = (
-  props: ResponsiveEditSlotDialogueProps,
-) => {
-  return <EditSlotDialog {...props} />
 }
