@@ -82,8 +82,18 @@ export const InfiniteList = <DataItem = unknown>(props: InfiniteListProps<DataIt
     const dataItem = showedItems[virtualizeItem.index]
     const isPlaceholderItem = !dataItem
 
-    if (isPlaceholderItem)
-      return placeholder
+    if (isPlaceholderItem) {
+      const gap = restProps.gap ?? 8
+
+      return (
+        <div
+          key={virtualizeItem.id}
+          style={{ marginTop: virtualizeItem.index === 0 ? 0 : gap }}
+        >
+          {placeholder}
+        </div>
+      )
+    }
 
     return children(dataItem!, virtualizeItem, { shouldRenderAsSkeleton: isPlaceholderItem })
   }

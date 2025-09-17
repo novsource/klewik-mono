@@ -8,13 +8,9 @@ import { useCallback, useRef, useState } from 'react'
 
 import { useInfiniteScroll } from '../use-infinite-scroll/use-infinite-scroll'
 
-type ServiceFunction<Args, Return>
-= Args extends undefined ? () => Promise<Return>
-  : Args extends unknown[]
-    ? (...serviceArgs: Args) => Promise<Return>
-    : (serviceArgs: Args) => Promise<Return>
+type ServiceFunction<Return> = () => Promise<Return>
 
-export type UseInfiniteListServiceFunction<ListDataItem, Args = undefined> = ServiceFunction<Args, Maybe<{ list: ListDataItem[] }>>
+export type UseInfiniteListServiceFunction<ListDataItem> = ServiceFunction<Maybe<{ list: ListDataItem[] }>>
 
 export type UseInfiniteListState = {
   page: number
@@ -23,31 +19,36 @@ export type UseInfiniteListState = {
   isDisabled: boolean
 }
 
-export type UseInfiniteListReturn<ListDataItem, ServiceArgs> = {
+export type ClearListOptions = {
+  resetPages?: boolean
+}
+
+export type UseInfiniteListReturn<ListDataItem> = {
   ref: StateRef<HTMLDivElement>
   state: UseInfiniteListState & {
     value: ListDataItem[]
     isPending: boolean
   }
   functions: {
-    loadMore: ServiceFunction<ServiceArgs, void>
+    loadMore: ServiceFunction<void>
     reset: () => void
-    clearList: () => void
+    clearList: (options?: ClearListOptions) => void
+    updateIsCanLoadMore: (value: boolean) => void
     enable: () => void
     disable: () => void
-    updateLimit: (limit: number) => void
   }
 }
 
 export type UseInfiniteListOptions<T> = {
-  limit?: number
   initial?: T[]
+  limit?: number
+  distance?: number
 }
 
-export const useInfiniteList = <ListDataItem, ServiceArgs = unknown>(
-  serviceFn: UseInfiniteListServiceFunction<ListDataItem, ServiceArgs>,
+export const useInfiniteList = <ListDataItem>(
+  serviceFn: UseInfiniteListServiceFunction<ListDataItem>,
   options?: UseInfiniteListOptions<ListDataItem>,
-): UseInfiniteListReturn<ListDataItem, ServiceArgs> => {
+): UseInfiniteListReturn<ListDataItem> => {
   const [value, setValue] = useState<ListDataItem[]>(options?.initial ?? [])
   const [isPending, setIsPending] = useState(false)
   const [listState, setListState] = useState<UseInfiniteListState>({
@@ -60,7 +61,7 @@ export const useInfiniteList = <ListDataItem, ServiceArgs = unknown>(
   const internalIsPendingRef = useRef(false)
 
   const loadMore = useCallback(
-    async (args: ServiceArgs) => {
+    async () => {
       try {
         const { isCanLoadMore, isDisabled } = listState
 
@@ -69,7 +70,7 @@ export const useInfiniteList = <ListDataItem, ServiceArgs = unknown>(
 
         internalIsPendingRef.current = true
         setIsPending(true)
-        const newData = await serviceFn(args)
+        const newData = await serviceFn()
         setIsPending(false)
         internalIsPendingRef.current = false
 
@@ -82,7 +83,7 @@ export const useInfiniteList = <ListDataItem, ServiceArgs = unknown>(
           setValue(curr => [...curr, ...newData.list])
         }
       }
-      catch (_) {
+      catch {
         setIsPending(false)
         internalIsPendingRef.current = false
       }
@@ -90,15 +91,23 @@ export const useInfiniteList = <ListDataItem, ServiceArgs = unknown>(
     [serviceFn, listState],
   )
 
-  const infiniteScroll = useInfiniteScroll<HTMLDivElement>(_ => loadMore())
+  const infiniteScroll = useInfiniteScroll<HTMLDivElement>(_ => loadMore(), { distance: options?.distance ?? 20 })
 
   const isLoading = infiniteScroll.loading || isPending
 
-  const resetList = () => {
+  const reset = () => {
     internalIsPendingRef.current = false
 
     setValue(() => options?.initial ?? [])
     setListState(curr => ({ ...curr, isCanLoadMore: true, page: 1 }))
+  }
+
+  const clearList = (stateOptions?: ClearListOptions) => {
+    if (stateOptions?.resetPages) {
+      setListState(curr => ({ ...curr, page: 1 }))
+    }
+
+    setValue(options?.initial ?? [])
   }
 
   return {
@@ -113,11 +122,11 @@ export const useInfiniteList = <ListDataItem, ServiceArgs = unknown>(
     },
     functions: {
       loadMore,
-      reset: resetList,
-      clearList: () => setValue([]),
+      clearList,
+      reset,
+      updateIsCanLoadMore: value => setListState(curr => ({ ...curr, isCanLoadMore: value })),
       enable: () => setListState(curr => ({ ...curr, isDisabled: false })),
       disable: () => setListState(curr => ({ ...curr, isDisabled: true })),
-      updateLimit: (limit: number) => setListState(curr => ({ ...curr, limit })),
     },
   }
 }
