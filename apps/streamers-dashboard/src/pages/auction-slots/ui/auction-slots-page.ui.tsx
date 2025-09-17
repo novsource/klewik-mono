@@ -1,5 +1,7 @@
 import { useMemo } from 'react'
 
+import { CreateSlotsDialog } from '~features/auction-slot/create-slots/ui'
+
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
@@ -8,7 +10,6 @@ import { Typography } from '~shared/ui/typograghy'
 import { twSlotsStyles } from '~shared/utils'
 
 import { auctionSlotsPageStyles } from '../styles'
-import { CreateSlotsDialog } from './create-slots-dialog.ui'
 import { AuctionSlotsList } from './slots-list.ui'
 import { SortingSlotsCombobox } from './sorting-slots-combobox.ui'
 

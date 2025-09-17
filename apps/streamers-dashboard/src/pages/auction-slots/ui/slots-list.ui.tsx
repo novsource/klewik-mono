@@ -4,6 +4,8 @@ import { useCallback, useRef, useState } from 'react'
 
 import { useSortingSlots } from '~pages/auction-slots/lib'
 
+import { EditSlotDialog } from '~features/auction-slot/edit-slot/ui'
+
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 import {
@@ -24,8 +26,6 @@ import type { ShadowVirtualListProps } from '~shared/ui/shadow-virtual-list'
 import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
 
 import { cn } from '~shared/utils'
-
-import { EditSlotDialog } from './edit-slot-dialog.ui'
 
 export type AuctionSlotsListProps = {
   data?: AuctionSlot[]

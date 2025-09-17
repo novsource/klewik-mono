@@ -1,9 +1,6 @@
 import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'
 
-import { useCreateSlotsForm } from '~features/auction-slot/create-slots/hooks'
-import { ControlledCreateSlotForm } from '~features/auction-slot/create-slots/ui'
-
 import { auctionSlotsActions as storeAuctionSlotsActions } from '~entities/auction-slot/store'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
@@ -30,7 +27,9 @@ import { Typography } from '~shared/ui/typograghy'
 import { twSlotsStyles } from '~shared/utils'
 import { getRandomHEXColor } from '~shared/utils/colors'
 
+import { useCreateSlotsForm } from '../hooks'
 import { createSlotsDialogStyles, createSlotsSheetStyles } from '../styles'
+import { ControlledCreateSlotForm } from './create-slots-form'
 
 type CreateSlotsDialogProps = {
   multiplySlots?: boolean

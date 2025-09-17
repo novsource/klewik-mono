@@ -1,3 +1,2 @@
-import { ControlledCreateSlotForm, CreateSlotsForm } from './create-slots-form'
-
-export { ControlledCreateSlotForm, CreateSlotsForm }
+export * from './create-slots-dialog.ui'
+export * from './create-slots-form'
