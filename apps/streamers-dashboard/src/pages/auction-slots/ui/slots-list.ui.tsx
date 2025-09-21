@@ -9,12 +9,14 @@ import { EditSlotDialog } from '~features/auction-slot/edit-slot/ui'
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 import {
-  AuctionSlotCardPointsInfo,
-  AuctionSlotCardWinPercents,
   BaseAuctionSlotCard,
-  BaseAuctionSlotCardContent,
+  SolidAuctionSlotContent,
   SolidAuctionSlotHeader,
 } from '~entities/auction-slot/ui/card'
+
+import { tailwindScreens } from '~shared/constants/tailwindcss'
+
+import { useMediaQuery } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -59,43 +61,43 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
 
   const sortedSlots = useSortingSlots(showedSlots, sortingOptions)
 
+  const isLargeThenTablet = useMediaQuery(tailwindScreens.tablet)
+
   const renderAuctionSlotCard = useCallback(
     (auctionSlot: AuctionSlot) => {
       const percents = ((auctionSlot.points / storedSlotsPointsSum) * 100)
 
       return (
         <BaseAuctionSlotCard
+          className="flex-row items-end pr-2"
           key={auctionSlot.title}
         >
-          <SolidAuctionSlotHeader
-            slotId={auctionSlot.id}
-            slotTitle={auctionSlot.title}
-            slotColor={auctionSlot.color}
-          />
-          <BaseAuctionSlotCardContent>
-            <Flex
-              className="w-full gap-x-3 tablet:gap-x-5"
-              direction="row"
-              align="end"
-            >
-              <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
-              <AuctionSlotCardWinPercents winPercents={percents} />
-            </Flex>
-            <EditSlotDialog
-              slot={auctionSlot}
-              trigger={(
-                <Button
-                  className="bg-dark-light size-9 text-gray-light transition-colors hover:text-white"
-                  isIconOnly
-                  icon={<Icons.ArrowRight />}
-                />
-              )}
+          <Flex className="gap-y-2 pr-3.5" direction="column">
+            <SolidAuctionSlotHeader
+              slotId={auctionSlot.id}
+              slotTitle={auctionSlot.title}
+              slotColor={auctionSlot.color}
             />
-          </BaseAuctionSlotCardContent>
+            <SolidAuctionSlotContent
+              auctionSlot={auctionSlot}
+              winPercents={percents}
+            />
+          </Flex>
+          <EditSlotDialog
+            slot={auctionSlot}
+            trigger={(
+              <Button
+                className="bg-dark-light size-8 tablet:size-9 text-gray-light transition-colors hover:text-white"
+                isIconOnly
+                icon={<Icons.ArrowRight size={isLargeThenTablet ? 'lg' : 'sm'} />}
+              />
+            )}
+          />
+
         </BaseAuctionSlotCard>
       )
     },
-    [storedSlotsPointsSum],
+    [storedSlotsPointsSum, isLargeThenTablet],
   )
 
   const renderVirtualListItem = useCallback(
