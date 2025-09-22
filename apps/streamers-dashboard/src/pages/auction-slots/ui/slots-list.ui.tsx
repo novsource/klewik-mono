@@ -14,7 +14,7 @@ import {
   SolidAuctionSlotHeader,
 } from '~entities/auction-slot/ui/card'
 
-import { tailwindScreens } from '~shared/constants/tailwindcss'
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { useMediaQuery } from '~shared/hooks'
 
@@ -25,6 +25,7 @@ import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { ShadowVirtualList } from '~shared/ui/shadow-virtual-list'
 import type { ShadowVirtualListProps } from '~shared/ui/shadow-virtual-list'
+import { WindowVirtualList } from '~shared/ui/virtual-list'
 import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
 
 import { cn } from '~shared/utils'
@@ -61,7 +62,7 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
 
   const sortedSlots = useSortingSlots(showedSlots, sortingOptions)
 
-  const isLargeThenTablet = useMediaQuery(tailwindScreens.tablet)
+  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   const renderAuctionSlotCard = useCallback(
     (auctionSlot: AuctionSlot) => {
@@ -87,13 +88,12 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
             slot={auctionSlot}
             trigger={(
               <Button
-                className="bg-dark-light size-8 tablet:size-9 text-gray-light transition-colors hover:text-white"
+                className="bg-dark-light size-7 tablet:size-8.5 text-gray-light transition-colors hover:text-white"
                 isIconOnly
-                icon={<Icons.ArrowRight size={isLargeThenTablet ? 'lg' : 'sm'} />}
+                icon={<Icons.ArrowRight size={isLargeThenTablet ? 'default' : 'sm'} />}
               />
             )}
           />
-
         </BaseAuctionSlotCard>
       )
     },
@@ -112,18 +112,30 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
     [renderAuctionSlotCard],
   )
 
+  if (isLargeThenTablet) {
+    return (
+      <Flex className={cn('w-full h-full overflow-scroll', className)}>
+        <ShadowVirtualList
+          data={sortedSlots}
+          slotsClassNames={{ container: 'pb-4' }}
+          gap={gap}
+          overscan={8}
+          virtualListRef={virtualizerRef}
+          {...virtualListProps}
+        >
+          {renderVirtualListItem}
+        </ShadowVirtualList>
+      </Flex>
+    )
+  }
+
   return (
-    <Flex className={cn('h-full w-full', className)}>
-      <ShadowVirtualList
-        data={sortedSlots}
-        slotsClassNames={{ container: 'pb-4' }}
-        gap={gap}
-        overscan={8}
-        virtualListRef={virtualizerRef}
-        {...virtualListProps}
-      >
-        {renderVirtualListItem}
-      </ShadowVirtualList>
-    </Flex>
+    <WindowVirtualList
+      data={sortedSlots}
+      overscan={8}
+      virtualListRef={virtualizerRef}
+    >
+      {renderVirtualListItem}
+    </WindowVirtualList>
   )
 }
