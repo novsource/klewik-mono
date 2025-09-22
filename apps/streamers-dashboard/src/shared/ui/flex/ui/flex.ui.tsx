@@ -1,28 +1,45 @@
-import { ComponentProps, forwardRef, useMemo } from 'react'
+import type { FlexVariantsProps } from '../styles/flex-variants'
+
+import type { ComponentPropsWithoutRef, ForwardedRef, ReactNode } from 'react'
+import { forwardRef, useMemo } from 'react'
 
 import { cn } from '~shared/utils'
 
-import { FlexVariantsProps, flexVariants } from '../styles/flex-variants'
+import { flexVariants } from '../styles/flex-variants'
 
-export type FlexProps = Omit<ComponentProps<'div'>, 'align'> &
-  FlexVariantsProps & {
-    component?: Omit<keyof JSX.IntrinsicElements, 'svg'>
+export type FlexProps<T extends keyof JSX.IntrinsicElements = 'div'>
+  = ComponentPropsWithoutRef<T> & FlexVariantsProps & {
+    as?: T
+    children?: ReactNode
   }
 
-const Flex = forwardRef<HTMLElement, FlexProps>(
-  (
-    { className, component, justify, wrap, direction, align, ...otherProps },
-    forwardRef
+export const Flex = forwardRef(
+  <T extends keyof JSX.IntrinsicElements = 'div'>
+  (props: FlexProps<T>,
+    forwardRef: ForwardedRef<T>,
   ) => {
-    const Comp = component ?? ('div' as keyof JSX.IntrinsicElements)
+    const {
+      as,
+      className,
+      justify,
+      wrap,
+      direction,
+      align,
+      children,
+      ...restProps
+    } = props
+
+    const Comp = (as || 'div') as keyof JSX.IntrinsicElements
 
     const styles = useMemo(
       () => cn(flexVariants({ justify, wrap, direction, align }), className),
-      [className, justify, wrap, direction, align]
+      [className, justify, wrap, direction, align],
     )
 
-    return <Comp ref={forwardRef} className={styles} {...otherProps} />
-  }
+    return (
+      <Comp ref={forwardRef} className={styles} {...restProps}>
+        {children}
+      </Comp>
+    )
+  },
 )
-
-export { Flex }

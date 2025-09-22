@@ -21,7 +21,7 @@ const paths = [
   { path: DASHBOARD_ROUTES.DONATIONS },
 ]
 
-const NavbarMenu = () => {
+export const DesktopNavbar = () => {
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   const menuItems = useMemo(() => {
@@ -79,8 +79,8 @@ const NavbarMenu = () => {
   return (
     <nav data-slot="navbar" className="fixed left-3 top-1/2 -translate-y-1/2 z-50">
       <Flex
+        as="ul"
         className="w-full gap-y-5 py-4 bg-dark/60 px-3.5 rounded-lg"
-        component="ul"
         direction="column"
         justify="between"
       >
@@ -89,13 +89,3 @@ const NavbarMenu = () => {
     </nav>
   )
 }
-
-const DesktopNavbarMenu = () => {
-  return (
-    <aside className="h-full w-13 flex-none">
-      <NavbarMenu />
-    </aside>
-  )
-}
-
-export { DesktopNavbarMenu }

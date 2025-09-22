@@ -50,6 +50,7 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
         return json(auctionInfo, { status: 200 })
       }
       catch (error) {
+        console.log('ERROR: ', error)
         if (error instanceof AxiosError) {
           const isStatusHaveReason = error.status !== undefined && Reflect.has(errorStatusReasons, error.status.toString())
 

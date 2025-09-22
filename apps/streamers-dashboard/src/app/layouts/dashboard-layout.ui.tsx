@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 
 import { Outlet } from 'react-router-dom'
 
+import { MobileDashboardFooter } from '~widgets/dashboard-footer/ui'
 import { DashboardHeader } from '~widgets/dashboard-header/ui'
-import { DesktopNavbarMenu, MobileNavbarMenu } from '~widgets/navbar-menu/ui'
+import { DesktopNavbar, MobileNavbar } from '~widgets/dashboard-navbar/ui'
 
 import { auctionSelectors } from '~entities/auction/store'
 
@@ -82,11 +83,20 @@ export const DashboardLayout = () => {
       <DashboardHeader />
       <main className="main--dashboard">
         <Flex className="h-full w-full px-4">
-          {isLargeThenTablet && <DesktopNavbarMenu />}
+          {isLargeThenTablet && (
+            <aside className="h-full w-13 flex-none">
+              <DesktopNavbar />
+            </aside>
+          ) }
           <Outlet />
         </Flex>
       </main>
-      {!isLargeThenTablet && <MobileNavbarMenu />}
+      {!isLargeThenTablet
+        && (
+          <MobileDashboardFooter>
+            <MobileNavbar />
+          </MobileDashboardFooter>
+        )}
     </div>
 
   )

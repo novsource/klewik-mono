@@ -46,6 +46,7 @@ const WizardWelcomeItem = (
           <Button
             className="w-full"
             variant={node === 'createAuction' ? 'action' : 'default'}
+            size="sm"
             startContent={WELCOME_PAGE_WIZARD_IDS_ICONS[node]}
           >
             {triggerTitle}

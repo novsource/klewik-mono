@@ -12,6 +12,8 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Flex } from '~shared/ui/flex'
 
+import { cn } from '~shared/utils'
+
 import { useWheel } from '../hooks/use-wheel'
 import { wheelSelectors } from '../store'
 import { generateWinner } from '../utils'
@@ -62,7 +64,7 @@ export const WheelCanvas = (props: WheelCanvasProps) => {
         />
         <canvas
           ref={innerRef}
-          className="absolute top-0"
+          className={cn('absolute top-0', wheelSpinStatus !== 'spinning' && 'animate-pulse duration-[4s] transition-opacity')}
           style={{ clipPath: 'circle(46%)' }}
         />
       </Flex>
