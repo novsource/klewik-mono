@@ -367,7 +367,7 @@
 
     #root {
         font-size: 16px;
-        @apply relative w-full tablet:h-full tablet:overflow-hidden;
+        @apply relative w-full h-auto tablet:h-full tablet:overflow-hidden;
     }
 
     body {

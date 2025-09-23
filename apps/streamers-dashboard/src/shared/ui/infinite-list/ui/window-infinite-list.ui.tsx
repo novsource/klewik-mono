@@ -1,16 +1,16 @@
 import { useMemo } from 'react'
 import type { ReactNode, SVGProps } from 'react'
 
-import type { StateRef, UseInfiniteListReturn } from '~shared/hooks'
+import type { UseInfiniteListReturn } from '~shared/hooks'
 
 import type { FlexProps } from '~shared/ui/flex'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import type { MotionBoxProps } from '~shared/ui/motion-box'
 import { MotionBox } from '~shared/ui/motion-box'
-import type { ShadowVirtualListProps } from '~shared/ui/shadow-virtual-list'
-import { ShadowVirtualList } from '~shared/ui/shadow-virtual-list'
 import { Typography } from '~shared/ui/typograghy'
+import type { WindowVirtualListProps } from '~shared/ui/virtual-list'
+import { WindowVirtualList } from '~shared/ui/virtual-list'
 import { useVirtualizedItems } from '~shared/ui/virtual-list/hooks'
 import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
 
@@ -18,36 +18,29 @@ import { cn } from '~shared/utils'
 
 import { infiniteListEmptyContentStyles, infiniteListLoaderStyles } from '../styles'
 
-export type ExtendedListState = {
-  shouldRenderAsSkeleton: boolean
-}
+export type WindowInfiniteListRenderFunction<T> = (item: T, virtualizedItem: VirtualizedItem, extendedListState: ExtendedListState) => ReactNode
 
-export type InfiniteListRenderFunction<T> = (item: T, virtualizedItem: VirtualizedItem, extendedListState: ExtendedListState) => ReactNode
-
-export type InfiniteListProps<DataItem> = Omit<
-  ShadowVirtualListProps<DataItem>,
-  'data' | 'count' | 'scrollElementRef' | 'children'
+export type WindowInfiniteListProps<DataItem> = Omit<
+  WindowVirtualListProps<DataItem>,
+  'data' | 'count' | 'children'
 > & Pick<UseInfiniteListReturn<DataItem>, 'state'> & {
   data: DataItem[]
-  children: InfiniteListRenderFunction<DataItem>
-  listRef: StateRef<HTMLElement | Window>
+  children: WindowInfiniteListRenderFunction<DataItem>
   limit?: number
   placeholder?: ReactNode
   showPlaceholders?: boolean
   showEmptyContent?: boolean
-  offset?: number
   emptyContentProps?: InfiniteListEmptyContentProps
   loaderProps?: InfiniteListLoaderProps
 }
 
-export const InfiniteList = <DataItem = unknown>(props: InfiniteListProps<DataItem>) => {
+export const WindowInfiniteList = <DataItem = unknown>(props: WindowInfiniteListProps<DataItem>) => {
   const {
     data,
     children,
-    listRef,
     state: listState,
-    offset,
     placeholder,
+    gap = 8,
     limit = 15,
     showPlaceholders = false,
     showEmptyContent = true,
@@ -83,8 +76,6 @@ export const InfiniteList = <DataItem = unknown>(props: InfiniteListProps<DataIt
     const isPlaceholderItem = !dataItem
 
     if (isPlaceholderItem) {
-      const gap = restProps.gap ?? 8
-
       return (
         <div
           key={virtualizeItem.id}
@@ -112,16 +103,15 @@ export const InfiniteList = <DataItem = unknown>(props: InfiniteListProps<DataIt
   const isShouldShowLoader = listState.isPending && preparedItems.length >= limit
 
   return (
-    <ShadowVirtualList
+    <WindowVirtualList
       data={showedItems}
       count={virtualListItemsCount}
-      scrollElementRef={listRef}
       {...restProps}
     >
       {isShouldShowEmptyContent && <InfiniteListEmptyContent {...emptyContentProps} />}
       {virtualizedItems.map(renderVirtualListItem)}
       {isShouldShowLoader && <InfiniteListLoader />}
-    </ShadowVirtualList>
+    </WindowVirtualList>
   )
 }
 
