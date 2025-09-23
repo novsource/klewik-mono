@@ -36,6 +36,8 @@ type TabsContextProps = TabsStylesProps & {
 
 type TriggersData = Record<string, {
   width: number
+  height: number
+  startY: number
   startX: number
 }>
 
@@ -46,6 +48,7 @@ export const TabsContextProvider = ({
   defaultValue,
   value,
   variant = 'default',
+  orientation = 'horizontal',
 }: TabsContextProps) => {
   const [triggersData, setTriggersData] = useState<NullablePossible<TriggersData>>(null)
   const [keys, setKeys] = useState<string[]>([])
@@ -74,9 +77,9 @@ export const TabsContextProvider = ({
         triggersData,
       },
       dispatch: { setKeys, setSelectedKey, setTriggersData },
-      styles: { variant },
+      styles: { variant, orientation },
     } satisfies TabsContextState
-  }, [selectedKey, keys, triggersData, defaultValue, variant])
+  }, [selectedKey, keys, triggersData, defaultValue, variant, orientation])
 
   return (
     <TabsContext.Provider

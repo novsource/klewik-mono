@@ -34,12 +34,11 @@ export const Tabs = forwardRef<ElementRef<typeof TabsPrimitive.Root>, TabsProps>
     value,
     defaultValue,
     variant,
+    orientation,
     ...restProps
   } = props
 
-  const [currentValue, setCurrentValue] = useState(
-    value ?? defaultValue ?? '',
-  )
+  const [currentValue, setCurrentValue] = useState(value ?? defaultValue)
 
   useLayoutEffect(() => {
     if (currentValue !== value && value) {
@@ -50,11 +49,17 @@ export const Tabs = forwardRef<ElementRef<typeof TabsPrimitive.Root>, TabsProps>
   const tabsProps = mergeProps(restProps, { onValueChange: setCurrentValue })
 
   return (
-    <TabsContextProvider defaultValue={defaultValue} value={currentValue} variant={variant}>
+    <TabsContextProvider
+      defaultValue={defaultValue}
+      value={currentValue}
+      variant={variant}
+      orientation={orientation}
+    >
       <TabsPrimitive.Root
         ref={ref}
         defaultValue={defaultValue}
         value={currentValue}
+        orientation={orientation}
         {...tabsProps}
       />
     </TabsContextProvider>
@@ -68,8 +73,14 @@ const TabsTriggerRunner = () => {
     styles: variantStyles,
   } = useTabContext()
 
-  const [width, setWidth] = useState(0)
-  const [x, setX] = useState(0)
+  const [sizes, setSizes] = useState({
+    width: 0,
+    height: 0,
+  })
+  const [coords, setCoords] = useState({
+    x: 0,
+    y: 0,
+  })
 
   useLayoutEffect(() => {
     if (!triggersData)
@@ -79,31 +90,40 @@ const TabsTriggerRunner = () => {
     const isDataExists = !!selectedTriggerData
 
     if (isDataExists) {
-      setWidth(selectedTriggerData.width)
-      setX(selectedTriggerData.startX)
+      setSizes({
+        width: selectedTriggerData.width,
+        height: selectedTriggerData.height,
+      })
+      setCoords({
+        x: selectedTriggerData.startX,
+        y: selectedTriggerData.startY,
+      })
     }
   }, [triggersData, selectedKey])
 
-  const styles = useMemo(
+  const classes = useMemo(
     () =>
       cn(tabsTriggerRunnerVariants(variantStyles)),
     [variantStyles],
   )
 
-  // If the width is zero, the trigger will be filled in
-  if (width === 0) {
+  if (sizes.width === 0 || sizes.height === 0) {
     return
   }
 
-  return (
-    <div
-      className={styles}
-      style={{
-        width,
-        transform: `translateX(calc(${x}px - var(--tabs-inner-padding)))`,
-      }}
-    />
-  )
+  const isHorizontal = variantStyles.orientation === 'horizontal'
+
+  const triggerStyles = isHorizontal
+    ? {
+        width: sizes.width,
+        transform: `translateX(calc(${coords.x}px - var(--tabs-inner-padding)))`,
+      }
+    : {
+        height: sizes.height,
+        transform: `translateY(calc(${coords.y}px - var(--tabs-inner-padding)))`,
+      }
+
+  return <div className={classes} style={triggerStyles} />
 }
 
 export type TabsListProps = ComponentPropsWithoutRef<typeof TabsPrimitive.List>
@@ -170,13 +190,26 @@ export const TabsTrigger = forwardRef<
       const storedTriggerData = triggersData[value]
 
       const startX = triggerElement.offsetLeft
+      const startY = triggerElement.offsetTop
+
       const actualWidth = entry.target.clientWidth
+      const actualHeight = entry.target.clientHeight
 
       const isStoredWidthOutdated = actualWidth !== storedTriggerData.width
+      const isStoredHeightOutdated = actualHeight !== storedTriggerData.height
 
-      if (isStoredWidthOutdated) {
+      if (isStoredWidthOutdated || isStoredHeightOutdated) {
         setTriggersData(curr =>
-          ({ ...curr, [value]: { value, startX, width: actualWidth } }))
+          ({
+            ...curr,
+            [value]: {
+              value,
+              startX,
+              startY,
+              width: actualWidth,
+              height: actualHeight,
+            },
+          }))
       }
     },
   })
@@ -195,9 +228,21 @@ export const TabsTrigger = forwardRef<
 
     if (isCurrentTriggerDataNotStored) {
       const startX = triggerElement.offsetLeft
-      const width = triggerElement.clientWidth
+      const startY = triggerElement.offsetTop
 
-      setTriggersData(curr => ({ ...curr, [value]: { value, startX, width } }))
+      const width = triggerElement.clientWidth
+      const height = triggerElement.clientHeight
+
+      setTriggersData(curr => ({
+        ...curr,
+        [value]: {
+          value,
+          startX,
+          startY,
+          width,
+          height,
+        },
+      }))
     }
   }, [value, setTriggersData, triggersData])
 
