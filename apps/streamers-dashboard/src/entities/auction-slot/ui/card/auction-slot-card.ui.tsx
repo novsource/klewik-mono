@@ -237,6 +237,19 @@ export const SolidAuctionSlotHeader = (props: SolidAuctionSlotHeaderProps) => {
   )
 }
 
+export type AuctionSlotCardContentInfoDividerProps = ComponentProps<'div'>
+
+export const AuctionSlotCardContentInfoDivider = (props: AuctionSlotCardContentInfoDividerProps) => {
+  const { className, ...restProps } = props
+
+  return (
+    <div
+      className={cn('size-1 bg-gray/80 rounded-pill mx-1.5 tablet:mx-2', className)}
+      {...restProps}
+    />
+  )
+}
+
 export type SolidAuctionSlotContentProps = CardProps & {
   auctionSlot: AuctionSlot
   winPercents?: number
@@ -248,13 +261,20 @@ export const SolidAuctionSlotContent = (props: SolidAuctionSlotContentProps) => 
   return (
     <BaseAuctionSlotCardContent {...restProps}>
       <Flex
-        className="bg-dark-light rounded-sm px-1.5 w-fit gap-x-3 tablet:gap-x-4"
+        className="bg-dark-light rounded-sm px-1.5 w-fit"
         direction="row"
-        align="end"
+        align="center"
       >
         <AuctionSlotCardIdInfo slotId={auctionSlot.id} />
+        <AuctionSlotCardContentInfoDivider />
         <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
-        {winPercents && <AuctionSlotCardWinPercents winPercents={winPercents} />}
+        {winPercents
+          && (
+            <>
+              <AuctionSlotCardContentInfoDivider />
+              <AuctionSlotCardWinPercents winPercents={winPercents} />
+            </>
+          )}
       </Flex>
     </BaseAuctionSlotCardContent>
   )
