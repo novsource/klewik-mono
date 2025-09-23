@@ -24,7 +24,7 @@ export type ClearListOptions = {
 }
 
 export type UseInfiniteListReturn<ListDataItem> = {
-  ref: StateRef<HTMLDivElement>
+  ref: StateRef<Window | HTMLElement>
   state: UseInfiniteListState & {
     value: ListDataItem[]
     isPending: boolean
@@ -91,7 +91,7 @@ export const useInfiniteList = <ListDataItem>(
     [serviceFn, listState],
   )
 
-  const infiniteScroll = useInfiniteScroll<HTMLDivElement>(_ => loadMore(), { distance: options?.distance ?? 20 })
+  const infiniteScroll = useInfiniteScroll<Window | HTMLElement>(_ => loadMore(), { distance: options?.distance ?? 20 })
 
   const isLoading = infiniteScroll.loading || isPending
 

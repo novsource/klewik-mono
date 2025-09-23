@@ -22,7 +22,7 @@ export type UseInfiniteScroll = {
     options?: UseInfiniteScrollOptions
   ): boolean
 
-  <Target extends Element>(
+  <Target extends Window | Element>(
     callback: (event: Event) => void,
     options?: UseInfiniteScrollOptions,
     target?: never
@@ -68,7 +68,7 @@ export const useInfiniteScroll = ((...params: any[]) => {
 
   const [loading, setIsLoading] = useState(false)
 
-  const internalRef = useRefState<Element>()
+  const internalRef = useRefState<Window | Element>()
   const internalCallbackRef = useRef(callback)
   internalCallbackRef.current = callback
   const internalLoadingRef = useRef(loading)
@@ -77,7 +77,10 @@ export const useInfiniteScroll = ((...params: any[]) => {
   useEffect(() => {
     if (!target && !internalRef.state)
       return
-    const element = (target ? getElement(target) : internalRef.current) as Element
+    const element = (target ? getElement(target) : internalRef.current)
+
+    const isTargetWindow = element instanceof Window
+
     if (!element)
       return
 
@@ -86,7 +89,8 @@ export const useInfiniteScroll = ((...params: any[]) => {
         return
 
       const { clientHeight, scrollHeight, scrollTop, clientWidth, scrollWidth, scrollLeft }
-        = event.target as Element
+        = isTargetWindow ? document.documentElement : event.target as Element
+
       const scrollBottom = scrollHeight - (scrollTop + clientHeight)
       const scrollRight = scrollWidth - (scrollLeft + clientWidth)
 
