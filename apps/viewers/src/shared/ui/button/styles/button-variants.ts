@@ -1,5 +1,5 @@
 import { VariantProps, cva } from "class-variance-authority";
-import { CvaClassValue } from "~/app/_shared/lib/cva";
+import { CvaClassValue } from "~/_shared/lib/cva";
 
 type ButtonVariant =
   | "default"

@@ -1,7 +1,7 @@
 import { VariantProps, cva } from "class-variance-authority";
 
 import { TypographyTags } from "../ui/typography.ui";
-import { CvaClassValue } from "~/app/_shared/lib/cva/cva.types";
+import { CvaClassValue } from "~/_shared/lib/cva/cva.types";
 
 type TypographyVariants = {
   tag: {

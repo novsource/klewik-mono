@@ -10,7 +10,7 @@ import {
   cardHeaderVariants,
   cardTitleVariants,
 } from "../styles/card-variants";
-import { cn } from "~/app/_shared/utils";
+import { cn } from "~/_shared/utils";
 
 const Card = React.forwardRef<
   HTMLDivElement,

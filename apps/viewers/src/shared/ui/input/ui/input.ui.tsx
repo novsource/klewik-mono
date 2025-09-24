@@ -16,8 +16,8 @@ import {
   inputVariants,
   labelVariants,
 } from "../styles/input-variants";
-import { CvaClassValue } from "~/app/_shared/lib/cva/cva.types";
-import { cn } from "~/app/_shared/utils";
+import { CvaClassValue } from "~/_shared/lib/cva/cva.types";
+import { cn } from "~/_shared/utils";
 
 export type InputProps = Omit<ComponentProps<"input">, "size" | "className"> &
   Omit<

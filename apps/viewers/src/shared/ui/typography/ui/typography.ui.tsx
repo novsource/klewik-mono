@@ -5,7 +5,7 @@ import {
   typographyVariants,
 } from "../styles/typography-variants";
 
-import { cn } from "~/app/_shared/utils";
+import { cn } from "~/_shared/utils";
 import { JSX } from "react/jsx-runtime";
 
 export type TypographyTags = "h1" | "h2" | "h3" | "h4" | "span" | "p";

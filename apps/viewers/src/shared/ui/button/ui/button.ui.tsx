@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { cn } from "~/app/_shared/utils";
+import { cn } from "~/_shared/utils";
 import { buttonVariants, ButtonVariantsProps } from "../styles/button-variants";
 import { Slot } from "@radix-ui/react-slot";
 
