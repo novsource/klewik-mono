@@ -1,16 +1,42 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import antfu from '@antfu/eslint-config'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import tailwindcss from 'eslint-plugin-tailwindcss'
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+export default antfu(
+  {
+    type: 'app',
 
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
-];
+    jsonc: false,
+    yaml: false,
 
-export default eslintConfig;
+    typescript: true,
+    react: true,
+
+    rules: {
+      'antfu/top-level-function': 'off',
+      'antfu/consistent-list-newline': 'error',
+      'no-console': 'warn',
+      'ts/consistent-type-definitions': ['error', 'type'],
+    },
+  },
+  ...tailwindcss.configs['flat/recommended'],
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      'tailwindcss/classnames-order': 'warn',
+      'tailwindcss/no-custom-classname': 'off',
+      'tailwindcss/no-contradicting-classname': 'error',
+    },
+    settings: {
+      tailwindcss: {
+        // These are the default values but feel free to customize
+        callees: ['classnames', 'clsx', 'cn'],
+        cssFiles: ['**/*.css', '!**/node_modules'],
+        groupByResponsive: false,
+        prependCustom: false,
+        removeDuplicates: true,
+        whitelist: [],
+      },
+    },
+  },
+)
