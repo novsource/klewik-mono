@@ -1,5 +1,5 @@
-import { Input } from "~ui/input";
+import { MDXLinkedHeader } from "./_local/mdx-linked-header";
 
 export const mdxComponents = {
-  Input: Input
+  LinkedHeader: MDXLinkedHeader
 }
