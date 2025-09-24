@@ -1,6 +1,6 @@
 import { VariantProps, cva } from "class-variance-authority";
 
-import { CvaClassValue } from "../../../lib/cva/cva.types";
+import { CvaClassValue } from "../../../shared/lib/cva/cva.types";
 
 export type InputSlots =
   | "base"
