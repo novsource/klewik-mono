@@ -1,10 +1,12 @@
 'use client'
 
 import type { TypographyProps, TypographyTags } from '~ui/typography'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useIntersectionObserver } from '~hooks/index'
+import { Divider } from '~ui/divider'
 import { Typography } from '~ui/typography'
-import { useLinkedHeadersContext } from '../context'
+import { cn } from '~utils/cn'
+import { useLinkedHeadersContext } from '../../context'
 
 type LinkedHeaderLevels = 1 | 2 | 3
 
@@ -25,6 +27,7 @@ type LinkedHeaderProps<Level extends LinkedHeaderLevels> = TypographyPropsByLeve
 		id: string
 		className?: string
 		level?: LinkedHeaderLevels
+		showTopDivider?: boolean
 		children: string
 	}
 
@@ -32,6 +35,7 @@ export const MDXLinkedHeader = <Level extends LinkedHeaderLevels = 1>(props: Lin
 	const {
 		id,
 		level = 1,
+		showTopDivider = true,
 		className,
 		children,
 		...restProps
@@ -59,15 +63,28 @@ export const MDXLinkedHeader = <Level extends LinkedHeaderLevels = 1>(props: Lin
 
 	const typographyTag = getTypographyTagByLevel(level)
 
+	const styles = useMemo(() =>
+		cn(
+			level === 2 && 'pt-6',
+			level === 3 && 'mt-4',
+			className,
+		), [typographyTag, className])
+
+	const isShouldRenderDivider = (level === 2) && showTopDivider
+
 	return (
-		<Typography
-			ref={ref}
-			id={id}
-			className={className}
-			tag={typographyTag}
-			{...restProps}
-		>
-			{ children }
-		</Typography>
+		<>
+			{isShouldRenderDivider && <Divider orientation="horizontal" />}
+			<Typography
+				ref={ref}
+				id={id}
+				className={styles}
+				tag={typographyTag}
+				{...restProps}
+			>
+				{ children }
+			</Typography>
+		</>
+
 	)
 }
