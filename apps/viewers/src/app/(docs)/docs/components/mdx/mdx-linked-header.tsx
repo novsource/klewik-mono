@@ -41,20 +41,20 @@ export const MDXLinkedHeader = <Level extends LinkedHeaderLevels = 1>(props: Lin
 		...restProps
 	} = props
 
-	const { updateHeadersInView, removeFromView } = useLinkedHeadersContext()
+	const { addHeader, updateHeadersInView, removeFromView } = useLinkedHeadersContext()
 
 	const { ref, inView, entry } = useIntersectionObserver({ threshold: 0.8 })
+
+	useEffect(() => {
+		addHeader({ id, inView })
+	}, [id])
 
 	useEffect(() => {
 		if (!entry)
 			return
 
 		if (inView && entry) {
-			updateHeadersInView({
-				id,
-				top: entry.boundingClientRect.top,
-				bottom: entry.boundingClientRect.bottom,
-			})
+			updateHeadersInView(id)
 		}
 
 		if (!inView)
@@ -68,7 +68,7 @@ export const MDXLinkedHeader = <Level extends LinkedHeaderLevels = 1>(props: Lin
 			level === 2 && 'pt-6',
 			level === 3 && 'mt-4',
 			className,
-		), [typographyTag, className])
+		), [level, className])
 
 	const isShouldRenderDivider = (level === 2) && showTopDivider
 

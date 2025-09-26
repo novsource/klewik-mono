@@ -297,6 +297,7 @@
   --header-height: 56px;
   --footer-height: 52px;
   --sheet-height: calc(100% - 20px);
+  --ds-width: 1440px;
 }
 
 :root {
@@ -315,7 +316,7 @@
 
 html {
   scroll-padding-top: calc(var(--header-height) + 24px);
-  @apply bg-dark-foreground h-auto w-full scroll-smooth;
+  @apply bg-dark-foreground h-auto w-full;
 }
 
 #root {
@@ -337,6 +338,10 @@ li {
 .main_auction {
   @apply w-full tablet:px-0;
   height: calc(100% - (var(--header-height)));
+}
+
+.container {
+  @apply mx-auto max-w-[var(--ds-width)];
 }
 
 input:-webkit-autofill,

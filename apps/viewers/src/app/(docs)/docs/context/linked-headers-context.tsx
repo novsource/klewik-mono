@@ -3,20 +3,23 @@
 import type { ReactNode } from 'react'
 import { createContext, use, useMemo, useState } from 'react'
 
-type HeaderInViewItem = {
+type HeaderItem = {
 	id: string
-	top: number
-	bottom: number
+	inView: boolean
 }
 
 export type LinkedHeadersContextState = {
-	headersInView: HeaderInViewItem[]
-	updateHeadersInView: (header: HeaderInViewItem) => void
-	removeFromView: (headerId: HeaderInViewItem['id']) => void
+	headers: HeaderItem[]
+	headersInView: string[]
+	addHeader: (header: HeaderItem) => void
+	updateHeadersInView: (headerId: HeaderItem['id']) => void
+	removeFromView: (headerId: HeaderItem['id']) => void
 }
 
 const LinkedHeadersContext = createContext<LinkedHeadersContextState>({
+	headers: [],
 	headersInView: [],
+	addHeader: _ => ({}),
 	updateHeadersInView: _ => ({}),
 	removeFromView: _ => ({}),
 })
@@ -35,39 +38,61 @@ type LinkedHeadersContextProviderProps = {
 }
 
 type LinkedHeadersContextProviderValue = LinkedHeadersContextState & {
-	updateHeadersInView: (header: HeaderInViewItem) => void
-	removeFromView: (headerId: HeaderInViewItem['id']) => void
+	updateHeadersInView: (headerId: HeaderItem['id']) => void
+	removeFromView: (headerId: HeaderItem['id']) => void
 }
 
 export const LinkedHeadersContextProvider = (props: LinkedHeadersContextProviderProps) => {
 	const { children } = props
 
-	const [headersInView, setHeadersInView] = useState<LinkedHeadersContextState['headersInView']>([])
+	const [headers, setHeaders] = useState<HeaderItem[]>([])
 
-	const updateHeadersInView = (headerToAdd: HeaderInViewItem) => {
-		setHeadersInView((storedHeaders) => {
-			const storedHeaderIndex = storedHeaders.findIndex(header => headerToAdd.id === header.id)
+	const addHeader = (header: HeaderItem) => {
+		setHeaders(curr => [...curr, header])
+	}
+
+	const updateHeadersInView = (headerId: HeaderItem['id']) => {
+		setHeaders((storedHeaders) => {
+			const storedHeaderIndex = storedHeaders.findIndex(header => headerId === header.id)
 			const isHeaderAlreadyStored = storedHeaderIndex !== -1
 
 			if (isHeaderAlreadyStored) {
 				return [
 					...storedHeaders.slice(0, storedHeaderIndex),
-					headerToAdd,
+					{ id: headerId, inView: true },
 					...storedHeaders.slice(storedHeaderIndex + 1),
 				]
 			}
 
-			return [...storedHeaders, headerToAdd]
+			return [...storedHeaders, { id: headerId, inView: true }]
 		})
 	}
 
-	const removeFromView = (headerId: HeaderInViewItem['id']) => {
-		setHeadersInView((curr) => {
-			return curr.filter(header => header.id !== headerId)
+	const removeFromView = (headerId: HeaderItem['id']) => {
+		setHeaders((curr) => {
+			return curr.map((header) => {
+				if (header.id === headerId)
+					return { id: headerId, inView: false }
+
+				return header
+			})
 		})
 	}
 
-	const value = useMemo<LinkedHeadersContextProviderValue>(() => ({ headersInView, updateHeadersInView, removeFromView }), [headersInView])
+	const headersInView = useMemo(() => headers.reduce<string[]>((acc, header) => {
+		if (header.inView)
+			acc.push(header.id)
 
-	return <LinkedHeadersContext value={value}>{children }</LinkedHeadersContext>
+		return acc
+	}, []), [headers])
+
+	const contextValue = useMemo<LinkedHeadersContextProviderValue>(() => ({
+		headers,
+		headersInView,
+		addHeader,
+		updateHeadersInView,
+		removeFromView,
+	}), [headers, headersInView])
+
+	return <LinkedHeadersContext value={contextValue}>{children}</LinkedHeadersContext>
 }

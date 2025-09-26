@@ -2,10 +2,11 @@
 
 import type { ComponentProps } from 'react'
 import type { DocsRoutes, DocsRoutesItem } from '~/constants'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useHash } from '~hooks/index'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useDebounceCallback, useHash, useWindowScroll } from '~hooks/index'
 import { Typography } from '~ui/typography'
 import { cn } from '~utils/cn'
+import { useLinkedHeadersContext } from '../context'
 
 type SidebarListItemsMarkerProps = Omit<ComponentProps<'span'>, 'style'> & {
 	activeItemId: string
@@ -58,7 +59,7 @@ function SidebarListItemsMarker(props: SidebarListItemsMarkerProps) {
 	return (
 		<span
 			ref={internalRef}
-			className={cn('bg-green-accent absolute -left-0.25 w-0.25 transition-all', className)}
+			className={cn('bg-green-accent absolute -left-0.25 w-0.25 transition-all duration-500', className)}
 			style={{
 				display: isShowed ? 'inline-block' : 'none',
 				top,
@@ -120,8 +121,14 @@ function SidebarList(props: SidebarProps) {
 	)
 }
 
-export type DocsSidebarProps = ComponentProps<'aside'> & {
-	routes: DocsRoutes
+type DocsOrderItem<T extends DocsRoutes> = {
+	id: keyof T
+	order: number
+}
+
+export type DocsSidebarProps<T extends DocsRoutes> = ComponentProps<'aside'> & {
+	routes: T
+	order: DocsOrderItem<T>[]
 }
 
 function getHashPath(routes: DocsRoutes, windowHash: string) {
@@ -138,12 +145,53 @@ function getHashPath(routes: DocsRoutes, windowHash: string) {
 	return windowHash
 }
 
-function DocsSidebar(props: DocsSidebarProps) {
+function DocsSidebar<T extends DocsRoutes>(props: DocsSidebarProps<T>) {
 	const { routes, className, ...restProps } = props
+
+	const { headersInView } = useLinkedHeadersContext()
 
 	const [currentHash, setCurrentHash] = useState<string>('')
 
 	const { hash: windowHash } = useHash()
+	const { value } = useWindowScroll()
+
+	const changeActiveHash = useCallback((headers: typeof headersInView) => {
+		if (headers.length === 0)
+			return
+
+		const headersSize = headers.length
+
+		const windowScroll = document.body.scrollTop || document.documentElement.scrollTop
+		const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
+		const scrollYProgress = (windowScroll / windowHeight) * 100
+
+		let index = 0
+
+		const isStartOfPage = scrollYProgress === 0
+		const isEndOfPage = scrollYProgress === 100
+
+		if (isStartOfPage)
+			index = 0
+
+		if (isEndOfPage)
+			index = -1
+
+		if (!isStartOfPage && !isEndOfPage) {
+			index = Math.ceil((headersSize / 100) * scrollYProgress) - 1
+		}
+
+		const header = headers.at(index)!
+
+		const hash = getHashPath(routes, header)
+
+		setCurrentHash(hash)
+	}, [routes])
+
+	const debouncesChangeActiveHash = useDebounceCallback(changeActiveHash, 8)
+
+	useEffect(() => {
+		debouncesChangeActiveHash(headersInView)
+	}, [debouncesChangeActiveHash, value.y])
 
 	useEffect(() => {
 		if (Object.keys(routes).length === 0) {
@@ -156,9 +204,14 @@ function DocsSidebar(props: DocsSidebarProps) {
 	}, [routes, windowHash])
 
 	return (
-		<aside className={cn('h-full w-56', className)} {...restProps}>
+		<aside className={cn('relative w-full max-w-56', className)} {...restProps}>
 			<nav className="fixed top-16 h-fit py-4">
-				<Typography className="mb-2.5" tag="h4">Разделы</Typography>
+				<Typography
+					className="text-gray-accent tablet:text-md tablet:font-medium mb-2.5"
+					tag="span"
+				>
+					Разделы
+				</Typography>
 				<SidebarList hash={currentHash} routes={routes} />
 			</nav>
 		</aside>

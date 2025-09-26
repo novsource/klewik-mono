@@ -1,19 +1,28 @@
 ---
 title: About point auction
 description: What is a point auction for?
-order: 4
+order: 2
 ---
 
-<LinkedHeader id="getStarted" tag="h2">
+<LinkedHeader id="getStarted" level={2}>
   Создание аукциона
 </LinkedHeader>
 
 <Spacer space={2} />
 
-"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
+<Typography id="masterKey" tag='h3'>
+    Мастер ключ
+</Typography>
 
-<Spacer space={4} />
+<Spacer space={0.5} />
 
-<Divider orientation="horizontal" />
+Для создания аукциона необходимо иметь **мастер-ключ**. Данное решение **временное** и в дальнейшем, по окончанию тестирования работы сервиса,
+каждый сможет свободно создавать аукционы. На момент тестирования мастер-ключ предоставляется **небольшому количеству стримеров (преищущественно с небольшой аудиторией)**, чтобы
+не создавать большую нагрузку на сервера.
 
-<Spacer space={4} />
+В случае утери ключа или его публичного обнародывания необходимо обратиться в тг.
+
+<Caption variant="warn">
+    **Добровольная передача своего ключа другим лицам запрещена. В случае передачи ключ будет деактивирован, а аукционы, созданные данным ключом, будут удалены.**
+    (не надо так делать **пж-пж** 👏)
+</Caption>
