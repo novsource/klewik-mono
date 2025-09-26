@@ -1,41 +1,44 @@
-import { HTMLAttributes, ReactNode, useMemo } from "react";
+import type { HTMLAttributes, ReactNode } from 'react'
+import type { JSX } from 'react/jsx-runtime'
 
+import type {
+	TypographyVariantsProps,
+} from '../styles/typography-variants'
+import { useMemo } from 'react'
+
+import { cn } from '~utils/cn'
 import {
-  TypographyVariantsProps,
-  typographyVariants,
-} from "../styles/typography-variants";
+	typographyVariants,
+} from '../styles/typography-variants'
 
-import { cn } from "~/_shared/utils";
-import { JSX } from "react/jsx-runtime";
+export type TypographyTags = 'h1' | 'h2' | 'h3' | 'h4' | 'span' | 'p'
 
-export type TypographyTags = "h1" | "h2" | "h3" | "h4" | "span" | "p";
+type TypographyHTMLElements = Pick<HTMLElementTagNameMap, TypographyTags>
 
-type TypographyHTMLElements = Pick<HTMLElementTagNameMap, TypographyTags>;
+export type TypographyProps<T extends keyof TypographyHTMLElements> = {
+	tag: T
+	value?: string
+	children?: ReactNode
+} & Omit<TypographyVariantsProps, 'tag'>
+& HTMLAttributes<TypographyHTMLElements[T]>
 
-type TypographyProps<T extends keyof TypographyHTMLElements> = {
-  tag: T;
-  children: ReactNode;
-} & Omit<TypographyVariantsProps, "tag"> &
-  HTMLAttributes<TypographyHTMLElements[T]>;
-
-const Typography = <T extends keyof TypographyHTMLElements>({
-  children,
-  tag,
-  className,
-  ...props
+export const Typography = <T extends keyof TypographyHTMLElements>({
+	children,
+	tag,
+	className,
+	value,
+	...props
 }: TypographyProps<T>) => {
-  const Comp = tag as keyof Pick<JSX.IntrinsicElements, TypographyTags>;
+	const Comp = tag as keyof Pick<JSX.IntrinsicElements, TypographyTags>
 
-  const styles = useMemo(
-    () => cn(typographyVariants({ tag }), className),
-    [className, tag],
-  );
+	const styles = useMemo(
+		() => cn(typographyVariants({ tag }), className),
+		[className, tag],
+	)
 
-  return (
-    <Comp className={styles} {...props}>
-      {children}
-    </Comp>
-  );
-};
-
-export default Typography;
+	return (
+		<Comp className={styles} {...props}>
+			{children ?? value}
+		</Comp>
+	)
+}

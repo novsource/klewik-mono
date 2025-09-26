@@ -1,25 +1,26 @@
-import { VariantProps, cva } from "class-variance-authority";
+import type { VariantProps } from 'class-variance-authority'
+import type { CvaClassValue } from '~lib/cva'
 
-import { TypographyTags } from "../ui/typography.ui";
-import { CvaClassValue } from "~/_shared/lib/cva/cva.types";
+import type { TypographyTags } from '../ui/typography.ui'
+import { cva } from 'class-variance-authority'
 
 type TypographyVariants = {
-  tag: {
-    [Tag in TypographyTags]: CvaClassValue;
-  };
-};
+	tag: {
+		[Tag in TypographyTags]: CvaClassValue;
+	}
+}
 
-export const typographyVariants = cva<TypographyVariants>("", {
-  variants: {
-    tag: {
-      h1: "text-title-lg font-bold leading-5 landtop:leading-7 landtop:text-title-xl desktop-xl:text-[24px]",
-      h2: "text-title-lg font-bold",
-      h3: "text-title font-semibold",
-      h4: "text-md font-semibold",
-      span: "text-md font-medium",
-      p: "text-md font-regular",
-    },
-  },
-});
+export const typographyVariants = cva<TypographyVariants>('', {
+	variants: {
+		tag: {
+			h1: 'text-title-xl tablet:text-[28px] font-bold',
+			h2: 'text-title-lg tablet:text-title-xl font-bold',
+			h3: 'text-title tablet:text-title-lg font-semibold',
+			h4: 'text-md tablet:text-title font-semibold',
+			span: 'text-md inline-block font-medium',
+			p: 'text-md font-regular',
+		},
+	},
+})
 
-export type TypographyVariantsProps = VariantProps<typeof typographyVariants>;
+export type TypographyVariantsProps = VariantProps<typeof typographyVariants>
