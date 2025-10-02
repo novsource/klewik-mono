@@ -1,110 +1,94 @@
-import * as React from "react";
+import type { CardContextProps } from '../context/card-context'
 
-import { CardContextProps } from "../context/card-context";
+import type {
+	CardStyleProps,
+} from '../styles/card-variants'
+import * as React from 'react'
+import { cn } from '~utils/cn'
 import {
-  CardStyleProps,
-  cardBaseVariants,
-  cardContentVariants,
-  cardDescriptionVariants,
-  cardFooterVariants,
-  cardHeaderVariants,
-  cardTitleVariants,
-} from "../styles/card-variants";
-import { cn } from "~/_shared/utils";
+	cardBaseVariants,
+	cardContentVariants,
+	cardDescriptionVariants,
+	cardFooterVariants,
+	cardHeaderVariants,
+	cardTitleVariants,
+} from '../styles/card-variants'
 
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div"> & CardStyleProps
->(({ className, size, variant, ...htmlProps }, ref) => {
-  const style = React.useMemo(
-    () => cn(cardBaseVariants({ size, variant }), className),
-    [className, size, variant],
-  );
+const Card = ({ ref, className, size, variant, ...htmlProps }: React.ComponentProps<'div'> & CardStyleProps & { ref?: React.RefObject<HTMLDivElement | null> }) => {
+	const style = React.useMemo(
+		() => cn(cardBaseVariants({ size, variant }), className),
+		[className, size, variant],
+	)
 
-  return <div ref={ref} className={style} {...htmlProps} />;
-});
-Card.displayName = "Card";
+	return <div ref={ref} className={style} {...htmlProps} />
+}
+Card.displayName = 'Card'
 
-const CardHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & CardContextProps
->(({ className, ...props }, ref) => {
-  const { size, variant } = props;
+const CardHeader = ({ ref, className, ...props }: React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }) => {
+	const { size, variant } = props
 
-  const style = React.useMemo(
-    () => cn(cardHeaderVariants({ size, variant }), className),
-    [className, size, variant],
-  );
+	const style = React.useMemo(
+		() => cn(cardHeaderVariants({ size, variant }), className),
+		[className, size, variant],
+	)
 
-  return <div ref={ref} className={style} {...props} />;
-});
-CardHeader.displayName = "CardHeader";
+	return <div ref={ref} className={style} {...props} />
+}
+CardHeader.displayName = 'CardHeader'
 
-const CardTitle = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & CardContextProps
->(({ className, ...props }, ref) => {
-  const { size, variant } = props;
+const CardTitle = ({ ref, className, ...props }: React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }) => {
+	const { size, variant } = props
 
-  const style = React.useMemo(
-    () => cn(cardTitleVariants({ size, variant }), className),
-    [className, size, variant],
-  );
+	const style = React.useMemo(
+		() => cn(cardTitleVariants({ size, variant }), className),
+		[className, size, variant],
+	)
 
-  return <div ref={ref} className={style} {...props} />;
-});
-CardTitle.displayName = "CardTitle";
+	return <div ref={ref} className={style} {...props} />
+}
+CardTitle.displayName = 'CardTitle'
 
-const CardDescription = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & CardContextProps
->(({ className, ...props }, ref) => {
-  const { size, variant } = props;
+const CardDescription = ({ ref, className, ...props }: React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }) => {
+	const { size, variant } = props
 
-  const style = React.useMemo(
-    () => cn(cardDescriptionVariants({ size, variant }), className),
-    [className, size, variant],
-  );
+	const style = React.useMemo(
+		() => cn(cardDescriptionVariants({ size, variant }), className),
+		[className, size, variant],
+	)
 
-  return <div ref={ref} className={style} {...props} />;
-});
-CardDescription.displayName = "CardDescription";
+	return <div ref={ref} className={style} {...props} />
+}
+CardDescription.displayName = 'CardDescription'
 
-const CardContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & CardContextProps
->(({ className, ...props }, ref) => {
-  const { size, variant } = props;
+const CardContent = ({ ref, className, ...props }: React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }) => {
+	const { size, variant } = props
 
-  const style = React.useMemo(
-    () => cn(cardContentVariants({ size, variant }), className),
-    [className, size, variant],
-  );
+	const style = React.useMemo(
+		() => cn(cardContentVariants({ size, variant }), className),
+		[className, size, variant],
+	)
 
-  return <div ref={ref} className={style} {...props} />;
-});
-CardContent.displayName = "CardContent";
+	return <div ref={ref} className={style} {...props} />
+}
+CardContent.displayName = 'CardContent'
 
-const CardFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & CardContextProps
->(({ className, ...props }, ref) => {
-  const { size, variant } = props;
+const CardFooter = ({ ref, className, ...props }: React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }) => {
+	const { size, variant } = props
 
-  const style = React.useMemo(
-    () => cn(cardFooterVariants({ size, variant }), className),
-    [className, size, variant],
-  );
+	const style = React.useMemo(
+		() => cn(cardFooterVariants({ size, variant }), className),
+		[className, size, variant],
+	)
 
-  return <div ref={ref} className={style} {...props} />;
-});
-CardFooter.displayName = "CardFooter";
+	return <div ref={ref} className={style} {...props} />
+}
+CardFooter.displayName = 'CardFooter'
 
 export {
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardDescription,
-  CardContent,
-};
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+}

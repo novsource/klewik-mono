@@ -23,26 +23,26 @@ export default antfu(
 			'ts/consistent-type-definitions': ['error', 'type'],
 		},
 	},
-	...tailwindcss.configs['flat/recommended'],
-	{
-		rules: {
-			'tailwindcss/no-custom-classname': 'off',
-		},
-		settings: {
-			tailwindcss: {
-				callees: ['cn', 'cva'],
-				cssFiles: [
-					'**/*.css',
-					'!**/node_modules',
-					'!**/.*',
-					'!**/dist',
-					'!**/build',
-				],
-				cssFilesRefreshRate: 5_000,
-				removeDuplicates: true,
-				skipClassAttribute: false,
-				whitelist: [],
-			},
-		},
-	},
+	// ...tailwindcss.configs['flat/recommended'],
+	// {
+	// 	rules: {
+	// 		'tailwindcss/no-custom-classname': 'off',
+	// 	},
+	// 	settings: {
+	// 		tailwindcss: {
+	// 			callees: ['cn', 'cva'],
+	// 			cssFiles: [
+	// 				'**/*.css',
+	// 				'!**/node_modules',
+	// 				'!**/.*',
+	// 				'!**/dist',
+	// 				'!**/build',
+	// 			],
+	// 			cssFilesRefreshRate: 5_000,
+	// 			removeDuplicates: true,
+	// 			skipClassAttribute: false,
+	// 			whitelist: [],
+	// 		},
+	// 	},
+	// },
 )

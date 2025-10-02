@@ -1,3 +1,5 @@
+'use client'
+
 import {
   ComponentProps,
   forwardRef,
@@ -16,8 +18,8 @@ import {
   inputVariants,
   labelVariants,
 } from "../styles/input-variants";
-import { CvaClassValue } from "~/_shared/lib/cva/cva.types";
-import { cn } from "~/_shared/utils";
+import { CvaClassValue } from "~lib/cva";
+import { cn } from "~utils/cn";
 
 export type InputProps = Omit<ComponentProps<"input">, "size" | "className"> &
   Omit<

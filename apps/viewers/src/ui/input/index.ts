@@ -1,3 +1,1 @@
-import { Input } from "./ui/input.ui";
-
-export { Input };
+export * from './ui/input.ui'

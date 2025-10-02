@@ -1,15 +1,15 @@
-import { ReactNode } from "react";
-import { AppContextProvider } from "~/app/_shared/context";
-import { SearchProvider } from "~/app/_shared/context/search-bar-context/search-bar-context";
+import type { ReactNode } from 'react'
+import { AppContextProvider } from '~context/app-context'
+import { SearchProvider } from '~context/search-bar-context'
 
 export default function AuctionLayout({
-  children,
+	children,
 }: Readonly<{
-  children: ReactNode;
+	children: ReactNode
 }>) {
-  return (
-    <AppContextProvider>
-      <SearchProvider>{children}</SearchProvider>
-    </AppContextProvider>
-  );
+	return (
+		<AppContextProvider>
+			<SearchProvider>{children}</SearchProvider>
+		</AppContextProvider>
+	)
 }

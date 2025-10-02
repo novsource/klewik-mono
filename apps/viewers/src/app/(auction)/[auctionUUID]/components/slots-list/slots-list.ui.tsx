@@ -1,59 +1,46 @@
-"use client";
+'use client'
 
-import { memo, useEffect, useState } from "react";
-import { SlotCard } from "../slot-card";
+import { memo, useMemo } from 'react'
+import { cn } from '~utils/cn'
+import { SlotCard } from '../slot-card'
 
 type SlotsListProps = {
-  slots: Post[];
-  filterTitle?: string | null;
-};
-
-export interface Post {
-  userId: number;
-  id: number;
-  title: string;
-  body: string;
+	slots: Slot[]
+	filterTitle?: string | null
 }
 
-const filterSlotsByTitle = (slots: Post[], filterTitle: Post["title"]) => {
-  return slots.filter((slot) =>
-    slot.title.toLocaleLowerCase().includes(filterTitle.toLocaleLowerCase()),
-  );
-};
+export type Slot = {
+	id: number
+	title: string
+	points: number
+}
 
-const SlotsList = memo(function List(props: SlotsListProps) {
-  const [slots, setSlots] = useState<Post[]>(() => {
-    if (props.filterTitle === undefined || props.filterTitle === null)
-      return props.slots;
+export const SlotsList = memo((props: SlotsListProps) => {
+	const { slots, filterTitle } = props
 
-    return filterSlotsByTitle(props.slots, props.filterTitle);
-  });
+	const showedSlots = useMemo(() => {
+		return slots.map((slot) => {
+			const isSlotPassFilter = filterTitle
+				? slot.title.toLocaleLowerCase().includes(filterTitle.toLocaleLowerCase())
+				: true
 
-  useEffect(() => {
-    if (!props.filterTitle || props.filterTitle === null) {
-      return setSlots(props.slots);
-    }
+			return (
+				<li className={cn(!isSlotPassFilter && 'hidden')} key={slot.id}>
+					<SlotCard
+						id={slot.id}
+						name={slot.title}
+						points={slot.points}
+						percent={10}
+						color="#FFF"
+					/>
+				</li>
+			)
+		})
+	}, [filterTitle, slots])
 
-    const newSlots = filterSlotsByTitle(props.slots, props.filterTitle);
-
-    setSlots([...newSlots]);
-  }, [props?.filterTitle, props.slots]);
-
-  return (
-    <ul className="flex flex-col gap-y-2 pb-4">
-      {slots.map((slot) => (
-        <li key={slot.id}>
-          <SlotCard
-            id={slot.id}
-            name={slot.title}
-            points={1000}
-            percent={10}
-            color="#FFF"
-          />
-        </li>
-      ))}
-    </ul>
-  );
-});
-
-export { SlotsList };
+	return (
+		<ul className="flex flex-col gap-y-2 pb-4">
+			{showedSlots}
+		</ul>
+	)
+})
