@@ -1,3 +1,4 @@
 export * from './cn'
-export * from './get-element';
-export * from './is-target';
+export * from './format-number'
+export * from './get-element'
+export * from './is-target'
