@@ -1,32 +1,44 @@
 import type { HeaderProps } from '~ui/header'
-import { Button } from '~ui/button'
 
+import Link from 'next/link'
 import { Divider } from '~ui/divider'
 import { Header } from '~ui/header'
 import { Icons } from '~ui/icons'
+import { cn } from '~utils/cn'
 
 export type AppHeaderProps = HeaderProps
 
 export const AppHeader = (props: AppHeaderProps) => {
+	const { className, ...restProps } = props
+
 	return (
-		<Header {...props}>
-			<div className="h-full w-full pt-2.5">
-				<div className="border-gray/20 rounded-medium bg-dark/30 relative z-20 flex h-full w-full items-center justify-between gap-x-4 border-1 px-4 py-4 tablet:py-2 backdrop-blur-md">
+		<Header
+			className={cn(
+				'border-b-dark-light border-b-1 bg-dark-foreground/30 backdrop-blur-sm sticky top-0',
+				className,
+			)}
+			{...restProps}
+		>
+			<div className="container h-full w-full">
+				<div className="relative flex h-full w-full items-center justify-between gap-x-4 px-4 py-2">
 					<Icons.KlewikLogo className="text-green-accent" size="lg" />
-
 					<div className="flex h-full items-center">
-						<a className="flex items-center text-gray-light hover:text-white size-6 transition-colors" href="https://github.com/novsource/klewik-viewers">
-							<Icons.GithubLogo size="sm" />
-						</a>
+						<Link
+							className="flex items-center gap-x-1.5 text-sm font-medium text-gray-light hover:text-dark-white transition-colors hover:underline underline-offset-5"
+							href="/docs"
+							target="_blank"
+						>
+							Документация
+							<Icons.LinkArrow size="xs" />
+						</Link>
 						<Divider className="mx-4" orientation="vertical" />
-						<Button
-							className="text-gray-light hover:text-white px-0 size-6 transition-colors"
-							variant="ghost"
-							isIconOnly
-							icon={<Icons.Hamburger />}
-						/>
+						<Link
+							className="flex items-center text-gray-light hover:text-dark-white size-6 transition-colors"
+							href="https://github.com/novsource/klewik-viewers"
+						>
+							<Icons.GithubLogo size="sm" />
+						</Link>
 					</div>
-
 				</div>
 			</div>
 		</Header>
