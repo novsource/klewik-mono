@@ -1,3 +1,4 @@
+import Crown from './crown.icon'
 import DonationAlertsLogo from './donalerts-logo.icon'
 import GithubLogo from './github-logo.icon'
 import Hamburger from './hamburger.icon'
@@ -11,6 +12,7 @@ import YoutubeLogo from './youtube-logo.icon'
 
 export const Icons = {
 	Id,
+	Crown,
 	SlotCoin,
 	Hamburger,
 	GithubLogo,
