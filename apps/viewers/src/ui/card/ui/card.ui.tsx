@@ -14,7 +14,9 @@ import {
 	cardTitleVariants,
 } from '../styles/card-variants'
 
-const Card = ({ ref, className, size, variant, ...htmlProps }: React.ComponentProps<'div'> & CardStyleProps & { ref?: React.RefObject<HTMLDivElement | null> }) => {
+export type CardProps = React.ComponentProps<'div'> & CardStyleProps & { ref?: React.RefObject<HTMLDivElement | null> }
+
+const Card = ({ ref, className, size, variant, ...htmlProps }: CardProps) => {
 	const style = React.useMemo(
 		() => cn(cardBaseVariants({ size, variant }), className),
 		[className, size, variant],
@@ -24,7 +26,9 @@ const Card = ({ ref, className, size, variant, ...htmlProps }: React.ComponentPr
 }
 Card.displayName = 'Card'
 
-const CardHeader = ({ ref, className, ...props }: React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }) => {
+export type CardHeaderProps = React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }
+
+const CardHeader = ({ ref, className, ...props }: CardHeaderProps) => {
 	const { size, variant } = props
 
 	const style = React.useMemo(
@@ -36,7 +40,9 @@ const CardHeader = ({ ref, className, ...props }: React.HTMLAttributes<HTMLDivEl
 }
 CardHeader.displayName = 'CardHeader'
 
-const CardTitle = ({ ref, className, ...props }: React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }) => {
+export type CardTitleProps = React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }
+
+const CardTitle = ({ ref, className, ...props }: CardTitleProps) => {
 	const { size, variant } = props
 
 	const style = React.useMemo(
@@ -48,7 +54,9 @@ const CardTitle = ({ ref, className, ...props }: React.HTMLAttributes<HTMLDivEle
 }
 CardTitle.displayName = 'CardTitle'
 
-const CardDescription = ({ ref, className, ...props }: React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }) => {
+export type CardDescriptionProps = React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }
+
+const CardDescription = ({ ref, className, ...props }: CardDescriptionProps) => {
 	const { size, variant } = props
 
 	const style = React.useMemo(
@@ -60,7 +68,9 @@ const CardDescription = ({ ref, className, ...props }: React.HTMLAttributes<HTML
 }
 CardDescription.displayName = 'CardDescription'
 
-const CardContent = ({ ref, className, ...props }: React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }) => {
+export type CardContentProps = React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }
+
+const CardContent = ({ ref, className, ...props }: CardContentProps) => {
 	const { size, variant } = props
 
 	const style = React.useMemo(
@@ -72,7 +82,9 @@ const CardContent = ({ ref, className, ...props }: React.HTMLAttributes<HTMLDivE
 }
 CardContent.displayName = 'CardContent'
 
-const CardFooter = ({ ref, className, ...props }: React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }) => {
+export type CardFooterProps = React.HTMLAttributes<HTMLDivElement> & CardContextProps & { ref?: React.RefObject<HTMLDivElement | null> }
+
+const CardFooter = ({ ref, className, ...props }: CardFooterProps) => {
 	const { size, variant } = props
 
 	const style = React.useMemo(
