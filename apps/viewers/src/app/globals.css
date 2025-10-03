@@ -6,6 +6,7 @@
   --color-*: initial;
   --color-white-accent: #f8f8ff;
   --color-white: #f4f4f4;
+  --color-dark-white: #e0e0e0;
 
   --color-green: #3f9663;
   --color-green-accent: #74dfa2;
@@ -318,7 +319,7 @@
 
 html {
   scroll-padding-top: calc(var(--header-height) + 24px);
-  @apply bg-dark-foreground h-auto w-full;
+  @apply bg-dark-foreground w-full;
 }
 
 #root {
