@@ -140,7 +140,7 @@ function getHashPath(routes: DocsRoutes, windowHash: string) {
 	const isActiveHeaderNotExist = !Object.keys(routes).includes(windowHash)
 
 	if (isActiveHeaderNotExist)
-		return routes[0]
+		return routes[0].title
 
 	return windowHash
 }
