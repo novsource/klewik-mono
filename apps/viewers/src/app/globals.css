@@ -101,6 +101,9 @@
   --animate-fade-out: fadeIn 2s ease reverse;
   --animate-fade-change: fadeChange 2s ease;
 
+  --animate-dialog-in: fadeIn 0.1s ease forwards;
+  --animate-dialog-out: fadeIn 0.5s ease reverse;
+
   --height-sheet: var(--sheet-height);
 
   --grid-template-rows-slots-desktop: max(62px) minmax(40px, 42px) 1fr;
