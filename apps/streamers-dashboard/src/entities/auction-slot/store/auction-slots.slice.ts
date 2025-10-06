@@ -3,9 +3,13 @@ import type { z } from 'zod'
 
 import type { AuctionSlot } from '../model'
 
+import { faker } from '@faker-js/faker'
 import { createSlice } from '@reduxjs/toolkit'
 
 import type { HexColorSchema } from '~shared/lib/zod'
+
+import type { SortingOptions } from '~shared/store/model'
+
 import { getHEXColor } from '~shared/utils/colors'
 
 type AuctionSlotsState = {
@@ -13,14 +17,15 @@ type AuctionSlotsState = {
   dropoutSlots: AuctionSlot[]
   sortedSlots: AuctionSlot[]
   slotsPointsSum: number
+  sortingOptions: SortingOptions<AuctionSlot>
 }
 
-const mockedAuctionSlots = Array.from({ length: 30 })
+const mockedAuctionSlots = Array.from({ length: faker.number.int({ min: 40, max: 140 }) })
   .fill(null)
   .map((_, index) => ({
     id: index + 1,
-    title: `Бэтмен ${index}`,
-    points: Math.floor(Math.random() * 10000),
+    title: faker.word.words(10),
+    points: faker.number.int({ min: 200, max: 205000 }),
     color: getHEXColor() as z.infer<typeof HexColorSchema>,
   }))
 
@@ -34,6 +39,10 @@ const initialState: AuctionSlotsState = {
   sortedSlots: mockedAuctionSlots,
   dropoutSlots: import.meta.env.VITE_DEV ? mockedAuctionSlots : [],
   slotsPointsSum: import.meta.env.VITE_DEV ? slotsPointsSum : 0,
+  sortingOptions: {
+    field: 'points',
+    type: 'descending',
+  },
 }
 
 const slice = createSlice({
@@ -97,6 +106,9 @@ const slice = createSlice({
 
       state.sortedSlots = payload
     },
+    setSlotsSortOptions(state, action: PayloadAction<SortingOptions<AuctionSlot>>) {
+      state.sortingOptions = action.payload
+    },
   },
   selectors: {
     getSlots(state) {
@@ -107,6 +119,9 @@ const slice = createSlice({
     },
     getSlotsPointsSum(state) {
       return state.slotsPointsSum
+    },
+    getSlotsSortOptions: (state) => {
+      return state.sortingOptions
     },
   },
 })

@@ -1,4 +1,4 @@
-import * as React from 'react'
+import type { ComponentProps } from 'react'
 
 import { Command as CommandPrimitive } from 'cmdk'
 
@@ -22,30 +22,35 @@ import {
   commandVariants,
 } from '../styles/command-variants'
 
-function Command({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive>) {
+export type CommandProps = ComponentProps<typeof CommandPrimitive>
+
+export const Command = (props: CommandProps) => {
+  const { className, ...restProps } = props
+
   return (
     <CommandPrimitive
       data-slot="command"
       className={cn(commandVariants(), className)}
-      {...props}
+      {...restProps}
     />
   )
 }
 
-function CommandDialog({
-  title = 'Command Palette',
-  description = 'Search for a command to run...',
-  children,
-  ...props
-}: React.ComponentProps<typeof Dialog> & {
+export type CommandDialogProps = ComponentProps<typeof Dialog> & {
   title?: string
   description?: string
-}) {
+}
+
+export const CommandDialog = (props: CommandDialogProps) => {
+  const {
+    title = 'Command Palette',
+    description = 'Search for a command to run...',
+    children,
+    ...restProps
+  } = props
+
   return (
-    <Dialog {...props}>
+    <Dialog {...restProps}>
       <DialogHeader className="sr-only">
         <DialogTitle>{title}</DialogTitle>
         <DialogDescription>{description}</DialogDescription>
@@ -59,10 +64,11 @@ function CommandDialog({
   )
 }
 
-function CommandInput({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Input>) {
+export type CommandInputProps = ComponentProps<typeof CommandPrimitive.Input>
+
+export const CommandInput = (props: CommandInputProps) => {
+  const { className, ...restProps } = props
+
   return (
     <div
       data-slot="command-input-wrapper"
@@ -72,28 +78,29 @@ function CommandInput({
       <CommandPrimitive.Input
         data-slot="command-input"
         className={cn(commandInputVariants(), className)}
-        {...props}
+        {...restProps}
       />
     </div>
   )
 }
 
-function CommandList({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.List>) {
+export type CommandListProps = ComponentProps<typeof CommandPrimitive.List>
+
+export const CommandList = (props: CommandListProps) => {
+  const { className, ...restProps } = props
+
   return (
     <CommandPrimitive.List
       data-slot="command-list"
       className={cn(commandListVariants(), className)}
-      {...props}
+      {...restProps}
     />
   )
 }
 
-function CommandEmpty({
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Empty>) {
+export type CommandEmptyProps = ComponentProps<typeof CommandPrimitive.Empty>
+
+export const CommandEmpty = (props: CommandEmptyProps) => {
   return (
     <CommandPrimitive.Empty
       data-slot="command-empty"
@@ -103,66 +110,58 @@ function CommandEmpty({
   )
 }
 
-function CommandGroup({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Group>) {
+export type CommandGroupProps = ComponentProps<typeof CommandPrimitive.Group>
+
+export const CommandGroup = (props: CommandGroupProps) => {
+  const { className, ...restProps } = props
+
   return (
     <CommandPrimitive.Group
       data-slot="command-group"
       className={cn(commandGroupVariants(), className)}
-      {...props}
+      {...restProps}
     />
   )
 }
 
-function CommandSeparator({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Separator>) {
+export type CommandSeparatorProps = ComponentProps<typeof CommandPrimitive.Separator>
+
+export const CommandSeparator = (props: CommandSeparatorProps) => {
+  const { className, ...restProps } = props
+
   return (
     <CommandPrimitive.Separator
       data-slot="command-separator"
       className={cn('bg-border -mx-1 h-px', className)}
-      {...props}
+      {...restProps}
     />
   )
 }
 
-function CommandItem({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Item>) {
+export type CommandItemProps = ComponentProps<typeof CommandPrimitive.Item>
+
+export const CommandItem = (props: CommandItemProps) => {
+  const { className, ...restProps } = props
+
   return (
     <CommandPrimitive.Item
       data-slot="command-item"
       className={cn(commandItemVariants(), className)}
-      {...props}
+      {...restProps}
     />
   )
 }
 
-function CommandShortcut({
-  className,
-  ...props
-}: React.ComponentProps<'span'>) {
+export type CommandShortcutProps = ComponentProps<'span'>
+
+export const CommandShortcut = (props: CommandShortcutProps) => {
+  const { className, ...restProps } = props
+
   return (
     <span
       data-slot="command-shortcut"
       className={cn(commandShortcutVariants(), className)}
-      {...props}
+      {...restProps}
     />
   )
-}
-
-export {
-  Command,
-  CommandDialog,
-  CommandInput,
-  CommandList,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandShortcut,
-  CommandSeparator,
 }

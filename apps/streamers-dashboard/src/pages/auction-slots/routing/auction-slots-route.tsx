@@ -1,6 +1,7 @@
 import type { NonIndexRouteObject } from 'react-router-dom'
 
 import { lazyLoadModule } from '~shared/lib/react-router-dom'
+
 import { AnimatedRoute } from '~shared/router'
 
 import { AuctionSlotsPage } from '../ui'

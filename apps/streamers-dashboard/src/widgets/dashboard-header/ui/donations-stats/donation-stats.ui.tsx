@@ -1,4 +1,5 @@
-import { ReactNode, memo } from 'react'
+import type { ReactNode } from 'react'
+import { memo } from 'react'
 
 import NumberFlow from '@number-flow/react'
 
@@ -7,9 +8,9 @@ import { Icons } from '~shared/ui/icons'
 
 import { cn } from '~shared/utils'
 
-const DonationsStats = memo(() => {
+const DonationsStats = memo((props: { className?: string }) => {
   return (
-    <StatisticCard>
+    <StatisticCard className={props.className}>
       <Flex className="w-full h-full gap-x-2.5" align="center">
         <Flex className="gap-x-1" align="center">
           <Icons.Success size="sm" />
@@ -48,7 +49,7 @@ const StatisticCard = ({
     <Flex
       className={cn(
         'gap-x-1.5 py-1.5 px-2.5 h-9 bg-dark rounded-md text-md font-semibold leading-5 text-gray-accent',
-        className
+        className,
       )}
       align="center"
       justify="center"

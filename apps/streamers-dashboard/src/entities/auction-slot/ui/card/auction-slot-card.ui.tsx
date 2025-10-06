@@ -1,18 +1,16 @@
 import type { NumberFlowProps } from '@number-flow/react'
 
 import type { ComponentProps, ReactNode } from 'react'
-import { forwardRef, useMemo } from 'react'
+import { forwardRef } from 'react'
 
 import NumberFlow from '@number-flow/react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
-import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+import { greaterThenDeviceWidthMediaQueries, tailwindScreens } from '~shared/constants/tailwindcss'
 
 import { useMediaQuery } from '~shared/hooks'
 
-import type { BadgeProps } from '~shared/ui/badge'
-import { Badge } from '~shared/ui/badge'
 import type {
   CardProps,
 } from '~shared/ui/card'
@@ -24,10 +22,10 @@ import {
 } from '~shared/ui/card'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
+import { Skeleton } from '~shared/ui/skeleton'
 import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
-import { hexToRgba } from '~shared/utils/colors'
 
 export type BaseAuctionSlotCardProps = CardProps
 
@@ -39,10 +37,10 @@ export const BaseAuctionSlotCard = forwardRef<HTMLDivElement, BaseAuctionSlotCar
       <Card
         ref={forwardRef}
         data-slot="base"
-        className={cn(
-          'flex flex-col justify-between gap-y-1 border-1 border-dark-light py-1 tablet:py-2 tablet:gap-y-0',
-          className,
-        )}
+        className={cn([
+          'flex flex-col justify-between gap-y-1 border-1 border-dark-light pt-1 pb-2',
+          'tablet:py-2 tablet:gap-y-2',
+        ], className)}
         {...restProps}
       />
     )
@@ -56,7 +54,10 @@ export const BaseAuctionSlotCardHeader = (props: BaseAuctionSlotCardHeaderProps)
 
   return (
     <CardHeader
-      className={cn('flex flex-col gap-y-1 tablet:gap-y-2.5 items-center justify-between', className)}
+      className={cn([
+        'flex gap-y-1 tablet:gap-y-2.5 items-center justify-between leading-4',
+        'tablet:flex-col tablet:leading-6',
+      ], className)}
       data-slot="header"
       {...restProps}
     />
@@ -73,7 +74,7 @@ export const AuctionSlotCardTitleInfo = (props: AuctionSlotCardTitleInfoProps) =
 
   return (
     <Typography
-      className={cn('text-md font-bold tablet:text-title-lg', className)}
+      className={cn('text-md font-bold tablet:text-title', className)}
       tag="span"
     >
       {slotTitle}
@@ -91,14 +92,14 @@ export const BaseAuctionSlotCardTitle = (props: BaseAuctionSlotCardTitleProps) =
   )
 }
 
-export type AuctionSlotCardContentProps = ComponentProps<'div'>
+export type BaseAuctionSlotCardContentProps = ComponentProps<'div'>
 
-export const AuctionSlotCardContent = (props: AuctionSlotCardContentProps) => {
+export const BaseAuctionSlotCardContent = (props: BaseAuctionSlotCardContentProps) => {
   const { className, ...restProps } = props
 
   return (
     <CardContent
-      className={cn('flex flex-row w-full gap-y-2 pt-0 space-y-0', className)}
+      className={cn('flex flex-row w-full gap-y-2 py-0 space-y-0', className)}
       data-slot="content"
       {...restProps}
     />
@@ -114,7 +115,10 @@ export const AuctionSlotCardContentInfoWrapper = (props: AuctionSlotCardContentI
 
   return (
     <Flex
-      className={cn('h-7 gap-y-0.5 tablet:flex-row gap-x-0.75 tablet:gap-x-2 tablet:items-center tablet:justify-start', className)}
+      className={cn([
+        'h-7 gap-y-0.5 gap-x-0.75',
+        'tablet:flex-row tablet:gap-x-1 tablet:items-center tablet:justify-start',
+      ], className)}
       justify="center"
       align="center"
       data-slot="content-item-wrapper"
@@ -138,19 +142,19 @@ export type AuctionSlotCardWinPercentsProps = Omit<ComponentProps<'div'>, 'child
 export const AuctionSlotCardWinPercents = (props: AuctionSlotCardWinPercentsProps) => {
   const { winPercents, numberFlowProps, ...restProps } = props
 
-  const isDeviceGreaterThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+  const isLargeThenTablet = useMediaQuery(tailwindScreens.tablet)
 
   return (
     <AuctionSlotCardContentInfoWrapper
       icon={(
         <Icons.Crown
-          size={isDeviceGreaterThenTablet ? 'lg' : 'default'}
+          size={isLargeThenTablet ? 'default' : 'sm'}
         />
       )}
       {...restProps}
     >
       <NumberFlow
-        className="text-green font-golos-f font-semibold text-md tablet:text-title"
+        className="text-green font-golos-f font-semibold text-sm tablet:text-md tablet:leading-4"
         willChange
         trend={0}
         value={winPercents}
@@ -174,15 +178,15 @@ export type AuctionSlotCardPointsInfoProps = Omit<ComponentProps<'div'>, 'childr
 export const AuctionSlotCardPointsInfo = (props: AuctionSlotCardPointsInfoProps) => {
   const { slotPoints, numberFlowProps, ...restProps } = props
 
-  const isDeviceGreaterThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+  const isLargeThenTablet = useMediaQuery(tailwindScreens.tablet)
 
   return (
     <AuctionSlotCardContentInfoWrapper
-      icon={<Icons.Coin size={isDeviceGreaterThenTablet ? 'lg' : 'default'} />}
+      icon={<Icons.Coin size={isLargeThenTablet ? 'default' : 'sm'} />}
       {...restProps}
     >
       <NumberFlow
-        className="font-golos-f font-semibold text-gray-accent text-md tablet:text-title tablet:leading-4"
+        className="font-golos-f font-semibold text-gray-accent text-sm tablet:text-md tablet:leading-4"
         willChange
         trend={0}
         value={slotPoints}
@@ -193,22 +197,25 @@ export const AuctionSlotCardPointsInfo = (props: AuctionSlotCardPointsInfoProps)
   )
 }
 
-export type AuctionSlotCardIdBadgeProps = Omit<BadgeProps, 'children'> & {
-  slotId: AuctionSlot['id']
+export type AuctionSlotCardIdInfoProps = Omit<ComponentProps<'div'>, 'children'> & {
+  slotId: number
+  numberFlowProps?: NumberFlowProps
 }
 
-export const AuctionSlotCardIdBadge = (props: AuctionSlotCardIdBadgeProps) => {
-  const { className, slotId, ...restProps } = props
+export const AuctionSlotCardIdInfo = (props: AuctionSlotCardIdInfoProps) => {
+  const { slotId, numberFlowProps, ...restProps } = props
+
+  const isLargeThenTablet = useMediaQuery(tailwindScreens.tablet)
 
   return (
-    <Badge
-      className={cn('px-1.5 py-0.25 bg-dark-light border-1 border-dark-accent text-gray-light', className)}
+    <AuctionSlotCardContentInfoWrapper
+      icon={<Icons.Id size={isLargeThenTablet ? 'default' : 'sm'} />}
       {...restProps}
     >
-      <Typography className="font-golos-f rounded-md text-xs tablet:text-sm" tag="span">
-        {`ID: ${slotId}`}
+      <Typography className="font-golos-f font-semibold text-gray-accent text-sm tablet:text-md tablet:leading-4" tag="span">
+        {slotId}
       </Typography>
-    </Badge>
+    </AuctionSlotCardContentInfoWrapper>
   )
 }
 
@@ -221,29 +228,25 @@ export type SolidAuctionSlotHeaderProps = BaseAuctionSlotCardHeaderProps & {
 export const SolidAuctionSlotHeader = (props: SolidAuctionSlotHeaderProps) => {
   const { slotId, slotTitle, slotColor, ...restProps } = props
 
-  const badgeStyle = useMemo(() => {
-    const bgColor = hexToRgba(slotColor, 0.025) || ''
-    const borderColor = hexToRgba(slotColor, 0.35) || ''
-
-    return {
-      backgroundColor: bgColor,
-      borderColor,
-      color: slotColor,
-    }
-  }, [slotColor])
-
   return (
     <BaseAuctionSlotCardHeader {...restProps}>
-      <Flex className="w-full gap-x-2" align="center">
-        <AuctionSlotCardIdBadge
-          slotId={slotId}
-          style={badgeStyle}
-        />
-      </Flex>
       <BaseAuctionSlotCardTitle>
         <AuctionSlotCardTitleInfo slotTitle={slotTitle} />
       </BaseAuctionSlotCardTitle>
     </BaseAuctionSlotCardHeader>
+  )
+}
+
+export type AuctionSlotCardContentInfoDividerProps = ComponentProps<'div'>
+
+export const AuctionSlotCardContentInfoDivider = (props: AuctionSlotCardContentInfoDividerProps) => {
+  const { className, ...restProps } = props
+
+  return (
+    <div
+      className={cn('size-1 bg-gray/80 rounded-pill mx-1.5 tablet:mx-2', className)}
+      {...restProps}
+    />
   )
 }
 
@@ -256,16 +259,24 @@ export const SolidAuctionSlotContent = (props: SolidAuctionSlotContentProps) => 
   const { auctionSlot, winPercents, ...restProps } = props
 
   return (
-    <AuctionSlotCardContent {...restProps}>
+    <BaseAuctionSlotCardContent {...restProps}>
       <Flex
-        className="w-full gap-x-3 tablet:gap-x-5"
+        className="bg-dark-light rounded-sm px-1.5 w-fit"
         direction="row"
-        align="end"
+        align="center"
       >
+        <AuctionSlotCardIdInfo slotId={auctionSlot.id} />
+        <AuctionSlotCardContentInfoDivider />
         <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
-        {winPercents && <AuctionSlotCardWinPercents winPercents={winPercents} />}
+        {winPercents
+          && (
+            <>
+              <AuctionSlotCardContentInfoDivider />
+              <AuctionSlotCardWinPercents winPercents={winPercents} />
+            </>
+          )}
       </Flex>
-    </AuctionSlotCardContent>
+    </BaseAuctionSlotCardContent>
   )
 }
 
@@ -275,20 +286,62 @@ export type SolidAuctionSlotCardProps = CardProps & {
 }
 
 export const SolidAuctionSlotCard = (props: SolidAuctionSlotCardProps) => {
-  const { className, auctionSlot, winPercents, ...restProps } = props
+  const { auctionSlot, winPercents, ...restProps } = props
 
   return (
-    <BaseAuctionSlotCard className={cn(className)} {...restProps}>
+    <BaseAuctionSlotCard {...restProps}>
       <SolidAuctionSlotHeader
         slotId={auctionSlot.id}
         slotTitle={auctionSlot.title}
         slotColor={auctionSlot.color}
       />
       <SolidAuctionSlotContent
-        className="min-h-11"
         auctionSlot={auctionSlot}
         winPercents={winPercents}
       />
+    </BaseAuctionSlotCard>
+  )
+}
+
+export type SkeletonAuctionSlotCardProps = BaseAuctionSlotCardProps & {
+  headerProps?: BaseAuctionSlotCardHeaderProps
+  contentProps?: BaseAuctionSlotCardContentProps
+}
+
+export const SkeletonAuctionSlotCard = (props: SkeletonAuctionSlotCardProps) => {
+  const { headerProps, contentProps, ...restProps } = props
+
+  const isDeviceGreaterThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+
+  return (
+    <BaseAuctionSlotCard {...restProps}>
+      <BaseAuctionSlotCardHeader {...headerProps}>
+        <Flex className="w-full gap-x-2" align="center">
+          <Skeleton className="w-8.5 h-5.5 max-tablet:h-4.5" />
+        </Flex>
+      </BaseAuctionSlotCardHeader>
+      <BaseAuctionSlotCardContent {...contentProps}>
+        <Flex
+          className="w-full gap-x-2.5 tablet:gap-x-3.5"
+          direction="row"
+          align="end"
+        >
+          <AuctionSlotCardContentInfoWrapper
+            icon={<Icons.Coin size={isDeviceGreaterThenTablet ? 'lg' : 'default'} />}
+          >
+            <Skeleton className="w-20 h-6" />
+          </AuctionSlotCardContentInfoWrapper>
+          <AuctionSlotCardContentInfoWrapper
+            icon={(
+              <Icons.Crown
+                size={isDeviceGreaterThenTablet ? 'lg' : 'default'}
+              />
+            )}
+          >
+            <Skeleton className="w-9 h-6.5 max-tablet:w-16 max-tablet:h-5.25" />
+          </AuctionSlotCardContentInfoWrapper>
+        </Flex>
+      </BaseAuctionSlotCardContent>
     </BaseAuctionSlotCard>
   )
 }

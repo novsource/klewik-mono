@@ -1,14 +1,9 @@
 import type {
-  ScrollAreaProps,
-} from '@radix-ui/react-scroll-area'
-
-import type {
   ComponentPropsWithoutRef,
   RefObject,
 } from 'react'
 import {
   forwardRef,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -21,26 +16,28 @@ import {
   useScroll,
 } from 'motion/react'
 
-import { useDebouncedCallback } from '~shared/hooks/use-debounced-callback'
-import { useResizeObserver } from '~shared/hooks/use-resize-observer'
+import { useDebounceCallback, useDidUpdate, useResizeObserver } from '~shared/hooks'
 
 import { MotionBox } from '~shared/ui/motion-box'
+import type { ScrollAreaProps } from '~shared/ui/scroll-area'
 import { ScrollArea } from '~shared/ui/scroll-area'
 
 import { cn, mergeProps } from '~shared/utils'
+
+const animatedSides = ['top', 'bottom'] as const
 
 export type ShadowScrollAreaProps = ComponentPropsWithoutRef<'div'> & {
   width: string | number
   height: string | number
   contentAreaHTMLProps?: ScrollAreaProps
-  externalScrollRef?: RefObject<HTMLElement>
-  externalContentRef?: RefObject<HTMLElement>
+  externalScrollRef?: RefObject<HTMLDivElement>
+  externalContentRef?: RefObject<HTMLDivElement>
   shadowEnabled?: boolean
   shadowSize?: number
   disableAnimation?: boolean
 }
 
-const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((props, forwardRef) => {
+export const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((props, forwardRef) => {
   const {
     style,
     children,
@@ -77,7 +74,7 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
 
   const { entries } = useResizeObserver(contentRefElement)
 
-  const debouncedShadowAnimation = useDebouncedCallback(
+  const debouncedShadowAnimation = useDebounceCallback(
     (
       values: { topShadow: boolean, bottomShadow: boolean } = {
         topShadow: true,
@@ -101,7 +98,7 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
     setScrollYValue(value)
   })
 
-  useEffect(() => {
+  useDidUpdate(() => {
     const scrollElement = scrollRefElement.current
 
     const [entry] = entries
@@ -132,7 +129,7 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
     scrollYValue,
   ])
 
-  useEffect(() => {
+  useDidUpdate(() => {
     const scrollElement = scrollRefElement.current
     const contentElement = contentRefElement.current
 
@@ -142,20 +139,23 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
     const isShouldShowBottomShadow
       = scrollElement.clientHeight <= scrollElement.scrollHeight
         && scrollYProgress <= 0.999
+    const isElementNotScrolled = scrollYValue === 0 && scrollYProgress === 0
 
-    if (scrollYValue === 0 && scrollYProgress === 0) {
+    if (isElementNotScrolled && !disableAnimation) {
       return debouncedShadowAnimation({
         topShadow: false,
         bottomShadow: isShouldShowBottomShadow,
       })
     }
-    else {
+
+    if (!disableAnimation) {
       debouncedShadowAnimation({
         topShadow: true,
         bottomShadow: isShouldShowBottomShadow,
       })
     }
   }, [
+    disableAnimation,
     scrollRefElement,
     contentRefElement,
     scrollYValue,
@@ -177,10 +177,54 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
     )`
   }, [scrollYProgress, shadowSize])
 
-  const isTopShadowShouldBeRendered
-    = isShadowsAnimated.topShadow && !disableAnimation
-  const isBottomShadowShouldBeRendered
-    = isShadowsAnimated.bottomShadow && !disableAnimation
+  const animatedShadows = useMemo(() => {
+    const isTopShadowShouldBeRendered
+      = isShadowsAnimated.topShadow && !disableAnimation
+    const isBottomShadowShouldBeRendered
+      = isShadowsAnimated.bottomShadow && !disableAnimation
+
+    return animatedSides.map((side) => {
+      const isTopSide = side === 'top'
+      const isBottomSide = side === 'bottom'
+
+      const isShouldSkipSideRender
+        = (!isTopShadowShouldBeRendered && isTopSide)
+          || (!isBottomShadowShouldBeRendered && isBottomSide)
+
+      if (isShouldSkipSideRender)
+        return undefined
+
+      return (
+        <MotionBox
+          key={`${side}-shadow`}
+          className={cn(
+            'w-full from-transparent via-white/70 via-20% to-transparent to-80%',
+            isTopSide && 'bg-gradient-to-b',
+            isBottomSide && 'bottom-0 bg-gradient-to-t',
+          )}
+          initial={{
+            opacity: 0,
+            height: shadowSize,
+          }}
+          animate={{
+            opacity: [0, 0.6, 0],
+            height: 0,
+          }}
+          transition={{
+            duration: 3,
+            ease: 'easeInOut',
+            repeat: Infinity,
+            repeatDelay: 1,
+          }}
+          style={{
+            position: 'absolute',
+            zIndex: 2,
+            pointerEvents: 'none',
+          }}
+        />
+      )
+    })
+  }, [shadowSize, isShadowsAnimated, disableAnimation])
 
   const scrollAreaProps = mergeProps(contentAreaHTMLProps, { style: { width, height } })
 
@@ -199,59 +243,7 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
       {...restProps}
     >
       <AnimatePresence>
-        <>
-          {isTopShadowShouldBeRendered && (
-            <MotionBox
-              className={cn(
-                'w-full bg-gradient-to-b from-transparent via-white/70 via-20% to-transparent to-80%',
-              )}
-              initial={{
-                opacity: 0,
-                height: shadowSize,
-              }}
-              animate={{
-                opacity: [0, 0.6, 0],
-                height: 0,
-              }}
-              transition={{
-                duration: 3,
-                ease: 'easeInOut',
-                repeat: Infinity,
-                repeatDelay: 1,
-              }}
-              style={{
-                position: 'absolute',
-                zIndex: 2,
-                pointerEvents: 'none',
-              }}
-            />
-          )}
-          {isBottomShadowShouldBeRendered && (
-            <MotionBox
-              className={cn(
-                'bottom-0 w-full bg-gradient-to-t from-transparent via-white/70 via-20% to-transparent to-80%',
-              )}
-              initial={{
-                opacity: 0,
-                height: shadowSize,
-              }}
-              animate={{
-                opacity: [0, 1, 0],
-                height: 0,
-              }}
-              transition={{
-                duration: 3,
-                ease: 'easeInOut',
-                repeat: Infinity,
-                repeatDelay: 1,
-              }}
-              style={{
-                position: 'absolute',
-                zIndex: 2,
-              }}
-            />
-          )}
-        </>
+        {animatedShadows}
       </AnimatePresence>
       <ScrollArea
         ref={internalContentAreaRef}
@@ -263,5 +255,3 @@ const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps>((prop
     </div>
   )
 })
-
-export { ShadowScrollArea }

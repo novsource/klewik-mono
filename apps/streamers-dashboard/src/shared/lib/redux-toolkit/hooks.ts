@@ -1,9 +1,13 @@
+import type {
+  ActionCreatorsMapObject,
+  AsyncThunk,
+} from '@reduxjs/toolkit'
+
 import { useMemo } from 'react'
+
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-  ActionCreatorsMapObject,
-  AsyncThunk,
   bindActionCreators,
 } from '@reduxjs/toolkit'
 
@@ -21,7 +25,7 @@ type ActionCreatorsTypes<Actions extends ActionCreatorsMapObject> = {
 }
 
 export const useActionCreators = <Actions extends ActionCreatorsMapObject>(
-  actions: Actions
+  actions: Actions,
 ): ActionCreatorsTypes<Actions> => {
   const dispatch = useStoreDispatch()
 

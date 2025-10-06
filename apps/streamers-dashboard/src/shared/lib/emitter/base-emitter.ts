@@ -8,7 +8,7 @@
 
 type EventHandler = (...args: any[]) => void
 
-interface BaseEmitterMethods<T extends Record<string, EventHandler>> {
+type BaseEmitterMethods<T extends Record<string, EventHandler>> = {
   /**
    * Calls all handlers with data corresponding to the event data type
    * @param eventName
@@ -43,13 +43,12 @@ interface BaseEmitterMethods<T extends Record<string, EventHandler>> {
 
 /**
   Base implemention of EventEmitter
-*/
-class BaseEmitter<EventsMap extends Record<string, EventHandler>>
-  implements BaseEmitterMethods<EventsMap>
-{
+ */
+class BaseEmitter<EventsMap extends Record<string, EventHandler> = Record<string, any>>
+implements BaseEmitterMethods<EventsMap> {
   /**
     Map of event emitter handlers
-  */
+   */
   private _subscriptions = new Map<keyof EventsMap, Array<EventHandler>>([])
 
   /*
@@ -65,21 +64,21 @@ class BaseEmitter<EventsMap extends Record<string, EventHandler>>
 
   on<EventName extends keyof EventsMap>(
     eventName: EventName,
-    handler: (...eventArgs: Parameters<EventsMap[EventName]>) => void
+    handler: (...eventArgs: Parameters<EventsMap[EventName]>) => void,
   ) {
     return this._internalSubscribe(eventName, handler)
   }
 
   off<EventName extends keyof EventsMap>(
     eventName: EventName,
-    handler: (...eventArgs: Parameters<EventsMap[EventName]>) => void
+    handler: (...eventArgs: Parameters<EventsMap[EventName]>) => void,
   ) {
     this._internalUnsubscribe(eventName, handler)
   }
 
   private _internalSubscribe<EventMap extends keyof EventsMap>(
     eventName: EventMap,
-    handler: (...eventArgs: Parameters<EventsMap[EventMap]>) => void
+    handler: (...eventArgs: Parameters<EventsMap[EventMap]>) => void,
   ) {
     let settedHandlers: EventHandler[] = []
 
@@ -98,14 +97,15 @@ class BaseEmitter<EventsMap extends Record<string, EventHandler>>
 
   private _internalUnsubscribe<EventMap extends keyof EventsMap>(
     eventName: EventMap,
-    handler: (...eventArgs: Parameters<EventsMap[EventMap]>) => void
+    handler: (...eventArgs: Parameters<EventsMap[EventMap]>) => void,
   ) {
     const storedHandlers = this._subscriptions.get(eventName)
 
-    if (!storedHandlers || storedHandlers.length === 0) return
+    if (!storedHandlers || storedHandlers.length === 0)
+      return
 
     const filtredHandlers = storedHandlers.filter(
-      (storedHandler) => storedHandler !== handler
+      storedHandler => storedHandler !== handler,
     )
 
     this._subscriptions.set(eventName, filtredHandlers)
@@ -117,7 +117,8 @@ class BaseEmitter<EventsMap extends Record<string, EventHandler>>
   ) {
     const storedHandlers = this._subscriptions.get(eventName)
 
-    if (!storedHandlers || storedHandlers.length === 0) return
+    if (!storedHandlers || storedHandlers.length === 0)
+      return
 
     for (const subscription of storedHandlers) {
       subscription(eventArgs)

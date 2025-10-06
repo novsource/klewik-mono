@@ -124,7 +124,7 @@
     --height-search-dialog-content: var(--height-search-dialog-content);
     --height-search-dialog-footer: var(--height-search-dialog-footer);
 
-    --grid-template-rows-dashboard-mobile: max-content 1fr max-content;
+    --grid-template-rows-dashboard-mobile: max-content 1fr;
     --grid-template-rows-dashboard-desktop: max-content 1fr;
 
     --grid-template-rows-slots-desktop: max-content 1fr;
@@ -367,7 +367,7 @@
 
     #root {
         font-size: 16px;
-        @apply relative h-full w-full overflow-hidden;
+        @apply relative w-full h-auto tablet:h-full tablet:overflow-hidden;
     }
 
     body {

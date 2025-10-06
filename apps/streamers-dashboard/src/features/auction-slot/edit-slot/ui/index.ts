@@ -1,3 +1,2 @@
-import { EditSlotForm } from './edit-slot-form.ui'
-
-export { EditSlotForm }
+export * from './edit-slot-dialog.ui'
+export * from './edit-slot-form.ui'

@@ -1,6 +1,10 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
 
-import { Auction } from '../model'
+import type { Auction } from '../model'
+
+import { createSlice } from '@reduxjs/toolkit'
+
+import { getAuctionInfoThunk } from '../api'
 
 type AuctionSliceState = {
   auctionInfo: Auction
@@ -35,10 +39,17 @@ const auctionSlice = createSlice({
     },
   },
   selectors: {
-    getAuctionUUID: (state) => state.auctionInfo.auctionUUID,
-    getAuctionUrl: (state) => state.auctionInfo.url,
-    getAuctionInfo: (state) => state.auctionInfo,
-    getBetsStatus: (state) => state.auctionInfo.isBetsClosed,
+    getAuctionUUID: state => state.auctionInfo.auctionUUID,
+    getAuctionUrl: state => state.auctionInfo.url,
+    getAuctionInfo: state => state.auctionInfo,
+    getBetsStatus: state => state.auctionInfo.isBetsClosed,
+  },
+  extraReducers: (builder) => {
+    builder.addCase(getAuctionInfoThunk.fulfilled, (state, action) => {
+      const auctionInfo = action.payload
+
+      state.auctionInfo = auctionInfo
+    })
   },
 })
 

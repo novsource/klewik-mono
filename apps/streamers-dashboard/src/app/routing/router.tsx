@@ -11,6 +11,7 @@ import { welcomePageRoute } from '~pages/welcome/routing'
 
 import { Toaster } from '~shared/ui/toaster'
 
+import { errorPageRoute } from '../../pages/error/routing'
 import { prepareDashboardRoute } from './prepate-dashboard.route'
 
 const WelcomePageRouteObject = welcomePageRoute()
@@ -19,6 +20,7 @@ const AuctionWheelRouteObject = auctionWheelPageRoute({ disableTransition: true 
 const AuctionSettingsRouteObject = auctionSettingsPageRoute({ disableTransition: true })
 const AuctionDonationsRouteObject = auctionDonationsPageRoute({ disableTransition: true })
 const RedirectRouteObject = redirectPageRoute()
+const ErrorPageRouteObject = errorPageRoute()
 
 const browserRouter = createBrowserRouter([
   {
@@ -33,6 +35,7 @@ const browserRouter = createBrowserRouter([
         path: '/',
         children: [
           WelcomePageRouteObject,
+          ErrorPageRouteObject,
           {
             path: 'dashboard/:auctionId',
             children: [

@@ -1,7 +1,13 @@
-import { isRouteErrorResponse, Link, useRouteError } from 'react-router-dom'
+import { useEffect } from 'react'
 
+import type { ErrorResponse } from 'react-router-dom'
+import { isRouteErrorResponse, Link, useNavigate, useRouteError, useSearchParams } from 'react-router-dom'
+
+import { isAxiosError } from 'axios'
 import * as m from 'motion/react-m'
 
+import type { ErrorStatusesWithReason } from '~shared/constants/router'
+import { errorStatusReasons } from '~shared/constants/router'
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { useMediaQuery } from '~shared/hooks'
@@ -11,46 +17,157 @@ import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Typography } from '~shared/ui/typograghy'
 
-const ErrorPage = () => {
+export const ErrorPage = () => {
   const error = useRouteError()
 
-  if (isRouteErrorResponse(error)) {
-    return (
-      <div className="relative container h-full mx-auto">
-        <div className="absolute top-1/4 -translate-y-1/4 w-full px-4">
-          <div className="flex flex-col h-full items-center justify-center gap-y-6">
-            <AnimatedLogo />
-            <div className="flex flex-col gap-y-4">
-              <Flex className="bg-dark p-2 w-fit rounded-small">
-                <Typography className="text-title font-semibold font-golos-f text-left text-gray-accent" tag="span">
-                  {`Ошибка ${error.status}`}
-                </Typography>
-              </Flex>
-              <Flex className="gap-y-2" direction="column">
-                <Typography
-                  className="font-semibold text-title tablet:text-title-xl leading-5 font-golos-f"
-                  tag="span"
-                >
-                  Проблемы получения доступа
-                </Typography>
-                <Typography
-                  className="font-medium leading-4 font-golos-f text-gray-accent"
-                  tag="span"
-                >
-                  {error.data.reason}
-                </Typography>
-              </Flex>
-              <Link to="/">
-                <Button variant="action" size="sm" startContent={<Icons.Undo size="sm" />}>
-                  Вернуться на главную
-                </Button>
-              </Link>
-            </div>
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  const isEmptyError = !error && !searchParams.has('reason')
+
+  useEffect(() => {
+    if (isEmptyError) {
+      navigate('/')
+    }
+  })
+
+  if (isEmptyError)
+    return
+
+  const isRouteError = isRouteErrorResponse(error)
+
+  return (
+    <div className="relative container h-full mx-auto">
+      <div className="absolute top-1/4 -translate-y-1/4 w-full px-4">
+        <div className="flex flex-col h-full items-center justify-center gap-y-6">
+          <AnimatedLogo />
+          <div className="flex flex-col gap-y-4">
+            {isRouteError && <RouterError error={error} />}
+            {!isRouteError && <SomethingWrong error={error} searchParams={searchParams} />}
           </div>
         </div>
       </div>
-    )
+    </div>
+  )
+}
+
+type FormattedError = {
+  status: number
+  reason: string
+}
+
+const unknownFormattedError: FormattedError = { reason: errorStatusReasons['500'], status: 500 }
+
+const formatUnknownError = (error: unknown): FormattedError => {
+  if (isAxiosError(error) && error.status) {
+    const status = error.status.toString() as unknown as ErrorStatusesWithReason
+    const reason = errorStatusReasons[status]
+
+    return { status, reason }
   }
+
+  return unknownFormattedError
+}
+
+const getErrorFromSearchParams = (searchParams: URLSearchParams): FormattedError => {
+  const isReasonExist = searchParams.has('reason')
+
+  if (!isReasonExist) {
+    return unknownFormattedError
+  }
+
+  const reason = searchParams.get('reason')
+  const isAuthError = reason === 'auth'
+
+  if (isAuthError) {
+    return { reason: errorStatusReasons['401'], status: 401 }
+  }
+
+  return unknownFormattedError
+}
+
+type SomethingWrongProps = {
+  error?: unknown
+  searchParams?: URLSearchParams
+}
+
+function SomethingWrong(props: SomethingWrongProps) {
+  const { error, searchParams } = props
+
+  let formattedError: FormattedError = unknownFormattedError
+
+  if (error) {
+    formattedError = formatUnknownError(error)
+  }
+  else if (searchParams) {
+    formattedError = getErrorFromSearchParams(searchParams)
+  }
+
+  return (
+    <>
+      <Flex className="bg-dark p-2 w-fit rounded-small">
+        <Typography className="text-title font-semibold font-golos-f text-left text-gray-accent" tag="span">
+          {`Ошибка ${formattedError.status}`}
+        </Typography>
+      </Flex>
+      <Flex className="gap-y-2" direction="column">
+        <Typography
+          className="font-semibold text-title tablet:text-title-xl leading-5 font-golos-f"
+          tag="span"
+        >
+          Что-то пошло не так
+        </Typography>
+        <Typography
+          className="font-medium leading-4 font-golos-f text-gray-accent"
+          tag="span"
+        >
+          {formattedError.reason}
+        </Typography>
+      </Flex>
+      <Link to="/">
+        <Button variant="action" size="sm" startContent={<Icons.Undo size="sm" />}>
+          Вернуться на главную
+        </Button>
+      </Link>
+    </>
+  )
+}
+
+type RouteErrorProps = {
+  error: ErrorResponse
+}
+
+function RouterError(props: RouteErrorProps) {
+  const { error } = props
+
+  return (
+    <>
+      <Flex className="bg-dark p-2 w-fit rounded-small">
+        <Typography className="text-title font-semibold font-golos-f text-left text-gray-accent" tag="span">
+          {`Ошибка ${error.status}`}
+        </Typography>
+      </Flex>
+      <Flex className="gap-y-2" direction="column">
+        <Typography
+          className="font-semibold text-title tablet:text-title-xl leading-5 font-golos-f"
+          tag="span"
+        >
+          Что-то пошло не так
+        </Typography>
+        <Typography
+          className="font-medium leading-4 font-golos-f text-gray-accent"
+          tag="span"
+        >
+          {error.data.reason}
+        </Typography>
+      </Flex>
+      <Link to="/">
+        <Button variant="action" size="sm" startContent={<Icons.Undo size="sm" />}>
+          Вернуться на главную
+        </Button>
+      </Link>
+    </>
+  )
 }
 
 function AnimatedLogo() {
@@ -118,5 +235,3 @@ function AnimatedLogo() {
     </m.svg>
   )
 }
-
-export { ErrorPage }

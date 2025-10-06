@@ -3,7 +3,9 @@ import type { MutableRefObject, Ref } from 'react'
 
 import { isFunction } from '~shared/utils'
 
-export const useMergedRefs = <T>(...refs: Array<NullablePossible<Ref<T>>>) => {
+export type MaybeRef<T> = Ref<T> | undefined
+
+export const useMergedRefs = <T>(...refs: Array<MaybeRef<T>>) => {
   return useCallback((instance: NullablePossible<T>) => {
     for (const ref of refs) {
       updateRef(ref, instance)
@@ -11,7 +13,7 @@ export const useMergedRefs = <T>(...refs: Array<NullablePossible<Ref<T>>>) => {
   }, [refs])
 }
 
-function updateRef<T>(ref: Ref<T>, instance: NullablePossible<T>) {
+function updateRef<T>(ref: MaybeRef<T>, instance: NullablePossible<T>) {
   if (!ref)
     return
 
@@ -19,8 +21,6 @@ function updateRef<T>(ref: Ref<T>, instance: NullablePossible<T>) {
     ref(instance)
   }
   else {
-    const castedMutableRef = ref as MutableRefObject<NullablePossible<T>>
-
-    castedMutableRef.current = instance
+    (ref as MutableRefObject<NullablePossible<T>>).current = instance
   }
 }

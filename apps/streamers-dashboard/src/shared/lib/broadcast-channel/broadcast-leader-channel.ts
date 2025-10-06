@@ -1,32 +1,36 @@
-import {
-  BroadcastChannel,
+import type {
   BroadcastChannelOptions,
   LeaderElector,
+} from 'broadcast-channel'
+
+import type { EventSourceMessage as BaseEventSourceMessage } from '../fetch-event-source'
+import type { DefaultChannelEventMap } from './model'
+
+import {
+  BroadcastChannel,
   createLeaderElection,
 } from 'broadcast-channel'
 
 import { BaseEmitter } from '../emitter'
-import { EventSourceMessage as BaseEventSourceMessage } from '../fetch-event-source'
-import { DefaultChannelEventMap } from './model'
 
 /**
  * Methods of BroadcastLeaderChannel
  */
-interface BroadcastLeaderChannelMethods<
+type BroadcastLeaderChannelMethods<
   SourceMessage extends BaseEventSourceMessage,
   ChannelEventMap extends Record<string, any>,
-> {
+> = {
   on: <
-    EventName extends keyof (ChannelEventMap &
-      DefaultChannelEventMap<SourceMessage>),
+    EventName extends keyof (ChannelEventMap
+      & DefaultChannelEventMap<SourceMessage>),
   >(
     eventName: EventName,
     handler: (...args: Parameters<ChannelEventMap[EventName]>) => void
   ) => void
 
   emit: <
-    EventName extends keyof (ChannelEventMap &
-      DefaultChannelEventMap<SourceMessage>),
+    EventName extends keyof (ChannelEventMap
+      & DefaultChannelEventMap<SourceMessage>),
   >(
     eventName: EventName,
     ...args: Parameters<ChannelEventMap[EventName]>
@@ -87,8 +91,7 @@ export type BroadcastLeaderChannelOptions = BroadcastChannelOptions & {
 export class BroadcastLeaderChannel<
   SourceMessage extends BaseEventSourceMessage,
   ChannelEventMap extends Record<string, any>,
-> implements BroadcastLeaderChannelMethods<SourceMessage, ChannelEventMap>
-{
+> implements BroadcastLeaderChannelMethods<SourceMessage, ChannelEventMap> {
   private readonly _elector: LeaderElector
   private readonly _emitter: BaseEmitter<
     ChannelEventMap & DefaultChannelEventMap<SourceMessage>
@@ -109,7 +112,7 @@ export class BroadcastLeaderChannel<
     })
 
     this._elector.awaitLeadership().then(() => {
-      //@ts-expect-error Emitter can't give a opportunity emit without data
+      // @ts-expect-error Emitter can't give a opportunity emit without data
       this._emitter.emit('new-leader')
     })
   }
@@ -127,28 +130,70 @@ export class BroadcastLeaderChannel<
   }
 
   on<
-    Event extends keyof (ChannelEventMap &
-      DefaultChannelEventMap<SourceMessage>),
+    Event extends keyof (ChannelEventMap
+      & DefaultChannelEventMap<SourceMessage>),
     EventMap extends ChannelEventMap & DefaultChannelEventMap<SourceMessage>,
-  >(eventName: Event, handler: (...args: Parameters<EventMap[Event]>) => void) {
+  >(eventName: Event,
+    handler: (...args: Parameters<EventMap[Event]>) => void,
+  ) {
     this._emitter.on(eventName, handler)
+
+    return () => {
+      this.off(eventName, handler)
+    }
+  }
+
+  // once<
+  //   Event extends keyof (ChannelEventMap
+  //     & DefaultChannelEventMap<SourceMessage>),
+  //   EventMap extends ChannelEventMap & DefaultChannelEventMap<SourceMessage>,
+  // >(eventName: Event,
+  //   handler: (...args: Parameters<EventMap[Event]>) => void,
+  // ) {
+  //   // Delete handler if exist
+  //   this.off(eventName, handler)
+
+  //   const fn = (...args: EventMap[Event]) => handler(...args)
+
+  //   this.on(eventName, (...args) => {
+  //     handler(...args)
+
+  //     this.off(eventName, fn)
+  //   })
+  // }
+
+  off<
+    Event extends keyof (ChannelEventMap
+      & DefaultChannelEventMap<SourceMessage>),
+    EventMap extends ChannelEventMap & DefaultChannelEventMap<SourceMessage>,
+  >(eventName: Event,
+    handler: (...args: Parameters<EventMap[Event]>) => void,
+  ) {
+    this._emitter.off(eventName, handler)
   }
 
   emit<
-    Event extends keyof (ChannelEventMap &
-      DefaultChannelEventMap<SourceMessage>),
+    Event extends keyof (ChannelEventMap
+      & DefaultChannelEventMap<SourceMessage>),
     EventMap extends ChannelEventMap & DefaultChannelEventMap<SourceMessage>,
-  >(eventName: Event, ...args: Parameters<EventMap[Event]>) {
+  >(eventName: Event,
+    ...args: Parameters<EventMap[Event]>
+  ) {
     this._emitter.emit(eventName, ...args)
   }
 
   onMessage(handler: (message: SourceMessage) => void) {
-    return this._elector.broadcastChannel.addEventListener('message', handler)
+    this._elector.broadcastChannel.addEventListener('message', handler)
+
+    return () => {
+      this.removeOnMessageHandler(handler)
+    }
   }
 
   onChannelLeadership(handler: () => void) {
     this.on('new-leader', () => {
-      if (this.isLeader) handler()
+      if (this.isLeader)
+        handler()
     })
   }
 

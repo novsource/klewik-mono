@@ -1,3 +1,5 @@
+import type { TabsStylesProps } from '../styles/tabs-variants'
+
 import type {
   Dispatch,
   SetStateAction,
@@ -16,26 +18,28 @@ type TabsContextState = {
     defaultKey: string
     selectedKey: string
     keys: string[]
-    triggersData: TriggersData
+    triggersData: NullablePossible<TriggersData>
   }
   dispatch: {
     setSelectedKey: Dispatch<SetStateAction<string>>
     setKeys: Dispatch<SetStateAction<string[]>>
-    setTriggersData: Dispatch<SetStateAction<TriggersData>>
+    setTriggersData: Dispatch<SetStateAction<NullablePossible<TriggersData>>>
   }
+  styles: TabsStylesProps
 }
 
-type TabsContextProps = {
+type TabsContextProps = TabsStylesProps & {
   value?: string
   defaultValue?: string
   children: JSX.Element
 }
 
-type TriggersData = {
-  value: string
+type TriggersData = Record<string, {
   width: number
+  height: number
+  startY: number
   startX: number
-}[]
+}>
 
 export const TabsContext = createContext<NullablePossible<TabsContextState>>(null)
 
@@ -43,8 +47,10 @@ export const TabsContextProvider = ({
   children,
   defaultValue,
   value,
+  variant = 'default',
+  orientation = 'horizontal',
 }: TabsContextProps) => {
-  const [triggersData, setTriggersData] = useState<TriggersData>([])
+  const [triggersData, setTriggersData] = useState<NullablePossible<TriggersData>>(null)
   const [keys, setKeys] = useState<string[]>([])
   const [selectedKey, setSelectedKey] = useState<string>(
     value ?? defaultValue ?? '',
@@ -64,10 +70,16 @@ export const TabsContextProvider = ({
 
   const tabsContextValue = useMemo(() => {
     return {
-      state: { defaultKey: defaultValue ?? selectedKey, selectedKey, keys, triggersData },
+      state: {
+        defaultKey: defaultValue ?? selectedKey,
+        selectedKey,
+        keys,
+        triggersData,
+      },
       dispatch: { setKeys, setSelectedKey, setTriggersData },
+      styles: { variant, orientation },
     } satisfies TabsContextState
-  }, [selectedKey, keys, triggersData, defaultValue])
+  }, [selectedKey, keys, triggersData, defaultValue, variant, orientation])
 
   return (
     <TabsContext.Provider

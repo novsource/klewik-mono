@@ -1,3 +1,1 @@
-import { splittedAuctionSlotsApi } from './auction-slot.api'
-
-export { splittedAuctionSlotsApi }
+export * from './auction-slot.api'
