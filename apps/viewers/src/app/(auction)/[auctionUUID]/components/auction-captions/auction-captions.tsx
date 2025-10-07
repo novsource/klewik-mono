@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useTimer } from '~hooks/index'
 import { Caption } from '~ui/caption'
 import { Flex } from '~ui/flex'
+import { REVALIDATE_TIME } from '~/constants'
 
 export type AuctionInfoProps = {
 	createAt: string
@@ -15,7 +16,7 @@ export const AuctionCaptions = (props: AuctionInfoProps) => {
 
 	const [isShouldReloadPage, setIsShouldReloadPage] = useState(false)
 
-	useTimer(120 - Math.floor((Date.now() - revalidateDate) / 1000),	{
+	useTimer(REVALIDATE_TIME - Math.floor((Date.now() - revalidateDate) / 1000),	{
 		immediately: true,
 		onExpire: () => {
 			setIsShouldReloadPage(true)

@@ -63,6 +63,9 @@
   --font-*: initial;
   --font-golos: "Golos";
 
+  --animate-opacity-in: fadeChange 0.15s ease;
+  --animate-opacity-out: fadeChange 0.15s ease reverse;
+
   --animate-fade-in: fadeIn 0.4s ease forwards;
   --animate-fade-out: fadeIn 2s ease reverse;
   --animate-fade-change: fadeChange 2s ease;
@@ -73,12 +76,11 @@
   --height-sheet: var(--sheet-height);
 
   @keyframes fadeChange {
-    0%,
+    0% {
+      opacity: 0;
+    }
     100% {
       opacity: 1;
-    }
-    50% {
-      opacity: 0;
     }
   }
   @keyframes fadeIn {

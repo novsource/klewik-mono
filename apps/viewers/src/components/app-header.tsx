@@ -20,7 +20,7 @@ export const AppHeader = (props: AppHeaderProps) => {
 			{...restProps}
 		>
 			<div className="container h-full w-full">
-				<div className="relative flex h-full w-full items-center justify-between gap-x-4 px-4 py-2">
+				<div className="relative flex h-full w-full items-center justify-between gap-x-4 tablet:px-4 py-2">
 					<Icons.KlewikLogo className="text-green-accent" size="lg" />
 					<div className="flex h-full items-center">
 						<Link

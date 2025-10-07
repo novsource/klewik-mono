@@ -1,9 +1,6 @@
 'use client'
 
 import type { HTMLAttributes } from 'react'
-import { useEffect, useRef } from 'react'
-import { useAppContext } from '~context/index'
-import { useIntersection } from '~hooks/use-intersection'
 import { Typography } from '~ui/typography'
 
 type AuctionTitleProps = {
@@ -12,35 +9,15 @@ type AuctionTitleProps = {
 	date: string
 }
 
-const AuctionTitle = ({ title, date }: AuctionTitleProps) => {
-	const {
-		state: { title: titleView },
-		dispatchers,
-	} = useAppContext()
-
-	const titleWrapperRef = useRef<HTMLDivElement>(null)
-	const intersection = useIntersection(titleWrapperRef, { threshold: 0 })
-
-	useEffect(() => {
-		if (titleView.entry !== intersection.entry) {
-			dispatchers?.title(intersection)
-		}
-	}, [dispatchers, intersection, titleView])
-
+export const AuctionTitle = ({ title }: AuctionTitleProps) => {
 	return (
-		<div
-			ref={titleWrapperRef}
-			className="flex flex-col gap-y-0.5"
-			style={{ opacity: titleView.entry?.intersectionRatio ?? 1 }}
-		>
-			<Typography tag="h1">{title}</Typography>
-			<Typography className="text-xs tablet:text-sm text-gray" tag="span">
-				Cоздан:
-				{' '}
-				{date}
+		<div className="flex flex-col gap-y-0.5">
+			<Typography
+				tag="h1"
+				className="leading-6 tablet:leading-10 text-title-lg tablet:text-[27px]"
+			>
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
 			</Typography>
 		</div>
 	)
 }
-
-export { AuctionTitle }

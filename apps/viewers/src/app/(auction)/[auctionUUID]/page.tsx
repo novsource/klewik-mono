@@ -1,12 +1,10 @@
 import process from 'node:process'
 
 import { notFound } from 'next/navigation'
-import { Button } from '~ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '~ui/dialog'
 import { Flex } from '~ui/flex'
-import { Icons } from '~ui/icons'
 import { AuctionCaptions } from './components/auction-captions'
 import { AuctionTitle } from './components/auction-title'
+import { CreateCodeDialog } from './components/create-code-dialog'
 import { FiltredSlotsList } from './components/slots-list/filtred-slots-list.ui'
 
 export const revalidate = 120
@@ -54,11 +52,13 @@ async function getAuctionInfo(id: string) {
 
 export const generateStaticParams = async () => []
 
-export async function generateMetadata({
-	params,
-}: {
+type AuctionPageGenMetaArgs = {
 	params: Promise<{ auctionUUID: string }>
-}) {
+}
+
+export async function generateMetadata(args: AuctionPageGenMetaArgs) {
+	const { params } = args
+
 	const { auctionUUID } = await params
 
 	const auction = await getAuctionInfo(auctionUUID)
@@ -68,11 +68,13 @@ export async function generateMetadata({
 	}
 }
 
-export default async function AuctionPage({
-	params,
-}: {
+type AuctionPageProps = {
 	params: Promise<{ auctionUUID: string }>
-}) {
+}
+
+export default async function AuctionPage(props: AuctionPageProps) {
+	const { params } = props
+
 	const auctionUUID = (await params).auctionUUID
 
 	const [slots, auctionInfo] = await Promise.all([
@@ -100,22 +102,7 @@ export default async function AuctionPage({
 					>
 						<Flex className="gap-x-6 tablet:gap-x-8" justify="between" align="start">
 							<AuctionTitle title={auctionInfo.id} date={date} />
-							<Dialog>
-								<DialogTrigger
-									nativeButton={false}
-									render={(
-										<Button
-											variant="action"
-											startContent={<Icons.Plus />}
-										>
-											Создать код
-										</Button>
-									)}
-								/>
-								<DialogContent>
-									Test
-								</DialogContent>
-							</Dialog>
+							<CreateCodeDialog slots={slots} auctionUUID={auctionUUID} />
 						</Flex>
 						<AuctionCaptions
 							createAt={date}
