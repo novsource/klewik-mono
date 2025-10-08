@@ -35,7 +35,7 @@ type ServerErrorData = {
   reason?: string
 }
 
-type AxiosBaseQueryError = {
+export type AxiosBaseQueryError = {
   status: AxiosError['status']
   message: AxiosError['message']
   reason?: string
@@ -136,7 +136,7 @@ export const axiosAuthBaseQuery
 
       if (result.error && result.error.status === 401) {
         const refreshResult = await baseQuery(
-          { url: '/api/v1/auth/refresh2', method: 'POST', rewriteBaseURL: true },
+          { url: '/api/v1/auth/refresh', method: 'POST', rewriteBaseURL: true },
           api,
           extraOptions,
         )
