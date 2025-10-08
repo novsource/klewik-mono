@@ -1,89 +1,73 @@
 import type { ReactNode } from 'react'
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
-import { useEditSlotForm } from '~features/auction-slot/edit-slot/hooks'
-import { ControlledEditSlotForm } from '~features/auction-slot/edit-slot/ui/edit-slot-form.ui'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
-import { auctionSlotsActions } from '~entities/auction-slot/store'
 import { SolidAuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { useMediaQuery } from '~shared/hooks'
 
-import { useActionCreators } from '~shared/lib/redux-toolkit'
-
+import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
+import { Divider } from '~shared/ui/divider'
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from '~shared/ui/drawer'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
+import type {
+  SheetProps,
+} from '~shared/ui/sheet'
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from '~shared/ui/sheet'
-import { closeAllToasts, toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
 
-type ResponsiveEditSlotDialogueProps = {
+import { twSlotsStyles } from '~shared/utils'
+
+import { useEditSlotDialog } from '../hooks'
+import { editSlotSheetStyles } from '../styles'
+import { ControlledEditSlotForm } from './edit-slot-form.ui'
+
+export type EditSlotDialogProps = SheetProps & {
   slot: AuctionSlot
-  trigger: ReactNode
+  trigger?: ReactNode
+  closeButtonProps?: ButtonProps
 }
 
-export const EditSlotDialog = ({
-  slot: inputSlot,
-  trigger,
-}: ResponsiveEditSlotDialogueProps) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
+export const EditSlotDialog = (props: EditSlotDialogProps) => {
+  const {
+    slot: inputSlot,
+    trigger,
+    open,
+    onOpenChange,
+    closeButtonProps,
+    ...restProps
+  } = props
 
-  const { updateSlot } = useActionCreators(auctionSlotsActions)
-
-  const { form, formState, submitForm, isLoading } = useEditSlotForm(inputSlot, {
-    onSuccess: (slot) => {
-      updateSlot({ id: inputSlot.id, data: slot })
-
-      setIsSuccess(true)
-      setIsDialogOpen(false)
-    },
-    onError: (error) => {
-      toastErrorNotification('Не удалось изменить слот', error.reason)
-    },
-  })
+  const {
+    dialogState,
+    form,
+    formState,
+    queryState: formQueryState,
+    submit,
+  } = useEditSlotDialog(inputSlot)
 
   const isMediaLargeThenTablet = useMediaQuery(
     greaterThenDeviceWidthMediaQueries.tablet,
   )
-
-  if (!isDialogOpen && formState.isDirty) {
-    form.reset()
-    form.clearErrors()
-
-    closeAllToasts()
-
-    setIsDialogOpen(false)
-
-    if (isSuccess) {
-      toastSuccessNotification('Слот успешно изменен!')
-    }
-  }
-
-  const handleFormSubmit = useCallback(() => {
-    const submit = form.handleSubmit(submitForm)
-
-    return submit()
-  }, [form, submitForm])
 
   const dialogContent = useMemo(() => {
     return (
@@ -98,10 +82,16 @@ export const EditSlotDialog = ({
     )
   }, [inputSlot, form])
 
+  const closeDialog = () => {
+    dialogState.setIsOpen(false)
+  }
+
+  const sheetStyles = useMemo(() => twSlotsStyles(editSlotSheetStyles), [])
+
   if (isMediaLargeThenTablet) {
     return (
-      <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <SheetTrigger>{trigger}</SheetTrigger>
+      <Sheet open={open} onOpenChange={onOpenChange} {...restProps}>
+        {trigger && <SheetTrigger>{trigger}</SheetTrigger>}
         <SheetContent>
           <Flex className="h-full w-full gap-y-4" direction="column">
             <SheetHeader className="flex flex-col w-full gap-y-5">
@@ -111,14 +101,14 @@ export const EditSlotDialog = ({
                     slotId={inputSlot.id}
                     className="size-8"
                     variant="error"
-                    disabled={isLoading}
+                    disabled={formQueryState.isLoading}
                     isIconOnly
                     icon={<Icons.Bin size="xs" />}
                     onClick={() => form.reset()}
                   />
                   <Button
                     className="size-8"
-                    disabled={isLoading || !formState.isDirty}
+                    disabled={formQueryState.isLoading || !formState.isDirty}
                     isIconOnly
                     icon={<Icons.Reset size="sm" />}
                     onClick={() => form.reset()}
@@ -130,9 +120,9 @@ export const EditSlotDialog = ({
                     className="h-full"
                     size="sm"
                     variant="action"
-                    disabled={isLoading || !formState.isDirty}
+                    disabled={formQueryState.isLoading || !formState.isDirty}
                     startContent={<Icons.Save width={14} height={14} />}
-                    onClick={handleFormSubmit}
+                    onClick={submit}
                   >
                     Сохранить
                   </Button>
@@ -141,8 +131,9 @@ export const EditSlotDialog = ({
                     className="size-8"
                     isIconOnly
                     icon={<Icons.LargeCross width={14} height={14} />}
-                    disabled={isLoading}
-                    onClick={() => setIsDialogOpen(false)}
+                    disabled={formQueryState.isLoading}
+                    onClick={closeDialog}
+                    {...closeButtonProps}
                   />
                 </Flex>
               </Flex>
@@ -173,35 +164,96 @@ export const EditSlotDialog = ({
   }
 
   return (
-    <Drawer noBodyStyles open={isDialogOpen} onOpenChange={setIsDialogOpen} shouldScaleBackground={false}>
-      <DrawerTrigger>{trigger}</DrawerTrigger>
-      <DrawerContent className="px-4 pb-4" isFullPageHeight={true}>
-        <DrawerHeader className="flex-row items-center gap-x-4 px-2">
-          <EditSlotDialogsIcon />
-          <Flex className="" direction="column">
-            <DrawerTitle className="leading-5 font-medium text-white">
-              Изменение слота
-            </DrawerTitle>
-            <DrawerDescription asChild>
-              <Typography tag="p">Измените данные слота</Typography>
-            </DrawerDescription>
+    <Sheet open={open} onOpenChange={onOpenChange} {...restProps}>
+      <SheetTrigger>{trigger}</SheetTrigger>
+      <SheetContent className="overflow-scroll" isFullPageSize side="bottom">
+        <Flex className="h-full w-full" direction="column">
+          <SheetHeader className={sheetStyles.header}>
+            <EditSlotDialogsIcon />
+            <div className={sheetStyles.titleWrapper}>
+              <SheetTitle className={sheetStyles.title}>
+                Редактирование слота
+              </SheetTitle>
+              <SheetDescription>
+                <Typography
+                  className={sheetStyles.titleDescription}
+                  tag="p"
+                >
+                  Измените параметры у слота
+                </Typography>
+              </SheetDescription>
+            </div>
+            <Drawer noBodyStyles>
+              <DrawerTrigger>
+                <Button
+                  className={sheetStyles.closeButton}
+                  isIconOnly
+                  icon={<Icons.Dots width={14} height={14} />}
+                />
+              </DrawerTrigger>
+              <DrawerContent className="px-4">
+                <DrawerHeader>
+                  <DrawerTitle>
+                    Действия
+                  </DrawerTitle>
+                </DrawerHeader>
+                <Flex className="w-full gap-y-3 pb-4" direction="column">
+                  <Button
+                    className="w-full"
+                    startContent={<Icons.Reset width={12} height={12} />}
+                  >
+                    Сбросить
+                  </Button>
+                  <Button
+                    className="w-full"
+                    variant="error"
+                    startContent={<Icons.Bin width={12} height={12} />}
+                  >
+                    Удалить слот
+                  </Button>
+                </Flex>
+              </DrawerContent>
+            </Drawer>
+
+          </SheetHeader>
+          <Divider className="mb-4" />
+          {dialogContent}
+          <Flex className="gap-y-2 pt-2" direction="column">
+            <Button
+              className="w-full"
+              variant="action"
+              size="sm"
+              disabled={formQueryState.isLoading || !formState.isDirty}
+              startContent={<Icons.Save width={14} height={14} />}
+              onClick={submit}
+            >
+              Сохранить
+            </Button>
+            <Button
+              className="w-full"
+              size="sm"
+              icon={<Icons.LargeCross width={14} height={14} />}
+              onClick={closeDialog}
+              {...closeButtonProps}
+            >
+              Отмена
+            </Button>
           </Flex>
-        </DrawerHeader>
-        {dialogContent}
-      </DrawerContent>
-    </Drawer>
+        </Flex>
+      </SheetContent>
+    </Sheet>
   )
 }
 
 function EditSlotDialogsIcon() {
   return (
-    <div className="bg-[#FFC837]/50 h-fit w-fit rounded-small p-0.5 outline-4 outline-[#FFC837]/15">
+    <div className="bg-[#FFC837]/50 h-fit w-fit rounded-small p-0.25 outline-4 outline-[#FFC837]/15">
       <Flex
-        className="rounded-small size-9 p-1.75"
+        className="relative size-7 tablet:size-8 rounded-small p-1.25"
         align="center"
         justify="center"
       >
-        <Icons.Pencil size="lg" gradient />
+        <Icons.Pencil gradient />
       </Flex>
     </div>
   )
