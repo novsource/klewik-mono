@@ -58,7 +58,7 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
       <Accordion type="single" collapsible>
         <AccordionItem value="message">
           <AccordionTrigger
-            className="flex-row-reverse justify-end gap-x-1.5 py-1.5 text-gray-light hover:text-gray-accent"
+            className="flex-row-reverse justify-end text-xs tablet:text-sm gap-x-1 py-1 tablet:gap-x-1.5 tablet:py-1.5 text-gray-light hover:text-gray-accent"
             onClick={() => setIsMessageOpened(curr => !curr)}
             {...triggerProps}
           >

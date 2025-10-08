@@ -37,7 +37,7 @@ export const ErrorPage = () => {
   const isRouteError = isRouteErrorResponse(error)
 
   return (
-    <div className="relative container h-full mx-auto">
+    <div className="relative container h-screen mx-auto">
       <div className="absolute top-1/4 -translate-y-1/4 w-full px-4">
         <div className="flex flex-col h-full items-center justify-center gap-y-6">
           <AnimatedLogo />
