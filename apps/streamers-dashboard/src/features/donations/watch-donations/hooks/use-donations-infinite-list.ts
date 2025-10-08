@@ -15,8 +15,8 @@ import {
 import { objectToDeps } from '~shared/utils'
 
 export const useDonationsInfiniteList
-  = <Args = unknown>(
-    query: UseInfiniteListServiceFunction<ProcessedDonation, Args>,
+  = (
+    query: UseInfiniteListServiceFunction<ProcessedDonation>,
     donations: ProcessedDonation[],
     options: UseInfiniteListOptions<ProcessedDonation>,
   ) => {
@@ -28,7 +28,7 @@ export const useDonationsInfiniteList
       ref,
       state: infiniteListState,
       functions: { loadMore, reset },
-    } = useInfiniteList<ProcessedDonation, Args>(query, options)
+    } = useInfiniteList<ProcessedDonation>(query, options)
 
     const listItems = useMemo(() => {
       return [...donations, ...infiniteListState.value]

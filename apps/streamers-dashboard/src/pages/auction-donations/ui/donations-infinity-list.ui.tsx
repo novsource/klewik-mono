@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 import { isAxiosError } from 'axios'
 
@@ -11,20 +11,21 @@ import { auctionSelectors } from '~entities/auction/store'
 
 import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
 import { donationsActions } from '~entities/donation/store'
+import { SkeletonDonationCard } from '~entities/donation/ui/card'
 
 import { useDidUpdate, useUnmount } from '~shared/hooks'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
+import type { InfiniteListRenderFunction } from '~shared/ui/infinite-list'
 import { MotionBox } from '~shared/ui/motion-box'
-import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
 
 import { InfinityDonationsListCard } from './donations-list-card.ui'
 
 export type AuctionDonationsInfiniteListProps
   = Omit<
     DonationsInfiniteListProps,
-'data' | 'listRef' | 'isCanBeLoadMore' | 'isPending' | 'children'
+'data' | 'listRef' | 'isCanBeLoadMore' | 'isPending' | 'children' | 'state'
 > & {
   data: ProcessedDonation[]
   filterStatus: NullablePossible<ProcessedDonationStatus>
@@ -40,6 +41,8 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
     ...restProps
   } = props
 
+  const [isShowingSkeletons, setIsShowingSkeletons] = useState(false)
+
   const { addDonation } = useActionCreators(donationsActions)
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
@@ -51,6 +54,8 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
 
   const loadDonations = async () => {
     try {
+      setIsShowingSkeletons(true)
+
       const request = loadMoreDonationsQuery({
         auctionUUID,
         limit,
@@ -62,6 +67,8 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
       queryRef.current = request
       const response = await request
       queryRef.current = null
+
+      setIsShowingSkeletons(false)
 
       if (response.isError) {
         throw response.error
@@ -81,6 +88,7 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
     }
     catch (err) {
       queryRef.current = null
+      setIsShowingSkeletons(false)
 
       if (isAxiosError(err)) {
         throw new Error(err.message)
@@ -112,9 +120,9 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
 
   useUnmount(() => queryRef.current?.abort())
 
-  const renderListItem = (
-    donation: ProcessedDonation,
-    virtualizeItem: VirtualizedItem,
+  const renderListItem: InfiniteListRenderFunction<ProcessedDonation> = (
+    donation,
+    virtualizeItem,
   ) => {
     return (
       <MotionBox
@@ -138,11 +146,13 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
 
   return (
     <DonationsInfiniteList
+      slotsClassNames={{ container: 'pb-4' }}
       data={listItems}
+      state={infiniteListState}
       listRef={ref}
-      isCanBeLoadMore={infiniteListState.isCanLoadMore}
-      isPending={infiniteListState.isPending}
-      limit={infiniteListState.limit}
+      gap={8}
+      placeholder={<SkeletonDonationCard />}
+      showPlaceholders={isShowingSkeletons}
       {...restProps}
     >
       { renderListItem }
