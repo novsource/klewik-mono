@@ -40,8 +40,8 @@ export const AuctionDonationsPage = () => {
   return (
     <div
       className={cn([
-        'grid grid-rows-slots-table gap-y-3 tablet:grid-rows-slots-desktop',
-        'relative mx-auto w-full h-full tablet:pt-5 mb-4',
+        'grid grid-rows-slots-table gap-y-3 pt-3 pb-20 tablet:grid-rows-slots-desktop',
+        'relative mx-auto w-full h-full tablet:pt-5 tablet:mb-4 tablet:pb-0',
         'mobile:gap-y-5',
         'max-tablet:max-w-[1100px] tablet:gap-y-7 tablet:pl-10',
         'desktop:max-w-[1750px] desktop-lg:max-w-[2100px]',
