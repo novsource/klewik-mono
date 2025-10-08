@@ -92,7 +92,7 @@ export const tabsTriggerRunnerVariants = cva<TabsVariantCva & TabsOrientationCva
       {
         variant: 'bottomLine',
         orientation: 'vertical',
-        className: 'rounded-l-pill right-0',
+        className: 'rounded-l-pill -right-0.25',
       },
       {
         variant: 'underline',
@@ -102,7 +102,7 @@ export const tabsTriggerRunnerVariants = cva<TabsVariantCva & TabsOrientationCva
       {
         variant: 'underline',
         orientation: 'vertical',
-        className: 'right-0',
+        className: '-right-0.25',
       },
     ],
   },
