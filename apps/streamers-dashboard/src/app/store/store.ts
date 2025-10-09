@@ -12,7 +12,7 @@ import { auctionReducer } from '~entities/auction/store'
 
 import { splittedAuctionSlotsApi as auctionSlotsApi } from '~entities/auction-slot/api'
 import {
-  auctionSlotsListenersMiddlewares,
+  auctionSlotsListenerMiddlewares,
   auctionSlotsReducer,
 } from '~entities/auction-slot/store'
 
@@ -82,9 +82,10 @@ const syncMiddleware = createStateSyncMiddleware(syncStoreConfig)
 
 export const store = configureStore({
   reducer: persistedReducer,
+  // @ts-expect-error Listeners middlewares expect RootStore and StoreDispatch types
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
-      .prepend(...auctionSlotsListenersMiddlewares)
+      .prepend(...auctionSlotsListenerMiddlewares)
       .concat(
         auctionApi.middleware,
         authApi.middleware,
