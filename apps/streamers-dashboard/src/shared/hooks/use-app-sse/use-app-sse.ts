@@ -78,7 +78,7 @@ export const useAppSSE = () => {
 
       return info
     }, {})
-  }, [sseStore.donations, sseStore.auctionSlots])
+  }, [sseStore])
 
   const connectToAllEvents = async (auctionUUID: string) => {
     if (internalIsPendingRef.current)

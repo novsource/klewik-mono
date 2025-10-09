@@ -8,6 +8,7 @@ import {
   EventStreamContentType,
   fetchEventSource,
 } from '@microsoft/fetch-event-source'
+import { Mutex } from 'async-mutex'
 import { AxiosError } from 'axios'
 
 import { refreshTokens } from '~shared/api/http/auth/auth.api'
@@ -18,6 +19,7 @@ type RetrySSEConnectOptions = Omit<SSEClientConnectOptions, 'retry'> & {
   retry: NonNullable<SSEClientConnectOptions['retry']>
 }
 
+const mutex = new Mutex()
 export class BaseSSEClient {
   async connect(
     url: string,
@@ -38,16 +40,27 @@ export class BaseSSEClient {
         && response.status < 500
         && response.status !== 429
       ) {
+        const isMutexLocked = mutex.isLocked()
+        if (response.status === 401 && isMutexLocked) {
+          await mutex.waitForUnlock()
+          return this.connect(url, inputListeners, inputOptions)
+        }
+
         /** @todo Refactor auth error */
-        if (response.status === 401) {
+        if (response.status === 401 && !isMutexLocked) {
+          const release = await mutex.acquire()
           try {
             await refreshTokens()
+            return this.connect(url, inputListeners, inputOptions)
           }
           catch (error) {
             if (error instanceof AxiosError)
               throw new Error(error.cause?.message)
             if (error instanceof Error)
               throw new Error('Authorization error')
+          }
+          finally {
+            release()
           }
         }
       }
@@ -105,6 +118,8 @@ export class BaseSSEClient {
     params.set('lastMessageId', String(options?.lastMessageId ?? 0))
 
     const isRetryInOptions = Reflect.has(options, 'retry')
+
+    await mutex.waitForUnlock()
 
     if (isRetryInOptions) {
       // @ts-expect-error - reflect checking

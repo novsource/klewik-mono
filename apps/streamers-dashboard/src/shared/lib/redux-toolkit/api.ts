@@ -9,6 +9,8 @@ import type { rateLimitOptions as RateLimitOptions } from 'axios-rate-limit'
 
 import type { SSEClientConnectOptions, SSEClientListeners } from '../fetch-event-source'
 
+import { Mutex } from 'async-mutex'
+
 import { chain } from '~shared/utils'
 
 import { BaseHttpClient } from '../axios'
@@ -105,6 +107,7 @@ export const axiosBaseQuery
       }
     }
 
+const authMutex = new Mutex()
 export const axiosAuthBaseQuery
   = (options: AxiosBaseQueryOptions): AxiosQueryFn =>
     async (args, api, extraOptions) => {
@@ -112,6 +115,7 @@ export const axiosAuthBaseQuery
 
       const initBaseUrl = import.meta.env.VITE_SERVER_URL
 
+      await authMutex.waitForUnlock()
       const baseQuery = axiosBaseQuery({
         ...options,
         baseUrl: isDev ? null : import.meta.env.VITE_SERVER_URL,
@@ -135,22 +139,37 @@ export const axiosAuthBaseQuery
       )
 
       if (result.error && result.error.status === 401) {
-        const refreshResult = await baseQuery(
-          { url: '/api/v1/auth/refresh', method: 'POST', rewriteBaseURL: true },
-          api,
-          extraOptions,
-        )
+        const isMutexUnlocked = !authMutex.isLocked()
 
-        if (refreshResult.error === undefined) {
+        if (isMutexUnlocked) {
+          const release = await authMutex.acquire()
+          const refreshTokensResponse = await baseQuery(
+            { url: '/api/v1/auth/refresh', method: 'POST', rewriteBaseURL: true },
+            api,
+            extraOptions,
+          )
+
+          if (refreshTokensResponse.error === undefined) {
+            release()
+            result = await baseQuery(
+              { ...args, ...options, url, rewriteBaseURL: true },
+              api,
+              extraOptions,
+            )
+          }
+          else {
+            release()
+            const errorURLParams = new URLSearchParams({ reason: 'auth' })
+            window.location.replace(`/error?${errorURLParams.toString()}`)
+          }
+        }
+        else {
+          await authMutex.waitForUnlock()
           result = await baseQuery(
             { ...args, ...options, url, rewriteBaseURL: true },
             api,
             extraOptions,
           )
-        }
-        else {
-          const errorURLParams = new URLSearchParams({ reason: 'auth' })
-          window.location.replace(`/error?${errorURLParams.toString()}`)
         }
       }
       return result
