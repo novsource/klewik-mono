@@ -64,7 +64,12 @@ export const WheelCanvas = (props: WheelCanvasProps) => {
         />
         <canvas
           ref={innerRef}
-          className={cn('absolute top-0', wheelSpinStatus !== 'spinning' && 'animate-pulse duration-[4s] transition-opacity')}
+          className={cn(
+            'absolute top-0',
+            wheelSpinStatus !== 'spinning'
+            && wheelSlots.length === 0 && 'animate-pulse duration-[4s] transition-opacity',
+            wheelSlots.length === 0 && 'bg-dark-foreground animate-none',
+          )}
           style={{ clipPath: 'circle(46%)' }}
         />
       </Flex>

@@ -178,17 +178,18 @@ export const useWheelInit = (
   const draw = useCallback(() => {
     const wheelCanvas = wheelCanvasRef.current
 
-    if (wheelCanvas) {
-      const isSlotsArrEmpty = !slots.length
+    if (!wheelCanvas)
+      return
 
-      if (slots && !isSlotsArrEmpty) {
-        drawSlicesItems(wheelCanvas, slots)
-      }
-      else {
-        drawEmptyWheel(wheelCanvas, {
-          color: defaultWheelColor.current,
-        })
-      }
+    const isSlotsArrEmpty = !slots.length
+
+    if (isSlotsArrEmpty || !slots) {
+      drawEmptyWheel(wheelCanvas, {
+        color: defaultWheelColor.current,
+      })
+    }
+    else {
+      drawSlicesItems(wheelCanvas, slots)
     }
   }, [wheelCanvasRef, slots])
 
