@@ -1,10 +1,17 @@
+import type { ReactNode } from 'react'
 import { memo } from 'react'
 
-import { IntegrationsPlatforms } from '~entities/integrations/model'
-
-import { Card, CardContent, CardHeader } from '~shared/ui/card'
-import { Icons } from '~shared/ui/icons'
-import { Typography } from '~shared/ui/typograghy'
+import { INTEGRATIONS_PLATFORM_NAMES } from '~entities/integrations/constants'
+import type { IntegrationsPlatforms } from '~entities/integrations/model'
+import {
+  BaseIntegrationCard,
+  BaseIntegrationCardContent,
+  BaseIntegrationCardDescription,
+  BaseIntegrationCardFooter,
+  BaseIntegrationCardHeader,
+  BaseIntegrationCardPlatformIcon,
+  BaseIntegrationCardTitle,
+} from '~entities/integrations/ui/card'
 
 import { DonatePayIntegrationButton } from './donate-pay'
 import {
@@ -13,45 +20,33 @@ import {
 } from './donation-alerts'
 
 type IntegrationCardProps = {
-  integrationSystem: IntegrationsPlatforms
+  platform: IntegrationsPlatforms
   description?: string
 }
 
 const IntegrationCard = (props: IntegrationCardProps) => {
-  const { integrationSystem, description } = props
+  const { platform, description } = props
 
-  const integrationIcon = {
-    donationAlerts: <Icons.DonationAlerts width={24} height={28} />,
-    donatePay: <Icons.DonatePay width={32} height={32} />,
-  }[integrationSystem]
-
-  const integrationButton = {
+  const integrationButtons: Record<IntegrationsPlatforms, NullablePossible<ReactNode>> = {
     donationAlerts: <DonationAlertsIntegrationButton />,
     donatePay: <DonatePayIntegrationButton />,
-  }[integrationSystem]
-
-  const integrationPlatformName = {
-    donationAlerts: 'Donation Alerts',
-    donatePay: 'Donate Pay',
-  }[integrationSystem]
+    twitch: null,
+    userInput: null,
+  }
 
   return (
-    <Card className="bg-dark max-w-[350px]">
-      <CardHeader className="flex w-full justify-between items-center">
-        {integrationIcon}
-        {integrationButton}
-      </CardHeader>
-      <CardContent>
-        <Typography tag="span" className="text-title font-bold">
-          {integrationPlatformName}
-        </Typography>
-        {description && (
-          <Typography tag="p" className="text-gray-accent">
-            {description}
-          </Typography>
-        )}
-      </CardContent>
-    </Card>
+    <BaseIntegrationCard>
+      <BaseIntegrationCardHeader className="h-12">
+        <BaseIntegrationCardPlatformIcon platform={platform} />
+      </BaseIntegrationCardHeader>
+      <BaseIntegrationCardContent>
+        <BaseIntegrationCardTitle>{ INTEGRATIONS_PLATFORM_NAMES[platform] }</BaseIntegrationCardTitle>
+        <BaseIntegrationCardDescription>{ description }</BaseIntegrationCardDescription>
+      </BaseIntegrationCardContent>
+      <BaseIntegrationCardFooter className="justify-end pt-2.5 pb-2">
+        {integrationButtons[platform]}
+      </BaseIntegrationCardFooter>
+    </BaseIntegrationCard>
   )
 }
 

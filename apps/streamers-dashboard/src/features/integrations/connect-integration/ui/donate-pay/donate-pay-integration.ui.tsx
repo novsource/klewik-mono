@@ -5,20 +5,20 @@ import { Icons } from '~shared/ui/icons'
 
 import { IntegrationCard } from '../connect-integration.ui'
 
-const DonatePayIntegrationCard = memo(() => {
+export const DonatePayIntegrationCard = memo(() => {
   return (
     <IntegrationCard
-      integrationSystem="donate-pay"
+      platform="donatePay"
       description="Использование пожертвований для создания слотов"
     />
   )
 })
 
-const DonatePayIntegrationButton = () => {
+export const DonatePayIntegrationButton = () => {
   return (
     <Button
       className="bg-gray/40 font-medium text-gray-accent"
-      size="sm"
+      size="xs"
       startContent={<Icons.Programming size="sm" />}
       disabled
     >
@@ -26,5 +26,3 @@ const DonatePayIntegrationButton = () => {
     </Button>
   )
 }
-
-export { DonatePayIntegrationCard, DonatePayIntegrationButton }

@@ -1,38 +1,38 @@
-import { integrationsActions } from '~entities/integrations/store'
+import type { Auction } from '~entities/auction/model'
 
-import { Auction } from '~entities/auction/model'
+import { integrationsActions } from '~entities/integrations/store'
 
 import { splittedSSEApi } from '~shared/store/api'
 
 type ConnectSSEPlatformQueryArgs = {
-  auctionId: Auction['id']
+  auctionUUID: Auction['auctionUUID']
 }
 
 type ConnectSSEPlatformQueryResult = void
 
 const connectSSEDonationAlertsApi = splittedSSEApi.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     connectSSEDonationAlerts: builder.query<
       ConnectSSEPlatformQueryResult,
       ConnectSSEPlatformQueryArgs
     >({
-      query: ({ auctionId }) => ({ url: `/${auctionId}/donalerts/connect` }),
-      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
-        await queryFulfilled
+      query: ({ auctionUUID }) => ({ url: `${auctionUUID}/donalerts/connect` }),
+      onQueryStarted: async (_, api) => {
+        await api.queryFulfilled
 
-        dispatch(
+        api.dispatch(
           integrationsActions.setPlatformStatus({
-            platform: 'donation-alerts',
+            platform: 'donationAlerts',
             data: {
               isConnected: true,
               isValid: true,
             },
-          })
+          }),
         )
       },
     }),
   }),
 })
 
-export const { useLazyConnectSSEDonationAlertsQuery } =
-  connectSSEDonationAlertsApi
+export const { useLazyConnectSSEDonationAlertsQuery }
+  = connectSSEDonationAlertsApi
