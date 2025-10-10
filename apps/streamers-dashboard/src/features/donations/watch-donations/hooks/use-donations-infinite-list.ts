@@ -37,7 +37,7 @@ export const useDonationsInfiniteList
       return [...filtredDonationsToAdd, ...infiniteListState.value]
     }, [donations, infiniteListState.value])
 
-    const isListEmpty = listItems.length === 0
+    const isListEmpty = listItems.length < infiniteListState.limit
 
     if (isListEmpty && isFirstRender) {
       loadMore()
