@@ -6,6 +6,7 @@ import {
   BaseDonationCard,
   BaseDonationCardHeader,
   DonationCardStatusBadge,
+  SkeletonDonationCard,
   SolidDonationCardContent,
 } from '~entities/donation/ui/card'
 
@@ -18,12 +19,13 @@ import { useMediaQuery } from '~shared/hooks'
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
+import { MotionBox } from '~shared/ui/motion-box'
 
-export type InfinitiDonationsListCardProps = BaseDonationCardProps & {
+export type InfiniteDonationsListCardProps = BaseDonationCardProps & {
   donation: ProcessedDonation
 }
 
-export const InfinityDonationsListCard = (props: InfinitiDonationsListCardProps) => {
+export const InfiniteDonationsListCard = (props: InfiniteDonationsListCardProps) => {
   const { donation, ...restProps } = props
 
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
@@ -54,5 +56,20 @@ export const InfinityDonationsListCard = (props: InfinitiDonationsListCardProps)
         />
       </Flex>
     </BaseDonationCard>
+  )
+}
+
+export const InfiniteDonationsListSkeletonCard = () => {
+  return (
+    <MotionBox
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{
+        duration: 0.1,
+        ease: 'easeInOut',
+      }}
+    >
+      <SkeletonDonationCard />
+    </MotionBox>
   )
 }

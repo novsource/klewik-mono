@@ -11,7 +11,6 @@ import { auctionSelectors } from '~entities/auction/store'
 
 import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
 import { donationsActions } from '~entities/donation/store'
-import { SkeletonDonationCard } from '~entities/donation/ui/card'
 
 import { useDidUpdate, useUnmount } from '~shared/hooks'
 
@@ -20,7 +19,7 @@ import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 import type { InfiniteListRenderFunction } from '~shared/ui/infinite-list'
 import { MotionBox } from '~shared/ui/motion-box'
 
-import { InfinityDonationsListCard } from './donations-list-card.ui'
+import { InfiniteDonationsListCard, InfiniteDonationsListSkeletonCard } from './donations-list-card.ui'
 
 export type AuctionDonationsInfiniteListProps
   = Omit<
@@ -137,7 +136,7 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
           ease: 'easeInOut',
         }}
       >
-        <InfinityDonationsListCard
+        <InfiniteDonationsListCard
           donation={donation}
           style={{
             marginTop: virtualizeItem.index !== 0 ? '8px' : '0',
@@ -154,7 +153,7 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
       state={infiniteListState}
       listRef={ref}
       gap={8}
-      placeholder={<SkeletonDonationCard />}
+      placeholder={<InfiniteDonationsListSkeletonCard />}
       showPlaceholders={isShowingSkeletons}
       {...restProps}
     >
