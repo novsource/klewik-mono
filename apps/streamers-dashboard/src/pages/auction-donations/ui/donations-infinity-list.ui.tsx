@@ -59,7 +59,7 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
       const request = loadMoreDonationsQuery({
         auctionUUID,
         limit,
-        after: lastDonationIdRef.current,
+        after: lastDonationIdRef.current || 0,
         order: 'descending',
         status: filterStatus || 'all',
       })
@@ -80,9 +80,12 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
         return { list: [] }
       }
 
-      responseData.forEach(addDonation)
       lastDonationIdRef.current
-        = responseData[responseData.length - 1] ? responseData[responseData.length - 1].id : lastDonationIdRef.current
+        = responseData[responseData.length - 1]
+          ? responseData[responseData.length - 1].id
+          : lastDonationIdRef.current
+
+      addDonation(responseData)
 
       return { list: responseData }
     }

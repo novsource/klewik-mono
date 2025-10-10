@@ -31,7 +31,10 @@ export const useDonationsInfiniteList
     } = useInfiniteList<ProcessedDonation>(query, options)
 
     const listItems = useMemo(() => {
-      return [...donations, ...infiniteListState.value]
+      const filtredDonationsToAdd = donations
+        .filter(donation => !infiniteListState.value.find(item => item.id === donation.id))
+
+      return [...filtredDonationsToAdd, ...infiniteListState.value]
     }, [donations, infiniteListState.value])
 
     const isListEmpty = listItems.length === 0

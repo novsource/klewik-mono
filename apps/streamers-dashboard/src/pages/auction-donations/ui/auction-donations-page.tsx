@@ -22,12 +22,12 @@ import { AuctionDonationsInfiniteList } from './donations-infinity-list.ui'
 export const AuctionDonationsPage = () => {
   const { isConnected: isDonationsSSEEventConnected } = useStoreSelector(store => sseSelectors.getEventStatus(store, 'auctionSlots'))
 
-  const donations = useStoreSelector(donationsSelectors.getAllDonations)
+  const storedDonations = useStoreSelector(donationsSelectors.getAllDonations)
 
   const [donationsFilterValue, setDonationsFilterValue]
     = useState<NullablePossible<ProcessedDonationStatus>>(null)
 
-  const filtredDonations = useFiltredDonations(donations, {
+  const filtredDonations = useFiltredDonations(storedDonations, {
     status: donationsFilterValue,
   })
 
