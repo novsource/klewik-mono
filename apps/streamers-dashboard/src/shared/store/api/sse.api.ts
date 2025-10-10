@@ -13,11 +13,11 @@ export const splittedSSEApi = createApi({
   endpoints: builder => ({
     connectSlotsSSE: builder.query<void, ConnectSSEQueryArgs>({
       query: ({ auctionUUID, ...sseConnectionOptions }) =>
-        ({ url: `${auctionUUID}/slots-events`, ...sseConnectionOptions }),
+        ({ url: `${auctionUUID}/sse/slots-events`, ...sseConnectionOptions }),
     }),
     connectDonationsSSE: builder.query<void, ConnectSSEQueryArgs>({
       query: ({ auctionUUID, ...sseConnectionOptions }) =>
-        ({ url: `${auctionUUID}/donations-events`, ...sseConnectionOptions }),
+        ({ url: `${auctionUUID}/sse/donations-events`, ...sseConnectionOptions }),
     }),
   }),
 })

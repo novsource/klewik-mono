@@ -108,15 +108,11 @@ export const useAppSSE = () => {
     }
   }
 
-  const addEventListener = <Event extends keyof SSEEvents>(channel: SSEChannels, event: Event, handler: NonNullable<SSEEvents[Event]>) => {
-    return sseChannelsEventsEmitter[channel].on(event, handler)
-  }
-
   return {
+    sseChannels: sseChannelsEventsEmitter,
     isTabLeader,
     isAllConnected,
     isPending,
     connectToAllEvents,
-    addEventListener,
   }
 }

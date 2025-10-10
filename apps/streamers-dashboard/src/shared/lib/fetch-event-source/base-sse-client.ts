@@ -123,10 +123,10 @@ export class BaseSSEClient {
 
     if (isRetryInOptions) {
       // @ts-expect-error - reflect checking
-      return this._retryConnect(`/api/v1/sse/${url}`, listeners, options)
+      return this._retryConnect(`/api/v1/auctions/${url}`, listeners, options)
     }
 
-    return this._internalRequest(`/api/v1/sse/${url}`, listeners, options)
+    return this._internalRequest(`/api/v1/auctions/${url}`, listeners, options)
   }
 
   private async _retryConnect(

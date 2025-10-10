@@ -24,7 +24,21 @@ export const auctionApiMocksHandlers = [
   }),
   http.get<GetAuctionInfoPathIds>(`/api/v1/auctions/:auctionUUID`, () => {
     return HttpResponse.json<AuctionDTO>(
-      { id: faker.number.int(), auctionUUID: faker.string.uuid(), ownerId: faker.string.uuid(), createAt: faker.date.future(), endedAt: faker.date.future(), dropoutSlotsIds: [], processedDonationsIds: [], isBetsClosed: false, isEnded: false, slotsIds: [], url: faker.internet.url(), wheelMode: 'classic', winnerSlotId: null },
+      {
+        id: faker.number.int(),
+        auctionUUID: faker.string.uuid(),
+        ownerId: faker.string.uuid(),
+        createAt: faker.date.future(),
+        endedAt: faker.date.future(),
+        dropoutSlotsIds: [],
+        processedDonationsIds: [],
+        isBetsClosed: false,
+        isEnded: false,
+        slotsIds: [],
+        url: faker.internet.url(),
+        wheelMode: 'classic',
+        winnerSlotId: null,
+      },
     )
   }),
 ] as const
