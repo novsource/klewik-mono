@@ -13,6 +13,8 @@ import {
   BaseIntegrationCardTitle,
 } from '~entities/integrations/ui/card'
 
+import { Icons } from '~shared/ui/icons'
+
 import { DonatePayIntegrationButton } from './donate-pay'
 import {
   DonationAlertsIntegrationButton,
@@ -22,10 +24,11 @@ import {
 type IntegrationCardProps = {
   platform: IntegrationsPlatforms
   description?: string
+  isConnected?: boolean
 }
 
 const IntegrationCard = (props: IntegrationCardProps) => {
-  const { platform, description } = props
+  const { platform, description, isConnected = false } = props
 
   const integrationButtons: Record<IntegrationsPlatforms, NullablePossible<ReactNode>> = {
     donationAlerts: <DonationAlertsIntegrationButton />,
@@ -36,8 +39,14 @@ const IntegrationCard = (props: IntegrationCardProps) => {
 
   return (
     <BaseIntegrationCard>
-      <BaseIntegrationCardHeader className="h-12">
+      <BaseIntegrationCardHeader className="h-12 flex flex-row justify-between">
         <BaseIntegrationCardPlatformIcon platform={platform} />
+        {isConnected
+          && (
+            <div className="rounded-small bg-green-dark p-1">
+              <Icons.Success className="text-green-accent" size="sm" />
+            </div>
+          )}
       </BaseIntegrationCardHeader>
       <BaseIntegrationCardContent>
         <BaseIntegrationCardTitle>{ INTEGRATIONS_PLATFORM_NAMES[platform] }</BaseIntegrationCardTitle>
@@ -51,14 +60,16 @@ const IntegrationCard = (props: IntegrationCardProps) => {
 }
 
 type RedirectDisplayProps = {
-  provider: IntegrationsPlatforms
+  platform: IntegrationsPlatforms
 }
 
 const RedirectDisplay = memo((props: RedirectDisplayProps) => {
   const redirectDisplay = {
     donationAlerts: <DonationAlertsRedirectDisplay />,
     donatePay: <></>,
-  }[props.provider]
+    twitch: <></>,
+    userInput: <></>,
+  }[props.platform]
 
   return redirectDisplay
 })

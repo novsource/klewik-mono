@@ -1,8 +1,7 @@
 import type { Auction } from '~entities/auction/model'
 
+import { splittedIntegrationsApi } from '~entities/integrations/api'
 import { integrationsActions } from '~entities/integrations/store'
-
-import { splittedSSEApi } from '~shared/store/api'
 
 type ConnectSSEPlatformQueryArgs = {
   auctionUUID: Auction['auctionUUID']
@@ -10,13 +9,13 @@ type ConnectSSEPlatformQueryArgs = {
 
 type ConnectSSEPlatformQueryResult = void
 
-const connectSSEDonationAlertsApi = splittedSSEApi.injectEndpoints({
+const connectSSEDonationAlertsApi = splittedIntegrationsApi.injectEndpoints({
   endpoints: builder => ({
     connectSSEDonationAlerts: builder.query<
       ConnectSSEPlatformQueryResult,
       ConnectSSEPlatformQueryArgs
     >({
-      query: ({ auctionUUID }) => ({ url: `${auctionUUID}/donalerts/connect` }),
+      query: ({ auctionUUID }) => ({ url: `/${auctionUUID}/integrations/donalerts/connect` }),
       onQueryStarted: async (_, api) => {
         await api.queryFulfilled
 

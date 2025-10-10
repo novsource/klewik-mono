@@ -3,40 +3,14 @@ import { memo } from 'react'
 
 import NumberFlow from '@number-flow/react'
 
+import { donationsSelectors } from '~entities/donation/store'
+
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 
 import { cn } from '~shared/utils'
-
-const DonationsStats = memo((props: { className?: string }) => {
-  return (
-    <StatisticCard className={props.className}>
-      <Flex className="w-full h-full gap-x-2.5" align="center">
-        <Flex className="gap-x-1" align="center">
-          <Icons.Success size="sm" />
-          <NumberFlow
-            className="font-azeret-mono font-medium tracking-tight"
-            value={121}
-          />
-        </Flex>
-        <Flex className="gap-x-1" align="center">
-          <Icons.Warning width="16" height="16" />
-          <NumberFlow
-            className="font-azeret-mono font-medium tracking-tight"
-            value={10}
-          />
-        </Flex>
-        <Flex className="gap-x-0.5" align="center">
-          <Icons.LargeCross size="sm" />
-          <NumberFlow
-            className="font-azeret-mono font-medium tracking-tight"
-            value={0}
-          />
-        </Flex>
-      </Flex>
-    </StatisticCard>
-  )
-})
 
 const StatisticCard = ({
   className,
@@ -59,4 +33,40 @@ const StatisticCard = ({
   )
 }
 
-export { DonationsStats }
+export type DonationsStatsCardProps = {
+  className?: string
+}
+
+export const DonationsStats = memo((props: DonationsStatsCardProps) => {
+  const { className } = props
+
+  const statusesCount = useStoreSelector(donationsSelectors.getDonationsStatusesCounts)
+
+  return (
+    <StatisticCard className={className}>
+      <Flex className="w-full h-full gap-x-2.5" align="center">
+        <Flex className="gap-x-1" align="center">
+          <Icons.Success size="sm" />
+          <NumberFlow
+            className="font-azeret-mono font-medium tracking-tight"
+            value={statusesCount.added}
+          />
+        </Flex>
+        <Flex className="gap-x-1" align="center">
+          <Icons.Warning width="16" height="16" />
+          <NumberFlow
+            className="font-azeret-mono font-medium tracking-tight"
+            value={statusesCount.checkRequested}
+          />
+        </Flex>
+        <Flex className="gap-x-0.5" align="center">
+          <Icons.LargeCross size="sm" />
+          <NumberFlow
+            className="font-azeret-mono font-medium tracking-tight"
+            value={statusesCount.error}
+          />
+        </Flex>
+      </Flex>
+    </StatisticCard>
+  )
+})

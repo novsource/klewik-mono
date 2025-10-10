@@ -34,15 +34,12 @@ export const DonationAlertsRedirectDisplay = memo(() => {
   const [connectSSEDonationAlerts, { isSuccess }]
     = useLazyConnectSSEDonationAlertsQuery()
 
-  const [connectionText, setConnectionText] = useState(
-    'Подключаем Donation Alerts... Пожалуйста подождите',
-  )
   const { set } = useLocalStorage('donationAlerts')
   const { value, remove } = useLocalStorage('redirect:donalerts')
 
   useEffect(() => {
     if (value === undefined || !value[auctionUUID]) {
-      return navigate(`/dashboard/${auctionUUID}/settings`)
+      return navigate(`/dashboard/${auctionUUID}/wheel`)
     }
 
     const time = value[auctionUUID].time
@@ -55,17 +52,9 @@ export const DonationAlertsRedirectDisplay = memo(() => {
 
     if (redirectKey !== key) {
       remove()
-      return navigate(`/dashboard/${auctionUUID}/settings`)
+      return navigate(`/dashboard/${auctionUUID}/wheel`)
     }
   }, [auctionUUID, value])
-
-  useEffect(() => {
-    if (isSuccess) {
-      setTimeout(() => {
-        navigate(`/dashboard/${auctionUUID}/settings`)
-      }, 5000)
-    }
-  }, [isSuccess])
 
   useEffect(() => {
     const connect = async () => {
@@ -75,10 +64,11 @@ export const DonationAlertsRedirectDisplay = memo(() => {
         remove()
         set({ [auctionUUID]: response.data })
 
-        setConnectionText('DonationAlerts успешно подключен!')
+        setTimeout(() => {
+          navigate(`/dashboard/${auctionUUID}/wheel`)
+        }, 5000)
       }
     }
-
     connect()
   }, [connectSSEDonationAlerts, auctionUUID])
 
@@ -107,7 +97,9 @@ export const DonationAlertsRedirectDisplay = memo(() => {
               && 'text-green-accent/80 animate-fadeIn duration-[3s] font-medium',
             )}
           >
-            {connectionText}
+            {isSuccess
+              ? 'DonationAlerts успешно подключен!'
+              : 'Подключаем Donation Alerts... Пожалуйста подождите'}
           </Typography>
         </div>
       </div>
@@ -161,12 +153,13 @@ export const DonationAlertsIntegrationButton = () => {
       className={cn(
         !isConnected && 'border-1 border-dark-accent transition-all',
         isConnected
-        && 'bg-green/20 border-0 text-green/100 cursor-default hover:bg-green/20',
+        && 'bg-green/20 border-0 text-green cursor-default hover:bg-green/20 hover:text-green',
       )}
       size="xs"
       startContent={
         isConnected && <Icons.Success size="sm" className="text-green" />
       }
+      disabled={isPressed}
       onClick={openDonationAlertAuth}
     >
       {!isConnected && (isPressed ? 'Подождите...' : 'Подключить')}
@@ -176,10 +169,13 @@ export const DonationAlertsIntegrationButton = () => {
 }
 
 export const DonationAlertsIntegrationCard = memo(() => {
+  const { isConnected } = useStoreSelector(integrationsSelectors.getDonationAlertsStatus)
+
   return (
     <IntegrationCard
       platform="donationAlerts"
       description="Использование пожертвований для создания слотов"
+      isConnected={isConnected}
     />
   )
 })
