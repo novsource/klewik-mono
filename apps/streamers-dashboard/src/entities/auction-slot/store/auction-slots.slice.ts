@@ -6,6 +6,10 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import type { SortingOptions } from '~shared/store/model'
 
+import { getRandomHEXColor } from '~shared/utils'
+
+import { getAuctionSlotsThunk } from '../api'
+
 type AuctionSlotsState = {
   slots: AuctionSlot[]
   dropoutSlots: AuctionSlot[]
@@ -120,6 +124,23 @@ const slice = createSlice({
     getSlotsSortOptions: (state) => {
       return state.sortingOptions
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(getAuctionSlotsThunk.fulfilled, (state, action) => {
+      const { payload: auctionSlots } = action
+
+      if (!auctionSlots)
+        return
+
+      const slotsWithColors = auctionSlots.reduce<AuctionSlot[]>((acc, slot) => {
+        const slotWithColor: AuctionSlot = { ...slot, color: getRandomHEXColor() }
+
+        acc.push(slotWithColor)
+        return acc
+      }, [])
+
+      state.slots = slotsWithColors
+    })
   },
 })
 
