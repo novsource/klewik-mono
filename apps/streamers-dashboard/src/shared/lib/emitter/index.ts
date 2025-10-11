@@ -1,3 +1,1 @@
-import { BaseEmitter } from './base-emitter'
-
-export { BaseEmitter }
+export * from './base-emitter'

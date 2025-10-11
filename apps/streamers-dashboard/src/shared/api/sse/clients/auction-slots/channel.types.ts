@@ -5,23 +5,16 @@ import type {
   AuctionSlotsEventsMessageSchema,
 } from './channel.contracts'
 
-type AuctionSlotDTO = z.infer<typeof AuctionSlotDTOSchema>
+export type AuctionSlotDTO = z.infer<typeof AuctionSlotDTOSchema>
 
-type AuctionEventSourceMessage = z.infer<typeof AuctionSlotsEventsMessageSchema>
+export type AuctionSlotsEventSourceMessage = z.infer<typeof AuctionSlotsEventsMessageSchema>
 
-type AuctionSlotsEventsMap = {
+export type AuctionSlotsEventsMap = {
   'auction-slots/add': AuctionSlotDTO[]
   'auction-slots/update': AuctionSlotDTO
 }
 
-type AuctionSlotsEventsCallbacks = {
+export type AuctionSlotsEventsCallbacks = {
   'auction-slots/add': (data: AuctionSlotDTO[]) => void
   'auction-slots/update': (data: AuctionSlotDTO) => void
-}
-
-export type {
-  AuctionEventSourceMessage,
-  AuctionSlotDTO,
-  AuctionSlotsEventsCallbacks,
-  AuctionSlotsEventsMap,
 }

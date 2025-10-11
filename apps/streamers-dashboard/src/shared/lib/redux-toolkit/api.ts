@@ -7,14 +7,16 @@ import type {
 } from 'axios'
 import type { rateLimitOptions as RateLimitOptions } from 'axios-rate-limit'
 
-import type { SSEClientConnectOptions, SSEClientListeners } from '../fetch-event-source'
+import type {
+  EventSourceMessage,
+  SSEClient,
+  SSEClientConnectOptions,
+  SSEClientListeners,
+} from '../fetch-event-source'
 
 import { Mutex } from 'async-mutex'
 
-import { chain } from '~shared/utils'
-
 import { BaseHttpClient } from '../axios'
-import { BaseSSEClient } from '../fetch-event-source'
 
 type AxiosBaseQueryOptions = {
   baseUrl: string
@@ -176,35 +178,64 @@ export const axiosAuthBaseQuery
     }
 
 export type SSEQueryArgs = {
-  url: string
-  listeners: SSEClientListeners
+  eventURL: string
   options?: SSEClientConnectOptions
 }
 
 type SSEQueryFn = BaseQueryFn<SSEQueryArgs>
 
-export const sseBaseQuery = (): SSEQueryFn =>
-  async (args) => {
-    const { url, listeners, options } = args
+// export const sseBaseQuery = (): SSEQueryFn =>
+//   async (args) => {
+//     const { url, listeners, options } = args
 
-    const sseClient = new BaseSSEClient()
+//     const sseClient = new BaseSSEClient()
 
-    const errorHandler = (error: unknown) => {
-      console.log('SSE Error: ', error)
-      throw error
-    }
+//     const errorHandler = (error: unknown) => {
+//       console.log('SSE Error: ', error)
+//       throw error
+//     }
 
-    try {
-      await sseClient.connect(url, listeners, {
-        ...options,
-        onerror: options?.onerror
-          ? chain(errorHandler, options.onerror)
-          : errorHandler,
-      })
+//     try {
+//       await sseClient.connect(url, listeners, {
+//         ...options,
+//         onerror: options?.onerror
+//           ? chain(errorHandler, options.onerror)
+//           : errorHandler,
+//       })
+
+//       return { data: null }
+//     }
+//     catch (error) {
+//       return { error }
+//     }
+//   }
+
+type SSEEventQueryOptions = {
+  listeners?: SSEClientListeners
+  connectOptions?: SSEClientConnectOptions
+}
+
+export const sseEventQuery
+  = <Events extends Record<string, any> = Record<string, any>, SourceMessage extends EventSourceMessage = EventSourceMessage>(
+    client: SSEClient<Events, SourceMessage>,
+    options: SSEEventQueryOptions,
+  ): SSEQueryFn => {
+    const { connectOptions, listeners } = options
+    return async (args) => {
+      const { eventURL } = args
+
+      try {
+        if (!client.isConnected) {
+          await client.connectToServer(eventURL, { ...connectOptions, ...listeners })
+
+          return { data: null }
+        }
+      }
+      catch (error) {
+        if (error instanceof Error)
+          throw error
+      }
 
       return { data: null }
-    }
-    catch (error) {
-      return { error }
     }
   }
