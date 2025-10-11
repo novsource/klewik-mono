@@ -11,6 +11,7 @@ import { default as Crown } from './Crown';
 import { default as DonateMessage } from './DonateMessage';
 import { default as DonatePay } from './DonatePay';
 import { default as DonationAlerts } from './DonationAlerts';
+import { default as DonationCode } from './DonationCode';
 import { default as Dots } from './Dots';
 import { default as EyeClosed } from './EyeClosed';
 import { default as EyeOpen } from './EyeOpen';
@@ -86,6 +87,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   DonateMessage,
   DonatePay,
   DonationAlerts,
+  DonationCode,
   Dots,
   EyeClosed,
   EyeOpen,
