@@ -14,6 +14,8 @@ import { getAuctionInfoThunk } from '~entities/auction/api'
 
 import { getAuctionSlotsThunk } from '~entities/auction-slot/api'
 
+import { getDonationsStatsThunk } from '~entities/donation/api'
+
 import type { ErrorStatusesWithReason } from '~shared/constants/router'
 import { errorStatusReasons } from '~shared/constants/router'
 
@@ -47,12 +49,18 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
         const thunksArr = [
           dispatch<any>(getAuctionInfoThunk(auctionUUID)),
           dispatch<any>(getAuctionSlotsThunk(auctionUUID)),
+          dispatch<any>(getDonationsStatsThunk(auctionUUID)),
         ]
 
-        const [auctionInfoResponse, slotsResponse] = await Promise.all(thunksArr)
+        const [
+          auctionInfoResponse,
+          slotsResponse,
+          donationsStatsResponse,
+        ] = await Promise.all(thunksArr)
 
         const isAuctionInfoResponseError = isAxiosError(auctionInfoResponse.payload)
         const isAuctionSlotsResponseError = isAxiosError(slotsResponse.payload)
+        const isDonationsStatusResponseError = isAxiosError(donationsStatsResponse.payload)
 
         if (isAuctionInfoResponseError) {
           throw auctionInfoResponse.payload
@@ -60,6 +68,10 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
 
         if (isAuctionSlotsResponseError) {
           throw slotsResponse.payload
+        }
+
+        if (isDonationsStatusResponseError) {
+          throw donationsStatsResponse.payload
         }
 
         return json(auctionInfoResponse, { status: 200 })

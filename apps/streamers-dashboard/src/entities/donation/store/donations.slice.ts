@@ -11,6 +11,8 @@ import type {
 
 import { createSlice } from '@reduxjs/toolkit'
 
+import { getDonationsStatsThunk } from '../api'
+
 // const createFakeDonations = (count: number) => {
 //   let idCount = 0
 
@@ -148,6 +150,16 @@ const slice = createSlice({
     getAllDonations(state) {
       return state.donations.all
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(getDonationsStatsThunk.fulfilled, (state, action) => {
+      const { payload } = action
+
+      if (!payload)
+        return
+
+      state.donationsStatusesCounts = { ...state.donationsStatusesCounts, ...payload }
+    })
   },
 })
 

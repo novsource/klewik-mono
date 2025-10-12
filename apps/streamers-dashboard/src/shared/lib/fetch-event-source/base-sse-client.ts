@@ -40,14 +40,16 @@ export class BaseSSEClient {
         && response.status < 500
         && response.status !== 429
       ) {
+        const isAuthError = response.status === 401
         const isMutexLocked = mutex.isLocked()
-        if (response.status === 401 && isMutexLocked) {
+
+        if (isAuthError && isMutexLocked) {
           await mutex.waitForUnlock()
           return this.connect(url, inputListeners, inputOptions)
         }
 
         /** @todo Refactor auth error */
-        if (response.status === 401 && !isMutexLocked) {
+        if (isAuthError && !isMutexLocked) {
           const release = await mutex.acquire()
           try {
             await refreshTokens()
@@ -63,10 +65,14 @@ export class BaseSSEClient {
             release()
           }
         }
+
+        if (!isAuthError) {
+          throw new AxiosError(response.statusText, response.status.toString())
+        }
       }
       else {
         if (response.status === 500) {
-          throw new Error('Server error')
+          throw new AxiosError(response.statusText, response.status.toString())
         }
 
         throw new Error('Unexpected error when trying to connect SSE')
