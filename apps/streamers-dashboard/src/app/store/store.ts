@@ -12,7 +12,6 @@ import {
 
 import { splittedDonationApi as donationsApi } from '~entities/donation/api'
 import { donationsReducer } from '~entities/donation/store'
-import { donationsListenerMiddlewares } from '~entities/donation/store/donations.middlewares'
 
 import { splittedIntegrationsApi as integrationsApi } from '~entities/integrations/api'
 import { integrationsReducer } from '~entities/integrations/store'
@@ -66,7 +65,7 @@ export const store = configureStore({
     getDefaultMiddleware()
       .prepend(
         ...auctionSlotsListenerMiddlewares,
-        ...donationsListenerMiddlewares,
+        // ...donationsListenerMiddlewares,
       )
       .concat(
         auctionApi.middleware,

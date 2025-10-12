@@ -1,4 +1,4 @@
-import { ProcessDonationSheet } from '~widgets/process-donation-dialogs/ui'
+import { ProcessDonationDialog } from '~features/donations/process-donation/ui'
 
 import type { ProcessedDonation } from '~entities/donation/model'
 import type { BaseDonationCardProps } from '~entities/donation/ui/card'
@@ -44,7 +44,7 @@ export const InfiniteDonationsListCard = (props: InfiniteDonationsListCardProps)
           </BaseDonationCardHeader>
           <SolidDonationCardContent donationData={donation} />
         </Flex>
-        <ProcessDonationSheet
+        <ProcessDonationDialog
           donation={donation}
           trigger={(
             <Button

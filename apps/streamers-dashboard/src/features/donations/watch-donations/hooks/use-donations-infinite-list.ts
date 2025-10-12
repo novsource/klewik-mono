@@ -33,6 +33,7 @@ export const useDonationsInfiniteList
     const listItems = useMemo(() => {
       const filtredDonationsToAdd = donations
         .filter(donation => !infiniteListState.value.find(item => item.id === donation.id))
+        .sort((first, second) => second.id - first.id)
 
       return [...filtredDonationsToAdd, ...infiniteListState.value]
     }, [donations, infiniteListState.value])

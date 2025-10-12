@@ -119,6 +119,11 @@ const slice = createSlice({
           state.donationsStatusesCounts[status] = counts[status]
       })
     },
+    setDonationsStatusesCounts(state, action: PayloadAction<Record<ProcessedDonationStatus, number>>) {
+      const counts = action.payload
+
+      state.donationsStatusesCounts = counts
+    },
   },
   selectors: {
     getDonationsStatusesCounts(state) {

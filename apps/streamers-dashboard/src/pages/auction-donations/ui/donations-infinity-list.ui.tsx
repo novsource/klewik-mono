@@ -58,7 +58,7 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
       const request = loadMoreDonationsQuery({
         auctionUUID,
         limit,
-        after: lastDonationIdRef.current || 0,
+        before: lastDonationIdRef.current || 0,
         order: 'descending',
         status: filterStatus || 'all',
       })
