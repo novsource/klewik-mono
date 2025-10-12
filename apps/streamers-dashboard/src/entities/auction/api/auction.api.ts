@@ -14,7 +14,7 @@ export type GetAuctionInfoQueryArgs = {
   auctionUUID: Auction['auctionUUID']
 }
 
-export const getAuctionInfoThunk = createAsyncThunk('auction/getAuctionInfo', async (auctionUUID: string) => {
+export const getAuctionInfoThunk = createAsyncThunk('auction/getAuctionInfo', async (auctionUUID: string, { rejectWithValue }) => {
   try {
     const response = await getAuctionInfo<Auction>(auctionUUID)
 
@@ -29,8 +29,13 @@ export const getAuctionInfoThunk = createAsyncThunk('auction/getAuctionInfo', as
     return response.data
   }
   catch (error) {
-    if (error instanceof Error || isAxiosError(error))
-      throw error
+    if (isAxiosError(error)) {
+      return rejectWithValue(error)
+    }
+
+    if (error instanceof Error) {
+      return rejectWithValue(new AxiosError(error.message, '500'))
+    }
   }
 })
 

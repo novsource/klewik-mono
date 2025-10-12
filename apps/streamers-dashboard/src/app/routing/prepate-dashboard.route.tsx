@@ -3,7 +3,7 @@ import type {
 } from 'react-router-dom'
 import { json, Outlet } from 'react-router-dom'
 
-import { AxiosError } from 'axios'
+import { AxiosError, isAxiosError } from 'axios'
 import { z } from 'zod'
 
 import { store } from '~app/store'
@@ -42,32 +42,30 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
 
       try {
         const dispatch = store.dispatch
-
         const auctionUUID = validatedParams.data.auctionId
 
         const thunksArr = [
-          dispatch(getAuctionInfoThunk(auctionUUID)),
-          dispatch(getAuctionSlotsThunk(auctionUUID)),
+          dispatch<any>(getAuctionInfoThunk(auctionUUID)),
+          dispatch<any>(getAuctionSlotsThunk(auctionUUID)),
         ]
 
-        const [auctionInfo] = await Promise.all(thunksArr)
+        const [auctionInfoResponse, slotsResponse] = await Promise.all(thunksArr)
 
-        return json(auctionInfo, { status: 200 })
+        const isAuctionInfoResponseError = isAxiosError(auctionInfoResponse.payload)
+        const isAuctionSlotsResponseError = isAxiosError(slotsResponse.payload)
+
+        if (isAuctionInfoResponseError) {
+          throw auctionInfoResponse.payload
+        }
+
+        if (isAuctionSlotsResponseError) {
+          throw slotsResponse.payload
+        }
+
+        return json(auctionInfoResponse, { status: 200 })
       }
       catch (error) {
         if (error instanceof AxiosError) {
-          if (error.status === 404) {
-            throw json(
-              {
-                reason,
-                hint: 'Не удалось найти аукцион. Попробуйте войти через главную страницу',
-              },
-              {
-                status: error.status,
-              },
-            )
-          }
-
           const isStatusHaveReason = error.status !== undefined && Reflect.has(errorStatusReasons, error.status.toString())
           const reason = isStatusHaveReason ? errorStatusReasons[error.status?.toString() as unknown as ErrorStatusesWithReason] : 'Неизвестная причина'
 

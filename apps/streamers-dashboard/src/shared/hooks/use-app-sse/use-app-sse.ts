@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { isAxiosError } from 'axios'
+
 import { auctionSlotsSSEClient } from '~shared/api/sse/clients/auction-slots'
 import type { AuctionSlotsEventsCallbacks } from '~shared/api/sse/clients/auction-slots'
 import { donationsSSEClient } from '~shared/api/sse/clients/donations'
@@ -138,12 +140,15 @@ export const useAppSSE = (listeners?: UseAppSSEListeners) => {
     try {
       setIsPending(true)
 
-      await Promise.all([connectAuctionSlotsSSEQuery({ auctionUUID }), connectDonationsSSEQuery({ auctionUUID })])
+      await Promise.all([
+        connectAuctionSlotsSSEQuery({ auctionUUID }).unwrap(),
+        connectDonationsSSEQuery({ auctionUUID }).unwrap(),
+      ])
 
       setAllConnected(true)
     }
     catch (error) {
-      if (error instanceof Error)
+      if (error instanceof Error || isAxiosError(error))
         throw error
     }
     finally {

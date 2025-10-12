@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { AxiosError } from 'axios'
+import { AxiosError, isAxiosError } from 'axios'
 
 import { getAuctionSlots } from '~shared/api/http/auction-slots'
 
@@ -8,7 +8,7 @@ import { axiosAuthBaseQuery } from '~shared/lib/redux-toolkit'
 
 export const getAuctionSlotsThunk = createAsyncThunk(
   'auctionSlots/getAuctionSlots',
-  async (auctionUUID: string) => {
+  async (auctionUUID: string, { rejectWithValue }) => {
     try {
       const response = await getAuctionSlots(auctionUUID)
 
@@ -19,8 +19,13 @@ export const getAuctionSlotsThunk = createAsyncThunk(
       return response.data
     }
     catch (error) {
-      if (error instanceof Error)
-        throw error
+      if (isAxiosError(error)) {
+        return rejectWithValue(error)
+      }
+
+      if (error instanceof Error) {
+        return rejectWithValue(new AxiosError(error.message, '500'))
+      }
     }
   },
 )

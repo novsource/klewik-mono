@@ -29,8 +29,9 @@ class AuthHttpClient extends BaseHttpClient {
       const axiosError = error as AxiosError
 
       const isAuthError = axiosError.status === 401
+
       if (!isAuthError)
-        throw new Error(axiosError.message)
+        throw error
 
       const isShouldRetry = !!fetchOptions.retry
 
