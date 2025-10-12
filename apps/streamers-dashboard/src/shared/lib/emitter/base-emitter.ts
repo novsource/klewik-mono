@@ -44,7 +44,7 @@ type BaseEmitterMethods<T extends Record<string, EventHandler>> = {
 /**
   Base implemention of EventEmitter
  */
-class BaseEmitter<EventsMap extends Record<string, EventHandler> = Record<string, any>>
+export class BaseEmitter<EventsMap extends Record<string, EventHandler> = Record<string, any>>
 implements BaseEmitterMethods<EventsMap> {
   /**
     Map of event emitter handlers
@@ -121,9 +121,7 @@ implements BaseEmitterMethods<EventsMap> {
       return
 
     for (const subscription of storedHandlers) {
-      subscription(eventArgs)
+      subscription(...eventArgs)
     }
   }
 }
-
-export { BaseEmitter }

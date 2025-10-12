@@ -100,6 +100,7 @@ export class BaseSSEClient {
 
     const onError = (err: unknown) => {
       inputListeners.onerror(err)
+
       throw err
     }
 

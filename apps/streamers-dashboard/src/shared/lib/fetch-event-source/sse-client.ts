@@ -64,7 +64,6 @@ export class SSEClient<
       onerror: (err) => {
         if (err instanceof Error) {
           this._sseEventsEmitter.notify('onerror', err)
-          throw err
         }
       },
       onmessage: (message) => {
