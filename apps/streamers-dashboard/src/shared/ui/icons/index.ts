@@ -26,6 +26,7 @@ import { default as Info } from './Info';
 import { default as Integrations } from './Integrations';
 import { default as Key } from './Key';
 import { default as LargeCross } from './LargeCross';
+import { default as Like } from './Like';
 import { default as LinkArrow } from './LinkArrow';
 import { default as List } from './List';
 import { default as Loading } from './Loading';
@@ -102,6 +103,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Integrations,
   Key,
   LargeCross,
+  Like,
   LinkArrow,
   List,
   Loading,
