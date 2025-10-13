@@ -8,6 +8,7 @@ import { default as CloseSquare } from './CloseSquare';
 import { default as Coin } from './Coin';
 import { default as Copy } from './Copy';
 import { default as Crown } from './Crown';
+import { default as Decline } from './Decline';
 import { default as DonateMessage } from './DonateMessage';
 import { default as DonatePay } from './DonatePay';
 import { default as DonationAlerts } from './DonationAlerts';
@@ -85,6 +86,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Coin,
   Copy,
   Crown,
+  Decline,
   DonateMessage,
   DonatePay,
   DonationAlerts,
