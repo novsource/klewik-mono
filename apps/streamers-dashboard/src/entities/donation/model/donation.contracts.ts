@@ -8,7 +8,7 @@ import { z } from 'zod'
 
 import { zodEnum } from '~shared/lib/zod'
 
-const processedDonationStatuses = [
+export const processedDonationStatuses = [
   'added',
   'checkRequested',
   'empty',
@@ -17,19 +17,19 @@ const processedDonationStatuses = [
   'inProgress',
 ] as const satisfies ProcessedDonationStatus[]
 
-const processedDonationAction = [
+export const processedDonationAction = [
   'createSlot',
   'noAction',
   'updateSlot',
 ] as const satisfies ProcessedDonationAction[]
 
-const donationMessageTypes = [
+export const donationMessageTypes = [
   'audio',
   'empty',
   'text',
 ] as const satisfies DonationMessageType[]
 
-const DonationSchema = z.object({
+export const DonationSchema = z.object({
   id: z.number(),
   auctionId: z.number(),
   sourceDonationId: z.number().positive().nullable(),
@@ -43,7 +43,7 @@ const DonationSchema = z.object({
   updatedAt: z.string(),
 })
 
-const ProcessedDonationSchema = DonationSchema.extend({
+export const ProcessedDonationSchema = DonationSchema.extend({
   processData: z.object({
     action: z.enum(
       zodEnum<ProcessedDonationAction>(processedDonationAction),
@@ -52,13 +52,15 @@ const ProcessedDonationSchema = DonationSchema.extend({
     status: z.enum(
       zodEnum<ProcessedDonationStatus>(processedDonationStatuses),
     ),
+    addedPoints: z.number().nullable(),
   }),
 })
 
-export {
-  donationMessageTypes,
-  DonationSchema,
-  processedDonationAction,
-  ProcessedDonationSchema,
-  processedDonationStatuses,
-}
+export const DonationCodeSchema = z.object({
+  id: z.number(),
+  auctionId: z.number(),
+  title: z.string(),
+  code: z.string().length(8),
+  slotId: z.number().nullable(),
+  createdAt: z.string(),
+})
