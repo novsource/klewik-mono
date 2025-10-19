@@ -15,13 +15,12 @@ export type TypographyTags = 'h1' | 'h2' | 'h3' | 'h4' | 'span' | 'p'
 
 type TypographyHTMLElements = Pick<HTMLElementTagNameMap, TypographyTags>
 
-type TypographyProps<T extends keyof TypographyHTMLElements> = {
+export type TypographyProps<T extends keyof TypographyHTMLElements> = {
   tag: T
   children: ReactNode
-} & Omit<TypographyVariantsProps, 'tag'>
-& HTMLAttributes<TypographyHTMLElements[T]>
+} & Omit<TypographyVariantsProps, 'tag'> & HTMLAttributes<TypographyHTMLElements[T]>
 
-const Typography = <T extends keyof TypographyHTMLElements>({
+export const Typography = <T extends keyof TypographyHTMLElements>({
   children,
   tag,
   className,
@@ -40,5 +39,3 @@ const Typography = <T extends keyof TypographyHTMLElements>({
     </Comp>
   )
 }
-
-export default Typography

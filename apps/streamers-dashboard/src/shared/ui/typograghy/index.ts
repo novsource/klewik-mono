@@ -1,3 +1,1 @@
-import Typography from './ui/typography'
-
-export { Typography }
+export * from './ui/typography'
