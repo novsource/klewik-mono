@@ -31,7 +31,7 @@ export const Caption = (props: CaptionProps) => {
   const baseStyles = useMemo(() =>
     cn(captionVariants({ variant, size }), className), [variant, size, className])
   const titleStyles = useMemo(() =>
-    cn(captionTitleVariants({ variant }), className), [variant, className])
+    cn(captionTitleVariants({ variant })), [variant])
 
   const mergedTitleProps = mergeProps<typeof Typography>(
     titleProps,
