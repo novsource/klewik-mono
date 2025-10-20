@@ -53,6 +53,7 @@ export const ProcessedDonationSchema = DonationSchema.extend({
       zodEnum<ProcessedDonationStatus>(processedDonationStatuses),
     ),
     addedPoints: z.number().nullable(),
+    title: z.string().max(40).nullable(),
   }),
 })
 
