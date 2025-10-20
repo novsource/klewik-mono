@@ -1,4 +1,5 @@
 import type { AuctionSlot } from '~entities/auction-slot/model'
+
 import type { WheelMode, WheelSlot } from '~entities/wheel/model'
 
 import {
@@ -24,9 +25,11 @@ export const drawEmptyWheel = (
 
   const center = radius
 
-  ctx.fillStyle = options?.color ?? getHEXColor()
+  ctx.fillStyle = 'transarent'
 
   ctx.save()
+
+  ctx.fillStyle = options?.color ?? getHEXColor()
 
   ctx.beginPath()
   ctx.arc(center, center, radius, 0, 2 * Math.PI)
@@ -47,7 +50,7 @@ export const drawSlicesItems = (
   canvas: HTMLCanvasElement,
   items: AuctionSlot[],
 ) => {
-  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+  const context = canvas.getContext('2d') as CanvasRenderingContext2D
   const radius = canvas.width / 2
 
   const x = canvas.width / 2
@@ -64,9 +67,15 @@ export const drawSlicesItems = (
         + convertDegreesToRadians(getDegreeByArcLength(radius, sliceArcLength))
 
     drawSlice({
-      context: ctx,
-      sliceParameters: { x, y, radius, startAngle, endAngle },
-      options: { text: item.title, color: item.color },
+      context,
+      sliceData: {
+        x,
+        y,
+        radius,
+        startAngle,
+        endAngle,
+        color: item.color,
+      },
     })
 
     startAngle = endAngle
@@ -86,13 +95,16 @@ export const drawWheelOverlay = (canvas: HTMLCanvasElement) => {
   ctx.arc(center, center, center, 0, Math.PI * 2 * canvas.width)
   ctx.closePath()
   ctx.fill()
+
+  ctx.restore()
 }
 
 export const drawSlicesAsPath2D = (
   canvas: HTMLCanvasElement,
   items: WheelSlot[],
 ) => {
-  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+  const size = canvas.width / 2
+  const context = canvas.getContext('2d') as CanvasRenderingContext2D
 
   for (const item of items) {
     let { startAngle, endAngle } = item
@@ -101,18 +113,15 @@ export const drawSlicesAsPath2D = (
     endAngle = convertDegreesToRadians(endAngle)
 
     drawSlice({
-      context: ctx,
-      sliceParameters: {
+      context,
+      sliceData: {
+        x: size,
+        y: size,
+        radius: size,
         startAngle,
         endAngle,
-        x: canvas.width / 2,
-        y: canvas.width / 2,
-        radius: canvas.width / 2,
-      },
-      options: {
         color: 'transparent',
       },
-      // onDraw: (slice: Path2D) => onDraw(slice, item),
     })
   }
 }
@@ -152,20 +161,17 @@ export const drawSlicesItemsWithSelectedItem = (
   canvas: HTMLCanvasElement,
   selectedItem: WheelSlot,
 ) => {
-  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+  const context = canvas.getContext('2d') as CanvasRenderingContext2D
   const center = canvas.width / 2
 
   drawSlice({
-    context: ctx,
-    sliceParameters: {
+    context,
+    sliceData: {
       x: center,
       y: center,
       radius: center,
       startAngle: convertDegreesToRadians(selectedItem.startAngle),
       endAngle: convertDegreesToRadians(selectedItem.endAngle),
-    },
-    options: {
-      text: selectedItem.title,
       color: selectedItem.color,
     },
   })
@@ -179,27 +185,24 @@ export const getSliceInfo = (
     y: number
   },
 ) => {
-  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+  const context = canvas.getContext('2d') as CanvasRenderingContext2D
   const center = canvas.width / 2
 
   return items.forEach(item =>
     drawSlice({
-      context: ctx,
-      sliceParameters: {
+      context,
+      sliceData: {
         x: center,
         y: center,
         radius: center,
         startAngle: convertDegreesToRadians(item.startAngle),
         endAngle: convertDegreesToRadians(item.endAngle),
-      },
-      options: {
-        text: item.title,
         color: item.color,
       },
-      onDraw: (slice: Path2D) => {
-        if (ctx.isPointInPath(slice, mouse.x, mouse.y))
-          console.log(item)
-      },
+      // onDraw: (slice: Path2D) => {
+      //   if (context.isPointInPath(slice, mouse.x, mouse.y))
+      //     console.log(item)
+      // },
     }),
   )
 }
@@ -358,19 +361,19 @@ const reverseLotsByValue = (slots: AuctionSlot[]) => {
   })
 }
 
-export const sliceMouse = ({
-  canvas,
-  slice,
-  item,
-}: {
+type SliceMouseProperties = {
   canvas: HTMLCanvasElement
   slice: Path2D
   item: WheelSlot
-}) => {
-  let activeItem: {
-    path2D: Path2D | null
-    item: WheelSlot | null
-  } = {
+}
+
+type SliceMouesActiveItem = {
+  path2D: NullablePossible<Path2D>
+  item: NullablePossible<WheelSlot>
+}
+
+export const sliceMouse = ({ canvas, slice, item }: SliceMouseProperties) => {
+  let activeItem: SliceMouesActiveItem = {
     path2D: null,
     item: null,
   }

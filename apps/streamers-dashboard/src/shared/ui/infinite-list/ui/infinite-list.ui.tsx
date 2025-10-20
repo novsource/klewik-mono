@@ -27,10 +27,11 @@ export type InfiniteListRenderFunction<T> = (item: T, virtualizedItem: Virtualiz
 export type InfiniteListProps<DataItem> = Omit<
   ShadowVirtualListProps<DataItem>,
   'data' | 'count' | 'scrollElementRef' | 'children'
-> & Pick<UseInfiniteListReturn<DataItem>, 'state'> & {
-  data: DataItem[]
+> & {
   children: InfiniteListRenderFunction<DataItem>
   listRef: StateRef<HTMLElement | Window>
+  state: UseInfiniteListReturn<DataItem>['state']
+  data?: DataItem[]
   limit?: number
   placeholder?: ReactNode
   showPlaceholders?: boolean
@@ -55,7 +56,12 @@ export const InfiniteList = <DataItem = unknown>(props: InfiniteListProps<DataIt
     ...restProps
   } = props
 
-  const preparedItems = useMemo(() => [...data, ...listState.value], [data, listState.value])
+  const preparedItems = useMemo(() => {
+    if (!data)
+      return listState.value
+
+    return data
+  }, [data, listState.value])
 
   /*
     Here we check if we can fit a screen full of cards equal to or greater than the list limit

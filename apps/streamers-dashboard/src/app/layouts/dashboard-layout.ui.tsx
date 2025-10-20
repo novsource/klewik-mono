@@ -79,9 +79,9 @@ export const DashboardLayout = () => {
   }
 
   return (
-    <div className="w-full h-full grid max-tablet:grid-rows-dashboard-mobile grid-rows-dashboard-desktop">
+    <div className="w-full h-full tablet:grid tablet:grid-rows-dashboard-desktop">
       <DashboardHeader />
-      <main className="main--dashboard">
+      <main className="relative w-full overflow-y-scroll tablet:h-full tablet:overflow-hidden">
         <Flex className="h-full w-full px-4">
           {isLargeThenTablet && (
             <aside className="h-full w-13 flex-none">

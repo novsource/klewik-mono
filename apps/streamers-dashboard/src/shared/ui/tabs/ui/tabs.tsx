@@ -120,7 +120,7 @@ const TabsTriggerRunner = () => {
       }
     : {
         height: sizes.height,
-        transform: `translateY(calc(${coords.y}px - var(--tabs-inner-padding)))`,
+        transform: `translateY(calc(${coords.y}px)`,
       }
 
   return <div className={classes} style={triggerStyles} />

@@ -5,6 +5,6 @@ export const DONATION_PROCESSED_STATUS: Record<ProcessedDonationStatus, string> 
   inProgress: 'Обрабатывается',
   checkRequested: 'Ожидание проверки',
   error: 'Ошибка',
-  empty: 'Не найдено',
+  empty: 'Нет данных',
   rejected: 'Отклонено',
 }

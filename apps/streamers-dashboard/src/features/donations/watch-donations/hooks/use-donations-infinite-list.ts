@@ -15,8 +15,8 @@ import {
 import { objectToDeps } from '~shared/utils'
 
 export const useDonationsInfiniteList
-  = <Args = unknown>(
-    query: UseInfiniteListServiceFunction<ProcessedDonation, Args>,
+  = (
+    query: UseInfiniteListServiceFunction<ProcessedDonation>,
     donations: ProcessedDonation[],
     options: UseInfiniteListOptions<ProcessedDonation>,
   ) => {
@@ -28,13 +28,17 @@ export const useDonationsInfiniteList
       ref,
       state: infiniteListState,
       functions: { loadMore, reset },
-    } = useInfiniteList<ProcessedDonation, Args>(query, options)
+    } = useInfiniteList<ProcessedDonation>(query, options)
 
     const listItems = useMemo(() => {
-      return [...donations, ...infiniteListState.value]
+      const filtredDonationsToAdd = donations
+        .filter(donation => !infiniteListState.value.find(item => item.id === donation.id))
+        .sort((first, second) => second.id - first.id)
+
+      return [...filtredDonationsToAdd, ...infiniteListState.value]
     }, [donations, infiniteListState.value])
 
-    const isListEmpty = listItems.length === 0
+    const isListEmpty = listItems.length < infiniteListState.limit
 
     if (isListEmpty && isFirstRender) {
       loadMore()

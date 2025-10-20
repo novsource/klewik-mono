@@ -1,20 +1,27 @@
-import { SpecializedSSEClient } from '~shared/lib/fetch-event-source'
+import type {
+  AuctionEventSourceMessage,
+  AuctionSlotsEventsCallbacks,
+} from '../clients/auction-slots'
+import type {
+  DonationsEventsCallbacks,
+  DonationsEventSourceMessage,
+} from '../clients/donations'
+import type {
+  SSEApiEventSourceMessage,
+} from './sse-clients-manager-channel'
 
 import { BROADCAST_CHANNEL_NAMES } from '~shared/constants/broadcast-channels'
 
+import { SpecializedSSEClient } from '~shared/lib/fetch-event-source'
+
 import {
-  AuctionEventSourceMessage,
   AuctionSlotDTOSchema,
-  AuctionSlotsEventsCallbacks,
 } from '../clients/auction-slots'
 import {
   DonationDTOSchema,
-  DonationsEventSourceMessage,
   DonationsEventSourceMessageSchema,
-  DonationsEventsCallbacks,
 } from '../clients/donations'
 import {
-  SSEApiEventSourceMessage,
   SSEClientsManagerBroadcastChannel,
 } from './sse-clients-manager-channel'
 
@@ -50,10 +57,13 @@ class SSEClientsManager {
     },
   })
 
-  private constructor(private _auctionId: string) {
+  private constructor(
+    private _auctionId: string,
+    clients: Record<string, SpecializedSSEClient>,
+  ) {
     this._broadcastChannel = new SSEClientsManagerBroadcastChannel(
       BROADCAST_CHANNEL_NAMES.MANAGER,
-      { auctionId: this._auctionId }
+      { auctionId: this._auctionId },
     )
 
     this._broadcastChannel.on('manager/leader-changed', () => {
@@ -94,7 +104,8 @@ class SSEClientsManager {
   }
 
   static init(auctionId: string) {
-    if (this._instance) return this._instance
+    if (this._instance)
+      return this._instance
 
     this._instance = new SSEClientsManager(auctionId)
 
@@ -107,6 +118,10 @@ class SSEClientsManager {
     }
 
     return this._instance
+  }
+
+  addClient(client: SpecializedSSEClient) {
+
   }
 
   onConnect(callback: () => void) {
@@ -126,7 +141,7 @@ class SSEClientsManager {
       this._connectedClients.push(clientName)
 
       if (this._connectedClients.length === 2) {
-        this._onConnectListeners.forEach((cb) => cb())
+        this._onConnectListeners.forEach(cb => cb())
         this._isConnectedToSSE = true
       }
     }

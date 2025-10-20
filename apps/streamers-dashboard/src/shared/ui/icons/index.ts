@@ -8,9 +8,11 @@ import { default as CloseSquare } from './CloseSquare';
 import { default as Coin } from './Coin';
 import { default as Copy } from './Copy';
 import { default as Crown } from './Crown';
+import { default as Decline } from './Decline';
 import { default as DonateMessage } from './DonateMessage';
 import { default as DonatePay } from './DonatePay';
 import { default as DonationAlerts } from './DonationAlerts';
+import { default as DonationCode } from './DonationCode';
 import { default as Dots } from './Dots';
 import { default as EyeClosed } from './EyeClosed';
 import { default as EyeOpen } from './EyeOpen';
@@ -25,6 +27,7 @@ import { default as Info } from './Info';
 import { default as Integrations } from './Integrations';
 import { default as Key } from './Key';
 import { default as LargeCross } from './LargeCross';
+import { default as Like } from './Like';
 import { default as LinkArrow } from './LinkArrow';
 import { default as List } from './List';
 import { default as Loading } from './Loading';
@@ -83,9 +86,11 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Coin,
   Copy,
   Crown,
+  Decline,
   DonateMessage,
   DonatePay,
   DonationAlerts,
+  DonationCode,
   Dots,
   EyeClosed,
   EyeOpen,
@@ -100,6 +105,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Integrations,
   Key,
   LargeCross,
+  Like,
   LinkArrow,
   List,
   Loading,

@@ -1,18 +1,12 @@
-import type { Config as ReduxStateSyncConfig } from 'redux-state-sync'
-
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
-import { persistReducer } from 'redux-persist'
-import createMigrate from 'redux-persist/es/createMigrate'
-import persistStore from 'redux-persist/es/persistStore'
-import localStorage from 'redux-persist/es/storage'
-import { createStateSyncMiddleware, initMessageListener } from 'redux-state-sync'
+import { initMessageListener } from 'redux-state-sync'
 
 import { splittedAuctionApi as auctionApi } from '~entities/auction/api'
 import { auctionReducer } from '~entities/auction/store'
 
 import { splittedAuctionSlotsApi as auctionSlotsApi } from '~entities/auction-slot/api'
 import {
-  auctionSlotsListenersMiddlewares,
+  auctionSlotsListenerMiddlewares,
   auctionSlotsReducer,
 } from '~entities/auction-slot/store'
 
@@ -24,7 +18,7 @@ import { integrationsReducer } from '~entities/integrations/store'
 
 import { wheelReducer } from '~entities/wheel/store'
 
-import { splittedAuthApi as authApi, splittedSSEApi as sseApi } from '~shared/store/api'
+import { auctionSlotsSSEApi, splittedAuthApi as authApi, donationsSSEApi } from '~shared/store/api'
 import { appReducer, sseReducer } from '~shared/store/slices'
 
 const rootReducer = combineReducers({
@@ -40,63 +34,51 @@ const rootReducer = combineReducers({
   [auctionSlotsApi.reducerPath]: auctionSlotsApi.reducer,
   [integrationsApi.reducerPath]: integrationsApi.reducer,
   [donationsApi.reducerPath]: donationsApi.reducer,
-  [sseApi.reducerPath]: sseApi.reducer,
+  [donationsSSEApi.reducerPath]: donationsSSEApi.reducer,
+  [auctionSlotsSSEApi.reducerPath]: auctionSlotsSSEApi.reducer,
 })
 
-const migrations = {
-  0: (state) => {
-    return { ...state, sse: {
-      auctionSlots: {
-        isConnected: false,
-        lastMessageId: 0,
-      },
-      donations: {
-        isConnected: false,
-        lastMessageId: 0,
-      },
-    } }
-  },
-}
+// const persistedReducer = persistReducer(
+//   {
+//     key: '-persist',
+//     storage: localStorage,
+//     keyPrefix: 'store',
+//     blacklist: ['sse', 'sseApi'],
+//   },
+//   rootReducer,
+// )
 
-const persistedReducer = persistReducer(
-  {
-    key: '-persist',
-    storage: localStorage,
-    keyPrefix: 'store',
-    migrate: createMigrate(migrations),
-    blacklist: ['sse', 'sseApi'],
-  },
-  rootReducer,
-)
+// const syncStoreConfig: ReduxStateSyncConfig = {
+//   blacklist: [
+//     'persist/PERSIST',
+//     'persist/REHYDRATE',
+//     'sseApi/endpoints/connectSlotsSSE',
+//     'sseApi/endpoints/connectDonationsSSE',
+//   ],
+// }
 
-const syncStoreConfig: ReduxStateSyncConfig = {
-  blacklist: [
-    'persist/PERSIST',
-    'persist/REHYDRATE',
-    'sseApi/endpoints/connectSlotsSSE',
-    'sseApi/endpoints/connectDonationsSSE',
-  ],
-}
-
-const syncMiddleware = createStateSyncMiddleware(syncStoreConfig)
+// const syncMiddleware = createStateSyncMiddleware(syncStoreConfig)
 
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
-      .prepend(...auctionSlotsListenersMiddlewares)
+      .prepend(
+        ...auctionSlotsListenerMiddlewares,
+        // ...donationsListenerMiddlewares,
+      )
       .concat(
         auctionApi.middleware,
         authApi.middleware,
         auctionSlotsApi.middleware,
         donationsApi.middleware,
         integrationsApi.middleware,
-        sseApi.middleware,
-        syncMiddleware,
+        donationsSSEApi.middleware,
+        auctionSlotsSSEApi.middleware,
       ),
 })
 
-export const persistor = persistStore(store)
+// export const persistor = persistStore(store)
 
 initMessageListener(store)
 

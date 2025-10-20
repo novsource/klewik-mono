@@ -42,13 +42,13 @@ const auctionSlice = createSlice({
     getAuctionUUID: state => state.auctionInfo.auctionUUID,
     getAuctionUrl: state => state.auctionInfo.url,
     getAuctionInfo: state => state.auctionInfo,
-    getBetsStatus: state => state.auctionInfo.isBetsClosed,
+    getIsBetsClosed: state => state.auctionInfo.isBetsClosed,
   },
   extraReducers: (builder) => {
     builder.addCase(getAuctionInfoThunk.fulfilled, (state, action) => {
       const auctionInfo = action.payload
 
-      state.auctionInfo = auctionInfo
+      state.auctionInfo = auctionInfo!
     })
   },
 })

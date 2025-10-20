@@ -63,8 +63,8 @@ const SvgSlots = (props: IconsProps) => {
           />
         </filter>
         <linearGradient id="gradientSlotsMiddle" x1="13.6445" y1="3.15639" x2="4.25883" y2="3.15639" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#E4FFF6" />
-          <stop offset="1" stop-color="#DDFFE7" />
+          <stop stopColor="#E4FFF6" />
+          <stop offset="1" stopColor="#DDFFE7" />
         </linearGradient>
       </defs>
       <g filter="url(#create-slot-filter)">

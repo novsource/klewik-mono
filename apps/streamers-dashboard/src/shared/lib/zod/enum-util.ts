@@ -1,3 +1,3 @@
-const zodEnum = <T>(arr: T[]): [T, ...T[]] => arr as [T, ...T[]]
+const zodEnum = <T>(arr: T[]): Readonly<[T, ...T[]]> => arr as [T, ...T[]]
 
 export { zodEnum }

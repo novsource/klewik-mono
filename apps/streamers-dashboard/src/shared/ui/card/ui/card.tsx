@@ -2,6 +2,7 @@ import type {
   CardStyleProps,
 } from '../styles/card-variants'
 
+import type { ComponentProps } from 'react'
 import { forwardRef, useMemo } from 'react'
 
 import { cn, objectToDeps } from '~shared/utils'
@@ -16,9 +17,9 @@ import {
   cardTitleVariants,
 } from '../styles/card-variants'
 
-export type CardProps = React.ComponentProps<'div'> & CardStyleProps
+export type CardProps = ComponentProps<'div'> & CardStyleProps
 
-const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
+export const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
   const { className, size, variant, ...restProps } = props
 
   const style = useMemo(() =>
@@ -32,10 +33,11 @@ const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
 })
 Card.displayName = 'Card'
 
-const CardHeader = forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
+export type CardHeaderProps = ComponentProps<'div'>
+
+export const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>((props, ref) => {
+  const { className, ...restProps } = props
+
   const cardStyleProps = useCardContext()
 
   const style = useMemo(
@@ -43,14 +45,15 @@ const CardHeader = forwardRef<
     [className, ...objectToDeps(cardStyleProps)],
   )
 
-  return <div ref={ref} className={style} {...props} />
+  return <div ref={ref} className={style} {...restProps} />
 })
 CardHeader.displayName = 'CardHeader'
 
-const CardTitle = forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
+export type CardTitleProps = ComponentProps<'div'>
+
+export const CardTitle = forwardRef<HTMLDivElement, CardTitleProps>((props, ref) => {
+  const { className, ...restProps } = props
+
   const cardStyleProps = useCardContext()
 
   const style = useMemo(
@@ -58,14 +61,14 @@ const CardTitle = forwardRef<
     [className, ...objectToDeps(cardStyleProps)],
   )
 
-  return <div ref={ref} className={style} {...props} />
+  return <div ref={ref} className={style} {...restProps} />
 })
 CardTitle.displayName = 'CardTitle'
 
-const CardDescription = forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
+export type CardDescriptionProps = ComponentProps<'div'>
+
+export const CardDescription = forwardRef<HTMLDivElement, CardDescriptionProps>((props, ref) => {
+  const { className, ...restProps } = props
   const cardStyleProps = useCardContext()
 
   const style = useMemo(
@@ -73,14 +76,15 @@ const CardDescription = forwardRef<
     [className, ...objectToDeps(cardStyleProps)],
   )
 
-  return <div ref={ref} className={style} {...props} />
+  return <div ref={ref} className={style} {...restProps} />
 })
 CardDescription.displayName = 'CardDescription'
 
-const CardContent = forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
+export type CardContentProps = ComponentProps<'div'>
+
+export const CardContent = forwardRef<HTMLDivElement, CardContentProps>((props, ref) => {
+  const { className, ...restProps } = props
+
   const cardStyleProps = useCardContext()
 
   const style = useMemo(
@@ -88,14 +92,15 @@ const CardContent = forwardRef<
     [className, ...objectToDeps(cardStyleProps)],
   )
 
-  return <div ref={ref} className={style} {...props} />
+  return <div ref={ref} className={style} {...restProps} />
 })
 CardContent.displayName = 'CardContent'
 
-const CardFooter = forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
+export type CardFooterProps = ComponentProps<'div'>
+
+export const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>((props, ref) => {
+  const { className, ...restProps } = props
+
   const cardStyleProps = useCardContext()
 
   const style = useMemo(
@@ -103,8 +108,6 @@ const CardFooter = forwardRef<
     [className, ...objectToDeps(cardStyleProps)],
   )
 
-  return <div ref={ref} className={style} {...props} />
+  return <div ref={ref} className={style} {...restProps} />
 })
 CardFooter.displayName = 'CardFooter'
-
-export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }

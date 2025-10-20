@@ -9,6 +9,9 @@ import { DONATION_PROCESSED_STATUS } from '~entities/donation/constants'
 import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
 
 import { FORMATTED_INTEGRATIONS_PLATFORMS_NAMES } from '~shared/constants/integrations'
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { useMediaQuery } from '~shared/hooks'
 
 import type { BadgeProps } from '~shared/ui/badge'
 import { Badge } from '~shared/ui/badge'
@@ -37,35 +40,12 @@ import {
 } from './donation-card-chip.ui'
 import { DonationCardMessage } from './donation-card-message.ui'
 
-// export type SkeletonDonationCardProps = CardProps
-
-// export const SkeletonDonationCard = (props: SkeletonDonationCardProps) => {
-//   return (
-//     <Card {...props}>
-//       <CardHeader className="flex gap-x-2">
-//         <SkeletonDonationCardBadge />
-//         <SkeletonDonationCardBadge />
-//       </CardHeader>
-//       <CardContent className="w-full flex flex-col p-0 py-2">
-//         <Skeleton className="max-w-[280px] h-6 rounded-md" />
-//       </CardContent>
-//       <CardFooter className="flex flex-row gap-x-1 mt-2 items-end justify-between">
-//         <Flex className="gap-x-2">
-//           <SkeletonDonationCardChip />
-//           <SkeletonDonationCardChip />
-//         </Flex>
-//         <SkeletonDonationCardChip className="h-5" />
-//       </CardFooter>
-//     </Card>
-//   )
-// }
-
 export type BaseDonationCardProps = CardProps
 
 export const BaseDonationCard = (props: BaseDonationCardProps) => {
   const { className, ...restProps } = props
 
-  return <Card className={cn('max-tablet:py-0 max-tablet:pt-1 max-tablet:pb-2.5', className)} {...restProps} />
+  return <Card className={cn('border-1 border-dark-light max-tablet:py-0 max-tablet:pt-1 max-tablet:pb-2.5', className)} {...restProps} />
 }
 
 export type BaseDonationCardHeaderProps = ComponentProps<'div'>
@@ -194,6 +174,8 @@ export const SolidDonationCardContent = (props: SolidDonationCardContentProps) =
     ...restProps
   } = props
 
+  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+
   const cardMessage = useMemo(() => {
     const isEmptyMessage
       = !donationData.message && donationData.messageType !== 'audio'
@@ -208,12 +190,12 @@ export const SolidDonationCardContent = (props: SolidDonationCardContentProps) =
     if (donationData.messageType === 'audio') {
       return (
         <Flex
-          className="w-fit bg-dark-accent/70 px-2 py-1.5 rounded-md gap-x-1.5 whitespace-nowrap"
+          className="w-fit bg-dark-accent/70 px-1 py-1 gap-x-1 rounded-md tablet:gap-x-1.5 whitespace-nowrap tablet:px-2 tablet:py-1.5"
           align="center"
         >
-          <Icons.Sound className="text-gray-light" />
+          <Icons.Sound className="text-gray-light" size={isLargeThenTablet ? 'default' : 'sm'} />
           <Typography
-            className="text-gray-light text-sm font-medium font-golos-f text-wrap"
+            className="text-gray-light text-xs font-medium font-golos-f text-wrap tablet:text-sm"
             tag="span"
           >
             Аудио-сообщения не поддерживаются
@@ -221,7 +203,7 @@ export const SolidDonationCardContent = (props: SolidDonationCardContentProps) =
         </Flex>
       )
     }
-  }, [donationData.message, donationData.messageType])
+  }, [donationData.message, donationData.messageType, isLargeThenTablet])
 
   return (
     <BaseDonationCardContent {...restProps}>

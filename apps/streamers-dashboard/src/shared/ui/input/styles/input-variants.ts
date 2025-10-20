@@ -32,6 +32,10 @@ type DescriptionVariants = SizesCvaVariants & ErrorCvaVariants
 type ContentBaseVariants = CvaClassValue
 type ContentWrapperVariants = SizesCvaVariants
   & ErrorCvaVariants & {
+    variant: {
+      default: CvaClassValue
+      ghost: CvaClassValue
+    }
     isDisabled: {
       [Bool in 'true' | 'false']: CvaClassValue
     }
@@ -95,11 +99,15 @@ export const contentVariants = cva<ContentBaseVariants>([
 
 export const contentWrapperVariants = cva<ContentWrapperVariants>(
   [
-    'border border-1 border-dark-accent/70 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden',
-    'flex w-full items-center rounded-medium bg-dark ring-gray/55 transition-all',
+    'flex w-full items-center rounded-medium transition-all bg-dark',
+    'ring-gray/70 data-[focus=true]:ring-1 data-[focus=true]:ring-gray/70',
   ],
   {
     variants: {
+      variant: {
+        default: 'border-1 border-dark-accent/70 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden data-[focus=true]:bg-dark-foreground-light data-[hover=true]:bg-dark/50 data-[hover=true]:ring-1 data-[hover=true]:ring-gray/20',
+        ghost: 'data-[focus=true]:bg-dark-foreground data-[hover=true]:bg-dark-foreground/40 data-[focus=true]:data-[hover=true]:bg-dark-foreground',
+      },
       size: {
         default: 'h-10 gap-x-2 px-4',
         sm: 'h-9 gap-x-1 px-3 py-2',
@@ -108,11 +116,11 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
       isError: { true: 'ring-1 ring-red/80', false: 'ring-gray-light' },
       isDisabled: {
         true: 'ring-0 data-[hover=true]:ring-0',
-        false:
-          'data-[focus=true]:bg-dark-foreground-light data-[focus=true]:ring-1 data-[hover=true]:bg-dark/50 data-[hover=true]:ring-1',
+        false: '',
       },
     },
     defaultVariants: {
+      variant: 'default',
       size: 'default',
       isError: false,
       isDisabled: false,

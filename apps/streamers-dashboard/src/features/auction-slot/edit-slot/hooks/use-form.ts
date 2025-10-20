@@ -5,23 +5,27 @@ import { useForm, useFormState } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSelectors } from '~entities/auction/store'
+
+import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import type { AxiosBaseQueryError } from '~shared/lib/redux-toolkit'
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { formatNumberToIntlString } from '~shared/utils'
 
 import { useEditSlotMutation } from '../api'
 import { transformEditSlotFormData } from '../lib'
 
-type UseEditSlotFormOptions = {
+export type UseEditSlotFormOptions = {
   defaultValues?: Pick<AuctionSlot, 'title' | 'points'>
   onSuccess?: (formData: TransformedEditSlotFormData) => void
   onError?: (error: AxiosBaseQueryError) => void
 }
 
-const useEditSlotForm = (target: AuctionSlot, { defaultValues, onError, onSuccess }: UseEditSlotFormOptions) => {
+export const useEditSlotForm = (target: AuctionSlot, options: UseEditSlotFormOptions) => {
+  const { defaultValues, onError, onSuccess } = options
+
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const form = useForm<
@@ -59,5 +63,3 @@ const useEditSlotForm = (target: AuctionSlot, { defaultValues, onError, onSucces
 
   return { form, formState, submitForm, ...queryState }
 }
-
-export { useEditSlotForm }

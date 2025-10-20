@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 import { isAxiosError } from 'axios'
 
@@ -16,15 +16,15 @@ import { useDidUpdate, useUnmount } from '~shared/hooks'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
+import type { InfiniteListRenderFunction } from '~shared/ui/infinite-list'
 import { MotionBox } from '~shared/ui/motion-box'
-import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
 
-import { InfinityDonationsListCard } from './donations-list-card.ui'
+import { InfiniteDonationsListCard, InfiniteDonationsListSkeletonCard } from './donations-list-card.ui'
 
 export type AuctionDonationsInfiniteListProps
   = Omit<
     DonationsInfiniteListProps,
-'data' | 'listRef' | 'isCanBeLoadMore' | 'isPending' | 'children'
+'data' | 'listRef' | 'isCanBeLoadMore' | 'isPending' | 'children' | 'state'
 > & {
   data: ProcessedDonation[]
   filterStatus: NullablePossible<ProcessedDonationStatus>
@@ -40,6 +40,8 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
     ...restProps
   } = props
 
+  const [isShowingSkeletons, setIsShowingSkeletons] = useState(false)
+
   const { addDonation } = useActionCreators(donationsActions)
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
@@ -51,10 +53,12 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
 
   const loadDonations = async () => {
     try {
+      setIsShowingSkeletons(true)
+
       const request = loadMoreDonationsQuery({
         auctionUUID,
         limit,
-        after: lastDonationIdRef.current,
+        before: lastDonationIdRef.current || 0,
         order: 'descending',
         status: filterStatus || 'all',
       })
@@ -62,6 +66,8 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
       queryRef.current = request
       const response = await request
       queryRef.current = null
+
+      setIsShowingSkeletons(false)
 
       if (response.isError) {
         throw response.error
@@ -73,14 +79,18 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
         return { list: [] }
       }
 
-      responseData.forEach(addDonation)
       lastDonationIdRef.current
-        = responseData[responseData.length - 1] ? responseData[responseData.length - 1].id : lastDonationIdRef.current
+        = responseData[responseData.length - 1]
+          ? responseData[responseData.length - 1].id
+          : lastDonationIdRef.current
+
+      addDonation(responseData)
 
       return { list: responseData }
     }
     catch (err) {
       queryRef.current = null
+      setIsShowingSkeletons(false)
 
       if (isAxiosError(err)) {
         throw new Error(err.message)
@@ -112,9 +122,9 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
 
   useUnmount(() => queryRef.current?.abort())
 
-  const renderListItem = (
-    donation: ProcessedDonation,
-    virtualizeItem: VirtualizedItem,
+  const renderListItem: InfiniteListRenderFunction<ProcessedDonation> = (
+    donation,
+    virtualizeItem,
   ) => {
     return (
       <MotionBox
@@ -126,7 +136,7 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
           ease: 'easeInOut',
         }}
       >
-        <InfinityDonationsListCard
+        <InfiniteDonationsListCard
           donation={donation}
           style={{
             marginTop: virtualizeItem.index !== 0 ? '8px' : '0',
@@ -138,11 +148,13 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
 
   return (
     <DonationsInfiniteList
+      slotsClassNames={{ container: 'pb-4' }}
       data={listItems}
+      state={infiniteListState}
       listRef={ref}
-      isCanBeLoadMore={infiniteListState.isCanLoadMore}
-      isPending={infiniteListState.isPending}
-      limit={infiniteListState.limit}
+      gap={8}
+      placeholder={<InfiniteDonationsListSkeletonCard />}
+      showPlaceholders={isShowingSkeletons}
       {...restProps}
     >
       { renderListItem }

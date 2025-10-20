@@ -67,16 +67,10 @@ export const getSelectorPath2D = (selectorCanvas: HTMLCanvasElement) => {
 }
 
 export const drawSelector = (selectorCanvas: HTMLCanvasElement) => {
-  const ctx = selectorCanvas.getContext('2d') as CanvasRenderingContext2D
+  const context = selectorCanvas.getContext('2d') as CanvasRenderingContext2D
 
   const center = selectorCanvas.width / 2
   const radius = selectorCanvas.width / 2
-
-  ctx.save()
-
-  ctx.restore()
-
-  ctx.save()
 
   const selectorWidth = Math.min(30, selectorCanvas.clientWidth * 0.045)
   const selectorHeight = Math.min(80, selectorCanvas.clientHeight * 0.03)
@@ -84,7 +78,7 @@ export const drawSelector = (selectorCanvas: HTMLCanvasElement) => {
   const selectorX = center
   const selectorY = radius * 0.05 + selectorHeight
 
-  const strokeGradient = ctx.createLinearGradient(
+  const strokeGradient = context.createLinearGradient(
     selectorX,
     selectorY - selectorHeight,
     selectorX,
@@ -94,32 +88,34 @@ export const drawSelector = (selectorCanvas: HTMLCanvasElement) => {
   strokeGradient.addColorStop(0.075, '#6FCF97')
   strokeGradient.addColorStop(0.925, '#6FCF97')
 
-  ctx.strokeStyle = strokeGradient
-  ctx.fillStyle = '#3E4145'
-  ctx.lineWidth = 2
+  context.save()
 
-  ctx.beginPath()
-  ctx.moveTo(selectorX, selectorY)
+  context.strokeStyle = strokeGradient
+  context.fillStyle = '#3E4145'
+  context.lineWidth = 2
 
-  ctx.arcTo(
+  context.beginPath()
+  context.moveTo(selectorX, selectorY)
+
+  context.arcTo(
     selectorX - selectorWidth / 2,
     selectorY,
     selectorX - selectorWidth / 4,
     selectorY - selectorHeight / 2,
     3,
   )
-  ctx.arcTo(
+  context.arcTo(
     selectorX,
     selectorY - selectorHeight,
     selectorX + selectorWidth / 4,
     selectorY - selectorHeight / 2,
     3,
   )
-  ctx.arcTo(selectorX + selectorWidth / 2, selectorY, selectorX, selectorY, 3)
-  ctx.closePath()
+  context.arcTo(selectorX + selectorWidth / 2, selectorY, selectorX, selectorY, 3)
+  context.closePath()
 
-  ctx.fill()
-  ctx.stroke()
+  context.fill()
+  context.stroke()
 
-  ctx.restore()
+  context.restore()
 }

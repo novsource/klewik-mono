@@ -59,72 +59,80 @@ export const resizeCanvasWithRatio = (
   canvas.style.height = `${size}px`
 }
 
+type DrawSliceProperties = {
+  context: CanvasRenderingContext2D
+  sliceData: {
+    x: number
+    y: number
+    radius: number
+    startAngle: number
+    endAngle: number
+    color?: string
+  }
+}
+
 /**
  * Draws a piece of a wheel
  * @param {DrawSliceProperties} properties
  */
-
-export const drawSlice: DrawSlice = ({
-  context: ctx,
-  options,
-  onDraw,
-  sliceParameters: { x, y, radius, startAngle, endAngle },
+export const drawSlice = ({
+  context,
+  sliceData,
 }: DrawSliceProperties) => {
-  const slice = new Path2D()
+  const { x, y, radius, startAngle, endAngle, color } = sliceData
+
   const sliceHeight = radius * 0.92
 
-  ctx.strokeStyle = '#1F1F22'
-  ctx.lineWidth = 2
+  context.strokeStyle = '#1F1F22'
+  context.lineWidth = 2
 
-  ctx.globalCompositeOperation = 'source-over'
+  context.globalCompositeOperation = 'source-over'
 
-  ctx.save()
+  context.save()
 
-  ctx.fillStyle = options?.color ?? getRandomHEXColor()
+  context.fillStyle = color ?? getRandomHEXColor()
 
   // Draw slice
-  ctx.beginPath()
-  ctx.moveTo(x, y)
-  ctx.arc(x, y, radius - ctx.lineWidth, startAngle, endAngle)
-  ctx.moveTo(x, y)
-  ctx.closePath()
+  context.beginPath()
+  context.moveTo(x, y)
+  context.arc(x, y, radius - context.lineWidth, startAngle, endAngle)
+  context.moveTo(x, y)
+  context.closePath()
 
-  ctx.fill()
-  ctx.stroke()
+  context.fill()
+  context.stroke()
 
-  ctx.beginPath()
-  ctx.arc(x, y, sliceHeight, 0, 2 * Math.PI)
-  ctx.closePath()
+  context.beginPath()
+  context.arc(x, y, sliceHeight, 0, 2 * Math.PI)
+  context.closePath()
 
-  ctx.fillStyle = '#151515'
-  ctx.fill()
-
-  ctx.save()
+  context.fillStyle = '#151515'
+  context.fill()
 
   // Draw text
-  const angle = convertRadiansToDegrees(endAngle - startAngle)
-  const arcLength = getArcLength(angle, radius)
+  // const angle = convertRadiansToDegrees(endAngle - startAngle)
+  // const arcLength = getArcLength(angle, radius)
 
-  // TODO: Fix angle of text
-  if (options?.text && !options?.disableText && false) {
-    const metrics = ctx.measureText(options.text)
-    const textHeight
-      = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+  // // TODO: Fix angle of text
+  // if (options?.text && !options?.disableText && false) {
+  //   const metrics = context.measureText(options.text)
+  //   const textHeight
+  //     = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
 
-    if (textHeight < arcLength * 0.125) {
-      drawTextOnSlice(ctx, options?.text ?? 'untitled', {
-        x,
-        y,
-        angle: (endAngle + startAngle) / 2,
-      })
-    }
-  }
+  //   if (textHeight < arcLength * 0.125) {
+  //     drawTextOnSlice(context, options?.text ?? 'untitled', {
+  //       x,
+  //       y,
+  //       angle: (endAngle + startAngle) / 2,
+  //     })
+  //   }
+  // }
 
-  if (onDraw !== undefined) {
-    onDraw(slice)
-  }
+  // if (onDraw !== undefined) {
+  //   onDraw(slice)
+  // }
 
-  ctx.restore()
+  context.restore()
 }
 
 /**
@@ -132,24 +140,24 @@ export const drawSlice: DrawSlice = ({
  */
 
 export const drawTextOnSlice = (
-  ctx: CanvasRenderingContext2D,
+  context: CanvasRenderingContext2D,
   text: string,
   slice: { x: number, y: number, angle: number },
 ) => {
-  ctx.fillStyle = 'white'
-  ctx.textAlign = 'center'
+  context.fillStyle = 'white'
+  context.textAlign = 'center'
   const radius = slice.x
 
-  const fitText = fitTextEllipsis(ctx, text, radius * 0.25)
-  setFontSizeForCanvasText(ctx, radius, fitText)
+  const fitText = fitTextEllipsis(context, text, radius * 0.25)
+  setFontSizeForCanvasText(context, radius, fitText)
 
-  const metrics = ctx.measureText(text)
+  const metrics = context.measureText(text)
   const textHeight
     = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
 
-  ctx.translate(slice.x, slice.y)
-  ctx.rotate(slice.angle)
-  ctx.fillText(fitText, slice.x * 0.65, textHeight / 2 - ctx.lineWidth)
+  context.translate(slice.x, slice.y)
+  context.rotate(slice.angle)
+  context.fillText(fitText, slice.x * 0.65, textHeight / 2 - context.lineWidth)
 }
 
 /**
@@ -157,24 +165,24 @@ export const drawTextOnSlice = (
  */
 
 const fitText = ({
-  ctx,
+  context,
   text,
   maxWidth,
   separator,
 }: {
-  ctx: CanvasRenderingContext2D
+  context: CanvasRenderingContext2D
   text: string
   maxWidth: number
   separator: string
 }) => {
   let result = ''
 
-  if (ctx.measureText(text).width <= maxWidth) {
+  if (context.measureText(text).width <= maxWidth) {
     return text
   }
 
   for (let charIndex = 0; charIndex < text.length - 1; charIndex++) {
-    const metrics = ctx.measureText(result + separator)
+    const metrics = context.measureText(result + separator)
 
     if (metrics.width > maxWidth) {
       return [...result, ...separator].join('')
@@ -187,12 +195,12 @@ const fitText = ({
 }
 
 export const wrapText = ({
-  ctx,
+  context,
   text,
   maxWidth,
   separator = '-',
 }: {
-  ctx: CanvasRenderingContext2D
+  context: CanvasRenderingContext2D
   text: string
   maxWidth: number
   separator: string
@@ -202,7 +210,7 @@ export const wrapText = ({
   let str = ''
 
   for (let charIndex = 0; charIndex <= text.length - 1; charIndex++) {
-    const metrics = ctx.measureText(`${str + separator}\n`)
+    const metrics = context.measureText(`${str + separator}\n`)
 
     if (metrics.width >= maxWidth) {
       result.push(`${str + separator}\n`)
@@ -224,12 +232,12 @@ export const wrapText = ({
  * Fit the text depending on the specified size and uses a colon at the end
  */
 
-export const fitTextEllipsis = (
-  ctx: CanvasRenderingContext2D,
+export function fitTextEllipsis(
+  context: CanvasRenderingContext2D,
   text: string,
   maxWidth: number,
-) => {
-  return fitText({ ctx, text, maxWidth, separator: '...' })
+) {
+  return fitText({ context, text, maxWidth, separator: '...' })
 }
 
 /**
@@ -237,7 +245,7 @@ export const fitTextEllipsis = (
  * @param {HTMLCanvasElement} canvas - Canvas element
  */
 
-export const clearCanvas = (canvas: HTMLCanvasElement) => {
+export function clearCanvas(canvas: HTMLCanvasElement) {
   const context = canvas.getContext('2d') as CanvasRenderingContext2D
 
   context.clearRect(0, 0, canvas.width, canvas.height)
@@ -247,60 +255,60 @@ export const clearCanvas = (canvas: HTMLCanvasElement) => {
  * Sets the correct font size on the canvas according to the wheel size
  */
 
-export const setFontSizeForCanvasText = (
-  ctx: CanvasRenderingContext2D,
+export function setFontSizeForCanvasText(
+  context: CanvasRenderingContext2D,
   radius: number,
   text: string,
-) => {
+) {
   const defaultFontSizeRem = 30
 
   for (let i = defaultFontSizeRem; i > 20; i -= 0.15) {
-    ctx.font = `${i}px sans-serif`
+    context.font = `${i}px sans-serif`
 
-    const measureText = ctx.measureText(text)
+    const measureText = context.measureText(text)
 
     if (measureText.width < radius * 0.2)
       return
   }
 }
 
-export const convertDegreesToRadians = (degrees: number) => {
+export function convertDegreesToRadians(degrees: number) {
   return degrees * (Math.PI / 180)
 }
 
-export const convertRadiansToDegrees = (radians: number) => {
+export function convertRadiansToDegrees(radians: number) {
   return radians * (180 / Math.PI)
 }
 
-export const getDegreeByArcLength = (radius: number, arcLength: number) => {
+export function getDegreeByArcLength(radius: number, arcLength: number) {
   return (180 * arcLength) / (Math.PI * radius)
 }
 
-export const getMaxCircleLength = (radius: number) => {
+export function getMaxCircleLength(radius: number) {
   return radius * 2 * Math.PI
 }
 
-export const getArcLength = (angle: number, radius: number) => {
+export function getArcLength(angle: number, radius: number) {
   return (angle * Math.PI * radius) / 180
 }
 
-export const getPercentValue = (numTarget: number, num: number) => {
+export function getPercentValue(numTarget: number, num: number) {
   return num / numTarget
 }
 
-export const getCoordsOfDotByVectorAngle = (
+export function getCoordsOfDotByVectorAngle(
   centerX: number,
   centerY: number,
   radius: number,
   angle: number,
-) => {
+) {
   const x = centerX + radius * Math.cos(angle)
   const y = centerY + radius * Math.sin(angle)
 
   return { x, y }
 }
 
-export const getAngleByCoords = (x: number, y: number) => {
+export function getAngleByCoords(x: number, y: number) {
   const angleInRadians = Math.atan2(y, x)
 
   let angleInDegrees = angleInRadians * (180 / Math.PI)
@@ -311,23 +319,3 @@ export const getAngleByCoords = (x: number, y: number) => {
 
   return angleInDegrees
 }
-
-// export const createNoiseImage = (
-//   ctx: CanvasRenderingContext2D,
-//   options: {
-//     x: number
-//     y: number
-//     width: number
-//     height: number
-//   }
-// ) => {
-//   const noiseImage = ctx.createImageData(options.width, options.height)
-//   const imageBuffer = new Uint32Array(noiseImage.data.buffer)
-
-//   let i = 0
-//   for (; i < imageBuffer.length; i++) {
-//     if (Math.random() < 0.5) imageBuffer[i] = 0xffffffff
-
-//     ctx.putImageData(noiseImage, 0, 0)
-//   }
-// }

@@ -1,6 +1,7 @@
-import { ReactNode, memo, useMemo } from 'react'
+import type { ReactNode } from 'react'
+import { memo, useMemo } from 'react'
 
-import { IntegrationsPlatforms } from '~entities/integrations/model'
+import type { IntegrationsPlatforms } from '~entities/integrations/model'
 import { integrationsSelectors } from '~entities/integrations/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -32,7 +33,7 @@ const IntegrationsStatisticsCard = ({
 
 const ConnectedIntegrationsStatisticCard = memo(() => {
   const integrationsStatuses = useStoreSelector(
-    integrationsSelectors.getAllIntegrationsStatuses
+    integrationsSelectors.getAllIntegrationsStatuses,
   )
 
   const integrationsLogo: Record<IntegrationsPlatforms, ReactNode> = {
@@ -45,7 +46,8 @@ const ConnectedIntegrationsStatisticCard = memo(() => {
       (
         Object.keys(integrationsStatuses) as Array<IntegrationsPlatforms>
       ).reduce((acc, key) => {
-        if (integrationsStatuses[key].isConnected) acc++
+        if (integrationsStatuses[key].isConnected)
+          acc++
 
         return acc
       }, 0) === 0

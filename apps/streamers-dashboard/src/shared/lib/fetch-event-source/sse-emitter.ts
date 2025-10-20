@@ -15,6 +15,19 @@ class SSEEmiter {
     if (!listeners)
       this._subscriptions.set(event, [callback])
     else listeners.push(callback)
+
+    return () => {
+      const storedHandlers = this._subscriptions.get(event)
+
+      if (!storedHandlers || storedHandlers.length === 0)
+        return
+
+      const filtredHandlers = storedHandlers.filter(
+        storedHandler => storedHandler !== callback,
+      )
+
+      this._subscriptions.set(event, filtredHandlers)
+    }
   }
 
   subscribeOnce<T extends keyof SSEEvents>(

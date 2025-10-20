@@ -8,6 +8,7 @@ import {
   EventStreamContentType,
   fetchEventSource,
 } from '@microsoft/fetch-event-source'
+import { Mutex } from 'async-mutex'
 import { AxiosError } from 'axios'
 
 import { refreshTokens } from '~shared/api/http/auth/auth.api'
@@ -18,6 +19,7 @@ type RetrySSEConnectOptions = Omit<SSEClientConnectOptions, 'retry'> & {
   retry: NonNullable<SSEClientConnectOptions['retry']>
 }
 
+const mutex = new Mutex()
 export class BaseSSEClient {
   async connect(
     url: string,
@@ -38,10 +40,20 @@ export class BaseSSEClient {
         && response.status < 500
         && response.status !== 429
       ) {
+        const isAuthError = response.status === 401
+        const isMutexLocked = mutex.isLocked()
+
+        if (isAuthError && isMutexLocked) {
+          await mutex.waitForUnlock()
+          return this.connect(url, inputListeners, inputOptions)
+        }
+
         /** @todo Refactor auth error */
-        if (response.status === 401) {
+        if (isAuthError && !isMutexLocked) {
+          const release = await mutex.acquire()
           try {
             await refreshTokens()
+            return this.connect(url, inputListeners, inputOptions)
           }
           catch (error) {
             if (error instanceof AxiosError)
@@ -49,11 +61,18 @@ export class BaseSSEClient {
             if (error instanceof Error)
               throw new Error('Authorization error')
           }
+          finally {
+            release()
+          }
+        }
+
+        if (!isAuthError) {
+          throw new AxiosError(response.statusText, response.status.toString())
         }
       }
       else {
         if (response.status === 500) {
-          throw new Error('Server error')
+          throw new AxiosError(response.statusText, response.status.toString())
         }
 
         throw new Error('Unexpected error when trying to connect SSE')
@@ -81,6 +100,7 @@ export class BaseSSEClient {
 
     const onError = (err: unknown) => {
       inputListeners.onerror(err)
+
       throw err
     }
 
@@ -106,12 +126,14 @@ export class BaseSSEClient {
 
     const isRetryInOptions = Reflect.has(options, 'retry')
 
+    await mutex.waitForUnlock()
+
     if (isRetryInOptions) {
       // @ts-expect-error - reflect checking
-      return this._retryConnect(`/api/v1/sse/${url}`, listeners, options)
+      return this._retryConnect(`/api/v1/auctions/${url}`, listeners, options)
     }
 
-    return this._internalRequest(`/api/v1/sse/${url}`, listeners, options)
+    return this._internalRequest(`/api/v1/auctions/${url}`, listeners, options)
   }
 
   private async _retryConnect(

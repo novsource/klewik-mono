@@ -1,22 +1,26 @@
-import { z } from 'zod'
+import type { z } from 'zod'
 
-import {
-  DonationDTOSchema,
+import type {
   DonationsEventSourceMessageSchema,
+  ProcessedDonationDTOSchema,
 } from './channel.contracts'
 
-type DonationDTO = z.infer<typeof DonationDTOSchema>
+export type ProcessedDonationDTOStatus
+  = | 'added'
+    | 'checkRequested'
+    | 'error'
+    | 'empty'
+    | 'rejected'
+    | 'inProgress'
 
-type DonationsEventSourceMessage = z.infer<
+export type ProcessedDonationDTOAction = 'createSlot' | 'updateSlot' | 'noAction'
+
+export type DonationsEventSourceMessage = z.infer<
   typeof DonationsEventSourceMessageSchema
 >
 
-type DonationsSSEChannelEventsMap = {
-  'donations/add': (data: DonationDTO) => void
-}
+export type ProcessedDonationDTO = z.infer<typeof ProcessedDonationDTOSchema>
 
-export type {
-  DonationDTO,
-  DonationsEventSourceMessage,
-  DonationsSSEChannelEventsMap as DonationsEventsCallbacks,
+export type DonationsSSEChannelEventsMap = {
+  'donations/add': (data: ProcessedDonationDTO) => void
 }

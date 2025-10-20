@@ -7,12 +7,16 @@ import type {
 } from 'axios'
 import type { rateLimitOptions as RateLimitOptions } from 'axios-rate-limit'
 
-import type { SSEClientConnectOptions, SSEClientListeners } from '../fetch-event-source'
+import type {
+  EventSourceMessage,
+  SSEClient,
+  SSEClientConnectOptions,
+  SSEClientListeners,
+} from '../fetch-event-source'
 
-import { chain } from '~shared/utils'
+import { Mutex } from 'async-mutex'
 
 import { BaseHttpClient } from '../axios'
-import { BaseSSEClient } from '../fetch-event-source'
 
 type AxiosBaseQueryOptions = {
   baseUrl: string
@@ -35,7 +39,7 @@ type ServerErrorData = {
   reason?: string
 }
 
-type AxiosBaseQueryError = {
+export type AxiosBaseQueryError = {
   status: AxiosError['status']
   message: AxiosError['message']
   reason?: string
@@ -105,6 +109,7 @@ export const axiosBaseQuery
       }
     }
 
+const authMutex = new Mutex()
 export const axiosAuthBaseQuery
   = (options: AxiosBaseQueryOptions): AxiosQueryFn =>
     async (args, api, extraOptions) => {
@@ -112,6 +117,7 @@ export const axiosAuthBaseQuery
 
       const initBaseUrl = import.meta.env.VITE_SERVER_URL
 
+      await authMutex.waitForUnlock()
       const baseQuery = axiosBaseQuery({
         ...options,
         baseUrl: isDev ? null : import.meta.env.VITE_SERVER_URL,
@@ -135,57 +141,101 @@ export const axiosAuthBaseQuery
       )
 
       if (result.error && result.error.status === 401) {
-        const refreshResult = await baseQuery(
-          { url: '/api/v1/auth/refresh2', method: 'POST', rewriteBaseURL: true },
-          api,
-          extraOptions,
-        )
+        const isMutexUnlocked = !authMutex.isLocked()
 
-        if (refreshResult.error === undefined) {
+        if (isMutexUnlocked) {
+          const release = await authMutex.acquire()
+          const refreshTokensResponse = await baseQuery(
+            { url: '/api/v1/auth/refresh', method: 'POST', rewriteBaseURL: true },
+            api,
+            extraOptions,
+          )
+
+          if (refreshTokensResponse.error === undefined) {
+            release()
+            result = await baseQuery(
+              { ...args, ...options, url, rewriteBaseURL: true },
+              api,
+              extraOptions,
+            )
+          }
+          else {
+            release()
+            const errorURLParams = new URLSearchParams({ reason: 'auth' })
+            window.location.replace(`/error?${errorURLParams.toString()}`)
+          }
+        }
+        else {
+          await authMutex.waitForUnlock()
           result = await baseQuery(
             { ...args, ...options, url, rewriteBaseURL: true },
             api,
             extraOptions,
           )
         }
-        else {
-          const errorURLParams = new URLSearchParams({ reason: 'auth' })
-          window.location.replace(`/error?${errorURLParams.toString()}`)
-        }
       }
       return result
     }
 
 export type SSEQueryArgs = {
-  url: string
-  listeners: SSEClientListeners
+  eventURL: string
   options?: SSEClientConnectOptions
 }
 
 type SSEQueryFn = BaseQueryFn<SSEQueryArgs>
 
-export const sseBaseQuery = (): SSEQueryFn =>
-  async (args) => {
-    const { url, listeners, options } = args
+// export const sseBaseQuery = (): SSEQueryFn =>
+//   async (args) => {
+//     const { url, listeners, options } = args
 
-    const sseClient = new BaseSSEClient()
+//     const sseClient = new BaseSSEClient()
 
-    const errorHandler = (error: unknown) => {
-      console.log('SSE Error: ', error)
-      throw error
-    }
+//     const errorHandler = (error: unknown) => {
+//       console.log('SSE Error: ', error)
+//       throw error
+//     }
 
-    try {
-      await sseClient.connect(url, listeners, {
-        ...options,
-        onerror: options?.onerror
-          ? chain(errorHandler, options.onerror)
-          : errorHandler,
-      })
+//     try {
+//       await sseClient.connect(url, listeners, {
+//         ...options,
+//         onerror: options?.onerror
+//           ? chain(errorHandler, options.onerror)
+//           : errorHandler,
+//       })
+
+//       return { data: null }
+//     }
+//     catch (error) {
+//       return { error }
+//     }
+//   }
+
+type SSEEventQueryOptions = {
+  listeners?: SSEClientListeners
+  connectOptions?: SSEClientConnectOptions
+}
+
+export const sseEventQuery
+  = <Events extends Record<string, any> = Record<string, any>, SourceMessage extends EventSourceMessage = EventSourceMessage>(
+    client: SSEClient<Events, SourceMessage>,
+    options: SSEEventQueryOptions,
+  ): SSEQueryFn => {
+    const { connectOptions, listeners } = options
+    return async (args) => {
+      const { eventURL } = args
+
+      try {
+        if (!client.isConnected) {
+          await client.connectToServer(eventURL, { ...connectOptions, ...listeners })
+
+          return { data: null }
+        }
+      }
+      catch (error) {
+        if (error instanceof Error)
+          throw error
+      }
 
       return { data: null }
-    }
-    catch (error) {
-      return { error }
     }
   }

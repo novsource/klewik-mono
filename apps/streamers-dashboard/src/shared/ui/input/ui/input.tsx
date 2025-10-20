@@ -32,6 +32,7 @@ export type InputProps = Omit<ComponentProps<'input'>, 'size' | 'className'>
       id: string
       value: string
     }
+    variant?: 'default' | 'ghost'
     startContent?: JSX.Element | string
     endContent?: JSX.Element | string
     description?: string
@@ -46,6 +47,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     errorMessage,
     startContent,
     endContent,
+    variant,
     type,
     slotClassNames: classNames,
     label,
@@ -115,13 +117,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     () =>
       cn(
         contentWrapperVariants({
+          variant,
           size,
           isError: !!errorMessage,
           isDisabled: disabled,
         }),
         classNames?.wrapper,
       ),
-    [classNames?.wrapper, size, errorMessage, disabled],
+    [classNames?.wrapper, size, errorMessage, disabled, variant],
   )
 
   return (

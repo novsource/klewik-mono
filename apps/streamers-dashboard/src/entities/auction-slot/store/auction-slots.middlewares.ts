@@ -1,17 +1,20 @@
-import { createStoreListenerMiddleware } from '~shared/lib/redux-toolkit'
+import { createListenerMiddleware } from '@reduxjs/toolkit'
 
 import { auctionSlotsActions } from './auction-slots.slice'
 
-const updateSlotsStatisticMiddleware = createStoreListenerMiddleware()
+const listeningMiddleware = createListenerMiddleware()
+const startSlotsListening = listeningMiddleware.startListening.withTypes<RootState, StoreDispatch>()
 
-updateSlotsStatisticMiddleware.startListening({
+export const auctionSlotsListenerMiddlewares = [listeningMiddleware.middleware]
+
+startSlotsListening({
   actionCreator: auctionSlotsActions.addSlots,
   effect: (action, api) => {
     api.dispatch(auctionSlotsActions.updateSlotsPointsSum(action.payload))
   },
 })
 
-updateSlotsStatisticMiddleware.startListening({
+startSlotsListening({
   actionCreator: auctionSlotsActions.updateSlot,
   effect: (action, api) => {
     const {
@@ -19,14 +22,25 @@ updateSlotsStatisticMiddleware.startListening({
       data: { points },
     } = action.payload
 
-    if (!points) return
+    if (!points)
+      return
 
     api.dispatch(auctionSlotsActions.updateSlotsPointsSum([{ id, points }]))
   },
 })
 
-const auctionSlotsListenersMiddlewares = [
-  updateSlotsStatisticMiddleware.middleware,
-]
+startSlotsListening({
+  actionCreator: auctionSlotsActions.deleteSlot,
+  effect: (action, api) => {
+    const { id } = action.payload
+    const { dispatch, getState } = api
 
-export { auctionSlotsListenersMiddlewares, updateSlotsStatisticMiddleware }
+    const deletedSlot = getState().auctionSlots.slots.find(slot => slot.id === id)
+    const pointsSum = getState().auctionSlots.slotsPointsSum
+
+    if (!deletedSlot)
+      return
+
+    dispatch(auctionSlotsActions.setPointsSum(pointsSum - deletedSlot.points))
+  },
+})

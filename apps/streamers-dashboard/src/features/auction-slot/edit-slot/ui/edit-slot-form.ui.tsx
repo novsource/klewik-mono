@@ -18,9 +18,11 @@ import { SlotPointsFormInput } from '~features/auction-slot/create-slots/ui/form
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import type { AxiosBaseQueryError } from '~shared/lib/redux-toolkit'
+
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Input } from '~shared/ui/input'
+
 import { cn } from '~shared/utils'
 
 import { useEditSlotForm } from '../hooks'
@@ -73,7 +75,12 @@ type EditSlotsFormProps = Omit<HTMLAttributes<HTMLFormElement>, 'onSubmit'> & {
 export const EditSlotForm = (props: EditSlotsFormProps) => {
   const { slot, onError, onSuccess, defaultValues, className, ...formProps } = props
 
-  const { submitForm, form, formState, isLoading } = useEditSlotForm(slot, { onSuccess, onError })
+  const {
+    submitForm,
+    form,
+    formState,
+    isLoading,
+  } = useEditSlotForm(slot, { onSuccess, onError })
 
   const isFieldsChanges = formState.isDirty
 
@@ -123,7 +130,7 @@ function EditSlotFormFields({ control }: EditSlotFormFieldsProps) {
   }
 
   return (
-    <div className="flex flex-col gap-y-4">
+    <Flex className="gap-y-4">
       <Input
         slotClassNames={{
           base: 'font-golos-f w-full basis-1/2 grow',
@@ -135,6 +142,6 @@ function EditSlotFormFields({ control }: EditSlotFormFieldsProps) {
         {...slotNameField}
       />
       <SlotPointsFormInput control={control} name="points" />
-    </div>
+    </Flex>
   )
 }

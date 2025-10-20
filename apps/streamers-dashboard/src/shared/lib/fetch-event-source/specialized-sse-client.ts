@@ -12,7 +12,7 @@ import { CommunicableSSEChannel } from '../broadcast-channel'
 import { BaseSSEClient } from './base-sse-client'
 import { SSEEmiter } from './sse-emitter'
 
-class SpecializedSSEClient<
+export class SpecializedSSEClient<
   SourceMessage extends EventSourceMessage = EventSourceMessage,
   EventsMap extends Record<string, any> = Record<string, any>,
 > extends BaseSSEClient {
@@ -22,6 +22,8 @@ class SpecializedSSEClient<
     SourceMessage,
     EventsMap
   >
+
+  public isConnected = false
 
   constructor(
     channelName: string,
@@ -57,8 +59,10 @@ class SpecializedSSEClient<
   ): Promise<void> {
     const listeners: SSEClientListeners = {
       onopen: async (response) => {
-        if (response.status === 200)
+        if (response.status === 200) {
+          this.isConnected = true
           this._sseEventsEmitter.notify('onopen', response)
+        }
       },
       onerror: (err) => {
         if (err instanceof Error) {
@@ -87,7 +91,10 @@ class SpecializedSSEClient<
           this.broadcastChannel.postMessage(parsedMessage.data)
         }
       },
-      onclose: () => this._sseEventsEmitter.notify('onclose'),
+      onclose: () => {
+        this.isConnected = false
+        this._sseEventsEmitter.notify('onclose')
+      },
     }
 
     return this.connect(url, listeners, {
@@ -98,5 +105,3 @@ class SpecializedSSEClient<
     })
   }
 }
-
-export { SpecializedSSEClient }

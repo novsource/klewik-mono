@@ -21,7 +21,7 @@ export const MobileDashboardFooter = (props: MobileDashboardFooterProps) => {
 
   const style = useMemo(() =>
     cn(
-      'z-50 w-full bottom-0 bg-dark-foreground-light border-t-1 border-dark-accent/50 transition-all',
+      'fixed bottom-0 z-50 w-full bg-dark-foreground-light border-t-1 border-dark-accent/50 transition-all',
       className,
     ), [className])
 
@@ -47,7 +47,7 @@ function ExtraRouteControls(props: ExtraRouteControlsProps) {
 
 function ExtraAuctionSlotsRouteControls() {
   return (
-    <div className="w-full px-4 py-2 pb-3">
+    <div className="w-full px-4 pb-1 pt-2">
       <CreateSlotsDialog
         trigger={(
           <Button

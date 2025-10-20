@@ -1,3 +1,5 @@
+import type { ExtendedListState } from './infinite-list.ui'
+
 import { useMemo } from 'react'
 import type { ReactNode, SVGProps } from 'react'
 
@@ -24,8 +26,8 @@ export type WindowInfiniteListProps<DataItem> = Omit<
   WindowVirtualListProps<DataItem>,
   'data' | 'count' | 'children'
 > & Pick<UseInfiniteListReturn<DataItem>, 'state'> & {
-  data: DataItem[]
   children: WindowInfiniteListRenderFunction<DataItem>
+  data?: DataItem[]
   limit?: number
   placeholder?: ReactNode
   showPlaceholders?: boolean
@@ -48,7 +50,12 @@ export const WindowInfiniteList = <DataItem = unknown>(props: WindowInfiniteList
     ...restProps
   } = props
 
-  const preparedItems = useMemo(() => [...data, ...listState.value], [data, listState.value])
+  const preparedItems = useMemo(() => {
+    if (!data)
+      return listState.value
+
+    return data
+  }, [data, listState.value])
 
   /*
     Here we check if we can fit a screen full of cards equal to or greater than the list limit

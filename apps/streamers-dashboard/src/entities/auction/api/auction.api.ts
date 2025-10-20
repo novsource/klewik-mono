@@ -2,20 +2,47 @@ import type { Auction } from '../model'
 
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { createApi } from '@reduxjs/toolkit/query/react'
+import { AxiosError, isAxiosError } from 'axios'
 
 import { getAuctionInfo } from '~shared/api/http/auction/auction.api'
 
 import { axiosAuthBaseQuery } from '~shared/lib/redux-toolkit'
 
+import { auctionActions } from '../store'
+
 export type GetAuctionInfoQueryArgs = {
   auctionUUID: Auction['auctionUUID']
 }
 
-export const getAuctionInfoThunk = createAsyncThunk('auction/getAuctionInfo', async (auctionUUID: string) => {
-  const response = await getAuctionInfo<Auction>(auctionUUID)
+export const getAuctionInfoThunk = createAsyncThunk('auction/getAuctionInfo', async (auctionUUID: string, { rejectWithValue }) => {
+  try {
+    const response = await getAuctionInfo<Auction>(auctionUUID)
 
-  return response.data
+    if (response.status === 404) {
+      throw new AxiosError('Can\'t get auction info', '404')
+    }
+
+    if (!response.data) {
+      throw new AxiosError('Can\'t get auction info', '500')
+    }
+
+    return response.data
+  }
+  catch (error) {
+    if (isAxiosError(error)) {
+      return rejectWithValue(error)
+    }
+
+    if (error instanceof Error) {
+      return rejectWithValue(new AxiosError(error.message, '500'))
+    }
+  }
 })
+
+export type UpdateBetsStatusQueryArgs = {
+  auctionUUID: Auction['auctionUUID']
+  status: boolean
+}
 
 export type SearchQueryDomain = 'slots' | 'donations'
 
@@ -39,6 +66,18 @@ export const splittedAuctionApi = createApi({
       query: ({ auctionUUID }) => ({ url: `/${auctionUUID}` }),
       providesTags: ['Info'],
     }),
+    updateBetsStatus: builder.mutation<void, UpdateBetsStatusQueryArgs>({
+      query: ({ auctionUUID, status }) => ({
+        url: `/${auctionUUID}/bets/status`,
+        data: { status },
+        method: 'POST',
+        withCredentials: true,
+      }),
+      onQueryStarted: async ({ status }, { dispatch, queryFulfilled }) => {
+        await queryFulfilled
+        dispatch(auctionActions.setAuction({ isBetsClosed: status }))
+      },
+    }),
     search: builder.query<unknown[], SearchQueryArgs>((
       { query: ({ auctionUUID, ...params }) => (
         {
@@ -55,5 +94,6 @@ export const {
   useGetAuctionInfoQuery,
   useLazySearchQuery,
   useSearchQuery,
+  useUpdateBetsStatusMutation,
 }
   = splittedAuctionApi

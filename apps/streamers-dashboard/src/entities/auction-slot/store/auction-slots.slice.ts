@@ -1,16 +1,14 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
-import type { z } from 'zod'
 
 import type { AuctionSlot } from '../model'
 
-import { faker } from '@faker-js/faker'
 import { createSlice } from '@reduxjs/toolkit'
-
-import type { HexColorSchema } from '~shared/lib/zod'
 
 import type { SortingOptions } from '~shared/store/model'
 
-import { getHEXColor } from '~shared/utils/colors'
+import { getRandomHEXColor } from '~shared/utils'
+
+import { getAuctionSlotsThunk } from '../api'
 
 type AuctionSlotsState = {
   slots: AuctionSlot[]
@@ -20,25 +18,25 @@ type AuctionSlotsState = {
   sortingOptions: SortingOptions<AuctionSlot>
 }
 
-const mockedAuctionSlots = Array.from({ length: faker.number.int({ min: 40, max: 140 }) })
-  .fill(null)
-  .map((_, index) => ({
-    id: index + 1,
-    title: faker.word.words(10),
-    points: faker.number.int({ min: 200, max: 205000 }),
-    color: getHEXColor() as z.infer<typeof HexColorSchema>,
-  }))
+// const mockedAuctionSlots = Array.from({ length: faker.number.int({ min: 40, max: 140 }) })
+//   .fill(null)
+//   .map((_, index) => ({
+//     id: index + 1,
+//     title: faker.word.words(10),
+//     points: faker.number.int({ min: 200, max: 205000 }),
+//     color: getHEXColor() as z.infer<typeof HexColorSchema>,
+//   }))
 
-const slotsPointsSum = mockedAuctionSlots.reduce(
-  (sum, slot) => sum + slot.points,
-  0,
-)
+// const slotsPointsSum = mockedAuctionSlots.reduce(
+//   (sum, slot) => sum + slot.points,
+//   0,
+// )
 
 const initialState: AuctionSlotsState = {
-  slots: mockedAuctionSlots,
-  sortedSlots: mockedAuctionSlots,
-  dropoutSlots: import.meta.env.VITE_DEV ? mockedAuctionSlots : [],
-  slotsPointsSum: import.meta.env.VITE_DEV ? slotsPointsSum : 0,
+  slots: [],
+  sortedSlots: [],
+  dropoutSlots: import.meta.env.VITE_DEV ? [] : [],
+  slotsPointsSum: import.meta.env.VITE_DEV ? 0 : 0,
   sortingOptions: {
     field: 'points',
     type: 'descending',
@@ -84,7 +82,7 @@ const slice = createSlice({
     },
     updateSlotsPointsSum(
       state,
-      action: PayloadAction<Omit<AuctionSlot, 'color' | 'name'>[]>,
+      action: PayloadAction<Omit<AuctionSlot, 'color' | 'title'>[]>,
     ) {
       const payload = action.payload
 
@@ -109,6 +107,9 @@ const slice = createSlice({
     setSlotsSortOptions(state, action: PayloadAction<SortingOptions<AuctionSlot>>) {
       state.sortingOptions = action.payload
     },
+    setPointsSum(state, action: PayloadAction<number>) {
+      state.slotsPointsSum = action.payload
+    },
   },
   selectors: {
     getSlots(state) {
@@ -124,12 +125,27 @@ const slice = createSlice({
       return state.sortingOptions
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(getAuctionSlotsThunk.fulfilled, (state, action) => {
+      const { payload: auctionSlots } = action
+
+      if (!auctionSlots)
+        return
+
+      const slotsWithColors = auctionSlots.reduce<AuctionSlot[]>((acc, slot) => {
+        const slotWithColor: AuctionSlot = { ...slot, color: getRandomHEXColor() }
+
+        acc.push(slotWithColor)
+        return acc
+      }, [])
+
+      state.slots = slotsWithColors
+    })
+  },
 })
 
-const {
+export const {
   actions: auctionSlotsActions,
   reducer: auctionSlotsReducer,
   selectors: auctionSlotsSelectors,
 } = slice
-
-export { auctionSlotsActions, auctionSlotsReducer, auctionSlotsSelectors }

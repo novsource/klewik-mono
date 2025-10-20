@@ -1,74 +1,73 @@
-import { AxiosError, AxiosResponse } from 'axios'
+import type { AxiosError, AxiosResponse } from 'axios'
 
-import {
+import { Mutex } from 'async-mutex'
+
+import type {
   BaseApiClientOptions,
-  BaseHttpClient,
   HttpClientRequestOptions,
 } from '~shared/lib/axios'
+import {
+  BaseHttpClient,
+} from '~shared/lib/axios'
+
+const mutex = new Mutex()
 
 class AuthHttpClient extends BaseHttpClient {
   constructor(options?: BaseApiClientOptions) {
     super({ ...options, axiosOptions: { withCredentials: true } })
   }
 
-  request<T>(
+  async request<T>(
     url: string,
-    options?: HttpClientRequestOptions
+    options?: HttpClientRequestOptions,
   ): Promise<AxiosResponse<T, any>> {
-    const isAlreadyFetching = this._requestPromisesCollection.has(url)
-
-    if (isAlreadyFetching) {
-      return this._requestPromisesCollection.get(url) as Promise<
-        AxiosResponse<T>
-      >
-    }
-
     const fetchOptions = { url, ...options, method: options?.method ?? 'GET' }
 
-    return new Promise((resolve, reject) => {
-      const response = this._internalRequest<T>(url, fetchOptions)
+    await mutex.waitForUnlock()
 
-      return response.then(resolve).catch((err: AxiosError) => {
-        console.log(err)
-        if (err.status === 401) {
-          const refreshRequest = fetchOptions.retry
-            ? this._retryFetching<T>(
-                '/auth/refresh',
-                {
-                  ...fetchOptions,
-                  url: '/api/v1/auth/refresh',
-                  method: 'POST',
-                },
-                fetchOptions.retriesCount
-              )
-            : this._internalRequest<T>('/auth/refresh', {
-                ...fetchOptions,
-                url: '/api/v1/auth/refresh',
-                method: 'POST',
-              })
+    return this._internalRequest<T>(url, fetchOptions).catch(async (error) => {
+      const axiosError = error as AxiosError
 
-          return refreshRequest
-            .then(() => {
-              const response = fetchOptions.retry
-                ? this._retryFetching<T>(
-                    url,
-                    fetchOptions,
-                    fetchOptions.retriesCount
-                  )
-                : this._internalRequest<T>(url, fetchOptions)
+      const isAuthError = axiosError.status === 401
 
-              return response.then(resolve).catch(reject)
+      if (!isAuthError)
+        throw error
+
+      const isShouldRetry = !!fetchOptions.retry
+
+      if (!mutex.isLocked()) {
+        try {
+          const release = await mutex.acquire()
+
+          if (isShouldRetry) {
+            await this._retryFetching<T>('/api/v1/auth/refresh', {
+              ...fetchOptions,
+              url: '/api/v1/auth/refresh',
+              method: 'POST',
+            }, fetchOptions.retriesCount)
+          }
+          else {
+            await this._internalRequest<T>('/api/v1/auth/refresh', {
+              ...fetchOptions,
+              url: '/api/v1/auth/refresh',
+              method: 'POST',
             })
-            .catch(reject)
+          }
+
+          release()
         }
-      })
+        catch {
+          throw new Error(axiosError.message)
+        }
+      }
+
+      await mutex.waitForUnlock()
+      return this._internalRequest<T>(url, fetchOptions)
     })
   }
 }
 
-const authHttpClient = new AuthHttpClient({
+export const authHttpClient = new AuthHttpClient({
   axiosOptions: { withCredentials: true },
   rateLimiterOptions: { maxRPS: 3 },
 })
-
-export { authHttpClient }

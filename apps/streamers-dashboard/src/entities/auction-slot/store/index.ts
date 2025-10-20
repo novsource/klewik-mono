@@ -1,12 +1,2 @@
-import {
-  auctionSlotsListenersMiddlewares,
-  updateSlotsStatisticMiddleware,
-} from './auction-slots.middlewares'
-import {
-  auctionSlotsActions,
-  auctionSlotsReducer,
-  auctionSlotsSelectors,
-} from './auction-slots.slice'
-
-export { auctionSlotsActions, auctionSlotsReducer, auctionSlotsSelectors }
-export { auctionSlotsListenersMiddlewares, updateSlotsStatisticMiddleware }
+export * from './auction-slots.middlewares'
+export * from './auction-slots.slice'

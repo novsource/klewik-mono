@@ -1,10 +1,28 @@
+import type { ProcessedDonationDTOAction, ProcessedDonationDTOStatus } from './channel.types'
+
 import { z } from 'zod'
 
 import { EventSourceMessageSchema } from '~shared/lib/fetch-event-source'
+import { zodEnum } from '~shared/lib/zod'
 
-const DonationDTOSchema = z.object({
+const processedDonationStatuses = [
+  'added',
+  'checkRequested',
+  'empty',
+  'error',
+  'rejected',
+  'inProgress',
+] as const satisfies ProcessedDonationDTOStatus[]
+
+const processedDonationAction = [
+  'createSlot',
+  'noAction',
+  'updateSlot',
+] as const satisfies ProcessedDonationDTOAction[]
+
+const DonationSchema = z.object({
   id: z.number(),
-  auctionUUID: z.string().uuid(),
+  auctionId: z.number(),
   sourceDonationId: z.number().positive().nullable(),
   username: z.string(),
   source: z.enum(['donatePay', 'donationAlerts', 'twitch', 'userInput']),
@@ -14,23 +32,23 @@ const DonationDTOSchema = z.object({
   currency: z.string(),
   createdAt: z.string(),
   updatedAt: z.string(),
-  processedAction: z.enum(['createSlot', 'noAction', 'updateSlot']),
-  processedSlotsIds: z.number().array().nullable(),
-  processedStatus: z.enum([
-    'added',
-    'checkRequested',
-    'empty',
-    'error',
-    'rejected',
-    'inProgress',
-  ]),
 })
 
-const DonationsEventSourceMessageSchema = EventSourceMessageSchema.merge(
+export const ProcessedDonationDTOSchema = DonationSchema.extend({
+  processData: z.object({
+    action: z.enum(
+      zodEnum<ProcessedDonationDTOAction>(processedDonationAction),
+    ),
+    slotsIds: z.number().array().nullable(),
+    status: z.enum(
+      zodEnum<ProcessedDonationDTOStatus>(processedDonationStatuses),
+    ),
+  }),
+})
+
+export const DonationsEventSourceMessageSchema = EventSourceMessageSchema.merge(
   z.object({
     event: z.literal('donations/add'),
     data: z.string().nonempty(),
-  })
+  }),
 )
-
-export { DonationDTOSchema, DonationsEventSourceMessageSchema }
