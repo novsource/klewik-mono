@@ -10,12 +10,13 @@ import { useProcessDonationForm } from '~features/donations/process-donation/hoo
 import { auctionSelectors } from '~entities/auction/store'
 
 import type { ProcessedDonation } from '~entities/donation/model'
+import { donationsActions } from '~entities/donation/store'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { useMediaQuery } from '~shared/hooks'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
@@ -237,6 +238,8 @@ function ApproveDonationButton(props: ApproveDonationButtonProps) {
 
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
+  const { updateDonation } = useActionCreators(donationsActions)
+
   const {
     state: { isBlockedActions },
     dispatch: { setIsBlockedActions },
@@ -245,7 +248,7 @@ function ApproveDonationButton(props: ApproveDonationButtonProps) {
   const [approveDonationMutation, mutationState] = useApproveDonationMutation()
 
   const approveDonation = async (formData: ProcessDonationForm) => {
-    if (mutationState.isLoading)
+    if (mutationState.isLoading || donation.processData.status === 'added')
       return
 
     setIsBlockedActions(true)
@@ -259,6 +262,12 @@ function ApproveDonationButton(props: ApproveDonationButtonProps) {
 
     if (response.error) {
       console.log(response.error)
+    }
+    else {
+      updateDonation({
+        id: donation.id,
+        processData: { ...donation.processData, status: 'added' },
+      })
     }
 
     setIsBlockedActions(false)
@@ -310,10 +319,12 @@ function DeclineDonationButton(props: DeclineDonationButtonProps) {
 
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
+  const { updateDonation } = useActionCreators(donationsActions)
+
   const [declineDonationMutation, mutationState] = useDeclineDonationMutation()
 
   const declineDonation = async () => {
-    if (mutationState.isLoading)
+    if (mutationState.isLoading || donation.processData.status === 'rejected')
       return
 
     setIsBlockedActions(true)
@@ -325,6 +336,12 @@ function DeclineDonationButton(props: DeclineDonationButtonProps) {
 
     if (response.error) {
       console.log(response.error)
+    }
+    else {
+      updateDonation({
+        id: donation.id,
+        processData: { ...donation.processData, status: 'rejected' },
+      })
     }
 
     setIsBlockedActions(false)
