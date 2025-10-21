@@ -265,7 +265,7 @@ export const SolidAuctionSlotContent = (props: SolidAuctionSlotContentProps) => 
         direction="row"
         align="center"
       >
-        <AuctionSlotCardIdInfo slotId={auctionSlot.id} />
+        <AuctionSlotCardIdInfo slotId={auctionSlot.auctionSlotOrder} />
         <AuctionSlotCardContentInfoDivider />
         <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
         {winPercents

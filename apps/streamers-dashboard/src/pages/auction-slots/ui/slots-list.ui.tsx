@@ -78,7 +78,7 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
         >
           <Flex className="gap-y-2 pr-3.5" direction="column">
             <SolidAuctionSlotHeader
-              slotId={auctionSlot.id}
+              slotId={auctionSlot.auctionSlotOrder}
               slotTitle={auctionSlot.title}
               slotColor={auctionSlot.color}
             />

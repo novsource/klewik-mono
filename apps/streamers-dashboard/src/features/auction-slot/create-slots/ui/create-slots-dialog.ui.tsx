@@ -51,11 +51,10 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
     greaterThenDeviceWidthMediaQueries.tablet,
   )
 
-  const { form, state: formState, submitForm, isLoading } = useCreateSlotsForm({ onSuccess: ({ slots }) => {
+  const { form, state: formState, submitForm, isLoading } = useCreateSlotsForm({ onSuccess: (slots) => {
     auctionSlotsActions.addSlots(
       slots.map(slot => ({
         ...slot,
-        id: 1,
         color: getRandomHEXColor(),
       })),
     )

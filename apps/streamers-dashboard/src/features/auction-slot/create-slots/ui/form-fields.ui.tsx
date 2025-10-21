@@ -41,7 +41,7 @@ const preventEnterFn = (event: KeyboardEvent<HTMLInputElement>) => {
   }
 }
 
-const SlotNameFormInput = <
+export const SlotNameFormInput = <
   FormFields extends FieldValues,
   Paths extends FieldPath<FormFields>,
   TransformedValues extends FormFields,
@@ -110,17 +110,28 @@ const SlotNameFormInput = <
   )
 }
 
-const SlotPointsFormInputs = <
+export type SlotPointsFormInputProps<
   FormFields extends FieldValues,
   Paths extends FieldPath<FormFields>,
   TransformedValues extends FormFields,
->(props: { pointsInputProps?: NumberInputProps, percentInputProps?: NumberInputProps, minPercent?: number }
-  & ControllerFormInputProps<FormFields, Paths, TransformedValues>) => {
+> = {
+  pointsInputProps?: NumberInputProps
+  percentInputProps?: NumberInputProps
+  minPercent?: number
+  showPercentInput?: boolean
+} & ControllerFormInputProps<FormFields, Paths, TransformedValues>
+
+export const SlotPointsFormInput = <
+  FormFields extends FieldValues,
+  Paths extends FieldPath<FormFields>,
+  TransformedValues extends FormFields,
+>(props: SlotPointsFormInputProps<FormFields, Paths, TransformedValues>) => {
   const {
     control,
     name,
     percentInputProps,
     pointsInputProps,
+    showPercentInput = true,
     minPercent = 0.1,
     ...pointsControllerProps
   } = props
@@ -218,10 +229,32 @@ const SlotPointsFormInputs = <
     onKeyDown: preventEnterFn,
   }
 
-  const mergedPointsInputProps = mergeProps(pointsInputHandlers, pointsInputProps)
+  const mergedPointsInputProps = mergeProps(pointsInputProps, pointsInputHandlers)
   const mergedPercentsInputProps = mergeProps(percentsInputHandlers, percentInputProps)
 
   const styles = useMemo(() => twSlotsStyles(createSlotsFormFieldsStyles), [])
+
+  if (!showPercentInput) {
+    return (
+      <NumberInput
+        slotClassNames={{
+          base: 'w-full grow',
+          description: 'text-wrap',
+          input: 'font-golos-f font-medium',
+        }}
+        label={{ id: `${name}`, value: 'Очки слота' }}
+        placeholder="Очки"
+        value={value}
+        startContent={<Icons.Coin className="text-gray-light" size="lg" />}
+        thousandSeparator=" "
+        decimalScale={0}
+        allowNegative={false}
+        // isAllowed={checkPointsBoundaries}
+        {...field}
+        {...mergedPointsInputProps}
+      />
+    )
+  }
 
   return (
     <Flex className={styles.pointsInputsWrapper} align="start">
@@ -238,7 +271,7 @@ const SlotPointsFormInputs = <
         thousandSeparator=" "
         decimalScale={0}
         allowNegative={false}
-        isAllowed={checkPointsBoundaries}
+        // isAllowed={checkPointsBoundaries}
         {...field}
         {...mergedPointsInputProps}
       />
@@ -255,11 +288,9 @@ const SlotPointsFormInputs = <
             99%
           </Typography>
         )}
-        isAllowed={checkPercentBoundaries}
+        // isAllowed={checkPercentBoundaries}
         {...mergedPercentsInputProps}
       />
     </Flex>
   )
 }
-
-export { SlotNameFormInput, SlotPointsFormInputs as SlotPointsFormInput }

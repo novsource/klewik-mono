@@ -30,6 +30,7 @@ const placeholderSlot: AuctionSlot = {
   color: '#FFF',
   id: -1,
   points: 0,
+  auctionSlotOrder: -1,
   title: '',
 }
 

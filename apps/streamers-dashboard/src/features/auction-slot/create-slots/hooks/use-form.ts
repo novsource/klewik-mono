@@ -5,6 +5,7 @@ import { useForm, useFormState } from 'react-hook-form'
 
 import { auctionSelectors } from '~entities/auction/store'
 
+import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import type { AxiosBaseQueryError } from '~shared/lib/redux-toolkit'
@@ -15,7 +16,7 @@ import { CREATE_SLOT_FORM_DEFAULT_VALUE } from '../constants'
 import { createSlotsFormResolver } from '../lib'
 
 type UseCreateSlotsFormListeners = {
-  onSuccess?: (formData: TransformedCreateSlotsFormData) => void
+  onSuccess?: (createdSlots: AuctionSlot[]) => void
   onError?: (error: NullablePossible<AxiosBaseQueryError>) => void
 }
 
@@ -50,7 +51,7 @@ const useCreateSlotsForm = (listeners?: UseCreateSlotsFormListeners) => {
       listeners?.onError && listeners.onError(error)
     }
     else {
-      listeners?.onSuccess && listeners.onSuccess(formData)
+      listeners?.onSuccess && listeners.onSuccess(response.data)
     }
   }
 
