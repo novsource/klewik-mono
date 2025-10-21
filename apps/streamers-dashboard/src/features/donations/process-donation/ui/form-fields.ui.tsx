@@ -147,21 +147,21 @@ export const ProcessedDonationSlotTitleFormInput = <
         endContent={
           isFocused
             ? (
-              <Typography
-                tag="span"
-                className={cn(
-                  'text-md transition-colors select-none',
-                  boundAnimationStatus === 'active'
-                    ? 'animate-horizontal-shaking text-red'
-                    : 'text-gray-light',
-                )}
-                onAnimationEnd={() => {
-                  setBoundAnimationStatus('inactive')
-                }}
-              >
-                {`${value.toString().length}/${maxLength}`}
-              </Typography>
-            )
+                <Typography
+                  tag="span"
+                  className={cn(
+                    'text-md transition-colors select-none',
+                    boundAnimationStatus === 'active'
+                      ? 'animate-horizontal-shaking text-red'
+                      : 'text-gray-light',
+                  )}
+                  onAnimationEnd={() => {
+                    setBoundAnimationStatus('inactive')
+                  }}
+                >
+                  {`${value.toString().length}/${maxLength}`}
+                </Typography>
+              )
             : undefined
         }
         {...field}

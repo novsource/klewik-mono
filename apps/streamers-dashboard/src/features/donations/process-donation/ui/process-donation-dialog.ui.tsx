@@ -23,6 +23,9 @@ import { Button } from '~shared/ui/button'
 import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
+import type {
+  SheetProps,
+} from '~shared/ui/sheet'
 import {
   Sheet,
   SheetContent,
@@ -41,28 +44,28 @@ import { ProcessDonationContextProvider, useProcessDonationContext } from '../co
 import { processDonationDialogStyles } from '../styles'
 import { ProcessDonationDialogTabs } from './dialog-tabs.ui'
 
-export type ProcessDonationDialogProps = {
+export type ProcessDonationDialogProps = SheetProps & {
   donation: ProcessedDonation
   trigger?: ReactNode
 }
 
 export const ProcessDonationDialog = (props: ProcessDonationDialogProps) => {
-  const { donation, trigger } = props
+  const { donation, trigger, ...restProps } = props
 
   return (
     <ProcessDonationContextProvider donation={donation}>
-      <ProcessDonationDialogBase donation={donation} trigger={trigger} />
+      <ProcessDonationDialogBase donation={donation} trigger={trigger} {...restProps} />
     </ProcessDonationContextProvider>
   )
 }
 
-type ProcessDonationDialogBaseProps = {
+type ProcessDonationDialogBaseProps = SheetProps & {
   donation: ProcessedDonation
   trigger?: ReactNode
 }
 
 function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
-  const { donation, trigger } = props
+  const { donation, trigger, ...restProps } = props
 
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
@@ -99,7 +102,7 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
     form.reset()
   }
 
-  const closeForm = () => {
+  const closeDialog = () => {
     if (queryState.isLoading)
       return
 
@@ -116,12 +119,13 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
     }
   }, [donationCode, donation, form])
 
+  const mergedSheetProps = mergeProps({
+    open: isSheetOpened,
+    onOpenChange: setIsSheetOpened,
+  }, restProps)
+
   return (
-    <Sheet
-      open={isSheetOpened}
-      onOpenChange={setIsSheetOpened}
-      dismissible={!isFormDirty}
-    >
+    <Sheet dismissible={!isFormDirty} {...mergedSheetProps}>
       <SheetTrigger
         nativeButton={false}
       >
@@ -162,7 +166,7 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
                       isIconOnly
                       icon={<Icons.LargeCross width={14} height={14} />}
                       disabled={isFormDirty || queryState.isLoading}
-                      onClick={closeForm}
+                      onClick={closeDialog}
                     />
                   </Flex>
                 </Flex>
@@ -190,7 +194,7 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
                     isIconOnly
                     icon={<Icons.LargeCross width={14} height={14} />}
                     disabled={isFormDirty || queryState.isLoading}
-                    onClick={closeForm}
+                    onClick={closeDialog}
                   />
                 )}
             </Flex>

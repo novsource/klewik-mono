@@ -1,5 +1,3 @@
-import { ProcessDonationDialog } from '~features/donations/process-donation/ui'
-
 import type { ProcessedDonation } from '~entities/donation/model'
 import type { BaseDonationCardProps } from '~entities/donation/ui/card'
 import {
@@ -16,6 +14,7 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 
 import { useMediaQuery } from '~shared/hooks'
 
+import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
@@ -23,10 +22,11 @@ import { MotionBox } from '~shared/ui/motion-box'
 
 export type InfiniteDonationsListCardProps = BaseDonationCardProps & {
   donation: ProcessedDonation
+  actionButtonProps?: ButtonProps
 }
 
 export const InfiniteDonationsListCard = (props: InfiniteDonationsListCardProps) => {
-  const { donation, ...restProps } = props
+  const { donation, actionButtonProps, ...restProps } = props
 
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
@@ -44,7 +44,13 @@ export const InfiniteDonationsListCard = (props: InfiniteDonationsListCardProps)
           </BaseDonationCardHeader>
           <SolidDonationCardContent donationData={donation} />
         </Flex>
-        <ProcessDonationDialog
+        <Button
+          className="bg-dark-light size-7 tablet:size-8.5 text-gray-light transition-colors hover:text-white"
+          isIconOnly
+          icon={<Icons.ArrowRight size={isLargeThenTablet ? 'default' : 'sm'} />}
+          {...actionButtonProps}
+        />
+        {/* <ProcessDonationDialog
           donation={donation}
           trigger={(
             <Button
@@ -53,7 +59,7 @@ export const InfiniteDonationsListCard = (props: InfiniteDonationsListCardProps)
               icon={<Icons.ArrowRight size={isLargeThenTablet ? 'default' : 'sm'} />}
             />
           )}
-        />
+        /> */}
       </Flex>
     </BaseDonationCard>
   )

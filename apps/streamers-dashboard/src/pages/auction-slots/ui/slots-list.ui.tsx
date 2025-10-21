@@ -4,7 +4,7 @@ import { useCallback, useRef, useState } from 'react'
 
 import { useSortingSlots } from '~pages/auction-slots/lib'
 
-import { EditSlotDialog } from '~features/auction-slot/edit-slot/ui'
+import { useGlobalDialogsContext } from '~widgets/global-dialogs/context'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -42,6 +42,7 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
     gap = 8,
     ...virtualListProps
   } = props
+
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const storedSlotsPointsSum = useStoreSelector(
     auctionSlotsSelectors.getSlotsPointsSum,
@@ -49,6 +50,8 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
   const sortingOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
 
   const [showedSlots, setShowedSlots] = useState(data ?? storedAuctionSlots)
+
+  const { dispatch: { setIsEditSlotDialogOpen, setSelectedSlot } } = useGlobalDialogsContext()
 
   if (data !== undefined && showedSlots !== data) {
     setShowedSlots(data)
@@ -84,15 +87,14 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
               winPercents={percents}
             />
           </Flex>
-          <EditSlotDialog
-            slot={auctionSlot}
-            trigger={(
-              <Button
-                className="bg-dark-light size-7 tablet:size-8.5 text-gray-light transition-colors hover:text-white"
-                isIconOnly
-                icon={<Icons.ArrowRight size={isLargeThenTablet ? 'default' : 'sm'} />}
-              />
-            )}
+          <Button
+            className="bg-dark-light size-7 tablet:size-8.5 text-gray-light transition-colors hover:text-white"
+            isIconOnly
+            icon={<Icons.ArrowRight size={isLargeThenTablet ? 'default' : 'sm'} />}
+            onClick={() => {
+              setSelectedSlot(auctionSlot)
+              setIsEditSlotDialogOpen(true)
+            }}
           />
         </BaseAuctionSlotCard>
       )
