@@ -11,7 +11,9 @@ import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import type { ProcessedDonation } from '~entities/donation/model'
 import { donationsSelectors } from '~entities/donation/store'
-import { BaseDonationCard, BaseDonationCardContent, SkeletonDonationCard } from '~entities/donation/ui/card'
+import { BaseDonationCard, BaseDonationCardContent, BaseDonationCardHeader, DonationCardStatusBadge, DonationCardUsernameInfo, SkeletonDonationCard } from '~entities/donation/ui/card'
+
+import { IntegrationBadge } from '~entities/integrations/ui/badge'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
@@ -241,16 +243,20 @@ export const SearchDonations = (props: SearchAuctionSlotsProps) => {
             closeDialog()
           }}
         >
-          <BaseDonationCard>
-            <BaseDonationCardContent className="gap-x-2 max-tablet:items-start">
+          <BaseDonationCard className="border-0 bg-transparent py-0 pb-1">
+            <BaseDonationCardHeader>
+              <Flex className="w-full gap-y-2" justify="between" direction="column">
+                <Flex className="h-6 gap-x-1.5">
+                  <IntegrationBadge integration={donation.source} />
+                  <DonationCardStatusBadge status={donation.processData.status} />
+                </Flex>
+                <DonationCardUsernameInfo donationData={donation} />
+              </Flex>
+            </BaseDonationCardHeader>
+            <BaseDonationCardContent className="flex flex-row gap-x-2 items-center space-y-0 overflow-clip">
+              <Icons.Message className="text-gray shrink-0" />
               <Typography
-                className="px-1 py-0.25 bg-dark border-1 border-dark-light font-golos-f text-gray-light rounded-sm text-sm"
-                tag="span"
-              >
-                { `ID: ${donation.id}`}
-              </Typography>
-              <Typography
-                className="font-breeze"
+                className="font-golos-f text-white/70"
                 tag="span"
               >
                 {donation.message}
