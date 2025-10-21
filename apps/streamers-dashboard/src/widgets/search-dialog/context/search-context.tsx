@@ -9,15 +9,20 @@ export type SearchDialogContextState = {
   isDialogOpen: boolean
 }
 
-type SearchDialogContextFunctions = {
+type SearchDialogContextDispatch = {
   setSearchValue: (value: string) => void
   setCategory: (category: SearchDialogCategories) => void
   setIsDialogOpen: (open: boolean) => void
 }
 
+type SearchDialogContextFunctions = {
+  closeDialog: () => void
+}
+
 export type SearchDialogContext = {
   state: SearchDialogContextState
-  dispatch: SearchDialogContextFunctions
+  functions: SearchDialogContextFunctions
+  dispatch: SearchDialogContextDispatch
 }
 
 const SearchContext = createContext<SearchDialogContext>({
@@ -26,10 +31,13 @@ const SearchContext = createContext<SearchDialogContext>({
     isDialogOpen: false,
     category: 'slots',
   },
+  functions: {
+    closeDialog: () => ({}),
+  },
   dispatch: {
-    setIsDialogOpen: () => (null),
-    setSearchValue: () => (null),
-    setCategory: () => (null),
+    setIsDialogOpen: () => ({}),
+    setSearchValue: () => ({}),
+    setCategory: () => ({}),
   },
 })
 
@@ -53,10 +61,16 @@ export const SearchDialogContextProvider = (props: SearchDialogContextProviderPr
   const [category, setCategory] = useState<SearchDialogCategories>(contextValues.category ?? 'slots')
   const [isDialogOpen, setIsDialogOpen] = useState(contextValues.isDialogOpen ?? false)
 
+  const closeDialog = () => {
+    setSearchValue('')
+    setIsDialogOpen(false)
+  }
+
   const contextValue = useMemo<SearchDialogContext>(() => {
     return {
       state: { isDialogOpen, searchValue, category },
       dispatch: { setSearchValue, setIsDialogOpen, setCategory },
+      functions: { closeDialog },
     }
   }, [isDialogOpen, searchValue, category])
 

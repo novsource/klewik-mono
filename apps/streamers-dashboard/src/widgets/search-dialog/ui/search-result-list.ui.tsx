@@ -4,6 +4,8 @@ import { memo, useCallback, useRef } from 'react'
 import NumberFlow from '@number-flow/react'
 import { AnimatePresence } from 'motion/react'
 
+import { useGlobalDialogsContext } from '~widgets/global-dialogs/context'
+
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
@@ -29,6 +31,7 @@ import { Typography } from '~shared/ui/typograghy'
 
 import { isStringEmpty } from '~shared/utils'
 
+import { useSearchDialogContext } from '../context'
 import { useSearchInfiniteList } from '../hooks/use-search-infinite-list'
 
 type SearchResultItemContainerProps = MotionBoxProps & {
@@ -155,6 +158,9 @@ export const SearchAuctionSlots = (props: SearchAuctionSlotsProps) => {
 
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
+  const { functions: { closeDialog } } = useSearchDialogContext()
+  const { dispatch: { setSelectedSlot, setIsEditSlotDialogOpen } } = useGlobalDialogsContext()
+
   const infiniteList = useSearchInfiniteList(searchValue, 'slots', auctionSlots, {
     debounceTime: 2000,
     limit: 30,
@@ -167,6 +173,11 @@ export const SearchAuctionSlots = (props: SearchAuctionSlotsProps) => {
         <SearchResultItemContainer
           key={virtualizedItem.id}
           style={{ marginTop: virtualizedItem.index === 0 ? 0 : 6 }}
+          onClick={() => {
+            setSelectedSlot(slot)
+            setIsEditSlotDialogOpen(true)
+            closeDialog()
+          }}
         >
           <Flex className="gap-x-2 max-tablet:items-start items-center max-tablet:flex-col max-tablet:justify-start max-tablet:gap-y-1.5">
             <Typography
@@ -209,6 +220,9 @@ export const SearchDonations = (props: SearchAuctionSlotsProps) => {
 
   const storedDonations = useStoreSelector(donationsSelectors.getAllDonations)
 
+  const { functions: { closeDialog } } = useSearchDialogContext()
+  const { dispatch: { setSelectedDonation, setIsProcessDonationDialogOpen } } = useGlobalDialogsContext()
+
   const infiniteList = useSearchInfiniteList(searchValue, 'donations', storedDonations, {
     debounceTime: 1500,
     limit: 15,
@@ -221,6 +235,11 @@ export const SearchDonations = (props: SearchAuctionSlotsProps) => {
         <SearchResultItemContainer
           key={virtualizedItem.id}
           style={{ marginTop: virtualizedItem.index === 0 ? 0 : 6 }}
+          onClick={() => {
+            setSelectedDonation(donation)
+            setIsProcessDonationDialogOpen(true)
+            closeDialog()
+          }}
         >
           <BaseDonationCard>
             <BaseDonationCardContent className="gap-x-2 max-tablet:items-start">
