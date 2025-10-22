@@ -1,5 +1,5 @@
 import type { z } from 'zod'
 
-import type { processDonationFormSchema } from './process-donation.contracts'
+import type { ProcessDonationFormSchema } from './process-donation.contracts'
 
-export type ProcessDonationForm = z.infer<typeof processDonationFormSchema>
+export type ProcessDonationForm = z.infer<typeof ProcessDonationFormSchema>

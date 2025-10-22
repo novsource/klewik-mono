@@ -28,6 +28,7 @@ import type {
 } from '~shared/ui/sheet'
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -36,7 +37,7 @@ import {
 } from '~shared/ui/sheet'
 import { Typography } from '~shared/ui/typograghy'
 
-import { mergeProps, twSlotsStyles } from '~shared/utils'
+import { formatNumberToIntlString, mergeProps, twSlotsStyles } from '~shared/utils'
 
 import { useApproveDonationMutation, useDeclineDonationMutation } from '../api'
 import { PROCESS_DONATION_FORM_ID } from '../constants'
@@ -114,7 +115,7 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
     if (donationCode) {
       form.reset({
         title: donationCode.title,
-        points: donation.processData.addedPoints?.toString() || 0,
+        points: formatNumberToIntlString(donation.processData.addedPoints || 0),
       })
     }
   }, [donationCode, donation, form])
@@ -161,13 +162,15 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
                       donationId={donation.id}
                     />
                     <Divider className="mx-1" orientation="vertical" />
-                    <Button
-                      className={sheetStyles.closeButton}
-                      isIconOnly
-                      icon={<Icons.LargeCross width={14} height={14} />}
-                      disabled={isFormDirty || queryState.isLoading}
-                      onClick={closeDialog}
-                    />
+                    <SheetClose className="relative top-0 right-0">
+                      <Button
+                        className={sheetStyles.closeButton}
+                        isIconOnly
+                        icon={<Icons.LargeCross width={14} height={14} />}
+                        disabled={isFormDirty || queryState.isLoading}
+                        onClick={closeDialog}
+                      />
+                    </SheetClose>
                   </Flex>
                 </Flex>
               )}
@@ -189,13 +192,15 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
               </Flex>
               {!isLargeThenTablet
                 && (
-                  <Button
-                    className={sheetStyles.closeButton}
-                    isIconOnly
-                    icon={<Icons.LargeCross width={14} height={14} />}
-                    disabled={isFormDirty || queryState.isLoading}
-                    onClick={closeDialog}
-                  />
+                  <SheetClose className="relative top-0 right-0">
+                    <Button
+                      className={sheetStyles.closeButton}
+                      isIconOnly
+                      icon={<Icons.LargeCross width={14} height={14} />}
+                      disabled={isFormDirty || queryState.isLoading}
+                      onClick={closeDialog}
+                    />
+                  </SheetClose>
                 )}
             </Flex>
           </SheetHeader>
