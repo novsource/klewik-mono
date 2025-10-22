@@ -3,7 +3,7 @@ import type { AuctionSlot } from '~entities/auction-slot/model'
 
 type EditSlotApiArgs = {
   auctionUUID: string
-  slot: Omit<AuctionSlot, 'color'>
+  slot: Omit<AuctionSlot, 'color' | 'auctionSlotOrder'>
 }
 
 const editSlotApi = splittedAuctionSlotsApi.injectEndpoints({

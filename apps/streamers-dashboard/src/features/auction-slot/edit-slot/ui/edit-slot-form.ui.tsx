@@ -3,25 +3,20 @@ import type { EditSlotFormData } from '../model'
 
 import type { ComponentProps, HTMLAttributes } from 'react'
 
-import type {
-  Control,
-  DefaultValues,
-  UseFormReturn,
-} from 'react-hook-form'
 import {
-  useController,
   useFormState,
-} from 'react-hook-form'
 
-import { SlotPointsFormInput } from '~features/auction-slot/create-slots/ui/form-fields.ui'
+} from 'react-hook-form'
+import type { Control, DefaultValues, UseFormReturn } from 'react-hook-form'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
+import { SlotPointsFormInput, SlotTitleFormInput } from '~entities/auction-slot/ui/form'
 
+import { getErrorMessageForField } from '~shared/lib/react-hook-form'
 import type { AxiosBaseQueryError } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
-import { Input } from '~shared/ui/input'
 
 import { cn } from '~shared/utils'
 
@@ -44,7 +39,7 @@ export const ControlledEditSlotForm = (props: ControlledEditSlotFormProps) => {
       {...formProps}
     >
       <Flex className="w-full gap-y-6" direction="column" align="stretch">
-        <Flex className="w-full" component="ul" direction="column">
+        <Flex className="w-full" as="ul" direction="column">
           <Flex
             className="h-full w-full gap-y-3 overflow-y-scroll p-1"
             direction="column"
@@ -91,7 +86,7 @@ export const EditSlotForm = (props: EditSlotsFormProps) => {
       {...formProps}
     >
       <Flex className="w-full gap-y-6" direction="column" align="stretch">
-        <Flex className="w-full" component="ul" direction="column">
+        <Flex as="ul" className="w-full" direction="column">
           <Flex
             className="h-full w-full gap-y-3 overflow-y-scroll p-1"
             direction="column"
@@ -116,30 +111,20 @@ type EditSlotFormFieldsProps = {
   control: Control<EditSlotFormData, unknown, TransformedEditSlotFormData>
 }
 
-function EditSlotFormFields({ control }: EditSlotFormFieldsProps) {
+function EditSlotFormFields(props: EditSlotFormFieldsProps) {
+  const { control } = props
   const formState = useFormState({ control })
 
-  const { field: slotNameField } = useController({ control, name: 'title' })
-
-  const getErrorMessageForField = (
-    fieldName: keyof EditSlotFormData,
-  ): string | undefined => {
-    if (formState.errors[fieldName]) {
-      return formState.errors[fieldName].message
-    }
-  }
-
   return (
-    <Flex className="gap-y-4">
-      <Input
+    <Flex className="gap-y-4" direction="column">
+      <SlotTitleFormInput
+        control={control}
+        name="title"
         slotClassNames={{
           base: 'font-golos-f w-full basis-1/2 grow',
           description: 'text-wrap',
         }}
-        label={{ id: 'slotTitle', value: 'Новое название' }}
-        placeholder="Название слота"
-        errorMessage={getErrorMessageForField('title')}
-        {...slotNameField}
+        errorMessage={getErrorMessageForField(formState, 'title')}
       />
       <SlotPointsFormInput control={control} name="points" />
     </Flex>

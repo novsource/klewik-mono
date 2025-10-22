@@ -27,7 +27,7 @@ const preventEnterFn = (event: KeyboardEvent<HTMLInputElement>) => {
 export type SlotPointsFormInputProps<
   FormFields extends FieldValues,
   Paths extends FieldPath<FormFields>,
-  TransformedValues extends FormFields,
+  TransformedValues,
 > = {
   containerProps?: FlexProps
   pointsInputProps?: NumberInputProps
@@ -39,7 +39,7 @@ export type SlotPointsFormInputProps<
 export const SlotPointsFormInput = <
   FormFields extends FieldValues,
   Paths extends FieldPath<FormFields>,
-  TransformedValues extends FormFields,
+  TransformedValues,
 >(props: SlotPointsFormInputProps<FormFields, Paths, TransformedValues>) => {
   const {
     control,

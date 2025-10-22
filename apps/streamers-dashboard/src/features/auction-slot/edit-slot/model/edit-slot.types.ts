@@ -1,7 +1,5 @@
-import { z } from 'zod'
+import type { z } from 'zod'
 
-import { EditSlotFormSchema } from './edit-slot.contracts'
+import type { EditSlotFormSchema } from './edit-slot.contracts'
 
-type EditSlotFormData = z.infer<typeof EditSlotFormSchema>
-
-export type { EditSlotFormData }
+export type EditSlotFormData = z.infer<typeof EditSlotFormSchema>

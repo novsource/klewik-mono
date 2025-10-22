@@ -1,16 +1,18 @@
+import type { EditSlotFormData } from '../model'
+
 import { deleteAllSpacesFromString } from '~shared/utils/string-format'
 
-import { EditSlotFormData, EditSlotFormSchema } from '../model'
+import { EditSlotFormSchema } from '../model'
 
-type TransformedEditSlotFormData = Omit<EditSlotFormData, 'points'> & {
+export type TransformedEditSlotFormData = Omit<EditSlotFormData, 'points'> & {
   points: number
 }
 
-const transformEditSlotFormData = () => {
+export const transformEditSlotFormData = () => {
   return EditSlotFormSchema.transform<TransformedEditSlotFormData>((slot) => {
-    return { ...slot, points: Number(deleteAllSpacesFromString(slot.points)) }
+    return {
+      title: slot.title,
+      points: Number(deleteAllSpacesFromString(slot.points)),
+    }
   })
 }
-
-export { transformEditSlotFormData }
-export type { TransformedEditSlotFormData }
