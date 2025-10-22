@@ -1,9 +1,14 @@
-import type { ComponentProps, ReactNode } from 'react'
+import type { ChangeEvent, ComponentProps, ReactNode } from 'react'
 import type { InputProps } from '~ui/input'
+
 import { mergeProps, Autocomplete as PrimitiveAutocomplete } from '@base-ui-components/react'
+
 import { useMemo } from 'react'
 import { Input } from '~ui/input'
+
 import { cn } from '~utils/cn'
+
+import { AutocompleteContextProvider, useAutocompleteContext } from '../context/autocomplete.context'
 import {
 	autocompleteEmptyVariants,
 	autocompleteItemVariants,
@@ -37,16 +42,38 @@ export const AutocompleteItem = (props: AutocompleteItemProps) => {
 
 type AutocompleteEmptyProps = PrimitiveAutocomplete.Empty.Props
 
-export type AutocompleteContentProps = Omit<PrimitiveAutocomplete.Popup.Props, 'children'> & {
+export type AutocompleteContentProps = {
+	children: (tag: AutocompleteTag) => ReactNode | ReactNode[] | ReactNode
+	popupProps?: Omit<PrimitiveAutocomplete.Popup.Props, 'children'>
 	emptyProps?: AutocompleteEmptyProps
 	positionerProps?: PrimitiveAutocomplete.Positioner.Props
-	children: (tag: AutocompleteTag) => ReactNode | ReactNode[] | ReactNode
+	showEmpty?: boolean
 }
 
 export const AutocompleteContent = (props: AutocompleteContentProps) => {
-	const { children, emptyProps, positionerProps, ...restProps } = props
+	const {
+		children,
+		popupProps,
+		emptyProps,
+		positionerProps,
+		showEmpty = true,
+	} = props
 
-	const mergedPopupProps = mergeProps<typeof PrimitiveAutocomplete.Popup>(restProps, {
+	const { query, items } = useAutocompleteContext()
+
+	const { contains } = PrimitiveAutocomplete.useFilter({ sensitivity: 'base' })
+
+	const isShouldRenderPopup = useMemo(() => {
+		if (!query)
+			return false
+
+		return items.some((item) => {
+			const is = contains(item.value, query)
+			return is
+		})
+	}, [items, query])
+
+	const mergedPopupProps = mergeProps<typeof PrimitiveAutocomplete.Popup>(popupProps, {
 		className: autocompletePopupVariants(),
 	})
 	const mergedEmptyProps = mergeProps<typeof PrimitiveAutocomplete.Empty>(emptyProps, {
@@ -56,6 +83,9 @@ export const AutocompleteContent = (props: AutocompleteContentProps) => {
 		className: 'outline-none z-50',
 		sideOffset: 4,
 	})
+
+	if (!isShouldRenderPopup && !showEmpty)
+		return
 
 	return (
 		<PrimitiveAutocomplete.Portal>
@@ -70,23 +100,44 @@ export const AutocompleteContent = (props: AutocompleteContentProps) => {
 				</PrimitiveAutocomplete.Popup>
 			</PrimitiveAutocomplete.Positioner>
 		</PrimitiveAutocomplete.Portal>
+
 	)
 }
 
-export type AutocompleteInputProps = InputProps & {
+export type AutocompleteInputProps = Omit<InputProps, 'ref'> & {
 	autocompleteProps?: Omit<PrimitiveAutocomplete.Input.Props, 'render'>
 }
 
 export const AutocompleteInput = (props: AutocompleteInputProps) => {
-	const { autocompleteProps, ...restProps } = props
+	const { autocompleteProps, value, ...restProps } = props
 
-	return <PrimitiveAutocomplete.Input render={<Input {...restProps} />} {...autocompleteProps} />
+	const { setQuery } = useAutocompleteContext()
+
+	const handleOnInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+		const value = event.target.value
+		setQuery(value)
+	}
+
+	const mergedInputProps = mergeProps<typeof Input>(restProps, {
+		onChange: handleOnInputChange,
+	})
+
+	return (
+		<PrimitiveAutocomplete.Input
+			render={<Input {...mergedInputProps} />}
+			{...autocompleteProps}
+		/>
+	)
 }
 
 export type AutocompleteProps = Omit<PrimitiveAutocomplete.Root.Props<AutocompleteTag>, 'items'> & {
-	items: readonly AutocompleteTag[]
+	items: AutocompleteTag[]
 }
 
 export const Autocomplete = (props: AutocompleteProps) => {
-	return <PrimitiveAutocomplete.Root {...props} />
+	return (
+		<AutocompleteContextProvider items={props.items}>
+			<PrimitiveAutocomplete.Root {...props} />
+		</AutocompleteContextProvider>
+	)
 }
