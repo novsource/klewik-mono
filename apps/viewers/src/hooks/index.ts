@@ -8,3 +8,4 @@ export * from './use-media-query/use-media-query'
 export * from './use-ref-state/use-ref-state'
 export * from './use-timer/use-timer'
 export * from './use-window-scroll/use-window-scroll'
+export * from './use-copy/use-copy';
