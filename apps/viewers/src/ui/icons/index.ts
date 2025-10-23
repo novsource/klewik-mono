@@ -1,3 +1,4 @@
+import Copy from './copy.icon'
 import Crown from './crown.icon'
 import DonationAlertsLogo from './donalerts-logo.icon'
 import GithubLogo from './github-logo.icon'
@@ -14,6 +15,7 @@ import TwitchLogo from './twitch-logo.icon'
 import YoutubeLogo from './youtube-logo.icon'
 
 export const Icons = {
+	Copy,
 	Loading,
 	LargeCross,
 	Id,
