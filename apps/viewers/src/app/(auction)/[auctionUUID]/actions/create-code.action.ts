@@ -1,5 +1,6 @@
 'use server'
 
+import type { CreateCodeFormState } from '../components/create-code-dialog'
 import process from 'node:process'
 
 type CreateCodeActionPayload = {
@@ -8,7 +9,7 @@ type CreateCodeActionPayload = {
 	formData: FormData
 }
 
-export const createCodeAction = async (payload: CreateCodeActionPayload) => {
+export async function createDonationCodeAction(payload: CreateCodeActionPayload): Promise<CreateCodeFormState> {
 	const { auctionUUID, formData } = payload
 
 	const slotTitle = formData.get('title')
@@ -20,16 +21,43 @@ export const createCodeAction = async (payload: CreateCodeActionPayload) => {
 		title: slotTitle.toString(),
 	}
 
-	const headers = new Headers()
+	try {
+		const headers = new Headers()
+		headers.set('Content-Type', 'application/json')
 
-	headers.set('Content-Type', 'application/json')
-	const createCodeResponse = await fetch(`${process.env.SERVER_API_URL}/auctions/${auctionUUID}/donations/code`, {
-		headers,
-		method: 'POST',
-		body: JSON.stringify({ ...rawFormData, secret: process.env.REVALIDATE_SECRET_KEY }),
-	})
+		const createCodeResponse = await fetch(
+			`${process.env.SERVER_API_URL}/auctions/${auctionUUID}/donations/code`,
+			{
+				headers,
+				method: 'POST',
+				body: JSON.stringify({
+					...rawFormData,
+					secret: process.env.REVALIDATE_SECRET_KEY,
+				}),
+			},
+		)
 
-	const donationCode = await createCodeResponse.json()
+		if (!createCodeResponse.ok) {
+			throw new Error(`HTTP error! status: ${createCodeResponse.status}`)
+		}
 
-	return { errorTitleLength: '', code: donationCode.code }
+		const donationCode = await createCodeResponse.json() as DonationCode
+
+		return {
+			errorTitleLength: '',
+			code: donationCode.code,
+		}
+	}
+	catch (error) {
+		if (error instanceof Error) {
+			return {
+				errorTitleLength: `Произошла ошибка при создании кода: ${error.message}`,
+			}
+		}
+		else {
+			return {
+				errorTitleLength: `Произошла неизвестная ошибка при создании кода`,
+			}
+		}
+	}
 }

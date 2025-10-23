@@ -2,8 +2,9 @@
 
 import type { ComponentProps } from 'react'
 import type { AutocompleteTag } from '~ui/autocomplete'
+import type { ButtonProps } from '~ui/button'
 import { useActionState, useMemo, useState } from 'react'
-import { useDidUpdate, useMediaQuery } from '~hooks/index'
+import { useCopy, useDidUpdate, useMediaQuery } from '~hooks/index'
 import {
 	Autocomplete,
 	AutocompleteContent,
@@ -25,8 +26,9 @@ import { Flex } from '~ui/flex'
 import { Icons } from '~ui/icons'
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '~ui/sheet'
 import { Typography } from '~ui/typography'
+import { cn } from '~utils/cn'
 import { greaterThenDeviceWidthMediaQueries } from '~/constants'
-import { createCodeAction } from '../../actions'
+import { createDonationCodeAction } from '../../actions'
 import { useCreateCodeContext } from '../../context'
 
 export type CreateCodeDialogProps = {
@@ -41,22 +43,71 @@ const convertSlotsToTags = (slots: AuctionSlot[]) => {
 export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
 	const { slots, auctionUUID } = props
 
-	const { selectedSlot, setSelectedSlot } = useCreateCodeContext()
+	const {
+		state: { isDialogOpen, isPending, code, selectedSlot },
+		dispatch: { setSelectedSlot, setIsDialogOpen, setCode },
+	} = useCreateCodeContext()
 
-	const [isDialogOpen, setIsDialogOpen] = useState(!!selectedSlot)
+	const { copied, copy } = useCopy()
 
 	const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
-	useDidUpdate(() => {
-		const isShouldOpenDialog = !!selectedSlot
+	const dialogContent = useMemo(() => {
+		return (
+			<CreateCodeForm
+				className="w-full"
+				auctionUUID={auctionUUID}
+				slots={slots}
+				selectedSlot={selectedSlot}
+			/>
+		)
+	}, [auctionUUID, selectedSlot, slots])
 
-		if (isShouldOpenDialog && !isDialogOpen)
-			setIsDialogOpen(true)
+	const closeDialog = () => {
+		setIsDialogOpen(false)
+		setCode('')
+	}
 
-		if (!isShouldOpenDialog && !selectedSlot) {
-			setIsDialogOpen(false)
+	const isCodeCreated = code.length !== 0
+
+	const dialogFooter = useMemo(() => {
+		if (isCodeCreated) {
+			return (
+				<Flex
+					className={cn('gap-x-2.5 max-tablet:flex-col-reverse max-tablet:gap-y-2.5')}
+					direction={isLargeThenTablet ? 'row' : 'column'}
+				>
+					<Button onClick={closeDialog}>
+						Закрыть
+					</Button>
+					<Button
+						startContent={<Icons.Copy size="sm" />}
+						variant="action"
+						onClick={() => copy(`[#${code}]`)}
+					>
+						{copied ? 'Код успешно скопирован!' : 'Скопировать код для вставки'}
+					</Button>
+				</Flex>
+			)
 		}
-	}, [selectedSlot])
+		return (
+			<Flex
+				className={cn('gap-x-2.5 max-tablet:flex-col-reverse max-tablet:gap-y-2.5')}
+				direction={isLargeThenTablet ? 'row' : 'column'}
+			>
+				<Button onClick={closeDialog}>
+					Отмена
+				</Button>
+				<Button
+					type="submit"
+					form="createCodeForm"
+					variant="action"
+				>
+					Создать донат-код
+				</Button>
+			</Flex>
+		)
+	}, [isLargeThenTablet, isCodeCreated, copied])
 
 	const handleOnOpenChange = (open: boolean) => {
 		const isClosedManually = !open
@@ -72,56 +123,42 @@ export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
 		}
 	}
 
-	const closeDialog = () => setIsDialogOpen(false)
+	const isDialogDismissible = !isPending || isCodeCreated
 
 	if (isLargeThenTablet) {
 		return (
-			<Dialog open={isDialogOpen} onOpenChange={handleOnOpenChange}>
-				<DialogTrigger
-					render={(
-						<Button
-							variant="action"
-							startContent={<Icons.Plus />}
-						>
-							Создать код
-						</Button>
+			<Dialog open={isDialogOpen} onOpenChange={handleOnOpenChange} dismissible={isDialogDismissible}>
+				<DialogTrigger render={(<CreateCodeDialogTrigger onClick={() => setIsDialogOpen(true)} />)} />
+				<DialogContent className="w-2/5 desktop:max-w-[450px] h-fit min-h-60 border-dark-light rounded-[24px] bg-dark-foreground-light px-4 py-0 overflow-clip transition-[height]">
+					{isPending && (
+						<Flex className="absolute w-full h-full text-dark z-10 bg-inherit" align="center" justify="center">
+							<Icons.Loading width={34} height={34} />
+						</Flex>
 					)}
-				/>
-				<DialogContent className="w-2/5 desktop:max-w-[450px] h-fit border-dark-light rounded-[24px] bg-dark-foreground-light px-4 py-0 overflow-clip">
+
 					<DialogHeader className="w-full h-fit flex flex-row justify-between shrink py-4 items-start">
 						<Flex className="justify-start" direction="column">
 							<DialogTitle className="text-title-lg font-semibold text-start">
-								Создание донат-кода
+								{isCodeCreated ? 'Донат-код успешно создан!' : 'Создание донат-кода'}
 							</DialogTitle>
 							<DialogDescription className="text-md text-gray-light">
-								Заполните поле снизу для создание донат-кода
+								{isCodeCreated ? 'Не забудьте скопировать код для вставки в сообщение' : 'Заполните поле снизу для создание донат-кода'}
 							</DialogDescription>
 						</Flex>
-						<DialogClose className="text-gray-light hover:text-gray-accent cursor-pointer">
+						<DialogClose
+							className="text-gray-light hover:text-gray-accent cursor-pointer"
+							onClick={() => {
+								setCode('')
+							}}
+						>
 							<Icons.LargeCross size="lg" />
 						</DialogClose>
 					</DialogHeader>
 					<Flex className="h-full grow">
-						<CreateCodeForm
-							className="w-full"
-							auctionUUID={auctionUUID}
-							slots={slots}
-							selectedSlot={selectedSlot}
-						/>
+						{dialogContent}
 					</Flex>
 					<DialogFooter className="flex-row h-fit py-4 gap-x-4 justify-end">
-						<Button
-							onClick={closeDialog}
-						>
-							Отмена
-						</Button>
-						<Button
-							type="submit"
-							form="createCodeForm"
-							variant="action"
-						>
-							Создать донат-код
-						</Button>
+						{dialogFooter}
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
@@ -129,56 +166,39 @@ export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
 	}
 
 	return (
-		<Sheet open={isDialogOpen} onOpenChange={handleOnOpenChange}>
-			<SheetTrigger
-				render={(
-					<Button
-						variant="action"
-						startContent={<Icons.Plus />}
-						size="sm"
-					>
-						Создать код
-					</Button>
+		<Sheet open={isDialogOpen} onOpenChange={handleOnOpenChange} dismissible={isDialogDismissible}>
+			<SheetTrigger render={(<CreateCodeDialogTrigger onClick={() => setIsDialogOpen(true)} />)} />
+			<SheetContent
+				className="w-full h-fit min-h-60 top-auto rounded-t-large border-t-1 border-t-dark-light gap-y-1.5"
+				side="bottom"
+				isFullPageSize
+			>
+				{isPending && (
+					<Flex className="absolute w-full h-full text-dark z-10 bg-inherit" align="center" justify="center">
+						<Icons.Loading width={34} height={34} />
+					</Flex>
 				)}
-			/>
-			<SheetContent className="w-full h-fit top-auto rounded-t-large border-t-1 border-t-dark-light gap-y-1.5" side="bottom" isFullPageSize>
 				<SheetHeader className="w-full h-fit flex flex-row justify-between shrink pt-2 items-start mb-2.5">
 					<Flex className="justify-start" direction="column">
 						<SheetTitle className="text-title font-semibold text-start">
-							Создание донат-кода
+							{isCodeCreated ? 'Донат-код успешно создан!' : 'Создание донат-кода'}
 						</SheetTitle>
 						<SheetDescription className="text-sm text-gray-light">
-							Заполните поле снизу для создание донат-кода
+							{isCodeCreated ? 'Не забудьте скопировать код для вставки в сообщение' : 'Заполните поле снизу для создание донат-кода'}
 						</SheetDescription>
 					</Flex>
-					<SheetClose className="text-gray-light hover:text-gray-accent">
+					<SheetClose
+						className="text-gray-light hover:text-gray-accent"
+						onClick={() => {
+							setCode('')
+						}}
+					>
 						<Icons.LargeCross />
 					</SheetClose>
 				</SheetHeader>
-				<CreateCodeForm
-					className="w-full mb-6"
-					auctionUUID={auctionUUID}
-					slots={slots}
-					selectedSlot={selectedSlot}
-				/>
-
-				<Flex className="gap-y-2" direction="column">
-					<Button
-						type="submit"
-						form="createCodeForm"
-						className="w-full"
-						variant="action"
-						size="sm"
-					>
-						Создать донат-код
-					</Button>
-					<Button
-						className="w-full"
-						size="sm"
-						onClick={closeDialog}
-					>
-						Отмена
-					</Button>
+				{dialogContent}
+				<Flex className="gap-y-2 mt-4" direction="column">
+					{dialogFooter}
 				</Flex>
 			</SheetContent>
 		</Sheet>
@@ -189,32 +209,52 @@ type CreateCodeFormProps = ComponentProps<'form'> & {
 	auctionUUID: string
 	slots: AuctionSlot[]
 	selectedSlot?: AuctionSlot | null
+	onSuccess?: (code: string) => void
+	onError?: () => void
 }
 
-type CreateCodeFormState = {
+export type CreateCodeFormState = {
 	errorTitleLength: string
+	code?: string
 }
 
 function CreateCodeForm(props: CreateCodeFormProps) {
-	const { auctionUUID, selectedSlot, slots, ...restProps } = props
+	const { auctionUUID, selectedSlot, slots, onSuccess, onError, ...restProps } = props
 
 	const [inputValue, setInputValue] = useState(selectedSlot?.title ?? '')
 	const [titleLength, setTitleLength] = useState(selectedSlot?.title.length ?? 0)
 
 	const [state, formAction, isPending] = useActionState<CreateCodeFormState, FormData>(
-		(state, formData) => createCodeAction({ auctionUUID, formData, formState: state }),
+		(state, formData) => createDonationCodeAction({ auctionUUID, formData, formState: state }),
 		{
 			errorTitleLength: '',
 		},
 	)
 
+	const {
+		state: { isPending: contextIsPending },
+		dispatch: { setCode, setIsPending },
+	} = useCreateCodeContext()
+
+	useDidUpdate(() => {
+		if (contextIsPending !== isPending) {
+			setIsPending(isPending)
+		}
+	}, [isPending])
+
+	useDidUpdate(() => {
+		if (state.code) {
+			setCode(state.code)
+		}
+	}, [state.code])
+
 	const autocompleteTags = useMemo(() => convertSlotsToTags(slots), [slots])
 
 	const handleAutocompleteValueChanges = (value: string) => {
-		const isValueLargeThenLimit = value.length > 30
+		const isValueLargeThenLimit = value.length > 35
 
 		if (isValueLargeThenLimit) {
-			setInputValue(value.slice(0, 30))
+			setInputValue(value.slice(0, 35))
 			setTitleLength(30)
 		}
 		else {
@@ -223,37 +263,65 @@ function CreateCodeForm(props: CreateCodeFormProps) {
 		}
 	}
 
+	const isCodeCreated = state.code
+
 	return (
 		<form id="createCodeForm" action={formAction} {...restProps}>
-			<Autocomplete
-				alwaysSubmitOnEnter
-				autoHighlight
-				defaultValue={inputValue}
-				value={inputValue}
-				items={autocompleteTags}
-				onValueChange={handleAutocompleteValueChanges}
-			>
-				<AutocompleteInput
-					name="title"
-					slotClassNames={{ base: 'w-full' }}
-					label={{
-						id: 'slotTitle',
-						value: 'Название слота',
-					}}
-					errorMessage={state.errorTitleLength}
-					endContent={(
-						<Typography className="text-gray-light text-sm tablet:text-md" tag="span">
-							{`${titleLength}/30`}
-						</Typography>
-					)}
-				/>
-				<AutocompleteContent
-					positionerProps={{ sideOffset: 12 }}
-					showEmpty={false}
+			{!isCodeCreated && (
+				<Autocomplete
+					alwaysSubmitOnEnter
+					autoHighlight
+					defaultValue={inputValue}
+					value={inputValue}
+					items={autocompleteTags}
+					onValueChange={handleAutocompleteValueChanges}
 				>
-					{tag => <AutocompleteItem key={tag.id} tag={tag} />}
-				</AutocompleteContent>
-			</Autocomplete>
+					<AutocompleteInput
+						name="title"
+						slotClassNames={{ base: 'w-full' }}
+						disabled={isPending}
+						label={{
+							id: 'slotTitle',
+							value: 'Название слота',
+						}}
+						placeholder="Введите название слота"
+						errorMessage={state.errorTitleLength}
+						endContent={(
+							<Typography className="text-gray-light text-sm tablet:text-md" tag="span">
+								{`${titleLength}/35`}
+							</Typography>
+						)}
+					/>
+					<AutocompleteContent
+						positionerProps={{ sideOffset: 12 }}
+						showEmpty={false}
+					>
+						{tag => <AutocompleteItem key={tag.id} tag={tag} />}
+					</AutocompleteContent>
+				</Autocomplete>
+			)}
+			{isCodeCreated
+				&& (
+					<Flex className="h-full w-full" justify="center">
+						<Typography className="text-white/80 text-title-xl" tag="span">
+							{`#${state.code}`}
+						</Typography>
+					</Flex>
+				)}
 		</form>
+	)
+}
+
+type CreateCodeDialogTriggerProps = ButtonProps
+
+function CreateCodeDialogTrigger(props: CreateCodeDialogTriggerProps) {
+	return (
+		<Button
+			variant="action"
+			startContent={<Icons.Plus />}
+			{...props}
+		>
+			Создать код
+		</Button>
 	)
 }

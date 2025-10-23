@@ -5,7 +5,7 @@ import type { ButtonProps } from '~ui/button'
 import type {
 	BaseAuctionSlotCardProps,
 } from '../slot-card'
-import { memo, useEffect, useRef, useState, useTransition } from 'react'
+import { memo, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { Button } from '~ui/button'
 import { Flex } from '~ui/flex'
 import { Icons } from '~ui/icons'
@@ -18,11 +18,12 @@ import {
 
 type AuctionSlotCardProps = BaseAuctionSlotCardProps & {
 	auctionSlot: AuctionSlot
+	winPercent: number
 	triggerProps?: ButtonProps
 }
 
 const AuctionSlotCard = memo((props: AuctionSlotCardProps) => {
-	const { auctionSlot, triggerProps, className, ...restProps } = props
+	const { auctionSlot, triggerProps, className, winPercent, ...restProps } = props
 
 	return (
 		<BaseAuctionSlotCard className={cn('flex-row items-end', className)} {...restProps}>
@@ -32,7 +33,7 @@ const AuctionSlotCard = memo((props: AuctionSlotCardProps) => {
 					slotTitle={auctionSlot.title}
 					slotId={auctionSlot.auctionSlotOrder}
 				/>
-				<SolidAuctionSlotContent auctionSlot={auctionSlot} winPercents={10} />
+				<SolidAuctionSlotContent auctionSlot={auctionSlot} winPercents={winPercent} />
 			</Flex>
 			<Button
 				variant="action"
@@ -68,6 +69,10 @@ export const SlotsList = memo((props: SlotsListProps) => {
 			.toLowerCase()
 			.includes(filterTitle.toLowerCase()))
 	})
+
+	const pointsSum = useMemo(() => {
+		return showedSlots.reduce((sum, slot) => sum + slot.points, 0)
+	}, [showedSlots])
 
 	const [isPending, startTransition] = useTransition()
 
@@ -105,16 +110,20 @@ export const SlotsList = memo((props: SlotsListProps) => {
 			)}
 			{...restProps}
 		>
-			{showedSlots.map((slot, index) => (
-				<li key={slot.id + index}>
-					<AuctionSlotCard
-						auctionSlot={slot}
-						triggerProps={{
-							onClick: () => setSlot(slot),
-						}}
-					/>
-				</li>
-			))}
+			{showedSlots.map((slot) => {
+				const winPercent = (slot.points / pointsSum) * 100
+				return (
+					<li key={slot.title}>
+						<AuctionSlotCard
+							auctionSlot={slot}
+							winPercent={winPercent}
+							triggerProps={{
+								onClick: () => setSlot(slot),
+							}}
+						/>
+					</li>
+				)
+			})}
 		</Flex>
 	)
 })

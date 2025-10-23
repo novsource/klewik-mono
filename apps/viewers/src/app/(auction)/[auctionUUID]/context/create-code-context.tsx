@@ -4,15 +4,37 @@ import type { Dispatch, ReactNode, SetStateAction } from 'react'
 import { createContext, use, useMemo, useState } from 'react'
 
 type CreateCodeContextState = {
-	selectedSlot: AuctionSlot | null
-	setSelectedSlot: Dispatch<SetStateAction<AuctionSlot | null>>
-	code: ''
+	state: {
+		isPending: boolean
+		isError: boolean
+		isDialogOpen: boolean
+		selectedSlot: AuctionSlot | null
+		code: string
+	}
+	dispatch: {
+		setIsDialogOpen: Dispatch<SetStateAction<boolean>>
+		setSelectedSlot: Dispatch<SetStateAction<AuctionSlot | null>>
+		setCode: Dispatch<SetStateAction<string>>
+		setIsPending: Dispatch<SetStateAction<boolean>>
+		setIsError: Dispatch<SetStateAction<boolean>>
+	}
 }
 
 const CreateCodeContext = createContext<CreateCodeContextState>({
-	selectedSlot: null,
-	setSelectedSlot: _ => ({}),
-	code: '',
+	state: {
+		isError: false,
+		isPending: false,
+		selectedSlot: null,
+		code: '',
+		isDialogOpen: false,
+	},
+	dispatch: {
+		setIsDialogOpen: () => ({}),
+		setCode: () => ({}),
+		setIsError: () => ({}),
+		setIsPending: () => ({}),
+		setSelectedSlot: () => ({}),
+	},
 })
 
 export const useCreateCodeContext = () => {
@@ -31,14 +53,28 @@ type CreateCodeContextProviderProps = {
 export const CreateCodeContextProvider = (props: CreateCodeContextProviderProps) => {
 	const { children } = props
 
-	const [selectedSlot, setSelectedSlot] = useState<CreateCodeContextState['selectedSlot']>(null)
-	const [code, setCode] = useState<CreateCodeContextState['code']>('')
+	const [isDialogOpen, setIsDialogOpen] = useState(false)
+	const [isPending, setIsPending] = useState(false)
+	const [isError, setIsError] = useState(false)
+	const [selectedSlot, setSelectedSlot] = useState<AuctionSlot | null>(null)
+	const [code, setCode] = useState<string>('')
 
 	const contextValue = useMemo<CreateCodeContextState>(() => ({
-		code,
-		selectedSlot,
-		setSelectedSlot,
-	}), [selectedSlot, code])
+		state: {
+			isError,
+			isPending,
+			isDialogOpen,
+			code,
+			selectedSlot,
+		},
+		dispatch: {
+			setIsDialogOpen,
+			setCode,
+			setIsError,
+			setIsPending,
+			setSelectedSlot,
+		},
+	}), [selectedSlot, code, isError, isPending, isDialogOpen])
 
 	return <CreateCodeContext value={contextValue}>{children}</CreateCodeContext>
 }

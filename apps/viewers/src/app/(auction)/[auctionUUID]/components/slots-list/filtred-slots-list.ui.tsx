@@ -16,11 +16,7 @@ export const FiltredSlotsList = memo((
 	const { slots } = props
 
 	const { inputRef, setSearchText, searchText } = useSearchContext()
-	const { setSelectedSlot } = useCreateCodeContext()
-
-	const showedSlots = useMemo(() =>
-		Array.from({ length: 300 })
-			.fill(slots[0]) as AuctionSlot[], [slots])
+	const { dispatch: { setSelectedSlot, setIsDialogOpen } } = useCreateCodeContext()
 
 	const searchInput = useMemo(() => {
 		return (
@@ -31,15 +27,20 @@ export const FiltredSlotsList = memo((
 		)
 	}, [inputRef, setSearchText])
 
+	const handleSelectSlot = (slot: AuctionSlot) => {
+		setSelectedSlot(slot)
+		setIsDialogOpen(true)
+	}
+
 	return (
 		<div className="flex h-full flex-col gap-y-4 px-0.5 mb-4">
 			<div className="flex w-full justify-between max-tablet:flex-col max-tablet:gap-y-1">
 				{searchInput}
 			</div>
 			<SlotsList
-				slots={showedSlots}
+				slots={slots}
 				filterTitle={searchText}
-				setSlot={setSelectedSlot}
+				setSlot={handleSelectSlot}
 			/>
 		</div>
 	)
