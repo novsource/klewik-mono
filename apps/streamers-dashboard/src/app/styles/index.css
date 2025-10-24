@@ -13,8 +13,7 @@
     font-family: "Breeze Sans";
     font-weight: 400;
     font-style: normal;
-    src: url("../../shared/assets/fonts/BreezeSans-Regular.woff2")
-        format("woff2");
+    src: url("../../shared/assets/fonts/BreezeSans-Regular.woff2") format("woff2");
 }
 
 @font-face {
@@ -35,8 +34,7 @@
     font-family: "Breeze Sans";
     font-weight: 500;
     font-style: normal;
-    src: url("../../shared/assets/fonts/BreezeSans-Medium.woff2")
-        format("woff2");
+    src: url("../../shared/assets/fonts/BreezeSans-Medium.woff2") format("woff2");
 }
 
 @variant dark (&:where(.dark, .dark *));
@@ -127,7 +125,7 @@
     --grid-template-rows-dashboard-mobile: max-content 1fr;
     --grid-template-rows-dashboard-desktop: max-content 1fr;
 
-    --grid-template-rows-slots-desktop: max-content 1fr;
+    --grid-template-rows-slots-desktop: max-content max-content 1fr;
     --grid-template-rows-slots-table: max-content 1fr;
     --grid-template-rows-slider: max-content 1fr max-content;
     --spacing-4xl: 1.5rem;
@@ -140,13 +138,16 @@
     --tabs-inner-padding: var(--tabs-inner-padding);
 
     @keyframes horizontal-shaking {
+
         0%,
         100% {
             transform: translateX(0);
         }
+
         50% {
             transform: translateX(-2px);
         }
+
         25%,
         75% {
             transform: translateX(2px);
@@ -154,18 +155,22 @@
     }
 
     @keyframes fadeChange {
+
         0%,
         100% {
             opacity: 1;
         }
+
         50% {
             opacity: 0;
         }
     }
+
     @keyframes fadeIn {
         0% {
             opacity: 0;
         }
+
         100% {
             opacity: 1;
         }
@@ -175,6 +180,7 @@
         from {
             height: 0;
         }
+
         to {
             height: var(--radix-accordion-content-height);
         }
@@ -184,6 +190,7 @@
         from {
             height: var(--radix-accordion-content-height);
         }
+
         to {
             height: 0;
         }
@@ -193,34 +200,22 @@
 @keyframes sheet-open {
     0% {
         opacity: var(--sheet-enter-opacity, 0);
-        transform: translate3d(
-                var(--sheet-enter-translate-x, 0),
+        transform: translate3d(var(--sheet-enter-translate-x, 0),
                 var(--sheet-enter-translate-y, 0),
-                0
-            )
-            scale3d(
+                0) scale3d(var(--sheet-enter-scale, 1),
                 var(--sheet-enter-scale, 1),
-                var(--sheet-enter-scale, 1),
-                var(--sheet-enter-scale, 1)
-            )
-            rotate(var(--sheet-enter-rotate, 0));
+                var(--sheet-enter-scale, 1)) rotate(var(--sheet-enter-rotate, 0));
     }
 }
 
 @keyframes sheet-exit {
     100% {
         opacity: var(--sheet-exit-opacity, 1);
-        transform: translate3d(
-                var(--sheet-exit-translate-x, 0),
+        transform: translate3d(var(--sheet-exit-translate-x, 0),
                 var(--sheet-exit-translate-y, 0),
-                0
-            )
-            scale3d(
+                0) scale3d(var(--sheet-exit-scale, 1),
                 var(--sheet-exit-scale, 1),
-                var(--sheet-exit-scale, 1),
-                var(--sheet-exit-scale, 1)
-            )
-            rotate(var(--sheet-exit-rotate, 0));
+                var(--sheet-exit-scale, 1)) rotate(var(--sheet-exit-rotate, 0));
     }
 }
 
@@ -294,9 +289,7 @@
         --height-search-dialog-header: 200px;
         --height-search-dialog-footer: 40px;
 
-        --height-search-dialog-content: calc(
-            100% - var(--height-search-dialog-header)
-        );
+        --height-search-dialog-content: calc(100% - var(--height-search-dialog-header));
 
         --dialog-width-desktop: 550px;
         --dialog-width-laptop: 500px;
@@ -397,7 +390,7 @@
         animation-name: onAutoFillCancel;
     }
 
-    section > header {
+    section>header {
         height: auto;
     }
 
@@ -449,7 +442,7 @@
         border-bottom: 3px dotted var(--color-dark-accent);
     }
 
-    @container slider (300px <= height <= 768px) {
+    @container slider (300px <=height <=768px) {
         .slider-content {
             flex-basis: 70%;
         }
@@ -461,7 +454,7 @@
         }
     }
 
-    @container slider (height >= 1080px) {
+    @container slider (height >=1080px) {
         .slider-content {
             flex-basis: 50%;
         }
@@ -486,11 +479,9 @@
     }
 
     .pencil-icon-gradient {
-        background: linear-gradient(
-            to left,
-            rgba(255, 249, 168, 0.3),
-            rgba(249, 139, 133, 0.3)
-        );
+        background: linear-gradient(to left,
+                rgba(255, 249, 168, 0.3),
+                rgba(249, 139, 133, 0.3));
     }
 
     .tabs-runner-shadow {

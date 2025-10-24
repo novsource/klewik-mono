@@ -9,6 +9,6 @@ export const auctionSlotsPageStyles: SlotsStyles<AuctionSlotsPageStylesSlots> = 
     'desktop:max-w-[1750px] desktop-lg:max-w-[2100px]',
     'landtop:max-w-[1600px]',
   ],
-  contentWrapper: /* tw */ 'gap-x-4 pt-1',
+  contentWrapper: /* tw */ 'gap-x-4 pt-6 tablet:pt-1',
   actionPanel: /* tw */ 'tablet:gap-x-2 w-full',
 }

@@ -1,49 +1,78 @@
-import { ReactNode, memo } from 'react'
+import { memo } from 'react'
+
+import NumberFlow from '@number-flow/react'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { useMediaQuery } from '~shared/hooks'
+
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Card, CardContent, CardHeader, CardTitle } from '~shared/ui/card'
+import type { FlexProps } from '~shared/ui/flex'
+import { Flex } from '~shared/ui/flex'
+import { Icons } from '~shared/ui/icons'
 
-type SlotsStatisticsCardProps = {
-  title: string | number
-  children: ReactNode
-}
+import { cn } from '~shared/utils'
 
-const SlotsStatisticsCard = ({ title, children }: SlotsStatisticsCardProps) => {
-  return (
-    <Card size="sm" className="rounded-medium">
-      <CardHeader>
-        <CardTitle className="text-sm text-gray-light">{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="pt-1 text-gray-accent font-medium font-golos-f">
-        {children}
-      </CardContent>
-    </Card>
-  )
-}
+export type SlotsCountStatisticCardProps = FlexProps
 
-const SlotsCountStatisticCard = memo(() => {
+export const SlotsCountStatisticCard = memo((props: SlotsCountStatisticCardProps) => {
+  const { className, ...restProps } = props
+
   const storedSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
+  const isLargeThenMobile = useMediaQuery(greaterThenDeviceWidthMediaQueries.mobile)
+
   return (
-    <SlotsStatisticsCard title="Количество слотов">
-      {storedSlots.length}
-    </SlotsStatisticsCard>
+    <Flex
+      className={cn(
+        'h-9 gap-x-1.5 rounded-md bg-dark px-2 mobile:px-2.5 py-1.5 text-md leading-5 font-semibold text-gray-accent text-nowrap',
+        className,
+      )}
+      align="center"
+      justify="center"
+      {...restProps}
+    >
+      <Icons.Slots width={isLargeThenMobile ? 18 : 14} height={isLargeThenMobile ? 18 : 14} />
+      <NumberFlow
+        className="font-azeret-mono font-medium tracking-tight text-sm mobile:text-md"
+        willChange
+        value={storedSlots.length}
+      />
+    </Flex>
   )
 })
 
-const SlotsPointsSumStatisticCard = memo(() => {
+export type SlotsPointsSumStatisticCardProps = FlexProps
+
+export const SlotsPointsSumStatisticCard = memo((props: SlotsPointsSumStatisticCardProps) => {
+  const { className, ...restProps } = props
+
   const storedSlotsPointsSum = useStoreSelector(
-    auctionSlotsSelectors.getSlotsPointsSum
+    auctionSlotsSelectors.getSlotsPointsSum,
   )
+
+  const isLargeThenMobile = useMediaQuery(greaterThenDeviceWidthMediaQueries.mobile)
 
   return (
-    <SlotsStatisticsCard title={'Общая сумма очков слотов'}>
-      {new Intl.NumberFormat('ru-RU').format(storedSlotsPointsSum)}
-    </SlotsStatisticsCard>
+    <Flex
+      className={cn(
+        'h-9 gap-x-1.5 rounded-md bg-dark px-2 mobile:px-2.5 py-1.5 text-md leading-5 font-semibold text-gray-accent text-nowrap',
+        className,
+      )}
+      align="center"
+      justify="center"
+      {...restProps}
+    >
+      <Icons.PointsSum width={isLargeThenMobile ? 21 : 16} height={isLargeThenMobile ? 21 : 16} />
+      <NumberFlow
+        className="font-azeret-mono font-medium tracking-tight text-sm mobile:text-md"
+        willChange
+        value={storedSlotsPointsSum}
+        locales="ru-RU"
+      />
+    </Flex>
   )
 })
-
-export { SlotsPointsSumStatisticCard, SlotsCountStatisticCard }

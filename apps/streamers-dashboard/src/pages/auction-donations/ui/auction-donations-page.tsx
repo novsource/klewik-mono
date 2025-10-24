@@ -1,14 +1,19 @@
 import { useState } from 'react'
 
+import { DonationsStats } from '~widgets/dashboard-header/ui/donations-stats'
+
 import type { ProcessedDonationStatus } from '~entities/donation/model'
 import { donationsSelectors } from '~entities/donation/store'
 
-import { useDidUpdate } from '~shared/hooks'
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { useDidUpdate, useMediaQuery } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { sseSelectors } from '~shared/store/slices'
 
+import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { toastErrorNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
@@ -31,6 +36,8 @@ export const AuctionDonationsPage = () => {
     status: donationsFilterValue,
   })
 
+  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+
   useDidUpdate(() => {
     if (!isDonationsSSEEventConnected) {
       toastErrorNotification('Auction slots not connected!!!')
@@ -49,24 +56,33 @@ export const AuctionDonationsPage = () => {
       ])}
     >
       <Flex
-        className="w-full gap-x-4 pt-1"
+        className="w-full gap-x-4 pt-6 tablet:pt-1"
         wrap="nowrap"
         align="center"
         justify="between"
       >
-        <Typography
-          className="tablet:text-title-xl"
-          tag="h1"
-        >
+        <Typography className="tablet:text-title-xl" tag="h1">
           Пожертвования
         </Typography>
-        <DonationsFilterSelect
-          status={donationsFilterValue}
-          onValueChange={(status: ProcessedDonationStatus) =>
-            setDonationsFilterValue(status)}
-        />
+        {isLargeThenTablet && (
+          <DonationsFilterSelect
+            status={donationsFilterValue}
+            onValueChange={(status: ProcessedDonationStatus) =>
+              setDonationsFilterValue(status)}
+          />
+        )}
       </Flex>
-
+      {!isLargeThenTablet && (
+        <Flex className="w-full mt-3.5" justify="between">
+          <DonationsStats />
+          <DonationsFilterSelect
+            status={donationsFilterValue}
+            onValueChange={(status: ProcessedDonationStatus) =>
+              setDonationsFilterValue(status)}
+          />
+        </Flex>
+      )}
+      <Divider className="border-gray/10 mt-1.5 mb-3" />
       <AuctionDonationsInfiniteList data={filtredDonations} filterStatus={donationsFilterValue} />
     </div>
   )
