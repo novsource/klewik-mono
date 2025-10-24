@@ -16,7 +16,7 @@ const RadioGroup = (props: RadioGroupProps) => {
 }
 
 export type RadioProps = Omit<RadioPrimitive.Root.Props, 'className'> & RadioVariantsProps & {
-  slotsClassnames?: Record<'label' | 'root' | 'indicator', string>
+  slotsClassnames?: Partial<Record<'label' | 'root' | 'indicator', string>>
   indicatorProps?: Omit<RadioPrimitive.Indicator.Props, 'className'>
   labelProps?: Omit<ComponentProps<'label'>, 'className'>
 }
