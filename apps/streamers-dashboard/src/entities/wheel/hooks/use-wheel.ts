@@ -9,7 +9,7 @@ import type { WheelSlot } from '~entities/wheel/model'
 
 import { useResizeObserver } from '~shared/hooks/use-resize-observer'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 import type { HexColor } from '~shared/lib/zod'
 
 import { clearCanvas, getMaxSizeCanvas, resizeCanvasWithRatio } from '~shared/utils/canvas'
@@ -284,6 +284,9 @@ export const useWheelControl = (
       const targetRotateCSSValue
           = wheelRotateCSSValue.current + calculateRotateWheelCSSValue(target)
 
+      if (targetRotateCSSValue !== wheelRotateCSSValue.current)
+        setWheelRotateCSSValue({ ...wheelRotateCSSValue, final: targetRotateCSSValue })
+
       animate(framerMotionAnimationValue, targetRotateCSSValue, {
         type: 'tween',
         ease: [0.55, 0.65, 0, 1],
@@ -291,7 +294,6 @@ export const useWheelControl = (
         visualDuration: spinTime,
         onPlay: () => {
           setIsWheelSpinning(true)
-          setWheelRotateCSSValue(curr => ({ ...curr, final: targetRotateCSSValue }))
 
           onSpinStart && onSpinStart(target)
           wheel.style.willChange = 'transform'
@@ -306,6 +308,8 @@ export const useWheelControl = (
         onComplete: () => {
           setIsWheelSpinning(false)
 
+          setWheelRotateCSSValue({ current: framerMotionAnimationValue.get(), final: framerMotionAnimationValue.get() })
+
           onSpinComplete && onSpinComplete(target)
         },
       })
@@ -314,8 +318,8 @@ export const useWheelControl = (
       wheelRef,
       onSpinComplete,
       onSpinStart,
-      framerMotionAnimationValue,
       wheelRotateCSSValue,
+      framerMotionAnimationValue,
       wheelSlots,
     ],
   )
@@ -344,9 +348,12 @@ export type UseWheelReturn = {
 }
 
 export const useWheel = (slots: AuctionSlot[]): UseWheelReturn => {
+  const storedRotateWheelValue = useStoreSelector(wheelSelectors.getRotateValue)
   const storeIsWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
   const storeSelectorTitle = useStoreSelector(wheelSelectors.getSelectorTargetTitle)
   const storedHighlightedSlotId = useStoreSelector(wheelSelectors.getHighlightedSlotId)
+
+  const { setSlots, setRotateValue, setWheelStatus, setSelectorTitleName } = useActionCreators(wheelActions)
 
   const preparedSlots = useMemo(() => {
     if (!storedHighlightedSlotId)
@@ -374,20 +381,34 @@ export const useWheel = (slots: AuctionSlot[]): UseWheelReturn => {
   })
 
   const wheelSlots = useMemo(() => {
+    if (isWheelSpinning)
+      return getItemsWithAngles(preparedSlots)
+
     return updateSlotsAnglesByRotateValue(
       getItemsWithAngles(slots),
-      wheelRotateCSSValue.current,
+      wheelRotateCSSValue.final,
     )
-  }, [wheelRotateCSSValue, slots])
+  }, [wheelRotateCSSValue, slots, isWheelSpinning, preparedSlots])
+
+  useEffect(() => {
+    if (isWheelSpinning)
+      return
+
+    setSlots(wheelSlots)
+  }, [wheelSlots, isWheelSpinning])
 
   if (storeIsWheelSpinning !== isWheelSpinning) {
     const wheelStatus = isWheelSpinning ? 'spinning' : 'idle'
 
-    wheelActions.setWheelStatus(wheelStatus)
+    setWheelStatus(wheelStatus)
   }
 
   if (isWheelSpinning && storeSelectorTitle !== selectorTargetTitle && selectorTargetTitle) {
-    wheelActions.setSelectorTitleName(selectorTargetTitle)
+    setSelectorTitleName(selectorTargetTitle)
+  }
+
+  if (storedRotateWheelValue.final !== wheelRotateCSSValue.final) {
+    setRotateValue(wheelRotateCSSValue)
   }
 
   useLayoutEffect(() => {

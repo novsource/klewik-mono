@@ -4,7 +4,7 @@ import type { WheelSlot } from '../model'
 
 import { createSlice } from '@reduxjs/toolkit'
 
-import { validateSlotsPayload } from '../lib/react-redux'
+import { validateWheelSlotsPayload } from '../lib/react-redux'
 
 type WheelSettings = {
   spinTime: number
@@ -52,9 +52,9 @@ const wheelSlice = createSlice({
           ? [...state.slots, ...payload]
           : [...state.slots, payload]
       },
-      prepare: (payload: WheelSlot | WheelSlot[]) => ({
-        payload: validateSlotsPayload(payload),
-      }),
+      prepare: (payload: WheelSlot | WheelSlot[]) => {
+        return { payload: validateWheelSlotsPayload(payload) }
+      },
     },
     setSlots: {
       reducer: (state, action: PayloadAction<WheelSlot | WheelSlot[]>) => {
@@ -62,9 +62,11 @@ const wheelSlice = createSlice({
 
         state.slots = Array.isArray(payload) ? payload : [payload]
       },
-      prepare: (payload: WheelSlot | WheelSlot[]) => ({
-        payload: validateSlotsPayload(payload),
-      }),
+      prepare: (payload: WheelSlot | WheelSlot[]) => {
+        const validatedPayload = validateWheelSlotsPayload(payload)
+
+        return { payload: validatedPayload }
+      },
     },
     setSelectorTitleName: (state, action: PayloadAction<string>) => {
       state.selectorTargetTitle = action.payload
