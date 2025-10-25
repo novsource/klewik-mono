@@ -3,6 +3,8 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 
 import { animate, transform, useMotionValue } from 'motion/react'
 
+import { auctionSelectors } from '~entities/auction/store'
+
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import type { WheelSlot } from '~entities/wheel/model'
@@ -16,6 +18,7 @@ import { clearCanvas, getMaxSizeCanvas, resizeCanvasWithRatio } from '~shared/ut
 import { getHEXColor } from '~shared/utils/colors'
 
 import { wheelActions, wheelSelectors } from '../store'
+import { formatSlotsToDropoutMode } from '../utils'
 import {
   calculateRotateWheelCSSValue,
   drawEmptyWheel,
@@ -353,20 +356,25 @@ export const useWheel = (slots: AuctionSlot[]): UseWheelReturn => {
   const storeSelectorTitle = useStoreSelector(wheelSelectors.getSelectorTargetTitle)
   const storedHighlightedSlotId = useStoreSelector(wheelSelectors.getHighlightedSlotId)
 
+  // TODO: Put wheel mode into wheel slice
+  const storedWheelMode = useStoreSelector(auctionSelectors.getWheelMode)
+
   const { setSlots, setRotateValue, setWheelStatus, setSelectorTitleName } = useActionCreators(wheelActions)
 
   const preparedSlots = useMemo(() => {
-    if (!storedHighlightedSlotId)
-      return slots
+    const formattedByModeSlots = storedWheelMode === 'classic' ? slots : formatSlotsToDropoutMode(slots)
 
-    return slots.map((slot) => {
+    if (!storedHighlightedSlotId)
+      return formattedByModeSlots
+
+    return formattedByModeSlots.map((slot) => {
       if (slot.id === storedHighlightedSlotId) {
         return slot
       }
 
       return { ...slot, color: '#333' as HexColor }
     })
-  }, [storedHighlightedSlotId, slots])
+  }, [storedHighlightedSlotId, storedWheelMode, slots])
 
   const {
     refs: { wheelRef, innerRef },
