@@ -1,5 +1,5 @@
 import type { RefObject } from 'react'
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import { animate, transform, useMotionValue } from 'motion/react'
 
@@ -44,7 +44,7 @@ const tinyCloverSize = window.devicePixelRatio === 1 ? 15 : 30
 
 const getBgCloversColor = transform([0, 1], ['#161616', '#212121'])
 
-const useWheelSelector = (
+const useWheelBackground = (
   canvasRef: RefObject<HTMLCanvasElement>,
   wrapperRef?: RefObject<HTMLElement>,
   options?: WheelSelectorOptions,
@@ -117,11 +117,6 @@ const useWheelSelector = (
     [canvasRef, wrapperRef, options?.gapBetweenClovers],
   )
 
-  const clearData = () => {
-    bgElementsArr.current = []
-    selectorCloversArr.current = []
-  }
-
   const resizeBackground = useCallback(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current
@@ -129,15 +124,14 @@ const useWheelSelector = (
       const wrapper
         = wrapperRef?.current ?? (canvas.parentElement as HTMLDivElement)
 
-      clearData()
+      bgElementsArr.current = []
+      selectorCloversArr.current = []
+
       clearCanvas(canvas)
 
       resizeCanvasWithRatio(canvas, wrapper)
       drawBackgroundWithClover()
     }
-
-    window.removeEventListener('resize', resizeBackground)
-    window.addEventListener('resize', resizeBackground)
   }, [drawBackgroundWithClover, wrapperRef, canvasRef])
 
   return {
@@ -173,8 +167,7 @@ export const useWheelInit = (
 
   const defaultWheelColor = useRef(getHEXColor())
 
-  const { drawBackground, resizeBackground }
-    = useWheelSelector(innerWheelCanvasRef)
+  const { drawBackground, resizeBackground } = useWheelBackground(innerWheelCanvasRef)
 
   const draw = useCallback(() => {
     const wheelCanvas = wheelCanvasRef.current
@@ -225,6 +218,10 @@ export const useWheelInit = (
     resizeWheel()
     resizeBackground()
   } })
+
+  useEffect(() => {
+    resizeBackground()
+  }, [slots, resizeBackground])
 
   return {
     refs: {

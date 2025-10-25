@@ -86,7 +86,7 @@ const createHEXColorGenerator = () => {
   return () => {
     seed += goldenRatio
     seed %= 1
-    return hslToHEX(seed * 360, 55, 55)
+    return hslToHEX(seed * 360, 55, 55) as HexColor
   }
 }
 

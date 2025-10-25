@@ -20,6 +20,7 @@ import {
   CardHeader,
   CardTitle,
 } from '~shared/ui/card'
+import type { FlexProps } from '~shared/ui/flex'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Skeleton } from '~shared/ui/skeleton'
@@ -106,7 +107,7 @@ export const BaseAuctionSlotCardContent = (props: BaseAuctionSlotCardContentProp
   )
 }
 
-export type AuctionSlotCardContentInfoWrapperProps = ComponentProps<'div'> & {
+export type AuctionSlotCardContentInfoWrapperProps = FlexProps & {
   icon?: ReactNode
 }
 
@@ -116,7 +117,7 @@ export const AuctionSlotCardContentInfoWrapper = (props: AuctionSlotCardContentI
   return (
     <Flex
       className={cn([
-        'h-7 gap-y-0.5 gap-x-0.75',
+        'h-7 gap-y-0.5 gap-x-0.75 py-1.25',
         'tablet:flex-row tablet:gap-x-1 tablet:items-center tablet:justify-start',
       ], className)}
       justify="center"
