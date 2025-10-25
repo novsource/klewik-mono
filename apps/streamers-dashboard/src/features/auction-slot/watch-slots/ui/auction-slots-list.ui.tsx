@@ -3,10 +3,13 @@ import { useCallback, useState } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
-import { SolidAuctionSlotCard } from '~entities/auction-slot/ui/card'
+import { AuctionSlotCardContentInfoDivider, AuctionSlotCardContentInfoWrapper, AuctionSlotCardIdInfo, AuctionSlotCardPointsInfo, AuctionSlotCardWinPercents, BaseAuctionSlotCard, BaseAuctionSlotCardContent, SolidAuctionSlotHeader } from '~entities/auction-slot/ui/card'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { wheelActions } from '~entities/wheel/store'
 
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import type {
@@ -27,12 +30,16 @@ type AuctionSlotsListProps<DataSlotItem extends AuctionSlot> = {
     item: DataSlotItem,
     index: number,
   ) => ReactNode
-} & Omit<ShadowVirtualListProps, 'children'>
+} & Omit<ShadowVirtualListProps<AuctionSlot>, 'children'>
 
-const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) => {
+export const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) => {
   const { data, renderCard, className, ...virtualListProps } = props
 
+  const { setHighlightedSlotId } = useActionCreators(wheelActions)
+
   const storedSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+  const storedPointsSum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
+
   const [slots, setSlots] = useState(data ?? storedSlots)
 
   if (data === undefined && slots !== storedSlots) {
@@ -51,9 +58,48 @@ const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) => {
         return renderCard(slot, virtualizedItem.index)
       }
 
-      return <SolidAuctionSlotCard auctionSlot={slot} />
+      const slotWinPercents = ((slot.points / storedPointsSum) * 100)
+
+      return (
+        <BaseAuctionSlotCard className="pr-2">
+          <Flex className="w-full" justify="between" align="center">
+            <SolidAuctionSlotHeader slotColor={slot.color} slotId={slot.id} slotTitle={slot.title} />
+            <Button
+              className="h-full text-gray hover:text-gray-accent transition-colors"
+              variant="ghost"
+              isIconOnly
+              icon={<Icons.EyeOpen size="sm" />}
+              size="xs"
+              onMouseEnter={() => setHighlightedSlotId(slot.id)}
+              onMouseLeave={() => setHighlightedSlotId(null)}
+            />
+          </Flex>
+          <BaseAuctionSlotCardContent>
+            <Flex
+              className="bg-dark-light rounded-sm px-1.5 w-fit"
+              direction="row"
+              align="center"
+            >
+              <AuctionSlotCardContentInfoWrapper>
+                <div className="size-3.5 rounded-pill" style={{ backgroundColor: slot.color }} />
+              </AuctionSlotCardContentInfoWrapper>
+              <AuctionSlotCardContentInfoDivider />
+              <AuctionSlotCardIdInfo slotId={slot.auctionSlotOrder} />
+              <AuctionSlotCardContentInfoDivider />
+              <AuctionSlotCardPointsInfo slotPoints={slot.points} />
+              {slotWinPercents
+                && (
+                  <>
+                    <AuctionSlotCardContentInfoDivider />
+                    <AuctionSlotCardWinPercents winPercents={slotWinPercents} />
+                  </>
+                )}
+            </Flex>
+          </BaseAuctionSlotCardContent>
+        </BaseAuctionSlotCard>
+      )
     },
-    [renderCard],
+    [renderCard, storedPointsSum],
   )
 
   if (slots.length === 0) {
@@ -89,5 +135,3 @@ const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) => {
     </Flex>
   )
 }
-
-export { VirtualizedSlotsList }

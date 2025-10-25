@@ -10,6 +10,7 @@ import type { WheelSlot } from '~entities/wheel/model'
 import { useResizeObserver } from '~shared/hooks/use-resize-observer'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import type { HexColor } from '~shared/lib/zod'
 
 import { clearCanvas, getMaxSizeCanvas, resizeCanvasWithRatio } from '~shared/utils/canvas'
 import { getHEXColor } from '~shared/utils/colors'
@@ -348,16 +349,30 @@ export type UseWheelReturn = {
 export const useWheel = (slots: AuctionSlot[]): UseWheelReturn => {
   const storeIsWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
   const storeSelectorTitle = useStoreSelector(wheelSelectors.getSelectorTargetTitle)
+  const storedHighlightedSlotId = useStoreSelector(wheelSelectors.getHighlightedSlotId)
+
+  const preparedSlots = useMemo(() => {
+    if (!storedHighlightedSlotId)
+      return slots
+
+    return slots.map((slot) => {
+      if (slot.id === storedHighlightedSlotId) {
+        return slot
+      }
+
+      return { ...slot, color: '#333' as HexColor }
+    })
+  }, [storedHighlightedSlotId, slots])
 
   const {
     refs: { wheelRef, innerRef },
     functions: { drawWheel, drawInner, resizeInnerBackground, resizeWheel },
-  } = useWheelInit(slots)
+  } = useWheelInit(preparedSlots)
 
   const {
     state: { wheelRotateCSSValue, selectorTargetTitle, isWheelSpinning },
     functions: { spinWheel },
-  } = useWheelControl(getItemsWithAngles(slots), {
+  } = useWheelControl(getItemsWithAngles(preparedSlots), {
     wheelRef,
   })
 
