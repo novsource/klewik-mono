@@ -50,6 +50,7 @@ import { default as Plus } from './Plus';
 import { default as PointsSum } from './PointsSum';
 import { default as Preferences } from './Preferences';
 import { default as Programming } from './Programming';
+import { default as Ranking } from './Ranking';
 import { default as Refresh } from './Refresh';
 import { default as Reset } from './Reset';
 import { default as ReturnArrow } from './ReturnArrow';
@@ -128,6 +129,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   PointsSum,
   Preferences,
   Programming,
+  Ranking,
   Refresh,
   Reset,
   ReturnArrow,
