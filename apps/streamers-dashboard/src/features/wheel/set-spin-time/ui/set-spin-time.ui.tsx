@@ -1,28 +1,33 @@
-import { useCallback } from 'react'
+import type { NumberFormatValues, SourceInfo } from 'react-number-format'
 
 import { wheelActions, wheelSelectors } from '~entities/wheel/store'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Icons } from '~shared/ui/icons'
-import { NumberInput, NumberInputProps } from '~shared/ui/number-input'
+import type { NumberInputProps } from '~shared/ui/number-input'
+import { NumberInput } from '~shared/ui/number-input'
 import { Typography } from '~shared/ui/typograghy'
 
 type SpinTimeInputProps = NumberInputProps
 
-const SpinTimeInput = ({ onNumberChanges, ...props }: SpinTimeInputProps) => {
+const SpinTimeInput = (props: SpinTimeInputProps) => {
+  const { onValueChange, ...restProps } = props
+
   const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
+  const { spinTime } = useStoreSelector(wheelSelectors.getSettings)
 
   const { setSettings } = useActionCreators(wheelActions)
 
-  const onNumberChangesHandler = useCallback(
-    (num: number | undefined) => {
-      setSettings({ spinTime: num ?? 0 })
+  const handleOnValueChange = (values: NumberFormatValues, sourceInfo: SourceInfo) => {
+    if (isWheelSpinning)
+      return
 
-      onNumberChanges && onNumberChanges(num)
-    },
-    [onNumberChanges]
-  )
+    const { floatValue } = values
+
+    setSettings({ spinTime: floatValue ?? 0 })
+    onValueChange?.(values, sourceInfo)
+  }
 
   return (
     <NumberInput
@@ -31,19 +36,18 @@ const SpinTimeInput = ({ onNumberChanges, ...props }: SpinTimeInputProps) => {
         input: 'font-golos-f text-title placeholder:text-md',
       }}
       disabled={isWheelSpinning}
-      minValue={2}
-      maxValue={120}
       startContent={
         <Icons.Timer size="sm" className="text-gray-light shrink-0" />
       }
-      endContent={
+      endContent={(
         <Typography className="text-gray-light" tag="span">
           сек.
         </Typography>
-      }
+      )}
+      value={spinTime}
       placeholder="Время"
-      onNumberChanges={onNumberChangesHandler}
-      {...props}
+      onValueChange={handleOnValueChange}
+      {...restProps}
     />
   )
 }
