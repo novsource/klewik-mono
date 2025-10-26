@@ -106,7 +106,7 @@ export const ShadowScrollArea = forwardRef<HTMLDivElement, ShadowScrollAreaProps
     if (!scrollElement || !entry)
       return
 
-    const scrollValue = scrollYValue + scrollElement.clientHeight
+    const scrollValue = scrollYValue ? scrollYValue + scrollElement.clientHeight : 0
 
     const newScrollYProgress
           = scrollValue / scrollElement.scrollHeight >= 1
