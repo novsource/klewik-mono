@@ -45,7 +45,7 @@ export const RadioCard = (props: RadioCardProps) => {
 
   return (
     <label {...mergedLabelProps}>
-      <Card className="w-full flex flex-row justify-between py-1.5">
+      <Card className="w-full flex flex-row justify-between pt-1.5 pb-0.5">
         <CardContent className="w-full flex-row gap-x-3 justify-between">
           <Flex className={cn(!!icon && 'gap-x-4')}>
             <Flex className="h-full shrink-0 items-center">
