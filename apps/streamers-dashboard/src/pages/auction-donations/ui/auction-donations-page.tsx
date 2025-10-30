@@ -49,6 +49,7 @@ export const AuctionDonationsPage = () => {
       className={cn([
         'grid grid-rows-slots-table gap-y-3 pt-3 pb-20 tablet:grid-rows-slots-desktop',
         'relative mx-auto w-full h-full tablet:pt-5 tablet:mb-4 tablet:pb-0',
+        'tablet:min-h-[var(--height-page)] tablet:h-auto',
         'mobile:gap-y-5',
         'max-tablet:max-w-[1100px] tablet:gap-y-7 tablet:pl-10',
         'desktop:max-w-[1750px] desktop-lg:max-w-[2100px]',

@@ -23,12 +23,9 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import { ShadowVirtualList } from '~shared/ui/shadow-virtual-list'
 import type { ShadowVirtualListProps } from '~shared/ui/shadow-virtual-list'
 import { WindowVirtualList } from '~shared/ui/virtual-list'
 import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
-
-import { cn } from '~shared/utils'
 
 export type AuctionSlotsListProps = {
   data?: AuctionSlot[]
@@ -116,19 +113,28 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
 
   if (isLargeThenTablet) {
     return (
-      <Flex className={cn('w-full h-full overflow-scroll', className)}>
-        <ShadowVirtualList
-          data={sortedSlots}
-          slotsClassNames={{ container: 'pb-4' }}
-          gap={gap}
-          overscan={8}
-          virtualListRef={virtualizerRef}
-          {...virtualListProps}
-        >
-          {renderVirtualListItem}
-        </ShadowVirtualList>
-      </Flex>
+      <WindowVirtualList
+        data={sortedSlots}
+        overscan={8}
+        virtualListRef={virtualizerRef}
+      >
+        {renderVirtualListItem}
+      </WindowVirtualList>
     )
+    // return (
+    //   <Flex className={cn('w-full h-full overflow-scroll', className)}>
+    //     <ShadowVirtualList
+    //       data={sortedSlots}
+    //       slotsClassNames={{ container: 'pb-4' }}
+    //       gap={gap}
+    //       overscan={8}
+    //       virtualListRef={virtualizerRef}
+    //       {...virtualListProps}
+    //     >
+    //       {renderVirtualListItem}
+    //     </ShadowVirtualList>
+    //   </Flex>
+    // )
   }
 
   return (

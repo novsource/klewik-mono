@@ -11,7 +11,7 @@ export type DonationCardBadgeProps = BadgeProps
 export const DonationCardBadge = (props: DonationCardBadgeProps) => {
   return (
     <Badge
-      className="text-nowrap font-medium max-tablet:text-[10px] max-tablet:h-5 transition-none"
+      className="text-nowrap font-medium text-[11px] leading-4 max-tablet:text-[10px] max-tablet:h-5 transition-none"
       {...props}
     />
   )

@@ -44,7 +44,7 @@
     --color-white-accent: #f8f8ff;
     --color-white: #f2f2f2;
 
-    --color-green-dark: #2c3b33;
+    --color-green-dark: #242A28;
     --color-green: #3f9663;
     --color-green-light: #2c3b33;
     --color-green-accent: #74dfa2;
@@ -291,6 +291,8 @@
 
         --height-search-dialog-content: calc(100% - var(--height-search-dialog-header));
 
+        --height-page: calc(100vh - var(--header-height));
+
         --dialog-width-desktop: 550px;
         --dialog-width-laptop: 500px;
 
@@ -360,7 +362,7 @@
 
     #root {
         font-size: 16px;
-        @apply relative w-full h-auto tablet:h-full tablet:overflow-hidden;
+        @apply relative w-full h-auto;
     }
 
     body {

@@ -26,7 +26,7 @@ const IS_CLOVER_CAN_BE_SAFEFULLY_RENDERED
 
 const WelcomePage = () => {
   return (
-    <main className="h-full w-full">
+    <main className="h-screen w-full">
       <Flex className="h-full w-full" direction="row">
         <div
           className={cn(

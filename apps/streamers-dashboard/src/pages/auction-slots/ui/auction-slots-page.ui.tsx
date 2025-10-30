@@ -45,7 +45,8 @@ export const AuctionSlotsPage = () => {
                   <Button
                     className="z-50 w-full max-tablet:hidden"
                     variant="action"
-                    startContent={<Icons.Plus />}
+                    startContent={<Icons.Plus size="sm" />}
+                    size="sm"
                   >
                     Добавить слоты
                   </Button>

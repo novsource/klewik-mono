@@ -31,12 +31,12 @@ export const InfiniteDonationsListCard = (props: InfiniteDonationsListCardProps)
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   return (
-    <BaseDonationCard className="max-tablet:pr-2.5" {...restProps}>
+    <BaseDonationCard className="pt-1.5 max-tablet:pr-2.5" {...restProps}>
       <Flex className="gap-x-4 tablet:gap-x-10" justify="between" align="end">
         <Flex className="w-full" direction="column">
           <BaseDonationCardHeader>
-            <Flex className="w-full h-6" justify="between">
-              <Flex className="gap-x-1.5">
+            <Flex className="w-full h-5" justify="between">
+              <Flex className="gap-x-1">
                 <IntegrationBadge integration={donation.source} />
                 <DonationCardStatusBadge status={donation.processData.status} />
               </Flex>
