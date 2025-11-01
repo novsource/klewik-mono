@@ -4,7 +4,7 @@ import { useCallback, useRef, useState } from 'react'
 
 import { useSortingSlots } from '~pages/auction-slots/lib'
 
-import { EditSlotDialog } from '~features/auction-slot/edit-slot/ui'
+import { useGlobalDialogsContext } from '~widgets/global-dialogs/context'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -23,12 +23,9 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import { ShadowVirtualList } from '~shared/ui/shadow-virtual-list'
 import type { ShadowVirtualListProps } from '~shared/ui/shadow-virtual-list'
 import { WindowVirtualList } from '~shared/ui/virtual-list'
 import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
-
-import { cn } from '~shared/utils'
 
 export type AuctionSlotsListProps = {
   data?: AuctionSlot[]
@@ -42,6 +39,7 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
     gap = 8,
     ...virtualListProps
   } = props
+
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const storedSlotsPointsSum = useStoreSelector(
     auctionSlotsSelectors.getSlotsPointsSum,
@@ -49,6 +47,8 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
   const sortingOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
 
   const [showedSlots, setShowedSlots] = useState(data ?? storedAuctionSlots)
+
+  const { dispatch: { setIsEditSlotDialogOpen, setSelectedSlot } } = useGlobalDialogsContext()
 
   if (data !== undefined && showedSlots !== data) {
     setShowedSlots(data)
@@ -75,7 +75,7 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
         >
           <Flex className="gap-y-2 pr-3.5" direction="column">
             <SolidAuctionSlotHeader
-              slotId={auctionSlot.id}
+              slotId={auctionSlot.auctionSlotOrder}
               slotTitle={auctionSlot.title}
               slotColor={auctionSlot.color}
             />
@@ -84,15 +84,14 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
               winPercents={percents}
             />
           </Flex>
-          <EditSlotDialog
-            slot={auctionSlot}
-            trigger={(
-              <Button
-                className="bg-dark-light size-7 tablet:size-8.5 text-gray-light transition-colors hover:text-white"
-                isIconOnly
-                icon={<Icons.ArrowRight size={isLargeThenTablet ? 'default' : 'sm'} />}
-              />
-            )}
+          <Button
+            className="bg-dark-light size-7 tablet:size-8.5 text-gray-light transition-colors hover:text-white"
+            isIconOnly
+            icon={<Icons.ArrowRight size={isLargeThenTablet ? 'default' : 'sm'} />}
+            onClick={() => {
+              setSelectedSlot(auctionSlot)
+              setIsEditSlotDialogOpen(true)
+            }}
           />
         </BaseAuctionSlotCard>
       )
@@ -114,19 +113,28 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
 
   if (isLargeThenTablet) {
     return (
-      <Flex className={cn('w-full h-full overflow-scroll', className)}>
-        <ShadowVirtualList
-          data={sortedSlots}
-          slotsClassNames={{ container: 'pb-4' }}
-          gap={gap}
-          overscan={8}
-          virtualListRef={virtualizerRef}
-          {...virtualListProps}
-        >
-          {renderVirtualListItem}
-        </ShadowVirtualList>
-      </Flex>
+      <WindowVirtualList
+        data={sortedSlots}
+        overscan={8}
+        virtualListRef={virtualizerRef}
+      >
+        {renderVirtualListItem}
+      </WindowVirtualList>
     )
+    // return (
+    //   <Flex className={cn('w-full h-full overflow-scroll', className)}>
+    //     <ShadowVirtualList
+    //       data={sortedSlots}
+    //       slotsClassNames={{ container: 'pb-4' }}
+    //       gap={gap}
+    //       overscan={8}
+    //       virtualListRef={virtualizerRef}
+    //       {...virtualListProps}
+    //     >
+    //       {renderVirtualListItem}
+    //     </ShadowVirtualList>
+    //   </Flex>
+    // )
   }
 
   return (

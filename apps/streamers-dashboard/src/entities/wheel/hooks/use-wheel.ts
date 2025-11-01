@@ -1,7 +1,9 @@
 import type { RefObject } from 'react'
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import { animate, transform, useMotionValue } from 'motion/react'
+
+import { auctionSelectors } from '~entities/auction/store'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
@@ -9,12 +11,14 @@ import type { WheelSlot } from '~entities/wheel/model'
 
 import { useResizeObserver } from '~shared/hooks/use-resize-observer'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+import type { HexColor } from '~shared/lib/zod'
 
 import { clearCanvas, getMaxSizeCanvas, resizeCanvasWithRatio } from '~shared/utils/canvas'
 import { getHEXColor } from '~shared/utils/colors'
 
 import { wheelActions, wheelSelectors } from '../store'
+import { formatSlotsToDropoutMode } from '../utils'
 import {
   calculateRotateWheelCSSValue,
   drawEmptyWheel,
@@ -43,7 +47,7 @@ const tinyCloverSize = window.devicePixelRatio === 1 ? 15 : 30
 
 const getBgCloversColor = transform([0, 1], ['#161616', '#212121'])
 
-const useWheelSelector = (
+const useWheelBackground = (
   canvasRef: RefObject<HTMLCanvasElement>,
   wrapperRef?: RefObject<HTMLElement>,
   options?: WheelSelectorOptions,
@@ -116,11 +120,6 @@ const useWheelSelector = (
     [canvasRef, wrapperRef, options?.gapBetweenClovers],
   )
 
-  const clearData = () => {
-    bgElementsArr.current = []
-    selectorCloversArr.current = []
-  }
-
   const resizeBackground = useCallback(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current
@@ -128,15 +127,14 @@ const useWheelSelector = (
       const wrapper
         = wrapperRef?.current ?? (canvas.parentElement as HTMLDivElement)
 
-      clearData()
+      bgElementsArr.current = []
+      selectorCloversArr.current = []
+
       clearCanvas(canvas)
 
       resizeCanvasWithRatio(canvas, wrapper)
       drawBackgroundWithClover()
     }
-
-    window.removeEventListener('resize', resizeBackground)
-    window.addEventListener('resize', resizeBackground)
   }, [drawBackgroundWithClover, wrapperRef, canvasRef])
 
   return {
@@ -172,8 +170,7 @@ export const useWheelInit = (
 
   const defaultWheelColor = useRef(getHEXColor())
 
-  const { drawBackground, resizeBackground }
-    = useWheelSelector(innerWheelCanvasRef)
+  const { drawBackground, resizeBackground } = useWheelBackground(innerWheelCanvasRef)
 
   const draw = useCallback(() => {
     const wheelCanvas = wheelCanvasRef.current
@@ -224,6 +221,10 @@ export const useWheelInit = (
     resizeWheel()
     resizeBackground()
   } })
+
+  useEffect(() => {
+    resizeBackground()
+  }, [slots, resizeBackground])
 
   return {
     refs: {
@@ -286,6 +287,9 @@ export const useWheelControl = (
       const targetRotateCSSValue
           = wheelRotateCSSValue.current + calculateRotateWheelCSSValue(target)
 
+      if (targetRotateCSSValue !== wheelRotateCSSValue.current)
+        setWheelRotateCSSValue({ ...wheelRotateCSSValue, final: targetRotateCSSValue })
+
       animate(framerMotionAnimationValue, targetRotateCSSValue, {
         type: 'tween',
         ease: [0.55, 0.65, 0, 1],
@@ -293,7 +297,6 @@ export const useWheelControl = (
         visualDuration: spinTime,
         onPlay: () => {
           setIsWheelSpinning(true)
-          setWheelRotateCSSValue(curr => ({ ...curr, final: targetRotateCSSValue }))
 
           onSpinStart && onSpinStart(target)
           wheel.style.willChange = 'transform'
@@ -308,6 +311,8 @@ export const useWheelControl = (
         onComplete: () => {
           setIsWheelSpinning(false)
 
+          setWheelRotateCSSValue({ current: framerMotionAnimationValue.get(), final: framerMotionAnimationValue.get() })
+
           onSpinComplete && onSpinComplete(target)
         },
       })
@@ -316,8 +321,8 @@ export const useWheelControl = (
       wheelRef,
       onSpinComplete,
       onSpinStart,
-      framerMotionAnimationValue,
       wheelRotateCSSValue,
+      framerMotionAnimationValue,
       wheelSlots,
     ],
   )
@@ -346,36 +351,72 @@ export type UseWheelReturn = {
 }
 
 export const useWheel = (slots: AuctionSlot[]): UseWheelReturn => {
+  const storedRotateWheelValue = useStoreSelector(wheelSelectors.getRotateValue)
   const storeIsWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
   const storeSelectorTitle = useStoreSelector(wheelSelectors.getSelectorTargetTitle)
+  const storedHighlightedSlotId = useStoreSelector(wheelSelectors.getHighlightedSlotId)
+
+  // TODO: Put wheel mode into wheel slice
+  const storedWheelMode = useStoreSelector(auctionSelectors.getWheelMode)
+
+  const { setSlots, setRotateValue, setWheelStatus, setSelectorTitleName } = useActionCreators(wheelActions)
+
+  const preparedSlots = useMemo(() => {
+    const formattedByModeSlots = storedWheelMode === 'classic' ? slots : formatSlotsToDropoutMode(slots)
+
+    if (!storedHighlightedSlotId)
+      return formattedByModeSlots
+
+    return formattedByModeSlots.map((slot) => {
+      if (slot.id === storedHighlightedSlotId) {
+        return slot
+      }
+
+      return { ...slot, color: '#333' as HexColor }
+    })
+  }, [storedHighlightedSlotId, storedWheelMode, slots])
 
   const {
     refs: { wheelRef, innerRef },
     functions: { drawWheel, drawInner, resizeInnerBackground, resizeWheel },
-  } = useWheelInit(slots)
+  } = useWheelInit(preparedSlots)
 
   const {
     state: { wheelRotateCSSValue, selectorTargetTitle, isWheelSpinning },
     functions: { spinWheel },
-  } = useWheelControl(getItemsWithAngles(slots), {
+  } = useWheelControl(getItemsWithAngles(preparedSlots), {
     wheelRef,
   })
 
   const wheelSlots = useMemo(() => {
+    if (isWheelSpinning)
+      return getItemsWithAngles(preparedSlots)
+
     return updateSlotsAnglesByRotateValue(
       getItemsWithAngles(slots),
-      wheelRotateCSSValue.current,
+      wheelRotateCSSValue.final,
     )
-  }, [wheelRotateCSSValue, slots])
+  }, [wheelRotateCSSValue, slots, isWheelSpinning, preparedSlots])
+
+  useEffect(() => {
+    if (isWheelSpinning)
+      return
+
+    setSlots(wheelSlots)
+  }, [wheelSlots, isWheelSpinning])
 
   if (storeIsWheelSpinning !== isWheelSpinning) {
     const wheelStatus = isWheelSpinning ? 'spinning' : 'idle'
 
-    wheelActions.setWheelStatus(wheelStatus)
+    setWheelStatus(wheelStatus)
   }
 
   if (isWheelSpinning && storeSelectorTitle !== selectorTargetTitle && selectorTargetTitle) {
-    wheelActions.setSelectorTitleName(selectorTargetTitle)
+    setSelectorTitleName(selectorTargetTitle)
+  }
+
+  if (storedRotateWheelValue.final !== wheelRotateCSSValue.final) {
+    setRotateValue(wheelRotateCSSValue)
   }
 
   useLayoutEffect(() => {

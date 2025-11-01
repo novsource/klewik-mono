@@ -119,6 +119,23 @@ const slice = createSlice({
           state.donationsStatusesCounts[status] = counts[status]
       })
     },
+    updateDonation(state, action: PayloadAction<Partial<ProcessedDonation>>) {
+      const { id, source, ...restDonationData } = action.payload
+
+      const collection = state.donations.all
+      const donationIndex = collection.findIndex(donation => donation.id === id)
+
+      if (donationIndex === -1)
+        return
+
+      const updatedDonation = { ...collection[donationIndex], ...restDonationData }
+
+      state.donations.all = [
+        ...collection.slice(0, donationIndex),
+        updatedDonation,
+        ...collection.slice(donationIndex + 1),
+      ]
+    },
     setDonationsStatusesCounts(state, action: PayloadAction<Record<ProcessedDonationStatus, number>>) {
       const counts = action.payload
 

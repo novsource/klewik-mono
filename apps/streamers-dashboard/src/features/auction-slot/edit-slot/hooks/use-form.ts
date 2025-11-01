@@ -1,6 +1,8 @@
 import type { TransformedEditSlotFormData } from '../lib'
 import type { EditSlotFormData } from '../model'
 
+import { useEffect } from 'react'
+
 import { useForm, useFormState } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,13 +20,12 @@ import { useEditSlotMutation } from '../api'
 import { transformEditSlotFormData } from '../lib'
 
 export type UseEditSlotFormOptions = {
-  defaultValues?: Pick<AuctionSlot, 'title' | 'points'>
   onSuccess?: (formData: TransformedEditSlotFormData) => void
   onError?: (error: AxiosBaseQueryError) => void
 }
 
 export const useEditSlotForm = (target: AuctionSlot, options: UseEditSlotFormOptions) => {
-  const { defaultValues, onError, onSuccess } = options
+  const { onError, onSuccess } = options
 
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
@@ -34,13 +35,23 @@ export const useEditSlotForm = (target: AuctionSlot, options: UseEditSlotFormOpt
     TransformedEditSlotFormData
   >({
     defaultValues: {
-      title: defaultValues?.title ?? target.title,
-      points: formatNumberToIntlString(defaultValues?.points ?? target.points),
+      title: target.title,
+      points: formatNumberToIntlString(target.points),
     },
     resolver: zodResolver(transformEditSlotFormData()),
-    mode: 'all',
     reValidateMode: 'onChange',
   })
+
+  useEffect(() => {
+    if (target) {
+      form.reset(
+        {
+          title: target.title,
+          points: formatNumberToIntlString(target.points),
+        },
+      )
+    }
+  }, [target, form])
 
   const formState = useFormState({ control: form.control })
 

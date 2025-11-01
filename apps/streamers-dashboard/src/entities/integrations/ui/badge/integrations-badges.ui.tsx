@@ -27,7 +27,7 @@ const IntegrationBadge = (props: IntegrationsBadgeProps) => {
       twitch: 'bg-gray text-white/80',
       userInput: 'bg-gray text-white/80',
     }
-    return cn(integrationsStyles[integration], 'max-tablet:h-5 max-tablet:text-[10px]', className)
+    return cn(integrationsStyles[integration], 'text-[11px] leading-4 max-tablet:h-5 max-tablet:text-[10px]', className)
   }, [integration, className])
 
   return (

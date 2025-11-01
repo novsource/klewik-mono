@@ -1,3 +1,1 @@
-import { SpinTimeInput } from './set-spin-time.ui'
-
-export { SpinTimeInput }
+export * from './set-spin-time.ui'

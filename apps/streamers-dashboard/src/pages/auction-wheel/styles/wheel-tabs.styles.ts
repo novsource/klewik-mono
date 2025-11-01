@@ -15,7 +15,7 @@ export const slotsWheelTabStyles: Record<SlotsWheelTabSlots, string> = {
 export type ControlWheelTabSlots = 'content' | 'controlsWrapper' | 'spinWheelButton'
 
 export const controlWheelTabStyles: Record<ControlWheelTabSlots, string> = {
-  content: /* tw */ 'mt-5 flex flex-col gap-y-3 data-[state=active]:h-full',
+  content: /* tw */ 'mt-5 flex flex-col gap-y-3 data-[state=active]:h-full overflow-scroll pb-4',
   controlsWrapper: /* tw */ 'w-full gap-x-2',
   spinWheelButton: /* tw */ 'w-full',
 }

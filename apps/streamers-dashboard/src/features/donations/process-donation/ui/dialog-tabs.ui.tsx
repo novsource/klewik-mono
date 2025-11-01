@@ -94,11 +94,11 @@ function DonationInfoTabContent(props: DonationInfoTabContentProps) {
           titleIcon={
             donation.messageType === 'audio'
               ? (
-                <Icons.Sound className="text-gray" size="sm" />
-              )
+                  <Icons.Sound className="text-gray" size="sm" />
+                )
               : (
-                <Icons.Message className="text-gray" size="sm" />
-              )
+                  <Icons.Message className="text-gray" size="sm" />
+                )
           }
         >
           {donation.messageType === 'audio'

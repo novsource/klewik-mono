@@ -19,22 +19,14 @@ export const useEditSlotDialog = (target: AuctionSlot) => {
     onSuccess: (slot) => {
       updateSlot({ id: target.id, data: slot })
       setIsSuccess(true)
+
+      closeAllToasts()
+      toastSuccessNotification('Слот успешно изменен!')
     },
     onError: (error) => {
       toastErrorNotification('Не удалось изменить слот', error.reason)
     },
   })
-
-  if (!isOpen && formState.isDirty) {
-    form.reset()
-    form.clearErrors()
-
-    closeAllToasts()
-
-    if (isSuccess) {
-      toastSuccessNotification('Слот успешно изменен!')
-    }
-  }
 
   const submit = useCallback(() => {
     const submit = form.handleSubmit(submitForm)

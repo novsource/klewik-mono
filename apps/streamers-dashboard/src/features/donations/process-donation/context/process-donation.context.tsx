@@ -74,7 +74,7 @@ export const ProcessDonationContextProvider = (props: ProcessDonationContextProv
     = useGetDonationCodeInfoMutation()
 
   const donationCodeQuery = useCallback(async (message: string | null) => {
-    if (!message || donationCodeMutationState.isLoading || donationCode)
+    if (!message || donationCodeMutationState.isLoading || donationCode || donation.id > 0)
       return
 
     const code = getDonationCodeFromMessage(message || '')
@@ -99,7 +99,7 @@ export const ProcessDonationContextProvider = (props: ProcessDonationContextProv
 
   useEffect(() => {
     donationCodeQuery(donation.message)
-  }, [donation.message])
+  }, [donation.id])
 
   const contextValue = useMemo<ProcessDonationContextState>(() => ({
     state: {

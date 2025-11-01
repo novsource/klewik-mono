@@ -26,7 +26,7 @@ export const WheelCanvas = (props: WheelCanvasProps) => {
   const { auctionSlots, style, ...restProps } = props
 
   const wheelSpinStatus = useStoreSelector(wheelSelectors.getWheelStatus)
-  const wheelRotateValue = useStoreSelector(wheelSelectors.getRotateValue)
+  const rotateValue = useStoreSelector(wheelSelectors.getRotateValue)
   const { spinTime } = useStoreSelector(wheelSelectors.getSettings)
 
   const {
@@ -58,7 +58,7 @@ export const WheelCanvas = (props: WheelCanvasProps) => {
           style={{
             ...style,
             willChange: 'transform',
-            transform: `rotateZ(${wheelRotateValue}deg)`,
+            transform: `rotateZ(${rotateValue.current}deg)`,
           }}
           {...restProps}
         />

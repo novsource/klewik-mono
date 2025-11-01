@@ -8,6 +8,7 @@ import { useIsFirstRender } from '~shared/hooks'
 
 import { Input } from '~shared/ui/input'
 import type { InputProps } from '~shared/ui/input'
+import type { TypographyProps } from '~shared/ui/typograghy'
 import { Typography } from '~shared/ui/typograghy'
 
 import { cn, mergeProps } from '~shared/utils'
@@ -21,7 +22,7 @@ const preventEnterFn = (event: KeyboardEvent<HTMLInputElement>) => {
 export const SlotTitleFormInput = <
   FormFields extends FieldValues,
   Paths extends FieldPath<FormFields>,
-  TransformedValues extends FormFields,
+  TransformedValues,
 >(props: InputProps
   & UseControllerProps<FormFields, Paths, TransformedValues> & {
     maxLength?: number
@@ -34,14 +35,15 @@ export const SlotTitleFormInput = <
     ...inputProps
   } = props
 
-  const [boundAnimationStatus, setBoundAnimationStatus] = useState<
-    'inactive' | 'active'
-  >('inactive')
+  const [isBoundAnimationActive, setIsBoundAnimationActive] = useState(false)
 
-  const { field: { onChange: fieldOnChange, value: fieldValue, ...field } } = useController({
-    name,
-    control,
-  })
+  const {
+    field: {
+      onChange: fieldOnChange,
+      value: fieldValue,
+      ...field
+    },
+  } = useController({ name, control })
 
   const [value, setValue] = useState(() => {
     if (inputValue) {
@@ -61,17 +63,16 @@ export const SlotTitleFormInput = <
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > maxLength) {
       fieldOnChange(event.target.value.slice(0, maxLength))
-      setBoundAnimationStatus('active')
+      setIsBoundAnimationActive(true)
     }
     else {
       fieldOnChange(event.target.value)
-      setBoundAnimationStatus('inactive')
+      setIsBoundAnimationActive(false)
     }
   }
 
   const inputHandlers: InputProps = { onChange: handleOnChange, onKeyDown: preventEnterFn }
-
-  const mergedInputProps = mergeProps(inputHandlers, inputProps)
+  const mergedInputProps = mergeProps(inputHandlers, inputProps, field)
 
   return (
     <Input
@@ -81,25 +82,44 @@ export const SlotTitleFormInput = <
         base: 'w-full basis-1/2 grow',
         description: 'text-wrap',
       }}
-      value={value}
+      value={fieldValue}
       endContent={(
-        <Typography
-          tag="span"
-          className={cn(
-            'text-md transition-colors select-none',
-            boundAnimationStatus === 'active'
-              ? 'animate-horizontal-shaking text-red'
-              : 'text-gray-light',
-          )}
+        <TitleFormInputCharsCounter
+          value={fieldValue.toString()}
+          maxLength={maxLength}
+          isActive={isBoundAnimationActive}
           onAnimationEnd={() => {
-            setBoundAnimationStatus('inactive')
+            setIsBoundAnimationActive(false)
           }}
-        >
-          {`${value.toString().length}/${maxLength}`}
-        </Typography>
+        />
       )}
-      {...field}
       {...mergedInputProps}
     />
+  )
+}
+
+type TitleFormInputCharsCounterProps = Omit<TypographyProps<'span'>, 'tag' | 'children'> & {
+  value: string
+  maxLength: number
+  isActive: boolean
+}
+
+function TitleFormInputCharsCounter(props: TitleFormInputCharsCounterProps) {
+  const { value, maxLength, isActive, className, ...restProps } = props
+
+  return (
+    <Typography
+      tag="span"
+      className={cn(
+        'text-md transition-colors select-none',
+        isActive
+          ? 'animate-horizontal-shaking text-red'
+          : 'text-gray-light',
+        className,
+      )}
+      {...restProps}
+    >
+      {`${value.length}/${maxLength}`}
+    </Typography>
   )
 }

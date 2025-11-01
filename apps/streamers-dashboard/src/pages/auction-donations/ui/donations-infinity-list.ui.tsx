@@ -2,6 +2,8 @@ import { useRef, useState } from 'react'
 
 import { isAxiosError } from 'axios'
 
+import { useGlobalDialogsContext } from '~widgets/global-dialogs/context'
+
 import { useLazyLoadMoreDonationsQuery } from '~features/donations/watch-donations/api'
 import { useDonationsInfiniteList } from '~features/donations/watch-donations/hooks'
 import type { DonationsInfiniteListProps } from '~features/donations/watch-donations/ui'
@@ -41,6 +43,8 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
   } = props
 
   const [isShowingSkeletons, setIsShowingSkeletons] = useState(false)
+
+  const { dispatch: { setSelectedDonation, setIsProcessDonationDialogOpen } } = useGlobalDialogsContext()
 
   const { addDonation } = useActionCreators(donationsActions)
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
@@ -138,6 +142,12 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
       >
         <InfiniteDonationsListCard
           donation={donation}
+          actionButtonProps={{
+            onClick: () => {
+              setSelectedDonation(donation)
+              setIsProcessDonationDialogOpen(true)
+            },
+          }}
           style={{
             marginTop: virtualizeItem.index !== 0 ? '8px' : '0',
           }}

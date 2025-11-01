@@ -10,20 +10,25 @@ import { useProcessDonationForm } from '~features/donations/process-donation/hoo
 import { auctionSelectors } from '~entities/auction/store'
 
 import type { ProcessedDonation } from '~entities/donation/model'
+import { donationsActions } from '~entities/donation/store'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { useMediaQuery } from '~shared/hooks'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
 import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
+import type {
+  SheetProps,
+} from '~shared/ui/sheet'
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -32,7 +37,7 @@ import {
 } from '~shared/ui/sheet'
 import { Typography } from '~shared/ui/typograghy'
 
-import { mergeProps, twSlotsStyles } from '~shared/utils'
+import { formatNumberToIntlString, mergeProps, twSlotsStyles } from '~shared/utils'
 
 import { useApproveDonationMutation, useDeclineDonationMutation } from '../api'
 import { PROCESS_DONATION_FORM_ID } from '../constants'
@@ -40,28 +45,28 @@ import { ProcessDonationContextProvider, useProcessDonationContext } from '../co
 import { processDonationDialogStyles } from '../styles'
 import { ProcessDonationDialogTabs } from './dialog-tabs.ui'
 
-export type ProcessDonationDialogProps = {
+export type ProcessDonationDialogProps = SheetProps & {
   donation: ProcessedDonation
   trigger?: ReactNode
 }
 
 export const ProcessDonationDialog = (props: ProcessDonationDialogProps) => {
-  const { donation, trigger } = props
+  const { donation, trigger, ...restProps } = props
 
   return (
     <ProcessDonationContextProvider donation={donation}>
-      <ProcessDonationDialogBase donation={donation} trigger={trigger} />
+      <ProcessDonationDialogBase donation={donation} trigger={trigger} {...restProps} />
     </ProcessDonationContextProvider>
   )
 }
 
-type ProcessDonationDialogBaseProps = {
+type ProcessDonationDialogBaseProps = SheetProps & {
   donation: ProcessedDonation
   trigger?: ReactNode
 }
 
 function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
-  const { donation, trigger } = props
+  const { donation, trigger, ...restProps } = props
 
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
@@ -98,7 +103,7 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
     form.reset()
   }
 
-  const closeForm = () => {
+  const closeDialog = () => {
     if (queryState.isLoading)
       return
 
@@ -110,17 +115,18 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
     if (donationCode) {
       form.reset({
         title: donationCode.title,
-        points: donation.processData.addedPoints?.toString() || 0,
+        points: formatNumberToIntlString(donation.processData.addedPoints || 0),
       })
     }
   }, [donationCode, donation, form])
 
+  const mergedSheetProps = mergeProps({
+    open: isSheetOpened,
+    onOpenChange: setIsSheetOpened,
+  }, restProps)
+
   return (
-    <Sheet
-      open={isSheetOpened}
-      onOpenChange={setIsSheetOpened}
-      dismissible={!isFormDirty}
-    >
+    <Sheet dismissible={!isFormDirty} {...mergedSheetProps}>
       <SheetTrigger
         nativeButton={false}
       >
@@ -156,13 +162,15 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
                       donationId={donation.id}
                     />
                     <Divider className="mx-1" orientation="vertical" />
-                    <Button
-                      className={sheetStyles.closeButton}
-                      isIconOnly
-                      icon={<Icons.LargeCross width={14} height={14} />}
-                      disabled={isFormDirty || queryState.isLoading}
-                      onClick={closeForm}
-                    />
+                    <SheetClose className="relative top-0 right-0">
+                      <Button
+                        className={sheetStyles.closeButton}
+                        isIconOnly
+                        icon={<Icons.LargeCross width={14} height={14} />}
+                        disabled={isFormDirty || queryState.isLoading}
+                        onClick={closeDialog}
+                      />
+                    </SheetClose>
                   </Flex>
                 </Flex>
               )}
@@ -184,13 +192,15 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
               </Flex>
               {!isLargeThenTablet
                 && (
-                  <Button
-                    className={sheetStyles.closeButton}
-                    isIconOnly
-                    icon={<Icons.LargeCross width={14} height={14} />}
-                    disabled={isFormDirty || queryState.isLoading}
-                    onClick={closeForm}
-                  />
+                  <SheetClose className="relative top-0 right-0">
+                    <Button
+                      className={sheetStyles.closeButton}
+                      isIconOnly
+                      icon={<Icons.LargeCross width={14} height={14} />}
+                      disabled={isFormDirty || queryState.isLoading}
+                      onClick={closeDialog}
+                    />
+                  </SheetClose>
                 )}
             </Flex>
           </SheetHeader>
@@ -237,6 +247,8 @@ function ApproveDonationButton(props: ApproveDonationButtonProps) {
 
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
+  const { updateDonation } = useActionCreators(donationsActions)
+
   const {
     state: { isBlockedActions },
     dispatch: { setIsBlockedActions },
@@ -245,7 +257,7 @@ function ApproveDonationButton(props: ApproveDonationButtonProps) {
   const [approveDonationMutation, mutationState] = useApproveDonationMutation()
 
   const approveDonation = async (formData: ProcessDonationForm) => {
-    if (mutationState.isLoading)
+    if (mutationState.isLoading || donation.processData.status === 'added')
       return
 
     setIsBlockedActions(true)
@@ -259,6 +271,12 @@ function ApproveDonationButton(props: ApproveDonationButtonProps) {
 
     if (response.error) {
       console.log(response.error)
+    }
+    else {
+      updateDonation({
+        id: donation.id,
+        processData: { ...donation.processData, status: 'added' },
+      })
     }
 
     setIsBlockedActions(false)
@@ -310,10 +328,12 @@ function DeclineDonationButton(props: DeclineDonationButtonProps) {
 
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
+  const { updateDonation } = useActionCreators(donationsActions)
+
   const [declineDonationMutation, mutationState] = useDeclineDonationMutation()
 
   const declineDonation = async () => {
-    if (mutationState.isLoading)
+    if (mutationState.isLoading || donation.processData.status === 'rejected')
       return
 
     setIsBlockedActions(true)
@@ -325,6 +345,12 @@ function DeclineDonationButton(props: DeclineDonationButtonProps) {
 
     if (response.error) {
       console.log(response.error)
+    }
+    else {
+      updateDonation({
+        id: donation.id,
+        processData: { ...donation.processData, status: 'rejected' },
+      })
     }
 
     setIsBlockedActions(false)

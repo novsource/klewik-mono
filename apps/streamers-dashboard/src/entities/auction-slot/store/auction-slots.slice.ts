@@ -82,7 +82,7 @@ const slice = createSlice({
     },
     updateSlotsPointsSum(
       state,
-      action: PayloadAction<Omit<AuctionSlot, 'color' | 'title'>[]>,
+      action: PayloadAction<Pick<AuctionSlot, 'id' | 'points'>[]>,
     ) {
       const payload = action.payload
 
@@ -132,14 +132,19 @@ const slice = createSlice({
       if (!auctionSlots)
         return
 
+      let pointsSum = 0
+
       const slotsWithColors = auctionSlots.reduce<AuctionSlot[]>((acc, slot) => {
         const slotWithColor: AuctionSlot = { ...slot, color: getRandomHEXColor() }
+
+        pointsSum += slot.points
 
         acc.push(slotWithColor)
         return acc
       }, [])
 
       state.slots = slotsWithColors
+      state.slotsPointsSum = pointsSum
     })
   },
 })

@@ -1,14 +1,22 @@
-import { WheelSlot, WheelSlotSchema } from '../../model'
+import type { WheelSlot } from '../../model'
 
-export const validateSlotsPayload = (payload: WheelSlot | WheelSlot[]) => {
+import { WheelSlotSchema } from '../../model'
+
+export const validateWheelSlotsPayload = (payload: WheelSlot | WheelSlot[]) => {
   try {
     if (Array.isArray(payload)) {
-      payload.forEach((slot) => WheelSlotSchema.parse(slot))
-    } else {
-      WheelSlotSchema.parse(payload)
+      const validatedData = payload.map(slot => WheelSlotSchema.parse(slot))
+
+      return validatedData
     }
-    return payload
-  } catch (err) {
+    else {
+      const validatedSlot = WheelSlotSchema.parse(payload)
+
+      return validatedSlot
+    }
+  }
+  catch (err) {
+    console.log('error:', err)
     throw err
   }
 }

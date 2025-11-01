@@ -27,9 +27,7 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
   const { value, triggerProps, className, ...restProps } = props
 
   const [isOpen, setIsOpen] = useState(false)
-  const [accordionAnimationStatus, setAccordionAnimatinoStatus] = useState<
-    'animating' | 'animated'
-  >('animated')
+  const [accordionAnimationStatus, setAccordionAnimatinoStatus] = useState<'animating' | 'animated'>('animated')
 
   const textRef = useRef<HTMLSpanElement>(null)
 
@@ -43,7 +41,7 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
     >
       <div
         className="rounded-md bg-dark-light px-2 transition-[width] duration-500"
-        style={{ width: isOpen ? messageContainerSizes.width : 300 }}
+        style={{ width: isOpen ? messageContainerSizes.width : 'auto' }}
         onAnimationStart={() => setAccordionAnimatinoStatus('animating')}
         onAnimationEnd={() => setAccordionAnimatinoStatus('animated')}
       >

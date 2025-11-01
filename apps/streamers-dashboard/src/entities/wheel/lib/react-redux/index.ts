@@ -1,3 +1,1 @@
-import { validateSlotsPayload } from './actions-validation'
-
-export { validateSlotsPayload }
+export * from './actions-validation'

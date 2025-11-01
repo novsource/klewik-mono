@@ -1,5 +1,3 @@
-import { ProcessDonationDialog } from '~features/donations/process-donation/ui'
-
 import type { ProcessedDonation } from '~entities/donation/model'
 import type { BaseDonationCardProps } from '~entities/donation/ui/card'
 import {
@@ -16,6 +14,7 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 
 import { useMediaQuery } from '~shared/hooks'
 
+import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
@@ -23,20 +22,21 @@ import { MotionBox } from '~shared/ui/motion-box'
 
 export type InfiniteDonationsListCardProps = BaseDonationCardProps & {
   donation: ProcessedDonation
+  actionButtonProps?: ButtonProps
 }
 
 export const InfiniteDonationsListCard = (props: InfiniteDonationsListCardProps) => {
-  const { donation, ...restProps } = props
+  const { donation, actionButtonProps, ...restProps } = props
 
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   return (
-    <BaseDonationCard {...restProps}>
+    <BaseDonationCard className="pt-1.5 max-tablet:pr-2.5" {...restProps}>
       <Flex className="gap-x-4 tablet:gap-x-10" justify="between" align="end">
         <Flex className="w-full" direction="column">
           <BaseDonationCardHeader>
-            <Flex className="w-full h-6" justify="between">
-              <Flex className="gap-x-1.5">
+            <Flex className="w-full h-5" justify="between">
+              <Flex className="gap-x-1">
                 <IntegrationBadge integration={donation.source} />
                 <DonationCardStatusBadge status={donation.processData.status} />
               </Flex>
@@ -44,15 +44,11 @@ export const InfiniteDonationsListCard = (props: InfiniteDonationsListCardProps)
           </BaseDonationCardHeader>
           <SolidDonationCardContent donationData={donation} />
         </Flex>
-        <ProcessDonationDialog
-          donation={donation}
-          trigger={(
-            <Button
-              className="bg-dark-light size-7 tablet:size-8.5 text-gray-light transition-colors hover:text-white"
-              isIconOnly
-              icon={<Icons.ArrowRight size={isLargeThenTablet ? 'default' : 'sm'} />}
-            />
-          )}
+        <Button
+          className="bg-dark-light size-8 tablet:size-8.5 text-gray-light transition-colors hover:text-white"
+          isIconOnly
+          icon={<Icons.ArrowRight size={isLargeThenTablet ? 'default' : 'sm'} />}
+          {...actionButtonProps}
         />
       </Flex>
     </BaseDonationCard>

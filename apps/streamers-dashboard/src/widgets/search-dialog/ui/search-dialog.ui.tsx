@@ -71,7 +71,16 @@ function DesktopSearchDialog(props: DesktopSearchDialogProps) {
   const {
     state: { isDialogOpen, searchValue, category },
     dispatch: { setIsDialogOpen, setSearchValue, setCategory },
+    functions: { closeDialog },
   } = useSearchDialogContext()
+
+  const handleOnOpenChange = (open: boolean) => {
+    if (!open) {
+      return closeDialog()
+    }
+
+    setIsDialogOpen(true)
+  }
 
   const dialogContentProps = useMemo(() => mergeProps(contentProps, {
     className: 'w-4/5 landtop:w-3/5 desktop:w-1/2 h-3/4 border-dark-light rounded-[16px] bg-dark-foreground-light p-0 overflow-clip',
@@ -79,7 +88,7 @@ function DesktopSearchDialog(props: DesktopSearchDialogProps) {
   const dialogHeaderProps = useMemo(() => mergeProps(headerProps, { className: 'gap-0' }), [headerProps])
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} {...dialogProps}>
+    <Dialog open={isDialogOpen} onOpenChange={handleOnOpenChange} {...dialogProps}>
       <DialogTrigger {...triggerProps}>
         {trigger}
       </DialogTrigger>

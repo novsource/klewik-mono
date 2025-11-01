@@ -27,6 +27,7 @@ import type {
 } from '~shared/ui/sheet'
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -35,7 +36,7 @@ import {
 } from '~shared/ui/sheet'
 import { Typography } from '~shared/ui/typograghy'
 
-import { twSlotsStyles } from '~shared/utils'
+import { mergeProps, twSlotsStyles } from '~shared/utils'
 
 import { useEditSlotDialog } from '../hooks'
 import { editSlotSheetStyles } from '../styles'
@@ -51,8 +52,6 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
   const {
     slot: inputSlot,
     trigger,
-    open,
-    onOpenChange,
     closeButtonProps,
     ...restProps
   } = props
@@ -77,20 +76,30 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
           form={form}
           onSubmit={e => e.preventDefault()}
         />
-
       </Flex>
     )
   }, [inputSlot, form])
 
   const closeDialog = () => {
+    if (formState.isDirty || formQueryState.isLoading)
+      return
+
     dialogState.setIsOpen(false)
   }
 
   const sheetStyles = useMemo(() => twSlotsStyles(editSlotSheetStyles), [])
 
+  const isDismissible = !formState.isDirty || formQueryState.isLoading
+
+  const mergedSheetProps = mergeProps({
+    open: dialogState.isOpen,
+    onOpenChange: dialogState.setIsOpen,
+    dismissible: isDismissible,
+  }, restProps)
+
   if (isMediaLargeThenTablet) {
     return (
-      <Sheet open={open} onOpenChange={onOpenChange} {...restProps}>
+      <Sheet {...mergedSheetProps}>
         {trigger && <SheetTrigger>{trigger}</SheetTrigger>}
         <SheetContent>
           <Flex className="h-full w-full gap-y-4" direction="column">
@@ -127,14 +136,16 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
                     Сохранить
                   </Button>
                   <div className="h-2/3 w-0.25 bg-dark-accent mx-1" />
-                  <Button
-                    className="size-8"
-                    isIconOnly
-                    icon={<Icons.LargeCross width={14} height={14} />}
-                    disabled={formQueryState.isLoading}
-                    onClick={closeDialog}
-                    {...closeButtonProps}
-                  />
+                  <SheetClose nativeButton={false} className="relative right-0 top-0">
+                    <Button
+                      className="size-8"
+                      isIconOnly
+                      icon={<Icons.LargeCross width={14} height={14} />}
+                      disabled={formQueryState.isLoading || formState.isDirty}
+                      onClick={closeDialog}
+                      {...closeButtonProps}
+                    />
+                  </SheetClose>
                 </Flex>
               </Flex>
               <Flex className="h-full gap-x-4" align="center">
@@ -145,7 +156,7 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
                   align="start"
                   justify="start"
                 >
-                  <SheetTitle>Редактирование слота</SheetTitle>
+                  <SheetTitle>Обзор слота</SheetTitle>
                   <Typography
                     className="leading-4 font-normal text-gray-accent"
                     tag="p"
@@ -164,7 +175,7 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
   }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange} {...restProps}>
+    <Sheet {...mergedSheetProps}>
       <SheetTrigger>{trigger}</SheetTrigger>
       <SheetContent className="overflow-scroll" isFullPageSize side="bottom">
         <Flex className="h-full w-full" direction="column">
@@ -172,14 +183,14 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
             <EditSlotDialogsIcon />
             <div className={sheetStyles.titleWrapper}>
               <SheetTitle className={sheetStyles.title}>
-                Редактирование слота
+                Обзор слота
               </SheetTitle>
               <SheetDescription>
                 <Typography
                   className={sheetStyles.titleDescription}
                   tag="p"
                 >
-                  Измените параметры у слота
+                  Измените параметры слота
                 </Typography>
               </SheetDescription>
             </div>
@@ -229,15 +240,17 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
             >
               Сохранить
             </Button>
-            <Button
-              className="w-full"
-              size="sm"
-              icon={<Icons.LargeCross width={14} height={14} />}
-              onClick={closeDialog}
-              {...closeButtonProps}
-            >
-              Отмена
-            </Button>
+            <SheetClose className="relative top-0 right-0">
+              <Button
+                className="w-full"
+                size="sm"
+                icon={<Icons.LargeCross width={14} height={14} />}
+                onClick={closeDialog}
+                {...closeButtonProps}
+              >
+                Отмена
+              </Button>
+            </SheetClose>
           </Flex>
         </Flex>
       </SheetContent>

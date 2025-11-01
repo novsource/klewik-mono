@@ -4,7 +4,7 @@ import type { WheelSlot } from '../model'
 
 import { createSlice } from '@reduxjs/toolkit'
 
-import { validateSlotsPayload } from '../lib/react-redux'
+import { validateWheelSlotsPayload } from '../lib/react-redux'
 
 type WheelSettings = {
   spinTime: number
@@ -18,6 +18,7 @@ type WheelRotateValues = {
 }
 
 export type WheelState = {
+  highlightedSlotId: NullablePossible<number>
   wheelSpinStatus: WheelSpinStatus
   rotateValue: WheelRotateValues
   selectorTargetTitle: string
@@ -27,6 +28,7 @@ export type WheelState = {
 
 const initialState: WheelState = {
   wheelSpinStatus: 'idle',
+  highlightedSlotId: null,
   rotateValue: {
     current: 0,
     final: 0,
@@ -50,9 +52,9 @@ const wheelSlice = createSlice({
           ? [...state.slots, ...payload]
           : [...state.slots, payload]
       },
-      prepare: (payload: WheelSlot | WheelSlot[]) => ({
-        payload: validateSlotsPayload(payload),
-      }),
+      prepare: (payload: WheelSlot | WheelSlot[]) => {
+        return { payload: validateWheelSlotsPayload(payload) }
+      },
     },
     setSlots: {
       reducer: (state, action: PayloadAction<WheelSlot | WheelSlot[]>) => {
@@ -60,9 +62,11 @@ const wheelSlice = createSlice({
 
         state.slots = Array.isArray(payload) ? payload : [payload]
       },
-      prepare: (payload: WheelSlot | WheelSlot[]) => ({
-        payload: validateSlotsPayload(payload),
-      }),
+      prepare: (payload: WheelSlot | WheelSlot[]) => {
+        const validatedPayload = validateWheelSlotsPayload(payload)
+
+        return { payload: validatedPayload }
+      },
     },
     setSelectorTitleName: (state, action: PayloadAction<string>) => {
       state.selectorTargetTitle = action.payload
@@ -76,6 +80,9 @@ const wheelSlice = createSlice({
     setRotateValue: (state, action: PayloadAction<WheelRotateValues>) => {
       state.rotateValue = action.payload
     },
+    setHighlightedSlotId: (state, action: PayloadAction<NullablePossible<number>>) => {
+      state.highlightedSlotId = action.payload
+    },
   },
   selectors: {
     getSlots: state => state.slots,
@@ -84,6 +91,7 @@ const wheelSlice = createSlice({
     getIsWheelSpinning: state => state.wheelSpinStatus === 'spinning',
     getRotateValue: state => state.rotateValue,
     getWheelStatus: state => state.wheelSpinStatus,
+    getHighlightedSlotId: state => state.highlightedSlotId,
   },
 })
 

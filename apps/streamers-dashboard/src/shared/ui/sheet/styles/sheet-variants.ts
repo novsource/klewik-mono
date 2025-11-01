@@ -36,7 +36,7 @@ export const sheetVariants = cva(
 export type SheetVariantsProps = VariantProps<typeof sheetVariants>
 
 export const sheetBackdropVariants = cva(
-  'fixed inset-0 z-50 bg-black/40',
+  'fixed inset-0 z-50 bg-black/40 opacity-70 transition-all data-[ending-style]:opacity-0 data-[starting-style]:opacity-0 duration-150',
 )
 
 export const sheetHeaderVariants = cva('flex flex-col space-y-2 text-left')

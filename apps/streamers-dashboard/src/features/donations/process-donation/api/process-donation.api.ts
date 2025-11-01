@@ -5,7 +5,7 @@ import type { Auction } from '~entities/auction/model'
 import { splittedDonationApi } from '~entities/donation/api'
 import type { DonationCode, ProcessedDonation } from '~entities/donation/model'
 
-type ProcessDonationMutationArgs = ProcessDonationForm & {
+type ProcessDonationMutationArgs = Omit<ProcessDonationForm, 'points'> & {
   id: ProcessedDonation['id']
   auctionUUID: Auction['auctionUUID']
   title: string
@@ -55,13 +55,13 @@ const processDonationApi = splittedDonationApi.injectEndpoints({
     })),
     processDonation: builder.mutation<void, ProcessDonationMutationArgs>(({
       query: ({ auctionUUID, id, ...data }) =>
-      ({
-        url: `/${auctionUUID}/donations/${id}`,
-        data,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }),
+        ({
+          url: `/${auctionUUID}/donations/${id}`,
+          data,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }),
     })),
     getDonationCodeInfo: builder.mutation<DonationCode, GetDonationCodeInfo>({
       query: ({ auctionUUID, code }) => ({
