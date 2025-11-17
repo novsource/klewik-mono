@@ -58,12 +58,13 @@ export const InfiniteDonationsListCard = (props: InfiniteDonationsListCardProps)
 export const InfiniteDonationsListSkeletonCard = () => {
   return (
     <MotionBox
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, scaleX: 0.95, scaleY: 0.98 }}
+      animate={{ opacity: 1, scaleX: 1, scaleY: 1 }}
       transition={{
-        duration: 0.1,
+        duration: 0.3,
         ease: 'easeInOut',
       }}
+      exit={{ opacity: 0, scaleX: 0.95, scaleY: 0.98, transition: { duration: 0.15 } }}
     >
       <SkeletonDonationCard />
     </MotionBox>

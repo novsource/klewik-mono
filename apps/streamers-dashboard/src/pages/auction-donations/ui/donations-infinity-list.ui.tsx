@@ -135,8 +135,9 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
         key={virtualizeItem.id}
         initial={{ opacity: 0, scaleY: 0.975, scaleX: 0.975 }}
         animate={{ opacity: 1, scaleY: 1, scaleX: 1 }}
+        exit={{ opacity: 0, scaleY: 0.975, scaleX: 0.975 }}
         transition={{
-          duration: 0.25,
+          duration: 0.2,
           ease: 'easeInOut',
         }}
       >
