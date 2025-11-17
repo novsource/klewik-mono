@@ -1,22 +1,12 @@
-import type {
-  ComponentPropsWithoutRef,
-  CSSProperties,
-} from 'react'
-import {
-  useEffect,
-} from 'react'
+import type { ComponentPropsWithoutRef, CSSProperties } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
-
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Flex } from '~shared/ui/flex'
 
 import { cn } from '~shared/utils'
 
 import { useWheel } from '../hooks/use-wheel'
-import { wheelSelectors } from '../store'
-import { generateWinner } from '../utils'
 
 export type WheelCanvasProps = Omit<ComponentPropsWithoutRef<'canvas'>, 'children'> & {
   auctionSlots: AuctionSlot[]
@@ -25,25 +15,10 @@ export type WheelCanvasProps = Omit<ComponentPropsWithoutRef<'canvas'>, 'childre
 export const WheelCanvas = (props: WheelCanvasProps) => {
   const { auctionSlots, style, ...restProps } = props
 
-  const wheelSpinStatus = useStoreSelector(wheelSelectors.getWheelStatus)
-  const rotateValue = useStoreSelector(wheelSelectors.getRotateValue)
-  const { spinTime } = useStoreSelector(wheelSelectors.getSettings)
-
   const {
+    state: { isSpinning, wheelSlots, staticRotateValue },
     refs: { wheelRef, innerRef },
-    functions: { spinWheel },
-    state: { wheelSlots },
   } = useWheel(auctionSlots)
-
-  useEffect(() => {
-    const isShouldSpinWheel = wheelSpinStatus === 'prepare'
-
-    if (isShouldSpinWheel) {
-      const winner = generateWinner(wheelSlots)
-
-      spinWheel(winner, spinTime)
-    }
-  }, [wheelSpinStatus, spinTime, spinWheel, wheelSlots])
 
   return (
     <Flex className="shrink h-full w-full" align="start" justify="center">
@@ -58,20 +33,21 @@ export const WheelCanvas = (props: WheelCanvasProps) => {
           style={{
             ...style,
             willChange: 'transform',
-            transform: `rotateZ(${rotateValue.current}deg)`,
+            transform: `rotateZ(${staticRotateValue}deg)`,
           }}
           {...restProps}
         />
-        <canvas
-          ref={innerRef}
-          className={cn(
-            'absolute top-0',
-            wheelSpinStatus !== 'spinning'
-            && wheelSlots.length === 0 && 'animate-pulse duration-[4s] transition-opacity',
-            wheelSlots.length === 0 && 'bg-dark-foreground animate-none',
-          )}
-          style={{ clipPath: 'circle(46%)' }}
-        />
+        <div className="absolute top-0">
+          <canvas
+            ref={innerRef}
+            className={cn(
+              !isSpinning
+              && wheelSlots.length === 0 && 'animate-pulse duration-[4s] transition-opacity',
+              wheelSlots.length === 0 && 'bg-dark-foreground animate-none',
+            )}
+            style={{ clipPath: 'circle(46%)' }}
+          />
+        </div>
       </Flex>
     </Flex>
   )

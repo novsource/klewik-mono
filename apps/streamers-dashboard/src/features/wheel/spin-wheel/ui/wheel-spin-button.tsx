@@ -1,41 +1,58 @@
+import { useEffect } from 'react'
 import type { ComponentProps } from 'react'
-import { useCallback, useMemo } from 'react'
 
 import { wheelActions, wheelSelectors } from '~entities/wheel/store'
+import { generateWinner } from '~entities/wheel/utils'
 
-import { useStoreDispatch, useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 
 type SpinWheelButtonProps = ComponentProps<'button'>
 
-const SpinWheelButton = ({ className, ...props }: SpinWheelButtonProps) => {
+const SpinWheelButton = (props: SpinWheelButtonProps) => {
+  const { className, ...restProps } = props
+
+  const { setWheelStatus, setSpinTarget } = useActionCreators(wheelActions)
+
   const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
+  const storedWheelStatus = useStoreSelector(wheelSelectors.getWheelStatus)
+  const { spinTime } = useStoreSelector(wheelSelectors.getSettings)
   const wheelSlots = useStoreSelector(wheelSelectors.getSlots)
 
-  const dispatch = useStoreDispatch()
+  const isButtonShouldBeDisabled = wheelSlots.length < 2 || isWheelSpinning
 
-  const isButtonShouldBeDisabled = useMemo(
-    () => wheelSlots.length < 2 || isWheelSpinning,
-    [isWheelSpinning, wheelSlots],
-  )
-
-  const handleOnClick = useCallback(() => {
+  const handleOnClick = () => {
     if (isButtonShouldBeDisabled)
       return
 
-    dispatch(wheelActions.setWheelStatus('prepare'))
-  }, [dispatch, isButtonShouldBeDisabled])
+    setWheelStatus('prepare')
+  }
+
+  useEffect(() => {
+    const isWheelIdle = storedWheelStatus === 'idle'
+    const isWheelCanBeSpinned = storedWheelStatus === 'prepare'
+
+    if (isWheelIdle) {
+      setSpinTarget(null)
+    }
+
+    if (isWheelCanBeSpinned) {
+      const target = generateWinner(wheelSlots)
+
+      setSpinTarget(target)
+    }
+  }, [storedWheelStatus, wheelSlots, spinTime])
 
   return (
     <Button
       className={className}
       variant="action"
       startContent={<Icons.Refresh size="xs" />}
-      onClick={handleOnClick}
       disabled={isButtonShouldBeDisabled}
-      {...props}
+      onClick={handleOnClick}
+      {...restProps}
     >
       Прокрутить
     </Button>

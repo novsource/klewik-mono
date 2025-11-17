@@ -17,7 +17,7 @@ import type { HexColor } from '~shared/lib/zod'
 import { clearCanvas, getMaxSizeCanvas, resizeCanvasWithRatio } from '~shared/utils/canvas'
 import { getHEXColor } from '~shared/utils/colors'
 
-import { wheelActions, wheelSelectors } from '../store'
+import { wheelActions } from '../store'
 import { formatSlotsToDropoutMode } from '../utils'
 import {
   calculateRotateWheelCSSValue,
@@ -251,6 +251,7 @@ type WheelControlCallbacks = {
 
 type WheelControlOptions = Partial<WheelControlCallbacks> & {
   wheelRef: RefObject<HTMLCanvasElement>
+  initialRotateValue?: number
 }
 
 export const useWheelControl = (
@@ -260,8 +261,7 @@ export const useWheelControl = (
   const {
     wheelRef,
     rotateValue,
-    onSpinStart,
-    onSpinComplete,
+    ...listeners
   } = options
 
   const [selectorTargetTitle, setSelectorTargetTitle] = useState<string | null>(
@@ -298,7 +298,7 @@ export const useWheelControl = (
         onPlay: () => {
           setIsWheelSpinning(true)
 
-          onSpinStart && onSpinStart(target)
+          listeners.onSpinStart?.(target)
           wheel.style.willChange = 'transform'
         },
         onUpdate(currentDegree) {
@@ -313,27 +313,26 @@ export const useWheelControl = (
 
           setWheelRotateCSSValue({ current: framerMotionAnimationValue.get(), final: framerMotionAnimationValue.get() })
 
-          onSpinComplete && onSpinComplete(target)
+          listeners.onSpinComplete?.(target)
         },
       })
     },
     [
       wheelRef,
-      onSpinComplete,
-      onSpinStart,
+      listeners,
       wheelRotateCSSValue,
       framerMotionAnimationValue,
       wheelSlots,
     ],
   )
 
-  const spinWheel = (wheelWinner: WheelSlot, spinTime: number) => {
+  const startWheelSpinAnimation = (wheelWinner: WheelSlot, spinTime: number) => {
     rotateWheelAnimation(wheelWinner, spinTime)
   }
 
   return {
     state: { wheelRotateCSSValue, isWheelSpinning, selectorTargetTitle },
-    functions: { spinWheel },
+    functions: { startWheelSpinAnimation },
   }
 }
 
@@ -343,18 +342,31 @@ export type UseWheelReturn = {
     innerRef: RefObject<HTMLCanvasElement>
   }
   functions: {
-    spinWheel: (winner: WheelSlot, spinTime: number) => void
+    startWheelSpinAnimation: (target: WheelSlot, spinTime: number) => void
   }
   state: {
+    isSpinning: boolean
     wheelSlots: WheelSlot[]
+    staticRotateValue: number
+    dynamicRotateValue: number
   }
 }
 
 export const useWheel = (slots: AuctionSlot[]): UseWheelReturn => {
-  const storedRotateWheelValue = useStoreSelector(wheelSelectors.getRotateValue)
-  const storeIsWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
-  const storeSelectorTitle = useStoreSelector(wheelSelectors.getSelectorTargetTitle)
-  const storedHighlightedSlotId = useStoreSelector(wheelSelectors.getHighlightedSlotId)
+  const {
+    rotateValue: storedRotateWheelValue,
+    spinStatus: storedSpinStatus,
+    highlightedSlotId: storedHighlightedSlotId,
+    selectorTargetTitle: storeSelectorTitle,
+    spinTarget: storedSpinTarget,
+    settings: storedWheelSettings,
+  } = useStoreSelector(state => state.wheel)
+
+  // const storedRotateWheelValue = useStoreSelector(wheelSelectors.getRotateValue)
+  // const storeIsWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
+  // const storeSelectorTitle = useStoreSelector(wheelSelectors.getSelectorTargetTitle)
+  // const storedHighlightedSlotId = useStoreSelector(wheelSelectors.getHighlightedSlotId)
+  // const storedSpinTarget = useStoreSelector(wheelSelectors.getSpinTarget)
 
   // TODO: Put wheel mode into wheel slice
   const storedWheelMode = useStoreSelector(auctionSelectors.getWheelMode)
@@ -383,8 +395,9 @@ export const useWheel = (slots: AuctionSlot[]): UseWheelReturn => {
 
   const {
     state: { wheelRotateCSSValue, selectorTargetTitle, isWheelSpinning },
-    functions: { spinWheel },
+    functions: { startWheelSpinAnimation },
   } = useWheelControl(getItemsWithAngles(preparedSlots), {
+    rotateValue: storedSpinStatus === 'spinning' ? storedRotateWheelValue.current : storedRotateWheelValue.final,
     wheelRef,
   })
 
@@ -405,7 +418,16 @@ export const useWheel = (slots: AuctionSlot[]): UseWheelReturn => {
     setSlots(wheelSlots)
   }, [wheelSlots, isWheelSpinning])
 
-  if (storeIsWheelSpinning !== isWheelSpinning) {
+  const storedIsWheelSpinning = storedSpinStatus === 'spinning'
+
+  useEffect(() => {
+    if (!storedSpinTarget)
+      return
+
+    startWheelSpinAnimation(storedSpinTarget, storedWheelSettings.spinTime)
+  }, [storedSpinTarget, storedWheelSettings.spinTime])
+
+  if (storedIsWheelSpinning !== isWheelSpinning) {
     const wheelStatus = isWheelSpinning ? 'spinning' : 'idle'
 
     setWheelStatus(wheelStatus)
@@ -428,8 +450,8 @@ export const useWheel = (slots: AuctionSlot[]): UseWheelReturn => {
   }, [drawWheel, resizeWheel, drawInner, resizeInnerBackground])
 
   return {
-    state: { wheelSlots },
+    state: { isSpinning: isWheelSpinning, wheelSlots, dynamicRotateValue: wheelRotateCSSValue.current, staticRotateValue: wheelRotateCSSValue.final },
     refs: { wheelRef, innerRef },
-    functions: { spinWheel },
+    functions: { startWheelSpinAnimation },
   }
 }
