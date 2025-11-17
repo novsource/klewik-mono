@@ -1,5 +1,3 @@
-import { memo } from 'react'
-
 import { auctionSelectors } from '~entities/auction/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -12,21 +10,22 @@ import { cn } from '~shared/utils'
 
 import { useLazyCloseBetsQuery, useLazyOpenBetsQuery } from '../api'
 
-const UpdateBetsStatusButton = memo(() => {
-  const auctionId = useStoreSelector(auctionSelectors.getAuctionUUID)
-  const isBetsClosed = useStoreSelector(auctionSelectors.getBetsStatus)
+export const UpdateBetsStatusButton = () => {
+  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
+  const isBetsClosed = useStoreSelector(auctionSelectors.getIsBetsClosed)
 
-  const [openBetsQuery, { isLoading: openBetsQueryLoading }] =
-    useLazyOpenBetsQuery()
-  const [closeBetsQuery, { isLoading: closeBetsQueryLoading }] =
-    useLazyCloseBetsQuery()
+  const [openBetsQuery, { isLoading: openBetsQueryLoading }]
+    = useLazyOpenBetsQuery()
+  const [closeBetsQuery, { isLoading: closeBetsQueryLoading }]
+    = useLazyCloseBetsQuery()
 
   const handleClick = async () => {
-    if (openBetsQueryLoading || closeBetsQueryLoading) return
+    if (openBetsQueryLoading || closeBetsQueryLoading)
+      return
 
     const request = isBetsClosed
-      ? openBetsQuery({ auctionId })
-      : closeBetsQuery({ auctionId })
+      ? openBetsQuery({ auctionUUID, status: isBetsClosed })
+      : closeBetsQuery({ auctionUUID, status: isBetsClosed })
 
     toastPromiseNotification(
       request,
@@ -38,7 +37,7 @@ const UpdateBetsStatusButton = memo(() => {
         errorText: isBetsClosed
           ? 'Не удалось открыть ставки'
           : 'Не удалось закрыть ставки',
-      }
+      },
     )
   }
 
@@ -56,6 +55,4 @@ const UpdateBetsStatusButton = memo(() => {
       {isBetsClosed ? 'Открыть ставки' : 'Закрыть ставки'}
     </Button>
   )
-})
-
-export { UpdateBetsStatusButton }
+}
