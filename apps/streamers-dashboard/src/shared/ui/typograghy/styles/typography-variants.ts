@@ -15,7 +15,7 @@ type TypographyVariants = {
 export const typographyVariants = cva<TypographyVariants>('', {
   variants: {
     tag: {
-      h1: 'font-breeze text-title-lg font-bold leading-5 desktop:text-title-xl desktop-lg:text-[24px] desktop-lg:leading-7',
+      h1: 'font-breeze text-title-lg font-bold leading-5 desktop:text-title-xl desktop-lg:text-title-2xl desktop-lg:leading-7',
       h2: 'font-breeze text-title-lg font-bold',
       h3: 'font-breeze text-title font-semibold',
       h4: 'font-breeze text-md font-semibold',

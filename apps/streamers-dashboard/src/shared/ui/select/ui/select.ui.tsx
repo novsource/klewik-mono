@@ -51,9 +51,11 @@ function SelectTrigger({
   className,
   asChild = false,
   children,
+  hideChevron = false,
   ...triggerProps
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
   size?: 'sm' | 'default'
+  hideChevron?: boolean
 }) {
   const { size } = useSelectContext()
 
@@ -71,7 +73,7 @@ function SelectTrigger({
     >
       <>
         {children}
-        {!asChild && (
+        {!asChild && !hideChevron && (
           <SelectPrimitive.Icon asChild>
             <ChevronDownIcon className="size-4 opacity-50" />
           </SelectPrimitive.Icon>

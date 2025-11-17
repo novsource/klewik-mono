@@ -77,6 +77,8 @@
     --text-title: 1.05rem;
     --text-title-lg: 1.3rem;
     --text-title-xl: 1.5rem;
+    --text-title-2xl: 1.75rem;
+    --text-title-3xl: 2rem;
 
     --radius-*: initial;
     --radius-none: 0px;
