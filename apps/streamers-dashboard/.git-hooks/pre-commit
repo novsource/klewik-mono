@@ -1,0 +1,11 @@
+ #!/bin/sh
+
+if git diff --quiet HEAD; then
+    echo "No changes. Skipping build."
+else
+    echo "Running unit tests..."
+    pnpm run unit-tests
+
+    echo "Running e2e tests..."
+    pnpm run e2e-tests
+fi

@@ -32,3 +32,6 @@ dist-ssr
 /blob-report/
 /playwright/.cache/
 /tests-examples
+
+# Playwright
+/playwright/.auth/

@@ -5,6 +5,7 @@
   "type": "module",
   "packageManager": "pnpm@10.18.1",
   "scripts": {
+    "prepare": "git config core.hooksPath .git-hooks || echo 'Not in a git repo'",
     "dev": "vite --port 5500 --host 0.0.0.0",
     "dev:icons": "pnpm run icons && vite",
     "icons": "npx @svgr/cli -- ./src/shared/assets/icons",
@@ -13,11 +14,12 @@
     "lint": "eslint",
     "lint:check": "eslint --check",
     "lint:fix": "eslint --fix",
-    "tests:vitest": "vitest",
-    "tests:vitest:coverage": "vitest run --coverage",
-    "tests:playwright": "pnpm dlx playwright test",
-    "tests:playwright-chrome": "pnpm dlx playwright test --project=chromium",
-    "tests:playwright-ui:": "pnpm dlx playwright test --ui"
+    "unit-tests": "vitest run",
+    "unit-tests:watch": "vitest",
+    "unit-tests:coverage": "vitest run --coverage",
+    "e2e-tests": "playwright test",
+    "e2e-tests:chrome": "playwright test --project=chromium",
+    "e2e-tests:ui": "playwright test --ui"
   },
   "dependencies": {
     "@base-ui-components/react": "1.0.0-beta.4",
