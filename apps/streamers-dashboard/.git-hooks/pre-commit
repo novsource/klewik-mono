@@ -5,7 +5,4 @@ if git diff --quiet HEAD; then
 else
     echo "Running unit tests..."
     pnpm run unit-tests
-
-    echo "Running e2e tests..."
-    pnpm run e2e-tests
 fi

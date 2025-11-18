@@ -9,38 +9,14 @@ import type { SortingOptions } from '~shared/store/model'
 import { getRandomHEXColor } from '~shared/utils'
 
 import { getAuctionSlotsThunk } from '../api'
+import { AUCTION_SLOTS_SLICE_INITIAL_STATE as initialState } from '../constants'
 
-type AuctionSlotsState = {
+export type AuctionSlotsSliceState = {
   slots: AuctionSlot[]
   dropoutSlots: AuctionSlot[]
   sortedSlots: AuctionSlot[]
   slotsPointsSum: number
   sortingOptions: SortingOptions<AuctionSlot>
-}
-
-// const mockedAuctionSlots = Array.from({ length: faker.number.int({ min: 40, max: 140 }) })
-//   .fill(null)
-//   .map((_, index) => ({
-//     id: index + 1,
-//     title: faker.word.words(10),
-//     points: faker.number.int({ min: 200, max: 205000 }),
-//     color: getHEXColor() as z.infer<typeof HexColorSchema>,
-//   }))
-
-// const slotsPointsSum = mockedAuctionSlots.reduce(
-//   (sum, slot) => sum + slot.points,
-//   0,
-// )
-
-const initialState: AuctionSlotsState = {
-  slots: [],
-  sortedSlots: [],
-  dropoutSlots: import.meta.env.VITE_DEV ? [] : [],
-  slotsPointsSum: import.meta.env.VITE_DEV ? 0 : 0,
-  sortingOptions: {
-    field: 'points',
-    type: 'descending',
-  },
 }
 
 const slice = createSlice({
@@ -78,7 +54,11 @@ const slice = createSlice({
     deleteSlot(state, action: PayloadAction<{ id: AuctionSlot['id'] }>) {
       const payload = action.payload
 
-      state.slots = state.slots.filter(slot => slot.id !== payload.id)
+      const filtredSlots = state.slots.filter(slot => slot.id !== payload.id)
+      const updatedPointsSum = filtredSlots.reduce((acc, slot) => acc + slot.points, 0)
+
+      state.slots = filtredSlots
+      state.slotsPointsSum = updatedPointsSum
     },
     updateSlotsPointsSum(
       state,
