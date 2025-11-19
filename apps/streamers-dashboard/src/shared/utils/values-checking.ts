@@ -19,3 +19,7 @@ export const isStringContainNotOnlyDigits = (str: string) => {
 
   return !!str.match(regex)
 }
+
+export const isError = (value: unknown): value is Error => {
+  return value instanceof Error
+}

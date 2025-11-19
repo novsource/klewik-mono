@@ -1,3 +1,2 @@
-import { DONATION_PROCESSED_STATUS } from './donation-processed-status.constants'
-
-export { DONATION_PROCESSED_STATUS }
+export * from './donation-processed-status.constants'
+export * from './slice-initial-state'
