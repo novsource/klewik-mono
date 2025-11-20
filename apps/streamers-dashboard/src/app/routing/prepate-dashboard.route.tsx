@@ -3,21 +3,22 @@ import type {
 } from 'react-router-dom'
 import { json, Outlet } from 'react-router-dom'
 
-import { AxiosError, isAxiosError } from 'axios'
+import { isAxiosError } from 'axios'
 import { z } from 'zod'
 
 import { store } from '~app/store'
 
 import { ErrorPage } from '~pages/error/ui/error-page.ui'
 
-import { getAuctionInfoThunk } from '~entities/auction/api'
+import type { Auction } from '~entities/auction/model'
 
-import { getAuctionSlotsThunk } from '~entities/auction-slot/api'
-
-import { getDonationsStatsThunk } from '~entities/donation/api'
+import { getAuctionInfo } from '~shared/api/http/auction/auction.api'
+import { getDonationsStats } from '~shared/api/http/donations'
 
 import type { ErrorStatusesWithReason } from '~shared/constants/router'
 import { errorStatusReasons } from '~shared/constants/router'
+
+import { isError } from '~shared/utils'
 
 export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => {
   return {
@@ -43,43 +44,27 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
       }
 
       try {
-        const dispatch = store.dispatch
         const auctionUUID = validatedParams.data.auctionId
 
-        const thunksArr = [
-          dispatch<any>(getAuctionInfoThunk(auctionUUID)),
-          dispatch<any>(getAuctionSlotsThunk(auctionUUID)),
-          dispatch<any>(getDonationsStatsThunk(auctionUUID)),
-        ]
+        const requestsArr = [getAuctionInfo<Auction>(auctionUUID), getDonationsStats(auctionUUID)]
+        const responses = await Promise.all(requestsArr)
 
-        const [
-          auctionInfoResponse,
-          slotsResponse,
-          donationsStatsResponse,
-        ] = await Promise.all(thunksArr)
+        responses.forEach((response) => {
+          if (isAxiosError(response)) {
+            throw response
+          }
+        })
 
-        const isAuctionInfoResponseError = isAxiosError(auctionInfoResponse.payload)
-        const isAuctionSlotsResponseError = isAxiosError(slotsResponse.payload)
-        const isDonationsStatusResponseError = isAxiosError(donationsStatsResponse.payload)
-
-        if (isAuctionInfoResponseError) {
-          throw auctionInfoResponse.payload
-        }
-
-        if (isAuctionSlotsResponseError) {
-          throw slotsResponse.payload
-        }
-
-        if (isDonationsStatusResponseError) {
-          throw donationsStatsResponse.payload
-        }
+        const auctionInfoResponse = responses[0]
 
         return json(auctionInfoResponse, { status: 200 })
       }
       catch (error) {
-        if (error instanceof AxiosError) {
-          const isStatusHaveReason = error.status !== undefined && Reflect.has(errorStatusReasons, error.status.toString())
-          const reason = isStatusHaveReason ? errorStatusReasons[error.status?.toString() as unknown as ErrorStatusesWithReason] : 'Неизвестная причина'
+        if (isAxiosError(error)) {
+          const isRejectHaveReason = error.status !== undefined && Reflect.has(errorStatusReasons, error.status.toString())
+          const reason = isRejectHaveReason
+            ? errorStatusReasons[error.status?.toString() as unknown as ErrorStatusesWithReason]
+            : 'Неизвестная причина'
 
           throw json(
             {
@@ -91,28 +76,20 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
             },
           )
         }
-        if (error instanceof Error) {
+
+        if (isError(error)) {
           const isAuctionNotFound = error.message.includes('404')
+
+          const reason = isAuctionNotFound
+            ? errorStatusReasons['404']
+            : 'Неизвестная причина'
 
           if (isAuctionNotFound) {
             throw json({
               reason,
-              hint: 'Не удалось найти аукцион. Попробуйте войти через главную страницу',
+              hint: 'Попробуйте перезайти в аукцион через главную страницу',
             }, {
-              status: 404,
-            })
-          }
-        }
-
-        if ('message' in error) {
-          const isAuctionNotFound = error.message.includes('404')
-
-          if (isAuctionNotFound) {
-            throw json({
-              reason,
-              hint: 'Не удалось найти аукцион. Попробуйте войти через главную страницу',
-            }, {
-              status: 404,
+              status: isAuctionNotFound ? 404 : 500,
             })
           }
         }

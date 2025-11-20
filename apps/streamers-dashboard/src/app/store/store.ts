@@ -12,10 +12,12 @@ import {
 
 import { splittedDonationApi as donationsApi } from '~entities/donation/api'
 import { donationsReducer } from '~entities/donation/store'
+import { donationsListenerMiddlewares } from '~entities/donation/store/donations.middlewares'
 
 import { splittedIntegrationsApi as integrationsApi } from '~entities/integrations/api'
 import { integrationsReducer } from '~entities/integrations/store'
 
+import { splittedWheelApi as wheelApi } from '~entities/wheel/api'
 import { wheelReducer } from '~entities/wheel/store'
 
 import { auctionSlotsSSEApi, splittedAuthApi as authApi, donationsSSEApi } from '~shared/store/api'
@@ -29,6 +31,7 @@ const rootReducer = combineReducers({
   integrations: integrationsReducer,
   sse: sseReducer,
   wheel: wheelReducer,
+  [wheelApi.reducerPath]: wheelApi.reducer,
   [auctionApi.reducerPath]: auctionApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [auctionSlotsApi.reducerPath]: auctionSlotsApi.reducer,
@@ -65,13 +68,14 @@ export const store = configureStore({
     getDefaultMiddleware()
       .prepend(
         ...auctionSlotsListenerMiddlewares,
-        // ...donationsListenerMiddlewares,
+        ...donationsListenerMiddlewares,
       )
       .concat(
         auctionApi.middleware,
         authApi.middleware,
         auctionSlotsApi.middleware,
         donationsApi.middleware,
+        wheelApi.middleware,
         integrationsApi.middleware,
         donationsSSEApi.middleware,
         auctionSlotsSSEApi.middleware,
