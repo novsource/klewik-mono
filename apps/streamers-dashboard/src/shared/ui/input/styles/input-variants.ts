@@ -11,6 +11,8 @@ export type InputSlots
     | 'content'
     | 'description'
     | 'label'
+    | 'startContent'
+    | 'endContent'
 
 type ErrorCvaVariants = {
   isError: {
@@ -93,13 +95,29 @@ export const descriptionVariants = cva<DescriptionVariants>(
   },
 )
 
+export const sidesSectionsVariants = cva<SizesCvaVariants>([
+  'absolute top-1/2 -translate-y-1/2 flex justify-center items-center pointer-events-none',
+  'data-[side=start]:left-0 data-[side=end]:right-0',
+], {
+  variants: {
+    size: {
+      default: 'size-9',
+      sm: 'size-8',
+      lg: 'size-10',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+})
+
 export const contentVariants = cva<ContentBaseVariants>([
   'group flex flex-col gap-y-1.25 tablet:gap-y-2',
 ])
 
 export const contentWrapperVariants = cva<ContentWrapperVariants>(
   [
-    'flex w-full items-center rounded-medium transition-all bg-dark',
+    'relative flex w-full items-center rounded-medium transition-all bg-dark',
     'ring-gray/70 data-[focus=true]:ring-1 data-[focus=true]:ring-gray/70',
   ],
   {
@@ -109,9 +127,9 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
         ghost: 'data-[focus=true]:bg-dark-foreground data-[hover=true]:bg-dark-foreground/40 data-[focus=true]:data-[hover=true]:bg-dark-foreground',
       },
       size: {
-        default: 'h-10 gap-x-2 px-4',
-        sm: 'h-9 gap-x-1 px-3 py-2',
-        lg: 'h-11 gap-x-3 px-4',
+        default: 'h-10',
+        sm: 'h-9',
+        lg: 'h-11',
       },
       isError: { true: 'ring-1 ring-red/80', false: 'ring-gray-light' },
       isDisabled: {
@@ -141,9 +159,9 @@ export const inputVariants = cva<InputVariants>(
   {
     variants: {
       size: {
-        default: 'text-md font-superior',
-        lg: 'text-md font-superior',
-        sm: 'text-sm font-superior',
+        default: 'text-md font-superior px-4',
+        lg: 'text-md font-superior px-4',
+        sm: 'text-sm font-superior px-3 py-2',
       },
       isError: {
         true: 'focus-visible:ring-red',
@@ -153,12 +171,68 @@ export const inputVariants = cva<InputVariants>(
         true: '',
       },
       startContent: {
-        true: 'px-0',
+        true: '',
       },
       endContent: {
-        true: 'px-0',
+        true: '',
       },
     },
+    compoundVariants: [
+      {
+        startContent: true,
+        endContent: false,
+        size: 'default',
+        className: 'pl-10',
+      },
+      {
+        startContent: false,
+        endContent: true,
+        size: 'default',
+        className: 'pr-10',
+      },
+      {
+        startContent: true,
+        endContent: true,
+        size: 'default',
+        className: 'px-10',
+      },
+      {
+        startContent: true,
+        endContent: false,
+        size: 'sm',
+        className: 'pl-8',
+      },
+      {
+        startContent: false,
+        endContent: true,
+        size: 'sm',
+        className: 'pr-8',
+      },
+      {
+        startContent: true,
+        endContent: true,
+        size: 'sm',
+        className: 'px-8',
+      },
+      {
+        startContent: true,
+        endContent: false,
+        size: 'lg',
+        className: 'pl-12',
+      },
+      {
+        startContent: false,
+        endContent: true,
+        size: 'lg',
+        className: 'pr-12',
+      },
+      {
+        startContent: true,
+        endContent: true,
+        size: 'lg',
+        className: 'px-12',
+      },
+    ],
     defaultVariants: {
       size: 'default',
       isError: false,
