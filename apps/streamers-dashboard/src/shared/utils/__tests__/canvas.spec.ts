@@ -18,10 +18,10 @@ import {
 describe('#canvas utils', () => {
   beforeEach(() => {
     vi.spyOn(HTMLDivElement.prototype, 'offsetWidth', 'get').mockReturnValue(
-      window.innerWidth
+      window.innerWidth,
     )
     vi.spyOn(HTMLDivElement.prototype, 'offsetHeight', 'get').mockReturnValue(
-      window.innerHeight
+      window.innerHeight,
     )
   })
 
@@ -34,7 +34,7 @@ describe('#canvas utils', () => {
     'data-testid': 'canvas',
   })
   const canvasWrapper = createElement('div', {
-    children: canvas,
+    'children': canvas,
     'data-testid': 'wrapper',
   })
 
@@ -44,7 +44,7 @@ describe('#canvas utils', () => {
     const wrapper = screen.getByTestId('wrapper')
 
     expect(getMaxSizeCanvas(wrapper)).toBe(
-      Math.min(window.innerWidth - 56, window.innerHeight - 56)
+      Math.min(window.innerWidth - 56, window.innerHeight - 56),
     )
   })
 
@@ -63,7 +63,7 @@ describe('#canvas utils', () => {
         x: 0,
         y: 0,
         toJSON: () => undefined,
-      }
+      },
     )
 
     render(canvasWrapper)
@@ -99,7 +99,7 @@ describe('#canvas utils', () => {
 
     // Testing with short text
     expect(fitTextEllipsis(ctx, 'Short text', window.innerWidth)).toBe(
-      'Short text'
+      'Short text',
     )
 
     // Testing with long text
@@ -107,8 +107,8 @@ describe('#canvas utils', () => {
       fitTextEllipsis(
         ctx,
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
-        50
-      )
+        50,
+      ),
     ).toBe('Lorem ipsum dolor sit amet, consectetur adipisci...')
   })
 

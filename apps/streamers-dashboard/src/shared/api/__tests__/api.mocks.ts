@@ -2,7 +2,7 @@ import type { AuctionDTO } from '../http/auction'
 import type { CreateAuctionResponse } from '../http/auction/auction.api'
 
 import { faker } from '@faker-js/faker'
-import { checkPostFormRequestHeaders } from '~root/tests/mock-server/helpers'
+import { checkPostFormRequestHeaders } from '~root/tests/utils/mock-server/helpers'
 import { http, HttpResponse } from 'msw'
 import { z } from 'zod'
 

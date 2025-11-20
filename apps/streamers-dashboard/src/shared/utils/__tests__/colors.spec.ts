@@ -15,9 +15,9 @@ describe('#colors utils', () => {
     expect(rgbValues.length).toBeGreaterThanOrEqual(3)
     expect(rgbValues.length).toBeLessThanOrEqual(4)
 
-    rgbValues.forEach((val) => expect(Number(val)).not.toBe(NaN))
-    rgbValues.forEach((val) => expect(Number(val)).toBeGreaterThanOrEqual(0))
-    rgbValues.forEach((val) => expect(Number(val)).toBeLessThanOrEqual(255))
+    rgbValues.forEach(val => expect(Number(val)).not.toBe(Number.NaN))
+    rgbValues.forEach(val => expect(Number(val)).toBeGreaterThanOrEqual(0))
+    rgbValues.forEach(val => expect(Number(val)).toBeLessThanOrEqual(255))
   })
 
   it('should return correct random HEX color', () => {
@@ -31,8 +31,8 @@ describe('#colors utils', () => {
     expect(hexValues.length).toBeGreaterThanOrEqual(3)
     expect(hexValues.length).toBeLessThanOrEqual(6)
 
-    expect(hexValues).not.toMatch(/([d-z][D-Z])/gm)
-    expect(hexValues).not.toMatch(/w/gm)
+    expect(hexValues).not.toMatch(/([d-z][D-Z])/g)
+    expect(hexValues).not.toMatch(/w/g)
   })
 
   it('should return correct random HSL color', () => {
@@ -44,8 +44,8 @@ describe('#colors utils', () => {
 
     expect(hslValues.length).toBe(3)
 
-    hslValues.forEach((val) =>
-      expect(Number(val.replace('%', ''))).not.toBe(NaN)
+    hslValues.forEach(val =>
+      expect(Number(val.replace('%', ''))).not.toBe(Number.NaN),
     )
 
     expect(Number(hslValues[0])).toBeGreaterThanOrEqual(0)
