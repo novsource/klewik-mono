@@ -16,8 +16,8 @@ const initialState = {
     processedDonationsIds: [],
     ownerId: '',
     url: '',
-    createAt: new Date(),
-    endedAt: new Date(),
+    createAt: '',
+    endedAt: '',
     isBetsClosed: false,
     isEnded: false,
     wheelMode: 'classic',
@@ -28,11 +28,7 @@ describe('auction slice selectors', () => {
   it('should use correct initial state', () => {
     const state = createState()
 
-    expect({
-      ...state.auctionInfo,
-      createAt: initialState.auctionInfo.createAt,
-      endedAt: initialState.auctionInfo.endedAt,
-    }).toEqual(initialState.auctionInfo)
+    expect(state.auctionInfo).toEqual(initialState.auctionInfo)
   })
 
   it('should return auction uuid', () => {

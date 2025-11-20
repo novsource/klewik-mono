@@ -12,8 +12,16 @@ const AuctionSchema = z.object({
   dropoutSlotsIds: z.number().array(),
   isBetsClosed: z.boolean(),
   isEnded: z.boolean(),
-  createAt: z.date(),
-  endedAt: z.date(),
+  createAt: z.date().transform((value) => {
+    if (value instanceof Date) {
+      return value.toISOString()
+    }
+  }),
+  endedAt: z.date().transform((value) => {
+    if (value instanceof Date) {
+      return value.toISOString()
+    }
+  }),
 })
 
 export { AuctionSchema }

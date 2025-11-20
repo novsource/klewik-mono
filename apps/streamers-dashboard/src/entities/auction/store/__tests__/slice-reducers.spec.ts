@@ -12,8 +12,8 @@ describe('auction slice actions', () => {
   it('should set auction info', () => {
     const newAuctionInfo: Auction = {
       auctionUUID: 'fdsa',
-      createAt: new Date(),
-      endedAt: new Date(),
+      createAt: new Date().toISOString(),
+      endedAt: new Date().toISOString(),
       dropoutSlotsIds: [1, 2, 3],
       id: 10,
       isBetsClosed: true,
