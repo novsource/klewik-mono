@@ -7,14 +7,17 @@ import type { WheelTabsStylesSlots } from '~pages/auction-wheel/styles'
 import { wheelTabsStyles } from '~pages/auction-wheel/styles'
 
 import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
+
 import { twSlotsStyles } from '~shared/utils'
 
-import { ControlWheelTab } from './wheel-tab-control'
-import { SlotsWheelTab } from './wheel-tab-slots'
+import { ControlWheelTabContent } from './wheel-tab-control'
+import { PreferencesWheelTabContent } from './wheel-tab-preferences.ui'
+import { SlotsWheelTabContent } from './wheel-tab-slots'
 
 const triggersNames = {
   control: 'Управление',
   slots: 'Слоты',
+  preferences: 'Внешний вид',
 } as const
 
 type WheelTabsProps = Omit<TabsProps, 'className'> & {
@@ -49,8 +52,9 @@ const WheelTabs = (props: WheelTabsProps) => {
       <TabsList className={tabsStyles.tabList}>
         {tabsTriggers}
       </TabsList>
-      <ControlWheelTab />
-      <SlotsWheelTab />
+      <ControlWheelTabContent />
+      <SlotsWheelTabContent />
+      <PreferencesWheelTabContent />
     </Tabs>
   )
 }

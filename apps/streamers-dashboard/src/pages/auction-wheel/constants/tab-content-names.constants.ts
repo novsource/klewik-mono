@@ -1,6 +1,5 @@
-const TABS_CONTENT_NAMES = {
+export const TABS_CONTENT_NAMES = {
   CONTROL: 'control',
   SLOTS: 'slots',
+  PREFERENCES: 'preferences',
 }
-
-export { TABS_CONTENT_NAMES }
