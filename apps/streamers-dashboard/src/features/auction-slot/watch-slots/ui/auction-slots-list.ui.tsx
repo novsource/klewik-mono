@@ -61,11 +61,12 @@ export const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) 
       const slotWinPercents = ((slot.points / storedPointsSum) * 100)
 
       return (
-        <BaseAuctionSlotCard className="pr-2">
+        <BaseAuctionSlotCard key={slot.id} className="pr-2">
           <Flex className="w-full" justify="between" align="center">
             <SolidAuctionSlotHeader slotColor={slot.color} slotId={slot.id} slotTitle={slot.title} />
             <Button
               className="h-full text-gray hover:text-gray-accent transition-colors"
+              tabIndex={-1}
               variant="ghost"
               isIconOnly
               icon={<Icons.EyeOpen size="sm" />}

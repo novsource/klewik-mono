@@ -11,6 +11,8 @@ import { SpinWheelButton } from '~features/wheel/spin-wheel/ui'
 
 import { auctionActions, auctionSelectors } from '~entities/auction/store'
 
+import { wheelSelectors } from '~entities/wheel/store'
+
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Divider } from '~shared/ui/divider'
@@ -47,17 +49,20 @@ export const ControlWheelTabContent = (props: ControlWheelTabContentProps) => {
 }
 
 function WheelControl() {
+  const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
   const tabsContentStyles = useMemo(() => twSlotsStyles(controlWheelTabStyles), [])
 
   return (
     <Flex className={tabsContentStyles.controlsWrapper}>
-      <SpinWheelButton className={tabsContentStyles.spinWheelButton} />
-      <SpinTimeInput />
+      <SpinWheelButton className={tabsContentStyles.spinWheelButton} disabled={isWheelSpinning} />
+      <SpinTimeInput disabled={isWheelSpinning} />
     </Flex>
   )
 }
 
 function GameModeChooseRadioGroup() {
+  const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
+
   const { wheelMode } = useStoreSelector(auctionSelectors.getAuctionInfo)
 
   const { updateWheelMode } = useActionCreators(auctionActions)
@@ -73,6 +78,7 @@ function GameModeChooseRadioGroup() {
       <RadioGroup
         className="w-full flex flex-col gap-y-2 desktop:gap-x-3 desktop:justify-between desktop:flex-row"
         value={wheelMode}
+        disabled={isWheelSpinning}
       >
         <RadioCard
           slotsClassnames={{ label: 'w-full grow p-0' }}
@@ -100,6 +106,8 @@ function GameModeChooseRadioGroup() {
 type AuctionGames = 'wheel' | 'cards'
 
 function GamesChooseRadioGroup() {
+  const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
+
   const [choosenGame, setChoosenGame] = useState<AuctionGames>('wheel')
 
   return (
@@ -113,6 +121,7 @@ function GamesChooseRadioGroup() {
       <RadioGroup
         className="w-full flex flex-col gap-y-2 desktop:gap-x-3 desktop:justify-between desktop:flex-row"
         value={choosenGame}
+        disabled={isWheelSpinning}
       >
         <RadioCard
           slotsClassnames={{ label: 'w-full grow p-0' }}

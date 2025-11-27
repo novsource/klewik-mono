@@ -6,7 +6,7 @@ import { Flex } from '~shared/ui/flex'
 
 import { cn } from '~shared/utils'
 
-import { useWheel } from '../hooks/use-wheel'
+import { useWheelCanvas } from '../hooks'
 
 export type WheelCanvasProps = Omit<ComponentPropsWithoutRef<'canvas'>, 'children'> & {
   auctionSlots: AuctionSlot[]
@@ -16,9 +16,18 @@ export const WheelCanvas = (props: WheelCanvasProps) => {
   const { auctionSlots, style, ...restProps } = props
 
   const {
-    state: { isSpinning, wheelSlots, staticRotateValue },
+    state: { isSpinning, wheelSlots, rotateValue },
     refs: { wheelRef, innerRef },
-  } = useWheel(auctionSlots)
+  } = useWheelCanvas(auctionSlots)
+
+  const wheelMask = `linear-gradient(
+    #000,
+    #000,
+    transparent 0,
+    #000 0px,
+    #000 90%,
+    transparent
+  )`
 
   return (
     <Flex className="shrink h-full w-full" align="start" justify="center">
@@ -28,19 +37,20 @@ export const WheelCanvas = (props: WheelCanvasProps) => {
         justify="center"
       >
         <WheelSelector className="absolute -top-3.5 landtop:-top-1.5 z-10 shadow-dark drop-shadow-md" />
-        <canvas
-          ref={wheelRef}
-          style={{
-            ...style,
-            willChange: 'transform',
-            transform: `rotateZ(${staticRotateValue}deg)`,
-          }}
-          {...restProps}
-        />
-        <div className="absolute top-0">
+        <div className="h-1/2! overflow-clip" style={{ maskImage: wheelMask }}>
+          <canvas
+            ref={wheelRef}
+            style={{
+              ...style,
+              willChange: 'transform',
+              transform: `rotateZ(${rotateValue}deg)`,
+            }}
+            {...restProps}
+          />
           <canvas
             ref={innerRef}
             className={cn(
+              'absolute top-0',
               !isSpinning
               && wheelSlots.length === 0 && 'animate-pulse duration-[4s] transition-opacity',
               wheelSlots.length === 0 && 'bg-dark-foreground animate-none',

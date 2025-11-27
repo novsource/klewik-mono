@@ -1,4 +1,8 @@
+import type { WheelSlot } from '../model'
+
 import type { AuctionSlot } from '~entities/auction-slot/model'
+
+import { convertDegreesToRadians } from '~shared/utils'
 
 export const formatSlotsToDropoutMode = (slots: AuctionSlot[]) => {
   const clonedSlots = structuredClone(slots)
@@ -28,4 +32,24 @@ export const formatSlotsToDropoutMode = (slots: AuctionSlot[]) => {
 
     return { ...slot }
   })
+}
+
+export const generateWinner = (slots: WheelSlot[]): WheelSlot => {
+  const winnerRadians = 2 * Math.PI * Math.random()
+
+  for (const slot of slots) {
+    const { startAngle, endAngle } = slot
+
+    const startAngleInRadians = convertDegreesToRadians(startAngle)
+    const endAngleInRadians = convertDegreesToRadians(endAngle)
+
+    if (
+      winnerRadians >= startAngleInRadians
+      && endAngleInRadians >= winnerRadians
+    ) {
+      return slot
+    }
+  }
+
+  return slots[0]
 }
