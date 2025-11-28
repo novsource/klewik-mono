@@ -207,6 +207,34 @@ export const getSliceInfo = (
   )
 }
 
+const reverseLotsByValue = (slots: AuctionSlot[]) => {
+  const sortedLots = slots
+    .map(slot => ({ ...slot }))
+    .sort((a, b) => a.points - b.points)
+
+  let leftPointer = 0
+  let rightPointer = slots.length - 1
+
+  while (leftPointer <= rightPointer) {
+    const buffer = sortedLots[leftPointer].points
+    sortedLots[leftPointer].points = sortedLots[rightPointer].points
+    sortedLots[rightPointer].points = buffer
+
+    leftPointer++
+    rightPointer--
+  }
+
+  return slots.map((lot) => {
+    const findingLot = sortedLots.find(item => item.id === lot.id)
+
+    if (findingLot) {
+      lot.points = findingLot.points
+    }
+
+    return { ...lot }
+  })
+}
+
 export const getItemsWithAngles = <T extends AuctionSlot>(
   lots: T[] | null,
   wheelMode?: WheelMode,
@@ -278,26 +306,6 @@ export const getSlotNameOnSelector = (
   return ''
 }
 
-export const generateWinner = (slots: WheelSlot[]): WheelSlot => {
-  const winnerRadians = 2 * Math.PI * Math.random()
-
-  for (const slot of slots) {
-    const { startAngle, endAngle } = slot
-
-    const startAngleInRadians = convertDegreesToRadians(startAngle)
-    const endAngleInRadians = convertDegreesToRadians(endAngle)
-
-    if (
-      winnerRadians >= startAngleInRadians
-      && endAngleInRadians >= winnerRadians
-    ) {
-      return slot
-    }
-  }
-
-  return slots[0]
-}
-
 export const calculateRotateWheelCSSValue = (
   slotWithAngles: WheelSlot,
   spinCount: number = 10,
@@ -321,44 +329,6 @@ export const calculateRotateWheelCSSValue = (
     = 360 * spinCount + (selectorDegree - randomValueFromRange)
 
   return rotateCSSValue
-}
-
-const reverseLotsByValue = (slots: AuctionSlot[]) => {
-  // const sumOfLots = [...slots].reduce((acc, curr) => (acc += curr.value), 0);
-
-  // return [...slots].map((slot) => {
-  //   const reversedValue = (1 - slot.value / sumOfLots) / (slots.length - 1);
-
-  //   console.log(reversedValue * sumOfLots);
-
-  //   return { ...slot, value: reversedValue * sumOfLots };
-  // });
-
-  const sortedLots = slots
-    .map(slot => ({ ...slot }))
-    .sort((a, b) => a.points - b.points)
-
-  let leftPointer = 0
-  let rightPointer = slots.length - 1
-
-  while (leftPointer <= rightPointer) {
-    const buffer = sortedLots[leftPointer].points
-    sortedLots[leftPointer].points = sortedLots[rightPointer].points
-    sortedLots[rightPointer].points = buffer
-
-    leftPointer++
-    rightPointer--
-  }
-
-  return slots.map((lot) => {
-    const findingLot = sortedLots.find(item => item.id === lot.id)
-
-    if (findingLot) {
-      lot.points = findingLot.points
-    }
-
-    return { ...lot }
-  })
 }
 
 type SliceMouseProperties = {

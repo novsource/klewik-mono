@@ -1,4 +1,6 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
+
+import bgSelectorUrl from '~shared/assets/img/bgSelector.webp'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
@@ -44,22 +46,13 @@ function WheelFortune(props: WheelFortuneProps) {
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
   const {
-    state: { isSpinning, wheelSlots, selectorCurrentSlot },
+    state: { isSpinning, wheelSlots, selectorCurrentSlot, rotateValue },
     refs: { wheelRef },
   } = useWheel(storedAuctionSlots)
 
   const { ref: containerRef, value: containerSize } = useElementSize<HTMLDivElement>()
 
-  const wheelMask = `linear-gradient(
-    #000,
-    #000,
-    transparent 0,
-    #000 0px,
-    #000 90%,
-    transparent
-  )`
-
-  const wheelSize = Math.min(containerSize.height, containerSize.width)
+  const wheelSize = useMemo(() => Math.min(containerSize.height, containerSize.width), [containerSize.height, containerSize.width])
 
   const renderWheelSlot = useCallback((slot: WheelSlot) => {
     const isSlotOnSelector = slot.title.toLowerCase() === selectorCurrentSlot?.toLowerCase()
@@ -83,26 +76,53 @@ function WheelFortune(props: WheelFortuneProps) {
   }, [isSpinning, selectorCurrentSlot, wheelSize])
 
   return (
-    <Flex ref={containerRef} className="relative shrink h-full w-full" align="start" justify="center" {...props}>
-      <div className="flex w-full h-1/2 justify-center items-center" style={{ maskImage: wheelMask }}>
+    <Flex ref={containerRef} className="relative shrink h-full w-full justify-start items-start" {...props}>
+      <div
+        className="flex w-full h-1/2 justify-center items-center"
+        style={{ maskImage: `linear-gradient(
+          #000,
+          #000,
+          transparent 0,
+          #000 0px,
+          #000 90%,
+          transparent
+        )` }}
+      >
         <div className="relative w-full h-full flex justify-center">
+
+          {/* Wheel outer */}
           <div
-            className="absolute top-0 left-1/2 -translate-x-1/2 border-24 border-dark/60 rounded-full z-10"
+            className="absolute top-0 left-1/2 -translate-x-1/2 border-24 border-dark/60 rounded-full"
             style={{
               width: wheelSize,
               height: wheelSize,
             }}
           />
+
+          {/* Wheel selector */}
           <div
-            className="absolute left-1/2 -translate-y-1/2 -translate-x-1/2 bg-dark/60 rounded-full z-20"
+            className="absolute left-1/2 -translate-y-1/2 -translate-x-1/2 z-20"
             style={{
               width: wheelSize * 0.8,
               height: wheelSize * 0.8,
               top: wheelSize / 2,
             }}
           >
-            <div className="relative h-full w-full">
+            <div className="relative h-full w-full bg-dark/40 rounded-full">
+              <div
+                className={cn(
+                  'absolute w-full h-full rounded-pill overflow-clip z-10 my-1',
+                  'animate-pulse duration-[2.5s] bg-dark-accent',
+                  isSpinning && 'bg-green-accent/60 opacity-10',
+                )}
+                style={{
+                  maskImage: `url(${bgSelectorUrl})`,
+                  objectFit: 'fill',
+                  clipPath: 'circle(98%)',
+                }}
+              />
               <WheelSelector
+                className="z-50"
                 center={{
                   x: (wheelSize * 0.8) / 2,
                   y: (wheelSize * 0.8) / 2,
@@ -113,8 +133,15 @@ function WheelFortune(props: WheelFortuneProps) {
               />
             </div>
           </div>
+
+          {/* Wheel of fortune */}
           <div className="relative w-full flex justify-center z-40" style={{ width: wheelSize, height: wheelSize }}>
-            <BaseWheel ref={wheelRef} width={containerSize.width} height={containerSize.height}>
+            <BaseWheel
+              ref={wheelRef}
+              width={containerSize.width}
+              height={containerSize.height}
+              style={{ rotate: `${rotateValue}deg`, willChange: 'rotate' }}
+            >
               {wheelSlots.map(renderWheelSlot)}
             </BaseWheel>
           </div>

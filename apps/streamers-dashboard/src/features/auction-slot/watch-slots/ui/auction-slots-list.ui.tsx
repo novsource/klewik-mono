@@ -3,7 +3,16 @@ import { useCallback, useState } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
-import { AuctionSlotCardContentInfoDivider, AuctionSlotCardContentInfoWrapper, AuctionSlotCardIdInfo, AuctionSlotCardPointsInfo, AuctionSlotCardWinPercents, BaseAuctionSlotCard, BaseAuctionSlotCardContent, SolidAuctionSlotHeader } from '~entities/auction-slot/ui/card'
+import {
+  AuctionSlotCardContentInfoDivider,
+  AuctionSlotCardContentInfoWrapper,
+  AuctionSlotCardIdInfo,
+  AuctionSlotCardPointsInfo,
+  AuctionSlotCardWinPercents,
+  BaseAuctionSlotCard,
+  BaseAuctionSlotCardContent,
+  SolidAuctionSlotHeader,
+} from '~entities/auction-slot/ui/card'
 
 import { wheelActions } from '~entities/wheel/store'
 
@@ -127,7 +136,6 @@ export const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) 
       <ShadowVirtualList
         data={slots}
         slotsClassNames={{ container: 'pb-4' }}
-        overscan={8}
         estimateSize={() => 125}
         {...virtualListProps}
       >

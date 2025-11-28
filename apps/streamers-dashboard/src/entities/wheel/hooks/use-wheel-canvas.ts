@@ -21,7 +21,6 @@ import { wheelActions } from '../store'
 import { formatSlotsToDropoutMode } from '../utils'
 import {
   calculateRotateWheelCSSValue,
-  drawBaseWheelBg,
   drawEmptyWheel,
   drawSlicesItems,
   getItemsWithAngles,
@@ -182,14 +181,11 @@ const useWheelInit = (
     const isSlotsArrEmpty = !slots.length
 
     if (isSlotsArrEmpty || !slots) {
-      drawBaseWheelBg(wheelCanvas, { color: '#1f1e20' })
-
       drawEmptyWheel(wheelCanvas, {
         color: defaultWheelColor.current,
       })
     }
     else {
-      drawBaseWheelBg(wheelCanvas, { color: '#1f1e20' })
       drawSlicesItems(wheelCanvas, slots)
     }
   }, [wheelCanvasRef, slots])
