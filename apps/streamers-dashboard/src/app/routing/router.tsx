@@ -1,7 +1,5 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 
-import { DashboardLayout } from '~app/layouts'
-
 import { auctionDonationsPageRoute } from '~pages/auction-donations/routing'
 import { auctionSettingsPageRoute } from '~pages/auction-settings/routing'
 import { auctionSlotsPageRoute } from '~pages/auction-slots/routing'
@@ -42,16 +40,11 @@ const browserRouter = createBrowserRouter([
               prepareDashboardRoute([
                 RedirectRouteObject,
                 { index: true, element: <Navigate to="slots" /> },
-                {
-                  element: <DashboardLayout />,
-                  children: [
-                    AuctionSlotsRouteObject,
-                    AuctionWheelRouteObject,
-                    AuctionSettingsRouteObject,
-                    AuctionDonationsRouteObject,
-                    { path: '*', element: <Navigate to="slots" /> },
-                  ],
-                },
+                AuctionSlotsRouteObject,
+                AuctionWheelRouteObject,
+                AuctionSettingsRouteObject,
+                AuctionDonationsRouteObject,
+                { path: '*', element: <Navigate to="slots" /> },
               ]),
             ],
           },

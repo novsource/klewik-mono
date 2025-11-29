@@ -1,16 +1,21 @@
 import type {
   RouteObject,
 } from 'react-router-dom'
-import { json, Outlet } from 'react-router-dom'
+import { json } from 'react-router-dom'
 
 import { isAxiosError } from 'axios'
 import { z } from 'zod'
 
+import { DashboardLayout } from '~app/layouts'
 import { store } from '~app/store'
 
 import { ErrorPage } from '~pages/error/ui/error-page.ui'
 
+import { GlobalDialogsProvider } from '~widgets/global-dialogs/context'
+import { GlobalDialogs } from '~widgets/global-dialogs/ui'
+
 import type { Auction } from '~entities/auction/model'
+import { auctionActions } from '~entities/auction/store'
 
 import { getAuctionInfo } from '~shared/api/http/auction/auction.api'
 import { getDonationsStats } from '~shared/api/http/donations'
@@ -22,12 +27,20 @@ import { isError } from '~shared/utils'
 
 export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => {
   return {
-    element: <Outlet />,
+    element: (
+      <GlobalDialogsProvider>
+        <DashboardLayout />
+        <GlobalDialogs />
+      </GlobalDialogsProvider>
+    ),
     loader: async ({ params }) => {
-      const isAlreadyLoaded = !!store.getState().auction.auctionInfo.id
+      const storeState = store.getState()
+      const storedAuctionInfo = storeState.auction.auctionInfo
+
+      const isAlreadyLoaded = !!storedAuctionInfo.id
 
       if (isAlreadyLoaded)
-        return store.getState().auction.auctionInfo
+        return storedAuctionInfo
 
       const validatedParams = z
         .object({ auctionId: z.string().uuid() })
@@ -57,7 +70,10 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
 
         const auctionInfoResponse = responses[0]
 
-        return json(auctionInfoResponse, { status: 200 })
+        const auctionInfo = auctionInfoResponse.data as Auction
+        store.dispatch(auctionActions.setAuction(auctionInfo))
+
+        return auctionInfo
       }
       catch (error) {
         if (isAxiosError(error)) {

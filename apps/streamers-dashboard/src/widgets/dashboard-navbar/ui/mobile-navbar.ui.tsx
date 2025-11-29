@@ -5,11 +5,11 @@ import { NavLink } from 'react-router-dom'
 
 import { DASHBOARD_ROUTES } from '~shared/constants/router'
 
-import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
-import { Sheet, SheetContent, SheetTrigger } from '~shared/ui/sheet'
 
 import { cn } from '~shared/utils'
+
+import { MobileMenu } from './mobile-menu.ui'
 
 const paths = [
   { path: DASHBOARD_ROUTES.WHEEL },
@@ -62,24 +62,7 @@ export const MobileNavbar = () => {
       <ul className="px-2 grid grid-cols-4 h-full items-center justify-center">
         <>
           {navLinks}
-          <Sheet>
-            <SheetTrigger nativeButton={false}>
-              <Button
-                variant="ghost"
-                className={cn(
-                  'flex flex-col items-center justify-start gap-y-0.25 w-full text-[11px] font-regular h-full px-4 text-gray/50',
-                )}
-              >
-                <div className="flex size-5 justify-center">
-                  <Icons.Hamburger />
-                </div>
-                Меню
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="w-2/3 left-auto" isFullPageSize>
-              test
-            </SheetContent>
-          </Sheet>
+          <MobileMenu />
         </>
       </ul>
     </nav>

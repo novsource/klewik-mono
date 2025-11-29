@@ -1,97 +1,72 @@
-import { ReactNode, memo, useMemo } from 'react'
-import { ComponentProps } from 'react'
-import { NavLink } from 'react-router-dom'
+import type { ComponentProps, ReactNode } from 'react'
+import { memo, useMemo, useState } from 'react'
 
 import NumberFlow from '@number-flow/react'
-import * as m from 'motion/react-m'
+import { AnimatePresence } from 'motion/react'
 
-import { TimerButton } from '~features/auction/set-timer/ui'
-import { UpdateBetsStatusButton } from '~features/auction/update-bets-status/ui'
+import { SearchDialog } from '~widgets/search-dialog/ui'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
-import { IntegrationsPlatforms } from '~entities/integrations/model'
+import type { IntegrationsPlatforms } from '~entities/integrations/model'
 import { integrationsSelectors } from '~entities/integrations/store'
+
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { useMediaQuery } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { useMediaQuery } from '~shared/hooks/use-media-query'
-
+import { Button } from '~shared/ui/button'
+import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~shared/ui/tooltip'
 import { Typography } from '~shared/ui/typograghy'
 
-import { tailwindScreens } from '~shared/constants/tailwindcss'
-
 import { cn } from '~shared/utils'
 
+import { DashboardHeaderMenu } from '../../dashboard-header-menu/ui/dashboard-header-menu.ui'
+import { AuctionTimer } from './auction-timer'
 import { DonationsStats } from './donations-stats'
 
-export const DashboardHeader = memo(({ children }: { children: ReactNode }) => {
-  const isLargeThenTablet = useMediaQuery(
-    `(min-width:${tailwindScreens.tablet})`
-  )
-
-  return (
-    <Header>
-      {isLargeThenTablet && (
-        <Flex className="h-full gap-x-4" align="center">
-          <Flex className="h-8.5 gap-x-4" align="center">
-            <Flex className="gap-x-1.5" align="center" justify="center">
-              <SlotsStatisticCard />
-              <SlotsPointsSumStatisticCard />
-              <DonationsStats />
-              <IntegrationsStatisticCard />
-            </Flex>
-            <div className="h-2/3 w-0.5 bg-dark-accent/80" />
-            <Flex className="gap-x-1.5" align="center">
-              <TimerButton />
-              <UpdateBetsStatusButton />
-            </Flex>
-          </Flex>
-        </Flex>
-      )}
-      {children}
-    </Header>
-  )
-})
-
 const Header = ({ children, ...otherProps }: ComponentProps<'header'>) => {
+  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+
   return (
-    <header className="h-16 w-full" {...otherProps}>
+    <header className="h-fit w-full pt-4" {...otherProps}>
       <Flex
-        className="h-full w-full gap-x-4 px-4"
+        className="h-full w-full gap-x-4"
         align="center"
         justify="between"
       >
-        <m.div
-          whileHover={{ rotate: '180deg' }}
-          transition={{ duration: 0.65 }}
-        >
-          <NavLink to={'/'}>
-            <Icons.Logo className="text-green-accent" width={28} height={28} />
-          </NavLink>
-        </m.div>
-
+        {/* {isLargeThenTablet && (
+          <MotionBox
+            whileHover={{ rotate: '180deg' }}
+            transition={{ duration: 0.65 }}
+          >
+            <NavLink to="/">
+              <Icons.Logo className="text-green-accent" width={28} height={28} />
+            </NavLink>
+          </MotionBox>
+        )} */}
         {children}
       </Flex>
     </header>
   )
 }
 
-const StatisticCard = ({
-  className,
-  children,
-}: {
+const StatisticCard = (props: {
   className?: string
   children: ReactNode
 }) => {
+  const { className, children } = props
+
   return (
     <Flex
       className={cn(
-        'h-9 gap-x-1.5 rounded-md bg-dark px-2.5 py-1.5 text-md leading-5 font-semibold text-gray-accent',
-        className
+        'h-9 gap-x-1.5 rounded-md bg-dark px-2.5 py-1.5 text-md leading-5 font-semibold text-gray-accent text-nowrap',
+        className,
       )}
       align="center"
       justify="center"
@@ -101,13 +76,13 @@ const StatisticCard = ({
   )
 }
 
-const SlotsStatisticCard = memo(() => {
+const SlotsStatisticCard = memo((props: { className?: string }) => {
   const slots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
   return (
     <Tooltip delayDuration={500}>
       <TooltipTrigger>
-        <StatisticCard>
+        <StatisticCard className={props.className}>
           <Icons.Slots size="sm" />
           <NumberFlow
             className="font-azeret-mono font-medium tracking-tight"
@@ -125,13 +100,13 @@ const SlotsStatisticCard = memo(() => {
   )
 })
 
-const SlotsPointsSumStatisticCard = memo(() => {
+const SlotsPointsSumStatisticCard = memo((props: { className?: string }) => {
   const sum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
 
   return (
     <Tooltip delayDuration={500}>
       <TooltipTrigger>
-        <StatisticCard>
+        <StatisticCard className={props.className}>
           <Icons.PointsSum size="default" />
           <NumberFlow
             className="font-azeret-mono font-medium tracking-tight"
@@ -150,42 +125,29 @@ const SlotsPointsSumStatisticCard = memo(() => {
   )
 })
 
-const IntegrationsStatisticCard = memo(() => {
+const IntegrationsStatisticCard = memo((props: { className?: string }) => {
   const integrations = useStoreSelector(
-    integrationsSelectors.getAllIntegrationsStatuses
+    integrationsSelectors.getAllIntegrationsStatuses,
   )
 
-  const isEmptyIntegrations = useMemo(() => {
-    return (Object.keys(integrations) as Array<IntegrationsPlatforms>).every(
-      (key) => !integrations[key].isConnected
-    )
-  }, [integrations])
+  const connectedIntegrationsCount = useMemo(() => {
+    return (Object.keys(integrations) as Array<IntegrationsPlatforms>).reduce(
+      (acc, key) => {
+        if (integrations[key].isConnected)
+          acc++
 
-  const integrationsLogo: Record<IntegrationsPlatforms, ReactNode> = {
-    'donation-alerts': <Icons.DonationAlerts width={12} height={18} />,
-    'donate-pay': <Icons.DonatePay />,
-  }
-
-  const connectedIntegrationsLogos = useMemo(() => {
-    return (
-      <Flex className="gap-x-2" direction="row" align="center" justify="start">
-        {(Object.keys(integrations) as Array<IntegrationsPlatforms>).reduce<
-          ReactNode[]
-        >((acc, key) => {
-          if (integrations[key].isConnected) acc.push(integrationsLogo[key])
-
-          return acc
-        }, [])}
-      </Flex>
+        return acc
+      },
+      0,
     )
   }, [integrations])
 
   return (
     <Tooltip delayDuration={500}>
       <TooltipTrigger>
-        <StatisticCard className={cn(!isEmptyIntegrations && 'gap-x-3')}>
+        <StatisticCard className={cn(!connectedIntegrationsCount && 'gap-x-3', props.className)}>
           <Icons.Integrations width={18} height={18} />
-          {isEmptyIntegrations ? 'Нет подключений' : connectedIntegrationsLogos}
+          {connectedIntegrationsCount === 0 ? 'Нет интеграций' : `${connectedIntegrationsCount} подключено`}
         </StatisticCard>
       </TooltipTrigger>
       <TooltipContent>
@@ -194,5 +156,72 @@ const IntegrationsStatisticCard = memo(() => {
         </Typography>
       </TooltipContent>
     </Tooltip>
+  )
+})
+
+export type DashboardHeaderProps = {
+  children?: ReactNode
+}
+
+export const DashboardHeader = memo((props: DashboardHeaderProps) => {
+  const { children } = props
+
+  const [isTimerVisible, setIsTimerVisible] = useState(false)
+
+  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+
+  const toggleTimerVision = () => {
+    setIsTimerVisible(curr => !curr)
+  }
+
+  return (
+    <Header className={cn([
+      'z-50 top-0 sticky max-tablet:w-full max-tablet:bg-dark max-tablet:border-b-1 max-tablet:border-dark-accent/50 max-tablet:h-12',
+      'tablet:bg-dark-foreground/10 tablet:backdrop-blur-xs',
+    ])}
+    >
+      <Flex className="w-full h-full gap-x-4 px-4" align="center">
+        <Flex className="w-full h-9.5" align="center" justify="end">
+          {isLargeThenTablet && (
+            <>
+              <Flex align="center" justify="center">
+                <SlotsStatisticCard />
+                <SlotsPointsSumStatisticCard className="ml-1.5" />
+                <DonationsStats className="ml-1.5" />
+                <IntegrationsStatisticCard className="ml-1.5" />
+                <AnimatePresence>
+                  {isTimerVisible && <AuctionTimer className="ml-1.5" />}
+                </AnimatePresence>
+              </Flex>
+              <Divider className="mx-4" orientation="vertical" />
+            </>
+          )}
+
+          <Flex className="w-full tablet:w-fit gap-x-1.5" align="center" justify="end">
+            <SearchDialog trigger={(
+              <Button
+                variant={isLargeThenTablet ? 'ghost' : 'ghost'}
+                className={cn(
+                  isLargeThenTablet && 'bg-dark font-medium text-gray pr-4 pl-2.5 hover:text-gray-light/80 hover:bg-dark-light/80',
+                  !isLargeThenTablet && 'w-full text-gray bg-dark-light justify-start h-7.5 text-sm',
+                )}
+                startContent={<Icons.Magnifier size="xs" />}
+                size={isLargeThenTablet ? 'xs' : 'default'}
+              >
+                Поиск по аукциону...
+              </Button>
+            )}
+            />
+            {isLargeThenTablet && (
+              <DashboardHeaderMenu
+                isTimerVisible={isTimerVisible}
+                onTimerVisibilityChanges={toggleTimerVision}
+              />
+            ) }
+          </Flex>
+        </Flex>
+      </Flex>
+      {children}
+    </Header>
   )
 })

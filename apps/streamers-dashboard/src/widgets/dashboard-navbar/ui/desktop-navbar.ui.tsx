@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useMemo } from 'react'
+import { memo, useMemo } from 'react'
 
 import { NavLink } from 'react-router-dom'
 
@@ -11,8 +11,6 @@ import { useMediaQuery } from '~shared/hooks'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { MotionBox } from '~shared/ui/motion-box'
-import { Tooltip, TooltipContent, TooltipTrigger } from '~shared/ui/tooltip'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
@@ -22,7 +20,7 @@ const paths = [
   { path: DASHBOARD_ROUTES.DONATIONS },
 ]
 
-export const DesktopNavbar = () => {
+export const DesktopNavbar = memo(() => {
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   const menuItems = useMemo(() => {
@@ -55,23 +53,7 @@ export const DesktopNavbar = () => {
         </li>
       )
 
-      const tooltipContent = {
-        wheel: 'Событие аукциона',
-        donations: 'Донаты',
-        settings: 'Настройки',
-        slots: 'Слоты аукциона',
-      }[routerLink]
-
-      acc.push(
-        <Tooltip key={curr.path} delayDuration={500}>
-          <TooltipTrigger asChild>{link}</TooltipTrigger>
-          <TooltipContent side="right">
-            <Typography className="text-sm" tag="span">
-              {tooltipContent}
-            </Typography>
-          </TooltipContent>
-        </Tooltip>,
-      )
+      acc.push(link)
 
       return acc
     }, [])
@@ -99,4 +81,4 @@ export const DesktopNavbar = () => {
       </Flex>
     </nav>
   )
-}
+})

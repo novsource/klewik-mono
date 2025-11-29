@@ -1,10 +1,5 @@
 import type { BaseQueryFn } from '@reduxjs/toolkit/query'
-import type {
-  AxiosError,
-  AxiosRequestConfig,
-  AxiosResponse,
-  CreateAxiosDefaults,
-} from 'axios'
+import type { AxiosError, AxiosRequestConfig, AxiosResponse, CreateAxiosDefaults } from 'axios'
 import type { rateLimitOptions as RateLimitOptions } from 'axios-rate-limit'
 
 import type {
@@ -27,6 +22,7 @@ type AxiosBaseQueryOptions = {
 type AxiosBaseQueryArgs = {
   url: string
   method?: AxiosRequestConfig['method']
+  isBodyFormData?: boolean
   data?: AxiosRequestConfig['data']
   params?: AxiosRequestConfig['params']
   headers?: AxiosRequestConfig['headers']
@@ -63,8 +59,9 @@ export const axiosBaseQuery
     async (args, api) => {
       const {
         url,
-        method,
+        method = 'GET',
         data,
+        isBodyFormData = false,
         headers,
         params,
         rewriteBaseURL = false,
@@ -85,11 +82,20 @@ export const axiosBaseQuery
             ? `${options.baseUrl}${url}`
             : new URL(url, options.baseUrl).toString()
 
+        const isPostRequestMethod = method === 'POST'
+
+        const contentTypeHeader = isPostRequestMethod && isBodyFormData
+          ? 'multipart/form-data'
+          : 'application/json'
+        const requestHeaders = { ...headers, 'Content-Type': contentTypeHeader }
+
+        const requestData = data
+
         const result = await axios.request(queryURL, {
           method,
-          data,
+          data: requestData,
           params,
-          headers,
+          headers: requestHeaders,
           signal: api.signal,
         })
 
