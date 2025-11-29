@@ -22,7 +22,7 @@
     "e2e-tests:ui": "playwright test --ui"
   },
   "dependencies": {
-    "@base-ui-components/react": "1.0.0-beta.4",
+    "@base-ui-components/react": "1.0.0-beta.7",
     "@hookform/resolvers": "^3.9.1",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@number-flow/react": "^0.5.8",

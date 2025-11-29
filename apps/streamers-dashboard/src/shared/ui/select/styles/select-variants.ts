@@ -1,5 +1,3 @@
-import type { VariantProps } from 'class-variance-authority'
-
 import { cva } from 'class-variance-authority'
 
 import type { CvaClassValue } from '~shared/utils/types'
@@ -24,7 +22,7 @@ export type SelectPositions = {
 
 type SelectTriggerSizes = SelectSizes
 
-const selectTriggerVariants = cva<SelectTriggerSizes>(
+export const selectTriggerVariants = cva<SelectTriggerSizes>(
   [
     'flex w-fit items-center justify-between rounded-small border whitespace-nowrap transition-[color] outline-none',
     'hover:ring-gray/55 hover:bg-dark-accent/50 cursor-pointer',
@@ -52,13 +50,19 @@ const selectTriggerVariants = cva<SelectTriggerSizes>(
   },
 )
 
-type SelectContentVariants = SelectPositions
+export const selectPositionerVariants = cva('outline-none z-10 user-select-none')
 
-const selectContentVariants = cva<SelectContentVariants>(
+export const selectListVariants = cva([
+  'relative overflow-y-auto',
+  'max-h-[var(--available-height)]',
+])
+
+export const selectPopupVariants = cva(
   [
     'bg-dark relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin)',
     'text-gray overflow-x-hidden overflow-y-auto rounded-md border border-dark-accent shadow-md',
-    'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+    'data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.9]',
+    'data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.9]',
   ],
   {
     variants: {
@@ -71,27 +75,12 @@ const selectContentVariants = cva<SelectContentVariants>(
   },
 )
 
-type SelectViewportVariants = SelectPositions
-
-const selectViewportVariants = cva<SelectViewportVariants>('p-1 bg-dark ', {
-  variants: {
-    position: {
-      'item-aligned': '',
-      'popper':
-        'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1',
-    },
-  },
-})
-
-const selectLabelVariants = cva('text-muted-foreground px-2 py-1.5 text-xs')
-
 type SelectItemVariants = SelectSizes
 
-const selectItemVariants = cva<SelectItemVariants>(
+export const selectItemVariants = cva<SelectItemVariants>(
   [
+    'relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none cursor-pointer',
     'focus:bg-dark-accent focus:text-gray-accent [&_svg:not([class*=\'text-\'])]:text-gray-accent',
-    'relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none',
-    'data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\'size-\'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 cursor-pointer',
   ],
   {
     variants: {
@@ -99,34 +88,24 @@ const selectItemVariants = cva<SelectItemVariants>(
         sm: 'text-sm',
         default: 'text-md',
       },
+      variant: {
+        default: '',
+        ghost: '',
+      },
     },
     defaultVariants: {
       size: 'default',
     },
   },
 )
-const selectSeparatorVariants = cva(
+
+export const selectSeparatorVariants = cva(
   'bg-border pointer-events-none -mx-1 my-1 h-px',
 )
-const selectScrollUpButtonVariants = cva(
+export const selectScrollUpButtonVariants = cva(
   'flex cursor-default items-center justify-center py-1',
 )
 
-const selectScrollDownButtonVariants = cva(
+export const selectScrollDownButtonVariants = cva(
   'flex cursor-default items-center justify-center py-1',
 )
-
-export {
-  selectContentVariants,
-  selectItemVariants,
-  selectLabelVariants,
-  selectScrollDownButtonVariants,
-  selectScrollUpButtonVariants,
-  selectSeparatorVariants,
-  selectTriggerVariants,
-  selectViewportVariants,
-}
-
-type SelectContentVariantsProps = VariantProps<typeof selectContentVariants>
-
-export type { SelectContentVariantsProps }
