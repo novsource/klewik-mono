@@ -111,32 +111,6 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
     [renderAuctionSlotCard],
   )
 
-  if (isLargeThenTablet) {
-    return (
-      <WindowVirtualList
-        data={sortedSlots}
-        overscan={8}
-        virtualListRef={virtualizerRef}
-      >
-        {renderVirtualListItem}
-      </WindowVirtualList>
-    )
-    // return (
-    //   <Flex className={cn('w-full h-full overflow-scroll', className)}>
-    //     <ShadowVirtualList
-    //       data={sortedSlots}
-    //       slotsClassNames={{ container: 'pb-4' }}
-    //       gap={gap}
-    //       overscan={8}
-    //       virtualListRef={virtualizerRef}
-    //       {...virtualListProps}
-    //     >
-    //       {renderVirtualListItem}
-    //     </ShadowVirtualList>
-    //   </Flex>
-    // )
-  }
-
   return (
     <WindowVirtualList
       data={sortedSlots}

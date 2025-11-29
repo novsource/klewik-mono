@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker'
 
 import { getHEXColor } from '~shared/utils'
 
-const mockedAuctionSlots = Array.from({ length: faker.number.int({ min: 40, max: 140 }) })
+const mockedAuctionSlots = Array.from({ length: faker.number.int({ min: 50, max: 120 }) })
   .fill(null)
   .map((_, index) => ({
     id: index + 1,
