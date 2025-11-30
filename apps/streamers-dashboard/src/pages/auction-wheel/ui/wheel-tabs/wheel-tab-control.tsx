@@ -79,21 +79,21 @@ function GameModeChooseRadioGroup() {
         className="w-full flex flex-col gap-y-2 desktop:gap-x-3 desktop:justify-between desktop:flex-row"
         value={wheelMode}
         disabled={isWheelSpinning}
+        // @ts-expect-error value can be only wheel mode
+        onValueChange={value => updateWheelMode(value)}
       >
         <RadioCard
           slotsClassnames={{ label: 'w-full grow p-0' }}
           value="classic"
           icon={<Icons.Crown className="text-gray-accent" />}
-          onClick={() => updateWheelMode('classic')}
         >
           <RadioCardTitle>Классика</RadioCardTitle>
-          <RadioCardDescription>Победитель определяется сразу</RadioCardDescription>
+          <RadioCardDescription className="text-nowrap">Победитель определяется сразу</RadioCardDescription>
         </RadioCard>
         <RadioCard
           slotsClassnames={{ label: 'w-full grow p-0' }}
           value="dropout"
           icon={<Icons.Ranking className="text-gray-accent" size="lg" />}
-          onClick={() => updateWheelMode('dropout')}
         >
           <RadioCardTitle>На выбывание</RadioCardTitle>
           <RadioCardDescription>Побеждает оставшийся слот</RadioCardDescription>

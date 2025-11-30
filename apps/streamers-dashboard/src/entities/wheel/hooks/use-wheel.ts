@@ -12,7 +12,7 @@ import type { WheelSlot } from '~entities/wheel/model'
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 import type { HexColor } from '~shared/lib/zod'
 
-import { wheelActions } from '../store'
+import { wheelActions, wheelSelectors } from '../store'
 import { formatSlotsToDropoutMode } from '../utils'
 import {
   calculateRotateWheelCSSValue,
@@ -139,6 +139,7 @@ export const useWheel = (slots: AuctionSlot[]): UseWheelReturn => {
   const wheelRef = useRef<SVGSVGElement>(null)
 
   const storedWheelMode = useStoreSelector(auctionSelectors.getWheelMode)
+  const { sizeMode: storedSizeMode } = useStoreSelector(wheelSelectors.getSettings)
 
   const { setSlots, setRotateValue, setWheelStatus, setSelectorTitleName } = useActionCreators(wheelActions)
 
@@ -157,7 +158,7 @@ export const useWheel = (slots: AuctionSlot[]): UseWheelReturn => {
     })
   }, [storedHighlightedSlotId, storedWheelMode, slots])
 
-  const wheelSlots = useMemo(() => getItemsWithAngles(preparedSlots), [preparedSlots])
+  const wheelSlots = useMemo(() => getItemsWithAngles(preparedSlots, storedSizeMode), [preparedSlots, storedSizeMode])
 
   const {
     state: { wheelRotateCSSValue, selectorTargetTitle, isWheelSpinning },

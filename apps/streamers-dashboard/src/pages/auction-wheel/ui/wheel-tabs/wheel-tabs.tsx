@@ -1,6 +1,6 @@
 import type { TabsProps } from '@radix-ui/react-tabs'
 
-import { useMemo } from 'react'
+import { startTransition, useEffect, useMemo, useState } from 'react'
 
 import { TABS_CONTENT_NAMES } from '~pages/auction-wheel/constants'
 import type { WheelTabsStylesSlots } from '~pages/auction-wheel/styles'
@@ -27,6 +27,19 @@ type WheelTabsProps = Omit<TabsProps, 'className'> & {
 const WheelTabs = (props: WheelTabsProps) => {
   const { slotsClassnames, ...tabsProps } = props
 
+  const [currentTab, setCurrentTab] = useState(TABS_CONTENT_NAMES.CONTROL)
+  const [isSlotsTabTransitionEnded, setIsSlotsTabTransitionEnded] = useState(false)
+
+  if (currentTab !== TABS_CONTENT_NAMES.SLOTS && isSlotsTabTransitionEnded) {
+    setIsSlotsTabTransitionEnded(false)
+  }
+
+  useEffect(() => {
+    if (currentTab === TABS_CONTENT_NAMES.SLOTS && !isSlotsTabTransitionEnded) {
+      startTransition(() => setIsSlotsTabTransitionEnded(true))
+    }
+  }, [isSlotsTabTransitionEnded, currentTab])
+
   const tabsStyles = useMemo(() => twSlotsStyles(wheelTabsStyles, slotsClassnames), [slotsClassnames])
 
   const tabsTriggers = useMemo(() => {
@@ -47,13 +60,14 @@ const WheelTabs = (props: WheelTabsProps) => {
     <Tabs
       className={tabsStyles.base}
       defaultValue={TABS_CONTENT_NAMES.CONTROL}
+      onValueChange={setCurrentTab}
       {...tabsProps}
     >
       <TabsList className={tabsStyles.tabList}>
         {tabsTriggers}
       </TabsList>
       <ControlWheelTabContent />
-      <SlotsWheelTabContent />
+      {isSlotsTabTransitionEnded && <SlotsWheelTabContent />}
       <PreferencesWheelTabContent />
     </Tabs>
   )

@@ -1,6 +1,8 @@
+import type { WheelSlicesSizeMode } from '../store/wheel-slice'
+
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
-import type { WheelMode, WheelSlot } from '~entities/wheel/model'
+import type { WheelSlot } from '~entities/wheel/model'
 
 import {
   clearCanvas,
@@ -237,23 +239,22 @@ const reverseLotsByValue = (slots: AuctionSlot[]) => {
 
 export const getItemsWithAngles = <T extends AuctionSlot>(
   lots: T[] | null,
-  wheelMode?: WheelMode,
+  sliceMode: WheelSlicesSizeMode = 'auto',
 ): WheelSlot[] => {
   if (!lots || lots.length === 0)
     return []
 
-  const newLots = wheelMode === 'dropout' ? reverseLotsByValue(lots) : [...lots]
-
-  const sumItemsValue = newLots.reduce((acc, lot) => acc + lot.points, 0)
+  const sumItemsValue = lots.reduce((acc, lot) => acc + lot.points, 0)
 
   // Radius size not important
   const radius = 1
 
   const maxWheelArcLength = getMaxCircleLength(radius)
 
+  let smallestAnglesDiff = Number.MAX_SAFE_INTEGER
   let startAngle = 0
 
-  return newLots.reduce((acc: WheelSlot[], item: AuctionSlot) => {
+  const lotsWithAngles = lots.reduce((acc: WheelSlot[], item: AuctionSlot) => {
     const itemArcLength
       = maxWheelArcLength * getPercentValue(sumItemsValue, item.points)
 
@@ -266,10 +267,36 @@ export const getItemsWithAngles = <T extends AuctionSlot>(
       endAngle,
     })
 
+    const anglesDiff = Math.abs(endAngle - startAngle)
+
+    if (smallestAnglesDiff > anglesDiff) {
+      smallestAnglesDiff = anglesDiff
+    }
+
     startAngle = endAngle
 
     return acc
   }, [])
+
+  if (sliceMode === 'points' || (sliceMode === 'auto' && smallestAnglesDiff > 3))
+    return lotsWithAngles
+
+  startAngle = 0
+
+  const part = 360 / lots.length
+
+  const updatedAngles = lotsWithAngles.map((lot) => {
+    const endAngle = startAngle + part
+
+    lot.startAngle = startAngle
+    lot.endAngle = endAngle
+
+    startAngle = endAngle
+
+    return lot
+  })
+
+  return updatedAngles
 }
 
 export const getSlotNameOnSelector = (

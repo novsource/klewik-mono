@@ -6,8 +6,11 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { validateWheelSlotsPayload } from '../lib/react-redux'
 
+export type WheelSlicesSizeMode = 'auto' | 'points' | 'equals'
+
 type WheelSettings = {
   spinTime: number
+  sizeMode: WheelSlicesSizeMode
 }
 
 type SpinStatus = 'idle' | 'prepare' | 'spinning'
@@ -39,6 +42,7 @@ const initialState: WheelState = {
   slots: [],
   settings: {
     spinTime: 2,
+    sizeMode: 'auto',
   },
 }
 
@@ -81,6 +85,9 @@ const wheelSlice = createSlice({
     },
     setRotateValue: (state, action: PayloadAction<RotateValues>) => {
       state.rotateValue = action.payload
+    },
+    setSliceMode: (state, action: PayloadAction<WheelSlicesSizeMode>) => {
+      state.settings.sizeMode = action.payload
     },
     setHighlightedSlotId: (state, action: PayloadAction<NullablePossible<number>>) => {
       state.highlightedSlotId = action.payload
