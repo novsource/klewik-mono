@@ -62,7 +62,7 @@ const rootReducer = combineReducers({
 
 // const syncMiddleware = createStateSyncMiddleware(syncStoreConfig)
 
-export const store = configureStore({
+export const createStore = () => configureStore({
   reducer: rootReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
@@ -81,6 +81,8 @@ export const store = configureStore({
         auctionSlotsSSEApi.middleware,
       ),
 })
+
+export const store = createStore()
 
 // export const persistor = persistStore(store)
 

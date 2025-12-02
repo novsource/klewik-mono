@@ -21,6 +21,10 @@ export type DonationsEventSourceMessage = z.infer<
 
 export type ProcessedDonationDTO = z.infer<typeof ProcessedDonationDTOSchema>
 
+export type DonationsSSEEventsMap = {
+  'donations/add': ProcessedDonationDTO
+}
+
 export type DonationsSSEChannelEventsMap = {
   'donations/add': (data: ProcessedDonationDTO) => void
 }
