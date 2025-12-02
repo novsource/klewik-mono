@@ -1,26 +1,16 @@
 import type { AuctionSlotsSliceState } from '../store'
 
-import { faker } from '@faker-js/faker'
+import { createFakeAuctionSlotsArray } from '../model/__tests__/auction-slot.mocks'
 
-import { getHEXColor } from '~shared/utils'
+const fakeAuctionSlots = createFakeAuctionSlotsArray({ minLength: 50, maxLength: 130 })
 
-const mockedAuctionSlots = Array.from({ length: faker.number.int({ min: 50, max: 120 }) })
-  .fill(null)
-  .map((_, index) => ({
-    id: index + 1,
-    title: faker.word.words(10),
-    auctionSlotOrder: index + 1,
-    points: faker.number.int({ min: 200, max: 205000 }),
-    color: getHEXColor(),
-  }))
-
-const slotsPointsSum = mockedAuctionSlots.reduce(
+const slotsPointsSum = fakeAuctionSlots.reduce(
   (sum, slot) => sum + slot.points,
   0,
 )
 
 export const AUCTION_SLOTS_SLICE_INITIAL_STATE: AuctionSlotsSliceState = {
-  slots: import.meta.env.DEV ? mockedAuctionSlots : [],
+  slots: import.meta.env.DEV ? fakeAuctionSlots : [],
   sortedSlots: [],
   dropoutSlots: [],
   slotsPointsSum: import.meta.env.DEV ? slotsPointsSum : 0,

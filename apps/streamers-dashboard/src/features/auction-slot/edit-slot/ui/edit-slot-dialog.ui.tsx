@@ -1,10 +1,12 @@
 import type { ReactNode } from 'react'
 import { useMemo } from 'react'
 
+import { FormProvider, useFormContext } from 'react-hook-form'
+
 import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
-import { SolidAuctionSlotCard } from '~entities/auction-slot/ui/card'
+import { SlotPointsFormInput, SlotTitleFormInput } from '~entities/auction-slot/ui/form'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
@@ -12,7 +14,6 @@ import { useMediaQuery } from '~shared/hooks'
 
 import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
-import { Divider } from '~shared/ui/divider'
 import {
   Drawer,
   DrawerContent,
@@ -36,11 +37,11 @@ import {
 } from '~shared/ui/sheet'
 import { Typography } from '~shared/ui/typograghy'
 
-import { mergeProps, twSlotsStyles } from '~shared/utils'
+import { cn, mergeProps, twSlotsStyles } from '~shared/utils'
 
 import { useEditSlotDialog } from '../hooks'
 import { editSlotSheetStyles } from '../styles'
-import { ControlledEditSlotForm } from './edit-slot-form.ui'
+import { EditSlotDialogCard } from './dialog-card.ui'
 
 export type EditSlotDialogProps = SheetProps & {
   slot: AuctionSlot
@@ -67,18 +68,6 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
   const isMediaLargeThenTablet = useMediaQuery(
     greaterThenDeviceWidthMediaQueries.tablet,
   )
-
-  const dialogContent = useMemo(() => {
-    return (
-      <Flex className="h-full gap-y-6" direction="column">
-        <SolidAuctionSlotCard auctionSlot={inputSlot} />
-        <ControlledEditSlotForm
-          form={form}
-          onSubmit={e => e.preventDefault()}
-        />
-      </Flex>
-    )
-  }, [inputSlot, form])
 
   const closeDialog = () => {
     if (formState.isDirty || formQueryState.isLoading)
@@ -156,18 +145,16 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
                   align="start"
                   justify="start"
                 >
-                  <SheetTitle>Обзор слота</SheetTitle>
-                  <Typography
-                    className="leading-4 font-normal text-gray-accent"
-                    tag="p"
-                  >
-                    Измените параметры у слота
-                  </Typography>
+                  <EditSlotDialogTitle />
+                  <EditSlotDialogDescription />
                 </Flex>
               </Flex>
             </SheetHeader>
-            <div className="w-full h-0.25 bg-dark-accent" />
-            {dialogContent}
+
+            <FormProvider {...form}>
+              <EditSlotForm />
+            </FormProvider>
+
           </Flex>
         </SheetContent>
       </Sheet>
@@ -182,17 +169,8 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
           <SheetHeader className={sheetStyles.header}>
             <EditSlotDialogsIcon />
             <div className={sheetStyles.titleWrapper}>
-              <SheetTitle className={sheetStyles.title}>
-                Обзор слота
-              </SheetTitle>
-              <SheetDescription>
-                <Typography
-                  className={sheetStyles.titleDescription}
-                  tag="p"
-                >
-                  Измените параметры слота
-                </Typography>
-              </SheetDescription>
+              <EditSlotDialogTitle />
+              <EditSlotDialogDescription />
             </div>
             <Drawer noBodyStyles>
               <DrawerTrigger>
@@ -227,8 +205,11 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
             </Drawer>
 
           </SheetHeader>
-          <Divider className="mb-4" />
-          {dialogContent}
+
+          <FormProvider {...form}>
+            <EditSlotForm />
+          </FormProvider>
+
           <Flex className="gap-y-2 pt-2" direction="column">
             <Button
               className="w-full"
@@ -269,5 +250,63 @@ function EditSlotDialogsIcon() {
         <Icons.Pencil gradient />
       </Flex>
     </div>
+  )
+}
+
+function EditSlotForm() {
+  const { control } = useFormContext()
+
+  return (
+    <form className="flex flex-col gap-y-2 h-full">
+      <EditSlotDialogCard
+        className="pt-3 pb-1"
+        contentPosition="bottom"
+        title="Слот"
+        titleIcon={<Icons.Slots className="text-gray" size="xs" />}
+      >
+        <SlotTitleFormInput
+          variant="ghost"
+          name="title"
+          control={control}
+        />
+      </EditSlotDialogCard>
+      <EditSlotDialogCard
+        className="py-2"
+        contentPosition="right"
+        title="Очки"
+        titleIcon={<Icons.Coin className="text-gray" size="sm" />}
+      >
+        <SlotPointsFormInput
+          control={control}
+          name="points"
+          showPercentInput={false}
+          pointsInputProps={{
+            variant: 'ghost',
+            label: undefined,
+            startContent: undefined,
+            slotClassNames: { input: 'text-right text-white/80' },
+            isAllowed: value =>
+              value?.floatValue ? value.floatValue <= 1_000_000 : true,
+          }}
+        />
+      </EditSlotDialogCard>
+    </form>
+  )
+}
+
+function EditSlotDialogTitle() {
+  return <SheetTitle>Обзор слота</SheetTitle>
+}
+
+function EditSlotDialogDescription() {
+  return (
+    <SheetDescription>
+      <Typography
+        className={cn(editSlotSheetStyles.titleDescription)}
+        tag="p"
+      >
+        Измените параметры слота
+      </Typography>
+    </SheetDescription>
   )
 }
