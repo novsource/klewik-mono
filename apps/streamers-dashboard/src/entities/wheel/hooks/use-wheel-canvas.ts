@@ -23,8 +23,8 @@ import {
   calculateRotateWheelCSSValue,
   drawEmptyWheel,
   drawSlicesItems,
-  getItemsWithAngles,
   getSlotNameOnSelector,
+  transformSlotsToWheelSlots,
   updateSlotsAnglesByRotateValue,
 } from '../utils/wheel-canvas'
 
@@ -389,17 +389,17 @@ export const useWheelCanvas = (slots: AuctionSlot[]): UseWheelCanvasReturn => {
   const {
     state: { wheelRotateCSSValue, selectorTargetTitle, isWheelSpinning },
     functions: { startWheelSpinAnimation },
-  } = useWheelControl(getItemsWithAngles(preparedSlots), {
+  } = useWheelControl(transformSlotsToWheelSlots(preparedSlots), {
     rotateValue: storedSpinStatus === 'spinning' ? storedRotateWheelValue.current : storedRotateWheelValue.final,
     wheelRef,
   })
 
   const wheelSlots = useMemo(() => {
     if (isWheelSpinning)
-      return getItemsWithAngles(preparedSlots)
+      return transformSlotsToWheelSlots(preparedSlots)
 
     return updateSlotsAnglesByRotateValue(
-      getItemsWithAngles(preparedSlots),
+      transformSlotsToWheelSlots(preparedSlots),
       wheelRotateCSSValue.final,
     )
   }, [wheelRotateCSSValue, isWheelSpinning, preparedSlots])

@@ -9,7 +9,7 @@ import { slotsWheelTabStyles } from '~pages/auction-wheel/styles'
 
 import { VirtualizedSlotsList } from '~features/auction-slot/watch-slots/ui'
 
-import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+import { wheelSelectors } from '~entities/wheel/store'
 
 import { useDebounceCallback } from '~shared/hooks'
 
@@ -31,7 +31,7 @@ type SlotsWheelTabContentProps = Omit<TabsContentProps, 'value'> & {
 export const SlotsWheelTabContent = (props: SlotsWheelTabContentProps) => {
   const { slotsClassnames, ...tabsContentProps } = props
 
-  const slots = useStoreSelector(auctionSlotsSelectors.getSlots)
+  const slots = useStoreSelector(wheelSelectors.getSlots)
 
   const [searchValue, setSearchValue] = useState('')
   const [searchQuery, setSearchQuery] = useState('')

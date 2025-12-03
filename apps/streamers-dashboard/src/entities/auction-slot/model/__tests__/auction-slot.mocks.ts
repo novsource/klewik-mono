@@ -10,10 +10,9 @@ type CreateSingleFakeAuctionSlotsOptions = {
 
 export const createSingleFakeAuctionSlot = (options?: CreateSingleFakeAuctionSlotsOptions) => ({
   id: options?.id ?? 1,
-  title: faker.word.words({ count: { min: 1, max: 5 } }),
+  title: faker.word.words({ count: { min: 3, max: 7 } }),
   auctionSlotOrder: options?.id ?? 1,
   points: faker.number.int({ min: options?.pointsRange?.min ?? 200, max: options?.pointsRange?.max ?? 205000 }),
-  // color: getHEXColor(),
 })
 
 type CreateFakeAuctionSlotsArrayOptions = {

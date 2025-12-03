@@ -50,7 +50,7 @@ export const drawEmptyWheel = (
 
 export const drawSlicesItems = (
   canvas: HTMLCanvasElement,
-  items: AuctionSlot[],
+  items: WheelSlot[],
 ) => {
   const context = canvas.getContext('2d') as CanvasRenderingContext2D
   const radius = canvas.width / 2
@@ -182,10 +182,6 @@ export const drawSlicesItemsWithSelectedItem = (
 export const getSliceInfo = (
   canvas: HTMLCanvasElement,
   items: WheelSlot[],
-  mouse: {
-    x: number
-    y: number
-  },
 ) => {
   const context = canvas.getContext('2d') as CanvasRenderingContext2D
   const center = canvas.width / 2
@@ -209,35 +205,7 @@ export const getSliceInfo = (
   )
 }
 
-const reverseLotsByValue = (slots: AuctionSlot[]) => {
-  const sortedLots = slots
-    .map(slot => ({ ...slot }))
-    .sort((a, b) => a.points - b.points)
-
-  let leftPointer = 0
-  let rightPointer = slots.length - 1
-
-  while (leftPointer <= rightPointer) {
-    const buffer = sortedLots[leftPointer].points
-    sortedLots[leftPointer].points = sortedLots[rightPointer].points
-    sortedLots[rightPointer].points = buffer
-
-    leftPointer++
-    rightPointer--
-  }
-
-  return slots.map((lot) => {
-    const findingLot = sortedLots.find(item => item.id === lot.id)
-
-    if (findingLot) {
-      lot.points = findingLot.points
-    }
-
-    return { ...lot }
-  })
-}
-
-export const getItemsWithAngles = <T extends AuctionSlot>(
+export const transformSlotsToWheelSlots = <T extends AuctionSlot>(
   lots: T[] | null,
   sliceMode: WheelSlicesSizeMode = 'auto',
 ): WheelSlot[] => {
@@ -263,6 +231,7 @@ export const getItemsWithAngles = <T extends AuctionSlot>(
 
     acc.push({
       ...item,
+      color: getHEXColor(),
       startAngle,
       endAngle,
     })
@@ -395,7 +364,7 @@ export const sliceMouse = ({ canvas, slice, item }: SliceMouseProperties) => {
     }
 
     if (!isPointInPath && isSameSlice) {
-      activeItem.item === null
+      // activeItem.item === null
       clearCanvas(canvas)
     }
   })

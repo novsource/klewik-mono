@@ -10,14 +10,14 @@ import type { AuctionSlot } from '~entities/auction-slot/model'
 import type { WheelSlot } from '~entities/wheel/model'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
-import type { HexColor } from '~shared/lib/zod'
+import type { HexColor, RGBAColor } from '~shared/lib/zod'
 
 import { wheelActions, wheelSelectors } from '../store'
 import { formatSlotsToDropoutMode } from '../utils'
 import {
   calculateRotateWheelCSSValue,
-  getItemsWithAngles,
   getSlotNameOnSelector,
+  transformSlotsToWheelSlots,
 } from '../utils/wheel-canvas'
 
 type WheelControlCallbacks = {
@@ -126,7 +126,7 @@ export type UseWheelReturn = {
   }
 }
 
-export const useWheel = (slots: AuctionSlot[]): UseWheelReturn => {
+export const useWheel = (auctionSlots: AuctionSlot[]): UseWheelReturn => {
   const {
     rotateValue: storedRotateWheelValue,
     spinStatus: storedSpinStatus,
@@ -143,22 +143,44 @@ export const useWheel = (slots: AuctionSlot[]): UseWheelReturn => {
 
   const { setSlots, setRotateValue, setWheelStatus, setSelectorTitleName } = useActionCreators(wheelActions)
 
+  const defaultSlotsColorsRef = useRef<NullablePossible<Record<number, HexColor | RGBAColor>>>(null)
+
   const preparedSlots = useMemo(() => {
-    const formattedByModeSlots = storedWheelMode === 'classic' ? slots : formatSlotsToDropoutMode(slots)
+    return storedWheelMode === 'classic' ? auctionSlots : formatSlotsToDropoutMode(auctionSlots)
+  }, [storedWheelMode, auctionSlots])
 
-    if (!storedHighlightedSlotId)
-      return formattedByModeSlots
+  const wheelSlots = useMemo<WheelSlot[]>(() => {
+    let slots = transformSlotsToWheelSlots(preparedSlots, storedSizeMode)
 
-    return formattedByModeSlots.map((slot) => {
-      if (slot.id === storedHighlightedSlotId) {
-        return slot
+    // TODO: refactor color storage
+    if (defaultSlotsColorsRef.current) {
+      slots = slots.map(slot => ({ ...slot, color: defaultSlotsColorsRef.current![slot.id] }))
+    }
+    else {
+      defaultSlotsColorsRef.current = slots.reduce<Record<number, HexColor | RGBAColor>>(
+        (acc, slot) => {
+          acc[slot.id] = slot.color
+
+          return acc
+        },
+        {},
+      )
+    }
+
+    if (!storedHighlightedSlotId) {
+      return slots
+    }
+
+    return slots.map((slot) => {
+      const isSlotShouldBeHidden = slot.id !== storedHighlightedSlotId
+
+      if (isSlotShouldBeHidden) {
+        return { ...slot, color: '#333' as HexColor }
       }
 
-      return { ...slot, color: '#333' as HexColor }
+      return slot
     })
-  }, [storedHighlightedSlotId, storedWheelMode, slots])
-
-  const wheelSlots = useMemo(() => getItemsWithAngles(preparedSlots, storedSizeMode), [preparedSlots, storedSizeMode])
+  }, [preparedSlots, storedSizeMode, storedHighlightedSlotId])
 
   const {
     state: { wheelRotateCSSValue, selectorTargetTitle, isWheelSpinning },
