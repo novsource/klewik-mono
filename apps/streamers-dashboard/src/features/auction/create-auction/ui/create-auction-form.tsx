@@ -13,14 +13,19 @@ import { cn } from '~shared/utils'
 
 import { useCreateAuctionForm } from '../hooks'
 
-type CreateAuctionFormProps = ComponentPropsWithRef<'form'> & UseCreateAuctionFormListeners
+export type CreateAuctionFormProps = ComponentPropsWithRef<'form'> & UseCreateAuctionFormListeners
 
 export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
   const { onSuccess, onError, className, ...formProps } = props
 
-  const [isPasswordHidden, setIsPasswordHidden] = useState<boolean>(true)
+  const [isPasswordHidden, setIsPasswordHidden] = useState(true)
 
-  const { form: { control, handleSubmit }, state: { errors, isDirty, isValid }, submitForm, queryState: { isLoading } }
+  const {
+    form: { control, handleSubmit },
+    state: { errors, isDirty, isValid },
+    submitForm,
+    queryState: { isLoading },
+  }
     = useCreateAuctionForm({ onSuccess, onError })
 
   const isSubmitButtonShouldBeBlocked = isLoading || !isDirty || !isValid
@@ -44,10 +49,13 @@ export const CreateAuctionForm = (props: CreateAuctionFormProps) => {
             }}
             errorMessage={errors.key?.message}
             placeholder="••••••••"
+            startContent={<Icons.Key className="text-gray-accent" />}
             endContent={(
               <Button
+                className="pointer-events-auto"
                 variant="ghost"
                 isIconOnly
+                type="button"
                 icon={(
                   isPasswordHidden
                     ? (

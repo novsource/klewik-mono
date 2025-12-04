@@ -20,6 +20,7 @@ const createAuctionApi = splittedAuctionApi.injectEndpoints({
         url: '/create',
         data: { key },
         headers: { 'Content-Type': 'multipart/form-data' },
+        isBodyFormData: true,
         method: 'POST',
         withCredentials: false,
       }),

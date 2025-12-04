@@ -13,10 +13,10 @@ import { CreateAuctionSchema } from '../model'
 
 export type UseCreateAuctionFormListeners = {
   onError?: (error: AxiosBaseQueryError) => void
-  onSuccess?: (response: CreateAuctionQueryReturnValue) => void
+  onSuccess?: (response: CreateAuctionQueryReturnValue & CreateAuctionFormData) => void
 }
 
-const useCreateAuctionForm = (listeners?: UseCreateAuctionFormListeners) => {
+export const useCreateAuctionForm = (listeners?: UseCreateAuctionFormListeners) => {
   const form = useForm<CreateAuctionFormData>({
     defaultValues: {
       key: '',
@@ -38,10 +38,8 @@ const useCreateAuctionForm = (listeners?: UseCreateAuctionFormListeners) => {
       return listeners?.onError && listeners.onError(error)
     }
 
-    listeners?.onSuccess && listeners.onSuccess(createAuctionResponse.data)
+    listeners?.onSuccess && listeners.onSuccess({ ...createAuctionResponse.data, ...formData })
   }
 
   return { form, state, submitForm, queryState }
 }
-
-export { useCreateAuctionForm }

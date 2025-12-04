@@ -6,20 +6,20 @@ import { authHttpClient } from '../auth-instance'
 import { baseHttpClient } from '../base-api'
 
 export const loginInAuction = async (
-  auctionId: string,
+  uuid: string,
   password: string,
   fetchOptions?: HttpClientRequestOptions,
 ) => {
-  return authHttpClient.post(AUTH_ENDPOINTS.LOGIN, {
+  return authHttpClient.post<void>(AUTH_ENDPOINTS.LOGIN, {
     ...fetchOptions,
-    data: { auctionId, password },
+    data: { auctionId: uuid, password },
   })
 }
 
 export const refreshTokens = async (
   fetchOptions?: HttpClientRequestOptions,
 ) => {
-  return baseHttpClient.post(AUTH_ENDPOINTS.REFRESH, {
+  return baseHttpClient.post<void>(AUTH_ENDPOINTS.REFRESH, {
     ...fetchOptions,
     withCredentials: true,
   })

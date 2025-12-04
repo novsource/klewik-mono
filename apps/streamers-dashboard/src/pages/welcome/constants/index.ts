@@ -1,2 +1,2 @@
-export * from './wizard-items-ids'
 export * from './wizard-ids-icons'
+export * from './wizard-items-ids'

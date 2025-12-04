@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import { CloverAnimation } from '~widgets/big-clover-animation/ui'
 
 import { Button } from '~shared/ui/button'
@@ -65,23 +67,20 @@ const WelcomePage = () => {
               </Wizard>
 
               <div className="py-4">
-                <Flex
-                  className="w-fit items-center gap-x-2 text-gray-accent transition-all hover:text-white"
-                  component="a"
-                  href="https://www.github.com"
+                <Link
+                  className="flex w-fit items-center gap-x-2 text-gray transition-all hover:text-gray-accent"
+                  to="https://www.github.com"
                   target="_blank"
                 >
-                  <Icons.Github
-                    size="sm"
-                    className="text-gray-light transition-colors hover:text-gray-accent"
-                  />
+                  <Icons.Github size="sm" />
                   <Typography
                     tag="span"
                     className="hidden font-golos-f desktop-lg:inline-block desktop-lg:text-md desktop-lg:font-medium"
                   >
                     Github
                   </Typography>
-                </Flex>
+                  <Icons.LinkArrow size="xs" />
+                </Link>
               </div>
             </div>
           </div>
