@@ -19,14 +19,6 @@ import type { SortingOptions } from '~shared/store/model'
 import { Button } from '~shared/ui/button'
 import type { ComboboxData } from '~shared/ui/combobox'
 import { Command, CommandItem, CommandList } from '~shared/ui/command'
-import {
-  Drawer,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '~shared/ui/drawer'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import type {
@@ -35,8 +27,8 @@ import type {
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
+  SelectList,
   SelectTrigger,
 } from '~shared/ui/select'
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~shared/ui/sheet'
@@ -54,38 +46,26 @@ const sortingSlotsVariants: Array<
   {
     value: 'nameAscending',
     label: 'По номеру (возрастание)',
-    icon: (
-      <Icons.Id className="text-gray hover:text-gray-accent" />
-    ),
     sortingOptions: { field: 'id', type: 'ascending' },
   },
   {
     value: 'nameDescending',
     label: 'По номеру (убывание)',
-    icon: (
-      <Icons.Id className="text-gray hover:text-gray-accent" />
-    ),
     sortingOptions: { field: 'id', type: 'descending' },
   },
   {
     value: 'pointsAscending',
     label: 'По количеству очков (возрастание)',
-    icon: (
-      <Icons.Coin className="text-gray hover:text-gray-accent" />
-    ),
     sortingOptions: { field: 'points', type: 'ascending' },
   },
   {
     value: 'pointsDescending',
     label: 'По количеству очков (убывание)',
-    icon: (
-      <Icons.Coin className="text-gray hover:text-gray-accent" />
-    ),
     sortingOptions: { field: 'points', type: 'descending' },
   },
 ]
 
-type SortingSlotsComboboxProps = SelectProps & {
+type SortingSlotsComboboxProps = SelectProps<string, false> & {
   onSortingChange?: (sortOptions: SortingOptions<AuctionSlot>) => void
   drawerClassnames?: Partial<Record<SortingDrawerStylesSlots, string>>
 }
@@ -134,9 +114,6 @@ export const SortingSlotsCombobox = memo((props: SortingSlotsComboboxProps) => {
               <SheetTitle className="text-title font-semibold text-start">
                 Сортировать по
               </SheetTitle>
-              {/* <SheetDescription className="text-sm text-gray-light">
-                {isCodeCreated ? 'Не забудьте скопировать код для вставки в сообщение' : 'Заполните поле снизу для создание донат-кода'}
-              </SheetDescription> */}
             </Flex>
             <SheetClose
               className="text-gray-light hover:text-gray-accent"
@@ -161,39 +138,11 @@ export const SortingSlotsCombobox = memo((props: SortingSlotsComboboxProps) => {
         </SheetContent>
       </Sheet>
     )
-    return (
-      <Drawer noBodyStyles open={isOpen} onOpenChange={setIsOpen} dismissible={false}>
-        <DrawerTrigger asChild>
-          <Button isIconOnly icon={<Icons.Sort />} size="sm" />
-        </DrawerTrigger>
-        <DrawerContent hidePill>
-          <DrawerHeader className={drawerStyles.header}>
-            <Flex className={drawerStyles.headerTitleWrapper}>
-              <Icons.Sort />
-              <DrawerTitle className={drawerStyles.title}>Сортировать слоты</DrawerTitle>
-            </Flex>
-            <Button isIconOnly icon={<Icons.LargeCross size="sm" />} size="xs" onClick={() => setIsOpen(false)} />
-          </DrawerHeader>
-          <Command className={drawerStyles.content}>
-            <CommandList>
-              {sortingSlotsVariants.map(variant => (
-                <CommandItem key={variant.value} className={drawerStyles.contentItem}>
-                  {variant.label }
-                </CommandItem>
-              ))}
-            </CommandList>
-          </Command>
-          <DrawerFooter className={drawerStyles.footer}>
-            <Button className={drawerStyles.footerResetButton}>Сбросить</Button>
-            <Button className={drawerStyles.footerActionButton} variant="action">Применить</Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-    )
   }
 
   return (
     <Select
+      items={sortingSlotsVariants}
       open={isOpen}
       defaultValue={defaultSortValue}
       onValueChange={handleOnValueChange}
@@ -201,23 +150,27 @@ export const SortingSlotsCombobox = memo((props: SortingSlotsComboboxProps) => {
       size="sm"
       {...restProps}
     >
-      <SelectTrigger className="text-gray-accent" hideChevron>
-        <Icons.Sort
-          className={cn(storeSlotsSortOptions.type === 'ascending' && 'rotate-180', 'pb-0.25 shrink-0 grow')}
-        />
-        Сортировка
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
+      <SelectTrigger
+        className="text-gray-accent"
+        leftIcon={(
+          <Icons.Sort
+            className={cn(storeSlotsSortOptions.type === 'ascending' && 'rotate-180', 'pb-0.25 shrink-0 grow')}
+          />
+        )}
+      />
+      <SelectContent side="bottom" align="start">
+        <SelectList>
           {sortingSlotsVariants.map((variant) => {
             return (
-              <SelectItem key={variant.label} value={variant.value}>
-                {variant.icon }
-                {variant.label}
-              </SelectItem>
+              <SelectItem
+                key={variant.label}
+                label={variant.label}
+                value={variant.value}
+                itemWrapperProps={{ className: 'flex gap-x-2 items-center font-medium' }}
+              />
             )
           })}
-        </SelectGroup>
+        </SelectList>
       </SelectContent>
     </Select>
   )

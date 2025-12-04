@@ -49,6 +49,7 @@ export const SelectValue = (props: SelectValueProps) => {
 
 export type SelectTriggerProps = SelectPrimitive.SelectTrigger.Props & {
   size?: 'sm' | 'default'
+  leftIcon?: React.ReactNode
   label?: string
 }
 
@@ -56,6 +57,7 @@ export const SelectTrigger = (props: SelectTriggerProps) => {
   const {
     className,
     children,
+    leftIcon,
     label,
     ...triggerProps
   } = props
@@ -73,6 +75,7 @@ export const SelectTrigger = (props: SelectTriggerProps) => {
       className={style}
       {...triggerProps}
     >
+      {leftIcon}
       {!label && <SelectPrimitive.Select.Value />}
       {label}
       <SelectPrimitive.Select.Icon>
@@ -125,6 +128,7 @@ export const SelectItem = (props: SelectItemProps) => {
   const {
     className,
     itemWrapperProps,
+    label,
     children,
     ...restProps
   } = props
@@ -141,7 +145,7 @@ export const SelectItem = (props: SelectItemProps) => {
         </SelectPrimitive.Select.ItemIndicator>
       </span>
       <SelectPrimitive.Select.ItemText {...itemWrapperProps}>
-        {children}
+        {label}
       </SelectPrimitive.Select.ItemText>
     </SelectPrimitive.Select.Item>
   )
