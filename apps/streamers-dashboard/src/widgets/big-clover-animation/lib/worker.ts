@@ -58,7 +58,7 @@ const CLOVER_PATH_2D = {
 
 const CLOVER_PATH_2D_HiDPI = {
   size: 170,
-  path: new Path2D('M156.519 156.386C175.332 137.573 175.332 107.071 156.519 88.2576C154.993 86.7322 154.993 84.259 156.519 82.7336C175.332 63.9205 175.332 33.4187 156.519 14.6055C137.706 -4.20774 107.203 -4.20786 88.3904 14.6052C86.865 16.1306 84.3921 16.1308 82.867 14.6057C64.0538 -4.20748 33.5518 -4.20774 14.7386 14.6055C-4.07464 33.4187 -4.07464 63.9209 14.7386 82.7341C16.2637 84.2592 16.2637 86.7319 14.7386 88.2571C-4.07464 107.07 -4.07464 137.573 14.7386 156.386C33.5518 175.199 64.0538 175.199 82.867 156.385C84.3921 154.86 86.865 154.861 88.3904 156.386C107.203 175.199 137.706 175.199 156.519 156.386Z'),
+  path: new Path2D('M45.1187 74.3836L51.542 74.3836C61.7793 74.3836 70.3245 81.6287 72.33 91.2709L72.33 77.3651C72.33 69.7614 66.1661 63.5976 58.5624 63.5976C51.9827 63.5976 46.4809 68.2134 45.1187 74.3836ZM72.0245 95.6168C70.6937 101.829 65.1719 106.486 58.5624 106.486C51.953 106.486 46.4313 101.829 45.1004 95.6168L72.0245 95.6168ZM37.835 77.3651C37.835 65.9176 47.115 56.6377 58.5624 56.6377C70.0099 56.6377 79.2899 65.9176 79.2899 77.3651L79.2899 92.7189C79.2899 104.166 70.0099 113.446 58.5624 113.446C47.115 113.446 37.835 104.166 37.835 92.7189L37.835 77.3651ZM127.97 95.6163C126.639 101.829 121.117 106.486 114.508 106.486C107.898 106.486 102.376 101.829 101.046 95.6163L127.97 95.6163ZM128.275 92.1572L128.275 77.3651C128.275 69.7616 122.111 63.5976 114.508 63.5976C107.928 63.5976 102.426 68.2132 101.064 74.3831L107.322 74.3831C117.871 74.3831 126.624 82.0757 128.275 92.1572ZM93.7803 77.3651C93.7803 65.9176 103.06 56.6377 114.508 56.6377C125.955 56.6377 135.235 65.9176 135.235 77.3651L135.235 92.7189C135.235 104.166 125.955 113.446 114.508 113.446C103.06 113.446 93.7803 104.166 93.7803 92.7189L93.7803 77.3651ZM14.1099 87.7622C-4.70324 106.575 -4.70336 137.077 14.1099 155.89C32.9232 174.703 63.4253 174.703 82.2385 155.89C83.7638 154.365 86.2368 154.365 87.7619 155.89C106.575 174.703 137.077 174.703 155.891 155.89C174.703 137.077 174.703 106.575 155.891 87.7617C154.365 86.2366 154.365 83.764 155.891 82.2387C174.703 63.4257 174.703 32.9235 155.891 14.1103C137.077 -4.70343 106.575 -4.70169 87.7619 14.1107C86.2368 15.6357 83.7637 15.6356 82.2385 14.1101C63.4253 -4.70342 32.9232 -4.70342 14.1099 14.1103C-4.70337 32.9235 -4.70324 63.4253 14.1099 82.2382C15.6352 83.7636 15.6352 86.2368 14.1099 87.7622Z'),
 } as const
 
 let drawer: NullablePossible<CloverCanvasDrawer> = null
@@ -225,7 +225,6 @@ class CloverCanvasDrawer {
       // We take the first clover in the box
       const boxFirstClover = this._backgroundState.elements.get(`${column},${row}`)!
 
-      // console.log(boxFirstClover, column, row)
       const bigCloverMatrix = new DOMMatrix()
       bigCloverMatrix.translateSelf(boxFirstClover.matrix.e, boxFirstClover.matrix.f)
 
@@ -269,27 +268,25 @@ class CloverCanvasDrawer {
       )
     }
 
-    const startCloverColumn = 4
-    const startCloverRow = 4
-
-    const PADDING = 2
+    const PADDING = 1
 
     const countOfRowBoxes = Math.floor(
-      this._backgroundState.rowsCount / (PADDING + cloverBoxSize),
+      this._backgroundState.rowsCount / (cloverBoxSize + PADDING),
     )
     const countOfColumnBoxes = Math.floor(
-      this._backgroundState.columnsCount / (PADDING + cloverBoxSize),
+      this._backgroundState.columnsCount / (cloverBoxSize + PADDING),
     )
 
-    console.log(this._backgroundState.rowsCount / (PADDING + cloverBoxSize))
+    const startRow = Math.floor((this._backgroundState.rowsCount / countOfRowBoxes))
+    const startColumn = Math.floor((this._backgroundState.columnsCount / countOfColumnBoxes))
 
     /*
       Two cycles go through all the boxes in which clovers are drawn
     */
     for (let row = 0; row < countOfRowBoxes; row++) {
       for (let column = 0; column < countOfColumnBoxes; column++) {
-        const rowBgElementNumber = row * (startCloverRow + cloverBoxSize)
-        const columnBgElementNumber = column * (startCloverColumn + cloverBoxSize)
+        const rowBgElementNumber = row === 0 ? PADDING : (row * startRow) + PADDING
+        const columnBgElementNumber = column === 0 ? PADDING : (column * startColumn) + PADDING
 
         fillRowCloverBoxes(rowBgElementNumber, columnBgElementNumber, row)
       }
