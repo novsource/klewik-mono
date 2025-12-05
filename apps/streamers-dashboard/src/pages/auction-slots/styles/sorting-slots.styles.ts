@@ -5,7 +5,7 @@ export const sortingDrawerStyles: Record<SortingDrawerStylesSlots, string> = {
   headerTitleWrapper: /* tw */ 'gap-x-2 text-gray-accent',
   title: /* tw */ 'text-gray-accent font-medium text-md',
   content: /* tw */ 'bg-transparent',
-  contentItem: /* tw */ 'text-md px-4',
+  contentItem: /* tw */ 'text-md px-4 text-gray',
   footer: /* tw */ 'w-full flex-row',
   footerResetButton: /* tw */ 'w-full',
   footerActionButton: /* tw */ 'w-full',

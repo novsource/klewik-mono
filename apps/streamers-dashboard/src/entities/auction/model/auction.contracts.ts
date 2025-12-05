@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const AuctionSchema = z.object({
+export const AuctionSchema = z.object({
   id: z.number(),
   auctionUUID: z.string().uuid(),
   ownerId: z.string().uuid(),
@@ -13,15 +13,9 @@ const AuctionSchema = z.object({
   isBetsClosed: z.boolean(),
   isEnded: z.boolean(),
   createAt: z.date().transform((value) => {
-    if (value instanceof Date) {
-      return value.toISOString()
-    }
+    return value.toISOString()
   }),
   endedAt: z.date().transform((value) => {
-    if (value instanceof Date) {
-      return value.toISOString()
-    }
+    return value.toISOString()
   }),
 })
-
-export { AuctionSchema }

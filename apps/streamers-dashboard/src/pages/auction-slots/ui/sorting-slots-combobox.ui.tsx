@@ -1,6 +1,8 @@
-import { memo, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 
 import { shallowEqual } from 'react-redux'
+
+import { LucideCheck } from 'lucide-react'
 
 import { sortingDrawerStyles } from '~pages/auction-slots/styles'
 import type { SortingDrawerStylesSlots } from '~pages/auction-slots/styles'
@@ -73,8 +75,10 @@ type SortingSlotsComboboxProps = SelectProps<string, false> & {
 export const SortingSlotsCombobox = memo((props: SortingSlotsComboboxProps) => {
   const { onSortingChange, drawerClassnames, ...restProps } = props
 
-  const [isOpen, setIsOpen] = useState(false)
   const storeSlotsSortOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
+
+  const [isOpen, setIsOpen] = useState(false)
+  const [options, setOptions] = useState<SortingOptions<AuctionSlot>>(storeSlotsSortOptions)
 
   const { setSlotsSortOptions } = useActionCreators(auctionSlotsActions)
 
@@ -85,20 +89,33 @@ export const SortingSlotsCombobox = memo((props: SortingSlotsComboboxProps) => {
   const drawerStyles = useMemo(() => twSlotsStyles(sortingDrawerStyles, drawerClassnames), [drawerClassnames])
 
   const defaultSortValue = useMemo(() => {
-    const options = sortingSlotsVariants.find(variant =>
-      shallowEqual(variant.sortingOptions, storeSlotsSortOptions),
+    const defaultOptions = sortingSlotsVariants.find(variant =>
+      shallowEqual(variant.sortingOptions, options),
     )
 
-    return options?.value
-  }, [storeSlotsSortOptions])
+    return defaultOptions?.value
+  }, [options])
 
   const handleOnValueChange = (value: unknown) => {
     const sortOptions = sortingSlotsVariants.find(sort => sort.value === value)
     const options = sortOptions?.sortingOptions ?? defaultOptions
 
-    setSlotsSortOptions(options)
-    onSortingChange && onSortingChange(options)
+    setOptions(options)
   }
+
+  const handleOnConfirm = () => {
+    setSlotsSortOptions(options)
+    onSortingChange?.(options)
+  }
+
+  useEffect(() => {
+    if (isLargeThenTablet) {
+      setSlotsSortOptions(options)
+      onSortingChange?.(options)
+    }
+  }, [options, isLargeThenTablet, onSortingChange])
+
+  const isConfirmButtonDisabled = shallowEqual(options, storeSlotsSortOptions)
 
   if (!isLargeThenTablet) {
     return (
@@ -121,18 +138,33 @@ export const SortingSlotsCombobox = memo((props: SortingSlotsComboboxProps) => {
               <Icons.LargeCross />
             </SheetClose>
           </SheetHeader>
-          <Command value={storeSlotsSortOptions} className={drawerStyles.content} onValueChange={console.log}>
+          <Command
+            value={defaultSortValue}
+            className={drawerStyles.content}
+            onValueChange={handleOnValueChange}
+            disablePointerSelection
+          >
             <CommandList>
               {sortingSlotsVariants.map(variant => (
                 <CommandItem key={variant.value} className={drawerStyles.contentItem} value={variant.value}>
                   {variant.icon}
-                  {variant.label }
+                  <Flex className="w-full" justify="between" align="center">
+                    {variant.label}
+                    {shallowEqual(storeSlotsSortOptions, variant.sortingOptions) && <LucideCheck className="size-5" />}
+                  </Flex>
                 </CommandItem>
               ))}
             </CommandList>
           </Command>
           <Flex className="gap-y-2 mt-4" direction="column">
-            <Button className={drawerStyles.footerActionButton} variant="action">Применить</Button>
+            <Button
+              className={drawerStyles.footerActionButton}
+              variant="action"
+              disabled={isConfirmButtonDisabled}
+              onClick={handleOnConfirm}
+            >
+              Применить
+            </Button>
             <Button className={drawerStyles.footerResetButton} onClick={() => setIsOpen(false)}>Закрыть</Button>
           </Flex>
         </SheetContent>

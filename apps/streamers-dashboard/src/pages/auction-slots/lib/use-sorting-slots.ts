@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
-import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+import { auctionSlotsActions, auctionSlotsSelectors } from '~entities/auction-slot/store'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import type { SortingOptions } from '~shared/store/model'
 
@@ -42,21 +42,25 @@ const compareSlotsFields = (
   return 0
 }
 
-const useSortingSlots = (slots: AuctionSlot[], options?: SortingOptions<AuctionSlot>) => {
+export const useSortingSlots = (slots: AuctionSlot[], options?: SortingOptions<AuctionSlot>) => {
   const storeSortingOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
 
-  const sortingOptions = options ?? storeSortingOptions
+  const { setSortedSlots } = useActionCreators(auctionSlotsActions)
 
   const sortedSlots = useMemo(() => {
+    const sortingOptions = options ?? storeSortingOptions
+
     if (sortingOptions === null)
       return slots
 
-    return [...slots].sort((itemOne, itemTwo) =>
-      compareSlotsFields(itemOne, itemTwo, sortingOptions),
+    return [...slots].sort((slotOne, slotTwo) =>
+      compareSlotsFields(slotOne, slotTwo, sortingOptions),
     )
-  }, [slots, sortingOptions])
+  }, [slots, options, storeSortingOptions])
+
+  useEffect(() => {
+    setSortedSlots(sortedSlots)
+  }, [sortedSlots])
 
   return sortedSlots
 }
-
-export { useSortingSlots }
