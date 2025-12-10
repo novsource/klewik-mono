@@ -1,24 +1,22 @@
+import type { ButtonVariantsProps } from '../styles/button-variants'
+
 import * as React from 'react'
 
 import { Slot } from '@radix-ui/react-slot'
 
-import { cn } from '~shared/utils'
+import { buttonVariants } from '../styles/button-variants'
 
-import { ButtonVariantsProps, buttonVariants } from '../styles/button-variants'
-
-export interface ButtonProps
-  extends React.ComponentProps<'button'>,
-    Omit<ButtonVariantsProps, 'startContent' | 'endContent'> {
+export type ButtonProps = {
   asChild?: boolean
   startContent?: React.ReactNode
   endContent?: React.ReactNode
   icon?: React.ReactNode
-}
+} & React.ComponentProps<'button'> & Omit<ButtonVariantsProps, 'startContent' | 'endContent'>
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     { className, isIconOnly, variant, size, icon, asChild = false, ...props },
-    ref
+    ref,
   ) => {
     const { children, startContent, endContent, ...otherProps } = props
 
@@ -26,17 +24,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const style = React.useMemo(
       () =>
-        cn(
-          buttonVariants({
-            variant,
-            size,
-            isIconOnly,
-            startContent: !!startContent,
-            endContent: !!endContent,
-          }),
-          className
-        ),
-      [isIconOnly, variant, size, startContent, endContent, className]
+        buttonVariants({
+          variant,
+          size,
+          isIconOnly,
+          startContent: !!startContent,
+          endContent: !!endContent,
+          className,
+        }),
+      [isIconOnly, variant, size, startContent, endContent, className],
     )
 
     return (
@@ -52,7 +48,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {endContent}
       </Comp>
     )
-  }
+  },
 )
 Button.displayName = 'Button'
 
