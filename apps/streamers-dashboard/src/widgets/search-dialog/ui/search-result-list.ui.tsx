@@ -2,9 +2,8 @@ import type { ReactNode } from 'react'
 import { memo, useCallback, useRef } from 'react'
 
 import NumberFlow from '@number-flow/react'
+import { globalDialogsActions } from '~features/_common/display-dialogs'
 import { AnimatePresence } from 'motion/react'
-
-import { useGlobalDialogsContext } from '~widgets/global-dialogs/context'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -19,7 +18,7 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 
 import { useHover, useMediaQuery } from '~shared/hooks'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Card, CardContent } from '~shared/ui/card'
 import { Flex } from '~shared/ui/flex'
@@ -106,7 +105,7 @@ const SearchResultInfinityList = <T = unknown>(props: SearchResultInfinityListPr
     [children],
   )
 
-  const countOfSearchResult = data.length
+  const countOfSearchResult = data?.length || 0
   const isSearchValueEmpty = isStringEmpty(searchValue)
 
   if (isSearchValueEmpty) {
@@ -160,8 +159,9 @@ export const SearchAuctionSlots = (props: SearchAuctionSlotsProps) => {
 
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
+  const { setDialogState } = useActionCreators(globalDialogsActions)
+
   const { functions: { closeDialog } } = useSearchDialogContext()
-  const { dispatch: { setSelectedSlot, setIsEditSlotDialogOpen } } = useGlobalDialogsContext()
 
   const infiniteList = useSearchInfiniteList(searchValue, 'slots', auctionSlots, {
     debounceTime: 2000,
@@ -176,8 +176,7 @@ export const SearchAuctionSlots = (props: SearchAuctionSlotsProps) => {
           key={virtualizedItem.id}
           style={{ marginTop: virtualizedItem.index === 0 ? 0 : 6 }}
           onClick={() => {
-            setSelectedSlot(slot)
-            setIsEditSlotDialogOpen(true)
+            setDialogState({ dialog: 'editSlot', data: { initialData: slot, isOpen: true } })
             closeDialog()
           }}
         >
@@ -220,10 +219,11 @@ export const SearchAuctionSlots = (props: SearchAuctionSlotsProps) => {
 export const SearchDonations = (props: SearchAuctionSlotsProps) => {
   const { searchValue } = props
 
+  const { setDialogState } = useActionCreators(globalDialogsActions)
+
   const storedDonations = useStoreSelector(donationsSelectors.getAllDonations)
 
   const { functions: { closeDialog } } = useSearchDialogContext()
-  const { dispatch: { setSelectedDonation, setIsProcessDonationDialogOpen } } = useGlobalDialogsContext()
 
   const infiniteList = useSearchInfiniteList(searchValue, 'donations', storedDonations, {
     debounceTime: 1500,
@@ -238,8 +238,7 @@ export const SearchDonations = (props: SearchAuctionSlotsProps) => {
           key={virtualizedItem.id}
           style={{ marginTop: virtualizedItem.index === 0 ? 0 : 6 }}
           onClick={() => {
-            setSelectedDonation(donation)
-            setIsProcessDonationDialogOpen(true)
+            setDialogState({ dialog: 'processDonation', data: { initialData: donation, isOpen: true } })
             closeDialog()
           }}
         >

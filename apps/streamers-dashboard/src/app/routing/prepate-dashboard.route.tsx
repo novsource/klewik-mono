@@ -3,6 +3,7 @@ import type {
 } from 'react-router-dom'
 import { json } from 'react-router-dom'
 
+import { GlobalDialogs } from '~features/_common/display-dialogs'
 import { isAxiosError } from 'axios'
 import { z } from 'zod'
 
@@ -10,9 +11,6 @@ import { DashboardLayout } from '~app/layouts'
 import { store } from '~app/store'
 
 import { ErrorPage } from '~pages/error/ui/error-page.ui'
-
-import { GlobalDialogsProvider } from '~widgets/global-dialogs/context'
-import { GlobalDialogs } from '~widgets/global-dialogs/ui'
 
 import type { Auction } from '~entities/auction/model'
 import { auctionActions } from '~entities/auction/store'
@@ -28,10 +26,10 @@ import { isError } from '~shared/utils'
 export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => {
   return {
     element: (
-      <GlobalDialogsProvider>
+      <>
         <DashboardLayout />
         <GlobalDialogs />
-      </GlobalDialogsProvider>
+      </>
     ),
     loader: async ({ params }) => {
       const storeState = store.getState()

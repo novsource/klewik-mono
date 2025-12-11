@@ -1,4 +1,5 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import { globalDialogsReducer } from '~features/_common/display-dialogs'
 import { initMessageListener } from 'redux-state-sync'
 
 import { splittedAuctionApi as auctionApi } from '~entities/auction/api'
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
   auction: auctionReducer,
   auctionSlots: auctionSlotsReducer,
   donations: donationsReducer,
+  globalDialogs: globalDialogsReducer,
   integrations: integrationsReducer,
   sse: sseReducer,
   wheel: wheelReducer,

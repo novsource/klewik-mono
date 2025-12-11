@@ -2,9 +2,9 @@ import type { VirtualizerHandle } from 'virtua'
 
 import { useCallback, useRef, useState } from 'react'
 
-import { useSortingSlots } from '~pages/auction-slots/lib'
+import { globalDialogsActions } from '~features/_common/display-dialogs'
 
-import { useGlobalDialogsContext } from '~widgets/global-dialogs/context'
+import { useSortingSlots } from '~pages/auction-slots/lib'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -18,25 +18,24 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 
 import { useMediaQuery } from '~shared/hooks'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import type { ShadowVirtualListProps } from '~shared/ui/shadow-virtual-list'
+import type { WindowVirtualListProps } from '~shared/ui/virtual-list'
 import { WindowVirtualList } from '~shared/ui/virtual-list'
 import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
 
 export type AuctionSlotsListProps = {
   data?: AuctionSlot[]
   className?: string
-} & Omit<ShadowVirtualListProps<AuctionSlot>, 'children' | 'virtualizer' | 'data'>
+} & Omit<WindowVirtualListProps<AuctionSlot>, 'children' | 'virtualizer' | 'data'>
 
 export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
   const {
     data,
     className,
-    gap = 8,
     ...virtualListProps
   } = props
 
@@ -48,7 +47,7 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
 
   const [showedSlots, setShowedSlots] = useState(data ?? storedAuctionSlots)
 
-  const { dispatch: { setIsEditSlotDialogOpen, setSelectedSlot } } = useGlobalDialogsContext()
+  const { setDialogState } = useActionCreators(globalDialogsActions)
 
   if (data !== undefined && showedSlots !== data) {
     setShowedSlots(data)
@@ -77,7 +76,6 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
             <SolidAuctionSlotHeader
               slotId={auctionSlot.auctionSlotOrder}
               slotTitle={auctionSlot.title}
-              slotColor={auctionSlot.color}
             />
             <SolidAuctionSlotContent
               auctionSlot={auctionSlot}
@@ -85,13 +83,13 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
             />
           </Flex>
           <Button
-            className="bg-dark-light size-7 tablet:size-8.5 text-gray-light transition-colors hover:text-white"
+            className="bg-dark-light text-gray-light transition-colors hover:text-white"
             isIconOnly
             icon={<Icons.ArrowRight size={isLargeThenTablet ? 'default' : 'sm'} />}
             onClick={() => {
-              setSelectedSlot(auctionSlot)
-              setIsEditSlotDialogOpen(true)
+              setDialogState({ dialog: 'editSlot', data: { initialData: auctionSlot, isOpen: true } })
             }}
+            size={isLargeThenTablet ? 'sm' : 'xs'}
           />
         </BaseAuctionSlotCard>
       )
@@ -116,6 +114,7 @@ export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
       data={sortedSlots}
       overscan={8}
       virtualListRef={virtualizerRef}
+      {...virtualListProps}
     >
       {renderVirtualListItem}
     </WindowVirtualList>
