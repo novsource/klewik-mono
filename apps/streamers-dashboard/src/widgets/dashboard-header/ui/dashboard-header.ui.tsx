@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { memo, useMemo, useState } from 'react'
 
 import NumberFlow from '@number-flow/react'
+import { globalDialogsActions } from '~features/_common/display-dialogs'
 import { AnimatePresence } from 'motion/react'
 
 import { SearchDialog } from '~widgets/search-dialog/ui'
@@ -15,7 +16,7 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 
 import { useMediaQuery } from '~shared/hooks'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
 import { Divider } from '~shared/ui/divider'
@@ -31,8 +32,6 @@ import { AuctionTimer } from './auction-timer'
 import { DonationsStats } from './donations-stats'
 
 const Header = ({ children, ...otherProps }: ComponentProps<'header'>) => {
-  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
-
   return (
     <header className="h-fit w-full pt-4" {...otherProps}>
       <Flex
@@ -40,16 +39,6 @@ const Header = ({ children, ...otherProps }: ComponentProps<'header'>) => {
         align="center"
         justify="between"
       >
-        {/* {isLargeThenTablet && (
-          <MotionBox
-            whileHover={{ rotate: '180deg' }}
-            transition={{ duration: 0.65 }}
-          >
-            <NavLink to="/">
-              <Icons.Logo className="text-green-accent" width={28} height={28} />
-            </NavLink>
-          </MotionBox>
-        )} */}
         {children}
       </Flex>
     </header>
@@ -168,10 +157,16 @@ export const DashboardHeader = memo((props: DashboardHeaderProps) => {
 
   const [isTimerVisible, setIsTimerVisible] = useState(false)
 
+  const { setDialogOpenStatus } = useActionCreators(globalDialogsActions)
+
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   const toggleTimerVision = () => {
     setIsTimerVisible(curr => !curr)
+  }
+
+  const openSearchDialog = () => {
+    setDialogOpenStatus({ dialog: 'search', status: true })
   }
 
   return (
@@ -197,16 +192,17 @@ export const DashboardHeader = memo((props: DashboardHeaderProps) => {
             </>
           )}
 
-          <Flex className="w-full tablet:w-fit gap-x-1.5" align="center" justify="end">
+          <Flex className="w-full h-full tablet:w-fit gap-x-1.5" align="center" justify="end">
             <SearchDialog trigger={(
               <Button
-                variant={isLargeThenTablet ? 'ghost' : 'ghost'}
+                variant="ghost"
                 className={cn(
+                  'w-full text-gray bg-dark-light justify-start text-sm h-9',
                   isLargeThenTablet && 'bg-dark font-medium text-gray pr-4 pl-2.5 hover:text-gray-light/80 hover:bg-dark-light/80',
-                  !isLargeThenTablet && 'w-full text-gray bg-dark-light justify-start h-7.5 text-sm',
                 )}
                 startContent={<Icons.Magnifier size="xs" />}
                 size={isLargeThenTablet ? 'xs' : 'default'}
+                onClick={openSearchDialog}
               >
                 Поиск по аукциону...
               </Button>

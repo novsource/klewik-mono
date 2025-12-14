@@ -2,10 +2,12 @@ import type { PopoverProps } from '@radix-ui/react-popover'
 
 import { useRef, useState } from 'react'
 
+import { globalDialogsActions } from '~features/_common/display-dialogs'
+
 import { useUpdateBetsStatusMutation } from '~entities/auction/api'
 import { auctionSelectors } from '~entities/auction/store'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
 import type { CommandItemProps } from '~shared/ui/command'
@@ -14,8 +16,6 @@ import { Icons } from '~shared/ui/icons'
 import { Popover, PopoverContent, PopoverTrigger } from '~shared/ui/popover'
 
 import { cn, mergeProps } from '~shared/utils'
-
-import { AuctionSettingsDialog } from './dashboard-settings-dialog.ui'
 
 export type DashboardHeaderMenuProps = PopoverProps & {
   isTimerVisible?: boolean
@@ -55,7 +55,7 @@ export const DashboardHeaderMenu = (props: DashboardHeaderMenuProps) => {
               />
               <BetsControlCommandItem />
               <CommandSeparator className="bg-dark-accent my-2" />
-              <AuctionSettingsDialog />
+              <OpenSettingsDialogCommandItem />
               <CommandItem
                 className="cursor-pointer text-red/80 bg-red/5 data-[selected=true]:bg-red/15 data-[selected=true]:text-red"
                 {...restProps}
@@ -76,6 +76,21 @@ export const DashboardHeaderMenu = (props: DashboardHeaderMenuProps) => {
         </Command>
       </PopoverContent>
     </Popover>
+  )
+}
+
+function OpenSettingsDialogCommandItem() {
+  const { setDialogOpenStatus } = useActionCreators(globalDialogsActions)
+
+  const openSettingsDialog = () => {
+    setDialogOpenStatus({ dialog: 'settings', status: true })
+  }
+
+  return (
+    <CommandItem className="cursor-pointer" onSelect={openSettingsDialog}>
+      <Icons.Settings size="xs" />
+      Настройки
+    </CommandItem>
   )
 }
 

@@ -4,6 +4,8 @@ import * as React from 'react'
 
 import { Slot } from '@radix-ui/react-slot'
 
+import { cn } from '~shared/utils'
+
 import { buttonVariants } from '../styles/button-variants'
 
 export type ButtonProps = {
@@ -24,14 +26,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const style = React.useMemo(
       () =>
-        buttonVariants({
+        cn(buttonVariants({
           variant,
           size,
           isIconOnly,
           startContent: !!startContent,
           endContent: !!endContent,
           className,
-        }),
+        }), className),
       [isIconOnly, variant, size, startContent, endContent, className],
     )
 

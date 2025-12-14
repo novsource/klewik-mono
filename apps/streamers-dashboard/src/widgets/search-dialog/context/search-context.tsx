@@ -1,6 +1,10 @@
 import type { ReactNode } from 'react'
 import { createContext, useContext, useMemo, useState } from 'react'
 
+import { globalDialogsActions, globalDialogsSelectors } from '~features/_common/display-dialogs'
+
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+
 export type SearchDialogCategories = 'slots' | 'donations'
 
 export type SearchDialogContextState = {
@@ -57,22 +61,29 @@ export type SearchDialogContextProviderProps = Partial<SearchDialogContextState>
 export const SearchDialogContextProvider = (props: SearchDialogContextProviderProps) => {
   const { children, ...contextValues } = props
 
+  const { isOpen } = useStoreSelector(state => globalDialogsSelectors.getDialogState(state, 'search'))
+
+  const { setDialogOpenStatus } = useActionCreators(globalDialogsActions)
+
   const [searchValue, setSearchValue] = useState(contextValues.searchValue ?? '')
   const [category, setCategory] = useState<SearchDialogCategories>(contextValues.category ?? 'slots')
-  const [isDialogOpen, setIsDialogOpen] = useState(contextValues.isDialogOpen ?? false)
 
   const closeDialog = () => {
     setSearchValue('')
-    setIsDialogOpen(false)
+    setDialogOpenStatus({ dialog: 'search', status: false })
   }
 
   const contextValue = useMemo<SearchDialogContext>(() => {
     return {
-      state: { isDialogOpen, searchValue, category },
-      dispatch: { setSearchValue, setIsDialogOpen, setCategory },
+      state: { isDialogOpen: isOpen, searchValue, category },
+      dispatch: {
+        setSearchValue,
+        setIsDialogOpen: (open: boolean) => setDialogOpenStatus({ dialog: 'search', status: open }),
+        setCategory,
+      },
       functions: { closeDialog },
     }
-  }, [isDialogOpen, searchValue, category])
+  }, [isOpen, searchValue, category])
 
   return (
     <SearchContext.Provider value={contextValue}>

@@ -89,9 +89,14 @@ function DesktopSearchDialog(props: DesktopSearchDialogProps) {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={handleOnOpenChange} {...dialogProps}>
-      <DialogTrigger {...triggerProps}>
-        {trigger}
-      </DialogTrigger>
+      <DialogTrigger
+        {...triggerProps}
+        render={(
+          <>
+            {trigger}
+          </>
+        )}
+      />
       <DialogContent {...dialogContentProps}>
         <Flex className="h-full w-full gap-y-6" direction="column">
           <DialogHeader {...dialogHeaderProps}>

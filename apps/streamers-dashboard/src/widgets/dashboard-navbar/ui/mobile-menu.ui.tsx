@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
 import NumberFlow from '@number-flow/react'
+import { globalDialogsActions } from '~features/_common/display-dialogs'
 
 import { useUpdateBetsStatusMutation } from '~features/auction/update-bets-status/api'
 
@@ -18,7 +19,7 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 
 import { useMediaQuery } from '~shared/hooks'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
 import { Divider } from '~shared/ui/divider'
@@ -66,10 +67,8 @@ export const MobileMenu = () => {
 
           <OpenSettingsDialogButton />
 
-          <Divider className="my-3 mobile:my-4" />
-
           <Flex className="h-full gap-y-8" justify="end" direction="column">
-            <Flex className="h-full gap-y-4 mobile:gap-y-6" direction="column">
+            <Flex className="h-full gap-y-4 mobile:gap-y-6" direction="column" justify="end">
               <Link className="flex gap-x-2 text-gray-light text-sm mobile:text-md" to="#">
                 Страница для зрителей
                 <Icons.LinkArrow size="sm" />
@@ -91,11 +90,18 @@ export const MobileMenu = () => {
 }
 
 function OpenSettingsDialogButton() {
+  const { setDialogOpenStatus } = useActionCreators(globalDialogsActions)
+
+  const openSettingsDialog = () => {
+    setDialogOpenStatus({ dialog: 'settings', status: true })
+  }
+
   return (
     <Button
       className="mobile:text-title text-gray-accent justify-start pl-0"
       variant="ghost"
       startContent={<Icons.Settings size="sm" />}
+      onClick={openSettingsDialog}
     >
       Настройки
     </Button>
@@ -126,7 +132,12 @@ function BetsStatusSwitcher() {
             Прием ставок
           </Typography>
         </Flex>
-        <Switch defaultChecked onCheckedChange={handleCheckedChange} disabled={isLoading} size={isMediaLargeThenMobile ? 'default' : 'sm'} />
+        <Switch
+          defaultChecked
+          onCheckedChange={handleCheckedChange}
+          disabled={isLoading}
+          size={isMediaLargeThenMobile ? 'default' : 'sm'}
+        />
       </Flex>
     </StatisticCard>
   )
