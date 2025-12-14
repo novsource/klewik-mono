@@ -33,12 +33,12 @@ export const useSearchInfiniteList = <Domain extends SearchQueryDomain, T extend
 
   const [isShowingSkeletons, setIsShowingSkeletons] = useState(false)
   const [isListShouldBeCleared, setIsListShouldBeCleared] = useState(false)
-  const [isDebounceStarted, setIsDebounceStarted] = useState(false)
-  const [isCanLoadMore, setIsCanLoadMore] = useState(false)
+  const [isDebounceQueryActive, setIsDebounceQueryActive] = useState(false)
+  const [isCanLoadMore, setIsCanLoadMore] = useState(true)
 
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
-  const filtredDataWithSearchValue = useMemo<T[]>(() => {
+  const filtredDataWithSearchQuery = useMemo<T[]>(() => {
     if (domain === 'slots') {
       return (data as AuctionSlot[]).filter(
         slot => slot.title?.toLowerCase().includes(searchValue.toLowerCase()),
@@ -53,11 +53,14 @@ export const useSearchInfiniteList = <Domain extends SearchQueryDomain, T extend
   const [query] = useLazySearchQuery()
 
   const queryRef = useRef<NullablePossible<ReturnType<typeof query>>>(null)
-  const lastDataItemIdRef = useRef<Maybe<number>>(filtredDataWithSearchValue.at(-1)?.id)
+  const lastDataItemIdRef = useRef<Maybe<number>>(filtredDataWithSearchQuery.at(-1)?.id)
+
+  const lastSearchValueRequestRef = useRef('')
 
   const searchQuery: UseInfiniteListServiceFunction<T> = async () => {
     try {
-      setIsDebounceStarted(false)
+      setIsDebounceQueryActive(false)
+      lastSearchValueRequestRef.current = searchValue
 
       queryRef.current = query({
         auctionUUID,
@@ -97,28 +100,28 @@ export const useSearchInfiniteList = <Domain extends SearchQueryDomain, T extend
     }
   }
 
-  const debouncedSearchDonationQuery = useDebounceCallback(searchQuery, debounceTime)
+  const debouncedSearchQuery = useDebounceCallback(searchQuery, debounceTime)
 
   const {
     ref: listRef,
     state: infiniteListState,
-    functions: { reset },
+    functions: { reset: resetInfiniteList, updateIsCanLoadMore },
   } = useInfiniteList<T>(searchQuery, infiniteListOptions)
 
   useDidUpdate(() => {
     const isInfiniteListValueEmpty = infiniteListState.value.length === 0
 
     if (isInfiniteListValueEmpty) {
-      lastDataItemIdRef.current = filtredDataWithSearchValue.at(-1)?.id
+      lastDataItemIdRef.current = filtredDataWithSearchQuery.at(-1)?.id
     }
     else {
       lastDataItemIdRef.current = infiniteListState.value.at(-1)?.id
     }
-  }, [filtredDataWithSearchValue, infiniteListState.value])
+  }, [filtredDataWithSearchQuery, infiniteListState.value])
 
   useDidUpdate(() => {
     if (isListShouldBeCleared) {
-      reset()
+      resetInfiniteList()
 
       lastDataItemIdRef.current = undefined
       queryRef.current?.abort()
@@ -129,35 +132,46 @@ export const useSearchInfiniteList = <Domain extends SearchQueryDomain, T extend
   }, [isListShouldBeCleared])
 
   useEffect(() => {
-    const isStringNotEmpty = !isStringEmpty(searchValue)
+    const isSearchValueNotEmpty = !isStringEmpty(searchValue)
     const isShouldLoadMore
-      = (filtredDataWithSearchValue.length < infiniteListState.limit)
+      = (filtredDataWithSearchQuery.length < infiniteListState.limit)
         && isCanLoadMore
 
-    if (isDebounceStarted && !isShouldLoadMore) {
-      debouncedSearchDonationQuery.cancel()
+    const isPreviousSearchValueLarge = lastSearchValueRequestRef.current.length > searchValue.length
 
-      setIsDebounceStarted(false)
+    if (isSearchValueNotEmpty && isPreviousSearchValueLarge) {
+      setIsListShouldBeCleared(true)
+      setIsCanLoadMore(true)
     }
 
-    if (isStringNotEmpty && isShouldLoadMore) {
-      debouncedSearchDonationQuery()
-      setIsDebounceStarted(true)
+    if (isDebounceQueryActive && !isShouldLoadMore) {
+      debouncedSearchQuery.cancel()
+
+      setIsDebounceQueryActive(false)
+      setIsCanLoadMore(false)
+      updateIsCanLoadMore(false)
+    }
+
+    if (isSearchValueNotEmpty && isShouldLoadMore) {
+      debouncedSearchQuery()
+
+      setIsDebounceQueryActive(true)
       setIsListShouldBeCleared(true)
       setIsShowingSkeletons(true)
     }
 
-    if (!isStringNotEmpty) {
+    if (!isSearchValueNotEmpty) {
       setIsListShouldBeCleared(true)
       setIsShowingSkeletons(false)
       setIsCanLoadMore(true)
+      updateIsCanLoadMore(true)
     }
   }, [
     searchValue,
     isCanLoadMore,
-    isDebounceStarted,
-    debouncedSearchDonationQuery,
-    filtredDataWithSearchValue.length,
+    isDebounceQueryActive,
+    debouncedSearchQuery,
+    filtredDataWithSearchQuery.length,
     ...objectToDeps(
       infiniteListState,
       ['isCanLoadMore', 'isPending', 'limit'],
@@ -168,7 +182,7 @@ export const useSearchInfiniteList = <Domain extends SearchQueryDomain, T extend
 
   return {
     isShowingSkeletons,
-    filtredData: filtredDataWithSearchValue,
+    filtredData: filtredDataWithSearchQuery,
     listRef,
     state: infiniteListState,
   }

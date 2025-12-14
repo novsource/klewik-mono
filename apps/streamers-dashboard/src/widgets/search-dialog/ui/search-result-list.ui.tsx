@@ -116,6 +116,8 @@ const SearchResultInfinityList = <T = unknown>(props: SearchResultInfinityListPr
     )
   }
 
+  console.log(data)
+
   return (
     <Flex className="w-full tablet:px-4 gap-y-2" direction="column">
       <Flex className="gap-x-2" align="center">
