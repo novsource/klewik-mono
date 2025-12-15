@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import { useMemo } from 'react'
 
+import { AnimatePresence } from 'motion/react'
+
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { useMediaQuery } from '~shared/hooks'
@@ -69,7 +71,7 @@ function DesktopSearchDialog(props: DesktopSearchDialogProps) {
   } = props
 
   const {
-    state: { isDialogOpen, searchValue, category },
+    state: { isLoading, isDialogOpen, searchValue, category },
     dispatch: { setIsDialogOpen, setSearchValue, setCategory },
     functions: { closeDialog },
   } = useSearchDialogContext()
@@ -103,6 +105,7 @@ function DesktopSearchDialog(props: DesktopSearchDialogProps) {
             <Flex direction="column">
               <SearchBar
                 value={searchValue}
+                showLoader={isLoading}
                 endContent={(
                   <Button
                     className="text-gray hover:text-white"
@@ -146,7 +149,7 @@ function MobileSearchDialog(props: MobileSearchDialogProps) {
   const { trigger } = props
 
   const {
-    state: { isDialogOpen, searchValue, category },
+    state: { isLoading, isDialogOpen, searchValue, category },
     dispatch: { setIsDialogOpen, setSearchValue, setCategory },
   } = useSearchDialogContext()
 
@@ -170,6 +173,7 @@ function MobileSearchDialog(props: MobileSearchDialogProps) {
           <Flex direction="column">
             <SearchBar
               value={searchValue}
+              showLoader={isLoading}
               onChange={(event) => {
                 setSearchValue(event.target.value)
               }}
@@ -194,23 +198,12 @@ function MobileSearchDialog(props: MobileSearchDialogProps) {
   )
 }
 
-type SearchBarProps = Omit<InputProps, 'value'> & { value: string }
+type SearchBarProps = Omit<InputProps, 'value'> & { value: string, showLoader: boolean }
 
 function SearchBar(props: SearchBarProps) {
-  const { value, ...restProps } = props
+  const { value, showLoader, ...restProps } = props
 
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
-
-  const searchInputStartIcon = useMemo(() => {
-    return (
-      <MotionBox
-        initial={{ scale: 1 }}
-        exit={{ scale: 0 }}
-      >
-        <Icons.Magnifier className={cn(isStringEmpty(value) && 'text-gray')} size="sm" />
-      </MotionBox>
-    )
-  }, [value])
 
   return (
     <Input
@@ -223,7 +216,31 @@ function SearchBar(props: SearchBarProps) {
           ],
         }
       }
-      startContent={searchInputStartIcon}
+      startContent={(
+        <AnimatePresence>
+          {
+            !showLoader
+              ? (
+                  <MotionBox
+                    initial={{ scale: 0.95 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                  >
+                    <Icons.Magnifier className={cn(isStringEmpty(value) && 'text-gray')} size="sm" />
+                  </MotionBox>
+                )
+              : (
+                  <MotionBox
+                    initial={{ scale: 0.95 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                  >
+                    <Icons.Loading className="text-green-accent" />
+                  </MotionBox>
+                )
+          }
+        </AnimatePresence>
+      )}
       placeholder="Искать по слотам или донатам..."
       size={isLargeThenTablet ? 'default' : 'sm'}
       value={value}

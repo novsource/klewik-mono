@@ -89,11 +89,9 @@ export const axiosBaseQuery
           : 'application/json'
         const requestHeaders = { ...headers, 'Content-Type': contentTypeHeader }
 
-        const requestData = data
-
         const result = await axios.request(queryURL, {
           method,
-          data: requestData,
+          data,
           params,
           headers: requestHeaders,
           signal: api.signal,

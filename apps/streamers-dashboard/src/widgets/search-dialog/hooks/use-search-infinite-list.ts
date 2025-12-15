@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import type { SearchQueryDomain } from '~entities/auction/api'
 import { useLazySearchQuery } from '~entities/auction/api'
@@ -13,7 +13,7 @@ import type { UseInfiniteListOptions, UseInfiniteListServiceFunction } from '~sh
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { isStringEmpty, objectToDeps } from '~shared/utils'
+import { isStringEmpty } from '~shared/utils'
 
 type UseSearchInfiniteListOptions<T> = Omit<UseInfiniteListOptions<T>, 'queryOnEnd'> & {
   debounceTime?: number
@@ -31,14 +31,16 @@ export const useSearchInfiniteList = <Domain extends SearchQueryDomain, T extend
     ...infiniteListOptions
   } = options
 
-  const [isShowingSkeletons, setIsShowingSkeletons] = useState(false)
-  const [isListShouldBeCleared, setIsListShouldBeCleared] = useState(false)
-  const [isDebounceQueryActive, setIsDebounceQueryActive] = useState(false)
+  const [isPending, setIsPending] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isDebounceActive, setIsDebounceActive] = useState(false)
   const [isCanLoadMore, setIsCanLoadMore] = useState(true)
 
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
-  const filtredDataWithSearchQuery = useMemo<T[]>(() => {
+  const [lazySearchQuery] = useLazySearchQuery()
+
+  const searchResultsFromInputData = useMemo<T[]>(() => {
     if (domain === 'slots') {
       return (data as AuctionSlot[]).filter(
         slot => slot.title?.toLowerCase().includes(searchValue.toLowerCase()),
@@ -50,19 +52,15 @@ export const useSearchInfiniteList = <Domain extends SearchQueryDomain, T extend
     ) as T[]
   }, [data, searchValue, domain])
 
-  const [query] = useLazySearchQuery()
-
-  const queryRef = useRef<NullablePossible<ReturnType<typeof query>>>(null)
-  const lastDataItemIdRef = useRef<Maybe<number>>(filtredDataWithSearchQuery.at(-1)?.id)
-
+  const queryRef = useRef<NullablePossible<ReturnType<typeof lazySearchQuery>>>(null)
+  const lastDataItemIdRef = useRef<Maybe<number>>(searchResultsFromInputData.at(-1)?.id)
   const lastSearchValueRequestRef = useRef('')
 
   const searchQuery: UseInfiniteListServiceFunction<T> = async () => {
     try {
-      setIsDebounceQueryActive(false)
-      lastSearchValueRequestRef.current = searchValue
+      setIsLoading(true)
 
-      queryRef.current = query({
+      queryRef.current = lazySearchQuery({
         auctionUUID,
         domain,
         query: searchValue,
@@ -71,118 +69,146 @@ export const useSearchInfiniteList = <Domain extends SearchQueryDomain, T extend
       })
 
       const response = await queryRef.current
-
-      setIsShowingSkeletons(false)
-      queryRef.current = null
-
       const responseData = response.data as Maybe<T[]>
 
-      if (!responseData || responseData.length === 0) {
+      const isDataEmpty = !responseData || !responseData.length
+
+      if (isDataEmpty) {
         setIsCanLoadMore(false)
+
         return { list: [] }
       }
 
-      const limit = infiniteListOptions.limit ?? 15
+      lastDataItemIdRef.current = responseData[responseData.length - 1].id
 
-      if (responseData.length < limit) {
+      const listLimit = infiniteListOptions.limit ?? 15
+      const isPossibleToLoadMoreInFuture = responseData.length < listLimit
+
+      if (isPossibleToLoadMoreInFuture) {
         setIsCanLoadMore(false)
       }
-
-      lastDataItemIdRef.current = responseData.at(-1)?.id ?? lastDataItemIdRef.current
 
       return { list: responseData }
     }
     catch (error) {
-      queryRef.current = null
-
       if (error instanceof Error)
         throw error
     }
+    finally {
+      lastSearchValueRequestRef.current = searchValue
+      queryRef.current = null
+
+      setIsPending(false)
+      setIsLoading(false)
+    }
   }
 
-  const debouncedSearchQuery = useDebounceCallback(searchQuery, debounceTime)
+  const debouncedSearchQuery = useDebounceCallback(() => {
+    setIsDebounceActive(false)
+
+    return searchQuery()
+  }, debounceTime)
 
   const {
     ref: listRef,
     state: infiniteListState,
-    functions: { reset: resetInfiniteList, updateIsCanLoadMore },
+    functions: { reset: resetInfiniteList, updateIsCanLoadMore: updateListIsCanLoadMore },
   } = useInfiniteList<T>(searchQuery, infiniteListOptions)
 
-  useDidUpdate(() => {
-    const isInfiniteListValueEmpty = infiniteListState.value.length === 0
+  const resetAll = useCallback(() => {
+    queryRef.current?.abort()
+    debouncedSearchQuery.cancel()
 
-    if (isInfiniteListValueEmpty) {
-      lastDataItemIdRef.current = filtredDataWithSearchQuery.at(-1)?.id
+    lastDataItemIdRef.current = undefined
+    lastSearchValueRequestRef.current = ''
+    queryRef.current = null
+
+    resetInfiniteList()
+
+    setIsCanLoadMore(true)
+    setIsPending(false)
+  }, [resetInfiniteList, debouncedSearchQuery])
+
+  useDidUpdate(() => {
+    const isInfiniteListEmpty = infiniteListState.value.length === 0
+
+    if (isInfiniteListEmpty) {
+      lastDataItemIdRef.current = searchResultsFromInputData.at(-1)?.id
     }
     else {
       lastDataItemIdRef.current = infiniteListState.value.at(-1)?.id
     }
-  }, [filtredDataWithSearchQuery, infiniteListState.value])
-
-  useDidUpdate(() => {
-    if (isListShouldBeCleared) {
-      resetInfiniteList()
-
-      lastDataItemIdRef.current = undefined
-      queryRef.current?.abort()
-      queryRef.current = null
-
-      setIsListShouldBeCleared(false)
-    }
-  }, [isListShouldBeCleared])
+  }, [searchResultsFromInputData, infiniteListState.value])
 
   useEffect(() => {
     const isSearchValueNotEmpty = !isStringEmpty(searchValue)
-    const isShouldLoadMore
-      = (filtredDataWithSearchQuery.length < infiniteListState.limit)
+    const isPreviousSearchValueWasLarge = lastSearchValueRequestRef.current.length > searchValue.length
+
+    const isShouldResetAll
+      = (isSearchValueNotEmpty && isPreviousSearchValueWasLarge && !isPending)
+        || (!isSearchValueNotEmpty && isPreviousSearchValueWasLarge)
+
+    if (!isShouldResetAll)
+      return
+
+    resetAll()
+  }, [isPending, searchValue, resetAll])
+
+  useEffect(() => {
+    const isSearchValueNotEmpty = !isStringEmpty(searchValue)
+    const isPossibleLoadMoreData
+      = (searchResultsFromInputData.length < infiniteListState.limit)
         && isCanLoadMore
+    const isShouldStartSearchRequest = isSearchValueNotEmpty && isPossibleLoadMoreData && !isLoading
 
-    const isPreviousSearchValueLarge = lastSearchValueRequestRef.current.length > searchValue.length
+    if (!isShouldStartSearchRequest)
+      return
 
-    if (isSearchValueNotEmpty && isPreviousSearchValueLarge) {
-      setIsListShouldBeCleared(true)
-      setIsCanLoadMore(true)
-    }
+    debouncedSearchQuery()
 
-    if (isDebounceQueryActive && !isShouldLoadMore) {
-      debouncedSearchQuery.cancel()
-
-      setIsDebounceQueryActive(false)
-      setIsCanLoadMore(false)
-      updateIsCanLoadMore(false)
-    }
-
-    if (isSearchValueNotEmpty && isShouldLoadMore) {
-      debouncedSearchQuery()
-
-      setIsDebounceQueryActive(true)
-      setIsListShouldBeCleared(true)
-      setIsShowingSkeletons(true)
-    }
-
-    if (!isSearchValueNotEmpty) {
-      setIsListShouldBeCleared(true)
-      setIsShowingSkeletons(false)
-      setIsCanLoadMore(true)
-      updateIsCanLoadMore(true)
-    }
+    setIsDebounceActive(true)
+    setIsPending(true)
   }, [
-    searchValue,
-    isCanLoadMore,
-    isDebounceQueryActive,
     debouncedSearchQuery,
-    filtredDataWithSearchQuery.length,
-    ...objectToDeps(
-      infiniteListState,
-      ['isCanLoadMore', 'isPending', 'limit'],
-    ),
+    searchResultsFromInputData.length,
+    isCanLoadMore,
+    isLoading,
+    searchValue,
+    infiniteListState.limit,
   ])
 
-  useUnmount(() => queryRef.current?.abort())
+  useEffect(() => {
+    const isPossibleLoadMoreData
+      = (searchResultsFromInputData.length < infiniteListState.limit)
+        && isCanLoadMore
+
+    const isShouldCancelSearchQuery = isDebounceActive && !isPossibleLoadMoreData
+
+    if (isShouldCancelSearchQuery) {
+      debouncedSearchQuery.cancel()
+
+      setIsDebounceActive(false)
+      setIsCanLoadMore(false)
+      updateListIsCanLoadMore(false)
+    }
+  }, [
+    updateListIsCanLoadMore,
+    searchValue,
+    isCanLoadMore,
+    isDebounceActive,
+    debouncedSearchQuery,
+    searchResultsFromInputData.length,
+    infiniteListState.limit,
+  ])
+
+  useUnmount(() => {
+    resetAll()
+  })
 
   return {
-    isShowingSkeletons,
-    filtredData: filtredDataWithSearchQuery,
+    isPending,
+    isLoading,
+    filtredData: searchResultsFromInputData,
     listRef,
     state: infiniteListState,
   }

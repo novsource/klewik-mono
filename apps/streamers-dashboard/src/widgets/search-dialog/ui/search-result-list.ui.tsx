@@ -116,8 +116,6 @@ const SearchResultInfinityList = <T = unknown>(props: SearchResultInfinityListPr
     )
   }
 
-  console.log(data)
-
   return (
     <Flex className="w-full tablet:px-4 gap-y-2" direction="column">
       <Flex className="gap-x-2" align="center">
@@ -159,17 +157,25 @@ export type SearchAuctionSlotsProps = {
 export const SearchAuctionSlots = (props: SearchAuctionSlotsProps) => {
   const { searchValue } = props
 
-  const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+  const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
   const { setDialogState } = useActionCreators(globalDialogsActions)
 
-  const { functions: { closeDialog } } = useSearchDialogContext()
+  const {
+    state: { isLoading },
+    dispatch: { setIsLoading },
+    functions: { closeDialog },
+  } = useSearchDialogContext()
 
-  const infiniteList = useSearchInfiniteList(searchValue, 'slots', auctionSlots, {
+  const infiniteList = useSearchInfiniteList(searchValue, 'slots', storedAuctionSlots, {
     debounceTime: 2000,
     limit: 30,
     distance: 30,
   })
+
+  if (infiniteList.isPending !== isLoading) {
+    setIsLoading(infiniteList.isPending)
+  }
 
   const renderAuctionSlotListItem = useCallback<InfiniteListRenderFunction<AuctionSlot>>(
     (slot, virtualizedItem) => {
@@ -211,7 +217,7 @@ export const SearchAuctionSlots = (props: SearchAuctionSlotsProps) => {
           </CardContent>
         </Card>
       )}
-      showPlaceholders={infiniteList.isShowingSkeletons}
+      showPlaceholders={infiniteList.isPending}
     >
       { renderAuctionSlotListItem }
     </SearchResultInfinityList>
@@ -225,13 +231,21 @@ export const SearchDonations = (props: SearchAuctionSlotsProps) => {
 
   const storedDonations = useStoreSelector(donationsSelectors.getAllDonations)
 
-  const { functions: { closeDialog } } = useSearchDialogContext()
+  const {
+    state: { isLoading },
+    dispatch: { setIsLoading },
+    functions: { closeDialog },
+  } = useSearchDialogContext()
 
   const infiniteList = useSearchInfiniteList(searchValue, 'donations', storedDonations, {
-    debounceTime: 1500,
+    debounceTime: 2000,
     limit: 15,
     distance: 30,
   })
+
+  if (infiniteList.isPending !== isLoading) {
+    setIsLoading(infiniteList.isPending)
+  }
 
   const renderDonationListItem = useCallback<InfiniteListRenderFunction<ProcessedDonation>>(
     (donation, virtualizedItem) => {
@@ -277,7 +291,7 @@ export const SearchDonations = (props: SearchAuctionSlotsProps) => {
       listRef={infiniteList.listRef}
       state={infiniteList.state}
       placeholder={<SkeletonDonationCard />}
-      showPlaceholders={infiniteList.isShowingSkeletons}
+      showPlaceholders={infiniteList.isPending}
     >
       { renderDonationListItem }
     </SearchResultInfinityList>
