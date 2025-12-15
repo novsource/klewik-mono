@@ -7,42 +7,31 @@ import { donationsSelectors } from '~entities/donation/store'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useDidUpdate, useMediaQuery } from '~shared/hooks'
+import { useMediaQuery } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { sseSelectors } from '~shared/store/slices'
-
 import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
-import { toastErrorNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
 import { useFiltredDonations } from '../lib'
-import { DonationsFilterSelect } from './donations-filter-select.ui'
+import { DonationsStatusFilterSelect } from './donations-filter-select.ui'
 import { AuctionDonationsInfiniteList } from './donations-infinity-list.ui'
 
 export const AuctionDonationsPage = () => {
-  const { isConnected: isDonationsSSEEventConnected } = useStoreSelector(store => sseSelectors.getEventStatus(store, 'auctionSlots'))
-
   const storedDonations = useStoreSelector(donationsSelectors.getAllDonations)
 
   const [donationsFilterValue, setDonationsFilterValue]
     = useState<NullablePossible<ProcessedDonationStatus>>(null)
 
-  const filtredDonations = useFiltredDonations(storedDonations, {
+  const filtredDonationsByStatus = useFiltredDonations(storedDonations, {
     status: donationsFilterValue,
   })
 
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
-
-  useDidUpdate(() => {
-    if (!isDonationsSSEEventConnected) {
-      toastErrorNotification('Auction slots not connected!!!')
-    }
-  }, [isDonationsSSEEventConnected])
 
   return (
     <div
@@ -51,7 +40,8 @@ export const AuctionDonationsPage = () => {
         'relative mx-auto w-full h-full tablet:pt-5 tablet:mb-4 tablet:pb-0',
         'tablet:min-h-[var(--height-page)] tablet:h-auto',
         'mobile:gap-y-5',
-        'max-tablet:max-w-[1100px] tablet:gap-y-7 tablet:pl-10',
+        'tablet:gap-y-0 tablet:pb-0 tablet:pl-4',
+        'max-tablet:max-w-[1100px] tablet:gap-y-7',
         'desktop:max-w-[1750px] desktop-lg:max-w-[2100px]',
         'landtop:max-w-[1600px]',
       ])}
@@ -62,29 +52,42 @@ export const AuctionDonationsPage = () => {
         align="center"
         justify="between"
       >
-        <Typography className="tablet:text-title-xl" tag="h1">
-          Пожертвования
-        </Typography>
+        <PageTitle />
+
         {isLargeThenTablet && (
-          <DonationsFilterSelect
+          <DonationsStatusFilterSelect
             status={donationsFilterValue}
-            onValueChange={(status: ProcessedDonationStatus) =>
-              setDonationsFilterValue(status)}
+            onValueChange={setDonationsFilterValue}
           />
         )}
       </Flex>
       {!isLargeThenTablet && (
         <Flex className="w-full mt-3.5" justify="between">
           <DonationsStats />
-          <DonationsFilterSelect
+          <DonationsStatusFilterSelect
             status={donationsFilterValue}
-            onValueChange={(status: ProcessedDonationStatus) =>
-              setDonationsFilterValue(status)}
+            onValueChange={setDonationsFilterValue}
           />
         </Flex>
       )}
       <Divider className="border-gray/10 mt-1.5 mb-3" />
-      <AuctionDonationsInfiniteList data={filtredDonations} filterStatus={donationsFilterValue} />
+      <AuctionDonationsInfiniteList data={filtredDonationsByStatus} filterStatus={donationsFilterValue} />
     </div>
+  )
+}
+
+function PageTitle() {
+  return (
+    <Flex className="gap-y-0.5 tablet:gap-y-1.25 w-full" direction="column">
+      <Typography className="tablet:text-title-xl" tag="h1">
+        Пожертвования
+      </Typography>
+      <Typography
+        className="text-gray/80 max-tablet:text-sm"
+        tag="span"
+      >
+        Просмотр и модерирование входящих пожертвований
+      </Typography>
+    </Flex>
   )
 }
