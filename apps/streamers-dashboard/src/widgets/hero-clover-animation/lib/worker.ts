@@ -1,22 +1,37 @@
 type CloverCanvasDrawerInitProps = {
-  canvas: HTMLCanvasElement
-  wrapper: {
-    offsetWidth: number
-    offsetHeight: number
+  payload: {
+    canvas: HTMLCanvasElement
+    wrapper: {
+      offsetWidth: number
+      offsetHeight: number
+    }
+    size?: {
+      width: number
+      height: number
+    }
+
+    devicePixelRatio: number
   }
-  size?: {
+  event: 'initialization'
+}
+
+type ResizeEvent = {
+  payload: {
     width: number
     height: number
   }
-
-  devicePixelRatio: number
-}
-
-type CloverCanvasDrawerResize = {
-  width: number
-  height: number
   event: 'resize'
 }
+
+type StartAnimationEvent = {
+  event: 'startAnimation'
+}
+
+type EndAnimationEvent = {
+  event: 'endAnimation'
+}
+
+type WorkerMessageEvents = CloverCanvasDrawerInitProps | ResizeEvent | StartAnimationEvent | EndAnimationEvent
 
 type BackgroundElement = {
   row: number
@@ -66,13 +81,15 @@ const CLOVER_PATH_2D_HiDPI = {
 let drawer: NullablePossible<CloverCanvasDrawer> = null
 
 globalThis.onmessage = (
-  message: MessageEvent<CloverCanvasDrawerInitProps & CloverCanvasDrawerResize>,
+  message: MessageEvent<WorkerMessageEvents>,
 ) => {
   switch (message.data.event) {
     case 'resize': {
+      const { height, width } = message.data.payload
+
       drawer?.resize({
-        height: message.data.height,
-        width: message.data.width,
+        height,
+        width,
       })
       break
     }
@@ -84,17 +101,19 @@ globalThis.onmessage = (
       drawer?.endAnimation()
       break
     }
-    default: {
-      drawer = new CloverCanvasDrawer({ ...message.data })
+    case 'initialization': {
+      const payload = message.data.payload
+
+      drawer = new CloverCanvasDrawer(payload)
     }
   }
 }
 
 class CloverCanvasDrawer {
-  private _canvas
-  private _pixelRatio
-  private _wrapperWidth
-  private _wrapperHeight
+  private _canvas: HTMLCanvasElement
+  private _pixelRatio: number = 1
+  private _wrapperWidth: number = 0
+  private _wrapperHeight: number = 0
   private _reqId: number = 0
   private _animationTimer: (status?: 'up' | 'down') => number
   private _previousAnimationValue: number = -1
@@ -110,7 +129,7 @@ class CloverCanvasDrawer {
     canvas,
     devicePixelRatio,
     wrapper,
-  }: CloverCanvasDrawerInitProps) {
+  }: CloverCanvasDrawerInitProps['payload']) {
     this._canvas = canvas
     this._wrapperWidth = wrapper.offsetWidth
     this._pixelRatio = devicePixelRatio
@@ -136,7 +155,16 @@ class CloverCanvasDrawer {
     this._canvas.width = sizes?.width ?? this._wrapperWidth * this._pixelRatio
     this._canvas.height = sizes?.height ?? this._wrapperHeight * this._pixelRatio
 
-    this._calculateBackgroundElements()
+    this.endAnimation()
+
+    this._backgroundState = {
+      rowsCount: 0,
+      columnsCount: 0,
+      elements: new Map(),
+    }
+    this._cloversBoxesCollection = new Map<`${number},${number}`, CloverBoxesState>()
+
+    this.startAnimation()
   }
 
   clearCanvas = () => {
@@ -146,7 +174,9 @@ class CloverCanvasDrawer {
   }
 
   startAnimation = () => {
+    this._calculateBackgroundElements()
     this._calculateCloverBoxes()
+
     this._animateCloverBoxes()
   }
 

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-import { CloverAnimation } from '~widgets/big-clover-animation/ui'
+import { HeroCloverAnimation } from '~widgets/hero-clover-animation/ui'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
@@ -22,7 +22,8 @@ import {
   WizardWelcomeItem,
 } from './wizard-content'
 
-const IS_CLOVER_CAN_BE_SAFEFULLY_RENDERED
+// Firefox don't support animation
+const IS_HERO_CLOVER_ANIMATION_CAN_BE_SAFEFULLY_RENDERED
   = !!HTMLCanvasElement.prototype.transferControlToOffscreen
     && !navigator.userAgent.includes('Firefox')
 
@@ -33,9 +34,9 @@ const WelcomePage = () => {
         <div
           className={cn(
             'container mx-auto h-full grow landtop:min-w-[450px]',
-            IS_CLOVER_CAN_BE_SAFEFULLY_RENDERED
+            IS_HERO_CLOVER_ANIMATION_CAN_BE_SAFEFULLY_RENDERED
             && 'max-w-[650px] basis-1/4 landtop:basis-1/5',
-            !IS_CLOVER_CAN_BE_SAFEFULLY_RENDERED && 'max-w-[1200px]',
+            !IS_HERO_CLOVER_ANIMATION_CAN_BE_SAFEFULLY_RENDERED && 'max-w-[1200px]',
           )}
         >
           <div className="h-full w-full px-4 desktop:px-8 desktop-lg:px-10">
@@ -85,10 +86,10 @@ const WelcomePage = () => {
             </div>
           </div>
         </div>
-        {IS_CLOVER_CAN_BE_SAFEFULLY_RENDERED && (
+        {IS_HERO_CLOVER_ANIMATION_CAN_BE_SAFEFULLY_RENDERED && (
           <Flex className="hidden h-full w-full shrink-[2] grow basis-2/3 landtop:block">
             <div className="w-full h-full p-5 overflow-clip">
-              <CloverAnimation />
+              <HeroCloverAnimation />
             </div>
           </Flex>
         )}
