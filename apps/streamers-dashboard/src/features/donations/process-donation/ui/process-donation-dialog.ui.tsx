@@ -80,14 +80,17 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
     defaultFormValues: {
       title: donationCode?.title ?? '',
       donationId: donation.id,
-      points: donation.processData.addedPoints || 0,
+      points: donation.processData.addedPoints || donation.amount,
     },
   })
 
-  const sheetStyles = useMemo(
-    () => twSlotsStyles(processDonationDialogStyles),
-    [],
-  )
+  useEffect(() => {
+    form.reset({
+      donationId: donation.id,
+      points: formatNumberToIntlString(donation.processData.addedPoints || donation.amount),
+      title: donationCode?.title ?? '',
+    })
+  }, [donation, form, donationCode])
 
   const isLargeThenTablet = useMediaQuery(
     greaterThenDeviceWidthMediaQueries.tablet,
@@ -120,13 +123,17 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
     }
   }, [donationCode, donation, form])
 
+  const sheetStyles = useMemo(
+    () => twSlotsStyles(processDonationDialogStyles),
+    [],
+  )
   const mergedSheetProps = mergeProps({
     open: isSheetOpened,
     onOpenChange: setIsSheetOpened,
   }, restProps)
 
   return (
-    <Sheet dismissible={!isFormDirty} {...mergedSheetProps}>
+    <Sheet disablePointerDismissal={isFormDirty} {...mergedSheetProps}>
       <SheetTrigger
         nativeButton={false}
       >

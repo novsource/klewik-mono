@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { Outlet, useLoaderData } from 'react-router-dom'
+import { Outlet, useLoaderData, useLocation } from 'react-router-dom'
 
 import { MobileDashboardFooter } from '~widgets/dashboard-footer/ui'
 import { DashboardHeader } from '~widgets/dashboard-header/ui'
@@ -22,6 +22,7 @@ import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 
 export const DashboardLayout = () => {
+  const { pathname } = useLocation()
   const { auctionUUID } = useLoaderData() as Auction
 
   const [isSSEStateReseted, setIsSSEStateReseted] = useState(false)

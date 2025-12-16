@@ -37,8 +37,8 @@ const browserRouter = createBrowserRouter([
           {
             path: 'dashboard/:auctionId',
             children: [
+              RedirectRouteObject,
               prepareDashboardRoute([
-                RedirectRouteObject,
                 { index: true, element: <Navigate to="slots" /> },
                 AuctionSlotsRouteObject,
                 AuctionWheelRouteObject,
