@@ -1,4 +1,4 @@
-import { startTransition, useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import { CreateSlotsDialog } from '~features/auction-slot/create-slots/ui'
 import { SlotsCountStatisticCard, SlotsPointsSumStatisticCard } from '~features/auction-slot/watch-statistics/ui'
@@ -7,7 +7,7 @@ import { SkeletonAuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useMediaQuery } from '~shared/hooks'
+import { useDumbedTransition, useMediaQuery } from '~shared/hooks'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
@@ -23,22 +23,24 @@ import { SortingSlotsCombobox } from './sorting-slots-combobox.ui'
 export const AuctionSlotsPage = () => {
   const pageStyles = useMemo(() => twSlotsStyles(auctionSlotsPageStyles), [])
 
-  const [isListShowed, setIsListShowed] = useState(false)
+  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
-  useEffect(() => startTransition(() => setIsListShowed(true)), [])
+  const isListShowed = useDumbedTransition()
 
   return (
     <div
       className={pageStyles.base}
     >
-      <Flex
-        className={pageStyles.contentWrapper}
-        wrap="nowrap"
-        align="center"
-        justify="end"
-      >
-        <PageTitle />
-      </Flex>
+      {isLargeThenTablet && (
+        <Flex
+          className={pageStyles.contentWrapper}
+          wrap="nowrap"
+          align="center"
+          justify="end"
+        >
+          <PageTitle />
+        </Flex>
+      )}
       <ListActionsPanel disabled={!isListShowed} />
       <AuctionSlotsVirtualList isShowed={isListShowed} />
     </div>

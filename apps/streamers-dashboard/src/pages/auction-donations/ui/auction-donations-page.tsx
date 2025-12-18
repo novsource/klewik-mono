@@ -46,21 +46,24 @@ export const AuctionDonationsPage = () => {
         'landtop:max-w-[1600px]',
       ])}
     >
-      <Flex
-        className="w-full gap-x-4 pt-6 tablet:pt-1"
-        wrap="nowrap"
-        align="center"
-        justify="between"
-      >
-        <PageTitle />
+      {isLargeThenTablet
+        && (
+          <Flex
+            className="w-full gap-x-4 pt-6 tablet:pt-1"
+            wrap="nowrap"
+            align="center"
+            justify="between"
+          >
+            <PageTitle />
 
-        {isLargeThenTablet && (
-          <DonationsStatusFilterSelect
-            status={donationsFilterValue}
-            onValueChange={setDonationsFilterValue}
-          />
+            <DonationsStatusFilterSelect
+              status={donationsFilterValue}
+              onValueChange={setDonationsFilterValue}
+            />
+
+          </Flex>
         )}
-      </Flex>
+
       {!isLargeThenTablet && (
         <Flex className="w-full mt-3.5" justify="between">
           <DonationsStats />

@@ -155,8 +155,14 @@ function MobileSearchDialog(props: MobileSearchDialogProps) {
 
   return (
     <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <SheetTrigger className="w-full" nativeButton={false}>
-        {trigger}
+      <SheetTrigger
+        className="w-full"
+        render={(
+          <>
+            {trigger}
+          </>
+        )}
+      >
       </SheetTrigger>
       <SheetContent className="flex flex-col h-full pb-0" isFullPageSize side="bottom">
         <SheetHeader className="gap-0 space-y-0">

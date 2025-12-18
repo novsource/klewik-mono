@@ -22,7 +22,6 @@ import { useMediaQuery } from '~shared/hooks'
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
-import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Sheet, SheetContent, SheetHeader, SheetTrigger } from '~shared/ui/sheet'
@@ -63,9 +62,9 @@ export const MobileMenu = () => {
             <BetsStatusSwitcher />
           </SheetHeader>
 
-          <Divider className="my-4" />
+          {/* <Divider className="my-4" /> */}
 
-          <OpenSettingsDialogButton />
+          {/* <OpenSettingsDialogButton /> */}
 
           <Flex className="h-full gap-y-8" justify="end" direction="column">
             <Flex className="h-full gap-y-4 mobile:gap-y-6" direction="column" justify="end">
