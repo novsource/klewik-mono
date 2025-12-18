@@ -2,14 +2,11 @@ import type { ButtonVariantsProps } from '../styles/button-variants'
 
 import * as React from 'react'
 
-import { Slot } from '@radix-ui/react-slot'
-
 import { cn } from '~shared/utils'
 
 import { buttonVariants } from '../styles/button-variants'
 
 export type ButtonProps = {
-  asChild?: boolean
   startContent?: React.ReactNode
   endContent?: React.ReactNode
   icon?: React.ReactNode
@@ -17,12 +14,10 @@ export type ButtonProps = {
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, isIconOnly, variant, size, icon, asChild = false, ...props },
+    { className, isIconOnly, variant, size, icon, ...props },
     ref,
   ) => {
     const { children, startContent, endContent, ...otherProps } = props
-
-    const Comp = asChild ? Slot : 'button'
 
     const style = React.useMemo(
       () =>
@@ -38,17 +33,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     )
 
     return (
-      <Comp
+      <button
+        type="button"
         className={style}
         ref={ref}
         data-icon-only={isIconOnly}
         {...otherProps}
       >
-        {startContent}
+        {!isIconOnly && startContent}
         {!isIconOnly && children}
         {isIconOnly && icon}
-        {endContent}
-      </Comp>
+        {!isIconOnly && endContent}
+      </button>
     )
   },
 )

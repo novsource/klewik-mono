@@ -1,4 +1,6 @@
 import antfu from '@antfu/eslint-config'
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from 'eslint-plugin-storybook'
 
 /**
  * For now is not supporting tailwindCSS v4
@@ -196,4 +198,4 @@ export default antfu({
     ],
   },
   ignore: ['**/*.d.ts, **/*.mts', '**/*.config.ts'],
-})
+}, ...storybook.configs['flat/recommended'])
