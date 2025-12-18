@@ -32,7 +32,7 @@ export const Default: StoryObj<Meta<ButtonProps>> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['default', 'default', 'action', 'outline', 'error', 'ghost-outline', 'ghost', 'link'],
+      options: ['default', 'action', 'error', 'ghost'],
     },
     startContent: {
       control: 'select',
@@ -58,10 +58,16 @@ export const Default: StoryObj<Meta<ButtonProps>> = {
   },
 }
 
-export const WithIconsContent: BaseButtonStory = {
+export const Variants: BaseButtonStory = {
   args: {
     variant: 'action',
   },
+  argTypes: {
+    variant: Default.argTypes?.variant,
+  },
+}
+
+export const WithIconsContent: BaseButtonStory = {
   argTypes: {
     startContent: Default.argTypes?.startContent,
     endContent: Default.argTypes?.endContent,
@@ -75,5 +81,6 @@ export const IconOnly: BaseButtonStory = {
   },
   args: {
     isIconOnly: true,
+    icon: <Icons.Logo />,
   },
 }

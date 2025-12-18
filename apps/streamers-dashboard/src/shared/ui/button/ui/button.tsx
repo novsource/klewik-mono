@@ -12,14 +12,14 @@ export type ButtonProps = {
   icon?: React.ReactNode
 } & React.ComponentProps<'button'> & Omit<ButtonVariantsProps, 'startContent' | 'endContent'>
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     { className, isIconOnly, variant, size, icon, ...props },
     ref,
   ) => {
     const { children, startContent, endContent, ...otherProps } = props
 
-    const style = React.useMemo(
+    const classes = React.useMemo(
       () =>
         cn(buttonVariants({
           variant,
@@ -35,7 +35,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         type="button"
-        className={style}
+        className={classes}
         ref={ref}
         data-icon-only={isIconOnly}
         {...otherProps}
@@ -49,5 +49,3 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   },
 )
 Button.displayName = 'Button'
-
-export { Button, buttonVariants }

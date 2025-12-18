@@ -7,11 +7,8 @@ import type { CvaClassValue } from '~shared/utils/types'
 type ButtonVariant
   = | 'default'
     | 'action'
-    | 'outline'
     | 'error'
-    | 'ghost-outline'
     | 'ghost'
-    | 'link'
 
 type ButtonSize = 'sm' | 'default' | 'lg' | 'xs'
 
@@ -35,7 +32,7 @@ type ButtonVariants = {
 
 export const buttonVariants = cva<ButtonVariants>(
   [
-    'inline-flex items-center justify-center gap-2',
+    'inline-flex items-center justify-center gap-2 touch-manipulation active:scale-[98%]',
     'ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-hidden',
     'disabled:pointer-events-none disabled:opacity-50',
     '[&_svg]:pointer-events-none [&_svg]:shrink-0',
@@ -44,17 +41,12 @@ export const buttonVariants = cva<ButtonVariants>(
   {
     variants: {
       variant: {
-        'default':
-          'border-1 border-gray/20 bg-dark text-gray-accent hover:border-gray/40 hover:bg-dark-accent/40 hover:text-white',
-        'action':
+        default:
+          'border-1 border-gray/20 bg-dark text-gray-accent hover:border-gray/40 hover:bg-dark-accent/40 hover:text-white active:bg-dark/80',
+        action:
           'bg-[#242A28] text-green-accent/80 hover:bg-[#2C3B33] hover:text-green-accent',
-        'error': 'border-1 border-red/20 bg-red/10 text-red hover:bg-red/15 hover:border-red/30',
-        'outline':
-          'border-1 border-dark-accent bg-dark text-gray-accent hover:border-gray hover:bg-dark/80 hover:text-white/80',
-        'ghost': 'border-transparent bg-transparent',
-        'ghost-outline':
-          'border-1 border-dark-accent/70 bg-transparent hover:border-gray',
-        'link': 'text-primary underline-offset-4 hover:underline',
+        error: 'border-1 border-red/20 bg-red/10 text-red hover:bg-red/15 hover:border-red/30',
+        ghost: 'border-transparent bg-transparent',
       },
       isIconOnly: {
         true: '',
