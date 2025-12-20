@@ -2,7 +2,7 @@ import type { ButtonVariantsProps } from '../styles/button-variants'
 
 import * as React from 'react'
 
-import { cn } from '~shared/utils'
+import { cn, toBooleanString } from '~shared/utils'
 
 import { buttonVariants } from '../styles/button-variants'
 
@@ -37,7 +37,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         type="button"
         className={classes}
         ref={ref}
-        data-icon-only={isIconOnly}
+        data-icon-only={toBooleanString(isIconOnly)}
         {...otherProps}
       >
         {!isIconOnly && startContent}

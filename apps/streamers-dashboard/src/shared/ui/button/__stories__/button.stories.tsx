@@ -5,8 +5,6 @@ import type { BaseButtonStory } from './button.meta'
 
 import type { ReactNode } from 'react'
 
-import '~app/styles/index.css'
-
 import { Icons } from '~shared/ui/icons'
 
 import { Button } from '../ui/button'

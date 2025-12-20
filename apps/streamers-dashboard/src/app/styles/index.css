@@ -44,8 +44,8 @@
     --color-white-accent: #f8f8ff;
     --color-white: #f2f2f2;
 
-    --color-green-dark: #242A28;
-    --color-green: #3f9663;
+    --color-green-dark: #1f2422;
+    --color-green: #57856b;
     --color-green-light: #2c3b33;
     --color-green-accent: #74dfa2;
 
@@ -71,14 +71,15 @@
     --color-transparent: rgba(255, 255, 255, 0);
 
     --text-*: initial;
-    --text-xs: 0.56rem;
+    --text-xs: 0.5625rem;
     --text-sm: 0.75rem;
     --text-md: 0.875rem;
-    --text-title: 1.05rem;
-    --text-title-lg: 1.3rem;
-    --text-title-xl: 1.5rem;
-    --text-title-2xl: 1.75rem;
-    --text-title-3xl: 2rem;
+    --text-base: 1rem;
+    --text-title: 1.0625rem;
+    --text-title-lg: 1.1875rem;
+    --text-title-xl: 1.3125rem;
+    --text-title-2xl: 1.5rem;
+    --text-title-3xl: 1.75rem;
 
     --radius-*: initial;
     --radius-none: 0px;
@@ -107,6 +108,7 @@
     --font-manrope: "Manrope", sans-serif;
     --font-breeze: "Breeze Sans", sans-serif;
     --font-breeze: "Superior", sans-serif;
+    --font-raleway: "Raleway", sans-serif;
 
     --animate-fade-in: fadeIn 2s ease;
     --animate-fade-out: fadeIn 2s ease reverse;
@@ -368,7 +370,7 @@
     }
 
     body {
-        font-family: "Golos Text", sans-serif;
+        font-family: "Raleway", sans-serif;
         @apply m-0 h-full w-full antialiased;
     }
 

@@ -106,7 +106,7 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
 
   if (isMediaLargeThenTablet) {
     return (
-      <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen} dismissible={!formState.isDirty}>
+      <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen} disablePointerDismissal={formState.isDirty}>
         <SheetTrigger>{trigger}</SheetTrigger>
         <SheetContent side="right">
           <Flex
@@ -126,10 +126,10 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
                 <Flex className={sheetStyles.panelActionsButtons} align="center">
                   <Button
                     className={sheetStyles.submitButton}
-                    size="sm"
+                    size="xs"
                     variant="action"
                     disabled={isShouldDisableSubmit}
-                    startContent={<Icons.Plus size="sm" />}
+                    startContent={<Icons.Plus />}
                     onClick={handleFormSubmit}
                   >
                     Добавить
@@ -167,7 +167,7 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
   }
 
   return (
-    <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen} dismissible={!formState.isDirty}>
+    <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen} disablePointerDismissal={formState.isDirty}>
       <SheetTrigger className="w-full">{trigger}</SheetTrigger>
       <SheetContent className="px-0" side="bottom" isFullPageSize>
         <div className={sheetStyles.contentWrapper}>

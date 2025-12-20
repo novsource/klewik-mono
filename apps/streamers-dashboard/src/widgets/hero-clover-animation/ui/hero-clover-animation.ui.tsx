@@ -26,7 +26,7 @@ export const HeroCloverAnimation = memo((props: HeroCloverAnimationProps) => {
   return (
     <div
       ref={ref}
-      className={cn('relative h-full w-full border-1 border-dark rounded-[32px] overflow-clip', className)}
+      className={cn('relative h-full w-full overflow-clip border-1 border-dark/50 rounded-large', className)}
       {...restProps}
     >
       <HeroAnimationCanvas width={width} height={height} />
