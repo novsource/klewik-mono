@@ -56,12 +56,12 @@ type InputVariants = SizesCvaVariants
     }
   }
 
-export const labelVariants = cva<LabelVariants>('select-none', {
+export const labelVariants = cva<LabelVariants>('select-none font-semibold', {
   variants: {
     size: {
-      default: 'text-sm tablet:text-md font-semibold',
-      lg: 'text-sm tablet:text-md desktop:text-base font-semibold',
-      sm: 'text-sm font-medium',
+      default: 'text-sm tablet:text-md',
+      lg: 'text-sm tablet:text-md desktop:text-base',
+      sm: 'text-sm',
     },
     isError: {
       true: 'text-red',
@@ -75,17 +75,17 @@ export const labelVariants = cva<LabelVariants>('select-none', {
 })
 
 export const descriptionVariants = cva<DescriptionVariants>(
-  'font-medium text-gray-accent',
+  'font-regular',
   {
     variants: {
       size: {
         default: 'text-sm',
-        lg: 'text-md',
-        sm: 'text-xs tablet:text-sm',
+        lg: 'text-sm',
+        sm: 'text-sm',
       },
       isError: {
         true: 'text-red',
-        false: 'text-white',
+        false: 'text-gray-accent',
       },
     },
     defaultVariants: {
@@ -127,9 +127,9 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
         ghost: 'data-[focus=true]:bg-dark-foreground data-[hover=true]:bg-dark-foreground/40 data-[focus=true]:data-[hover=true]:bg-dark-foreground',
       },
       size: {
-        default: 'h-10',
-        sm: 'h-9',
-        lg: 'h-11',
+        default: 'h-10.5',
+        sm: 'h-9.5',
+        lg: 'h-11.5',
       },
       isError: { true: 'ring-1 ring-red/80', false: 'ring-gray-light' },
       isDisabled: {
@@ -154,13 +154,13 @@ export const inputVariants = cva<InputVariants>(
     'file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground',
     'disabled:cursor-not-allowed disabled:opacity-50',
     'focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-hidden',
-    'placeholder:text-gray',
+    'placeholder:text-gray placeholder:text-md',
   ],
   {
     variants: {
       size: {
         default: 'text-base px-3.75',
-        lg: 'text-base px-4',
+        lg: 'text-base px-4 placeholder:text-base',
         sm: 'text-md px-3 py-2',
       },
       isError: {

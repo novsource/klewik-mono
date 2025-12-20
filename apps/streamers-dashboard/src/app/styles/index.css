@@ -370,7 +370,7 @@
     }
 
     body {
-        font-family: "Raleway", sans-serif;
+        font-family: "Inter", sans-serif;
         @apply m-0 h-full w-full antialiased;
     }
 

@@ -26,7 +26,7 @@ const mappedIcons = (Object.keys(Icons) as Array<keyof typeof Icons>).reduce((ac
   return acc
 }, {} as Record<keyof typeof Icons, ReactNode>)
 
-export const Default: StoryObj<Meta<ButtonProps>> = {
+export const Example: StoryObj<Meta<ButtonProps>> = {
   argTypes: {
     variant: {
       control: 'select',
@@ -61,21 +61,21 @@ export const Variants: BaseButtonStory = {
     variant: 'action',
   },
   argTypes: {
-    variant: Default.argTypes?.variant,
+    variant: Example.argTypes?.variant,
   },
 }
 
 export const WithIconsContent: BaseButtonStory = {
   argTypes: {
-    startContent: Default.argTypes?.startContent,
-    endContent: Default.argTypes?.endContent,
+    startContent: Example.argTypes?.startContent,
+    endContent: Example.argTypes?.endContent,
   },
 }
 
 export const IconOnly: BaseButtonStory = {
   argTypes: {
-    isIconOnly: Default.argTypes?.isIconOnly,
-    icon: Default.argTypes?.icon,
+    isIconOnly: Example.argTypes?.isIconOnly,
+    icon: Example.argTypes?.icon,
   },
   args: {
     isIconOnly: true,
