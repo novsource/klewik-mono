@@ -1,3 +1,5 @@
+import type { NumberFlowProps } from '@number-flow/react'
+
 import type { ReactNode } from 'react'
 import { memo, useCallback, useRef } from 'react'
 
@@ -30,7 +32,7 @@ import { MotionBox } from '~shared/ui/motion-box'
 import { Skeleton } from '~shared/ui/skeleton'
 import { Typography } from '~shared/ui/typograghy'
 
-import { isStringEmpty } from '~shared/utils'
+import { cn, isStringEmpty } from '~shared/utils'
 
 import { useSearchDialogContext } from '../context'
 import { useSearchInfiniteList } from '../hooks/use-search-infinite-list'
@@ -91,6 +93,26 @@ const SearchResultItemContainer = memo((props: SearchResultItemContainerProps) =
   )
 })
 
+type SearchListItemsCounterProps = NumberFlowProps & {
+  showPlaceholder?: boolean
+}
+
+const SearchListItemsCounter = (props: SearchListItemsCounterProps) => {
+  const { className, showPlaceholder, ...restProps } = props
+
+  if (showPlaceholder) {
+    return <Skeleton className="w-6.5 h-6" />
+  }
+
+  return (
+    <NumberFlow
+      className={cn('py-0.5 px-1 border-1 border-dark-accent text-sm rounded-sm bg-dark text-gray-accent', className)}
+      willChange
+      {...restProps}
+    />
+  )
+}
+
 type SearchResultInfinityListProps<T> = InfiniteListProps<T> & {
   searchValue: string
 }
@@ -120,16 +142,7 @@ const SearchResultInfinityList = <T = unknown>(props: SearchResultInfinityListPr
     <Flex className="w-full tablet:px-4 gap-y-2" direction="column">
       <Flex className="gap-x-2" align="center">
         <Typography className="text-gray-light" tag="span">Найдено: </Typography>
-        {!showPlaceholders && (
-          <NumberFlow
-            className="py-0.5 px-1 border-1 border-dark-accent text-sm rounded-sm bg-dark text-gray-accent"
-            value={countOfSearchResult}
-            willChange
-          />
-        )}
-        {showPlaceholders && (
-          <Skeleton className="w-6.5 h-5" />
-        )}
+        <SearchListItemsCounter value={countOfSearchResult} showPlaceholder={showPlaceholders} />
       </Flex>
       <Flex className="w-full h-full">
         <InfiniteList

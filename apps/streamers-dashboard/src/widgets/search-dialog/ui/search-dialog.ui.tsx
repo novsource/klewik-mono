@@ -215,7 +215,7 @@ function SearchBar(props: SearchBarProps) {
     <Input
       slotClassNames={
         {
-          base: 'w-full',
+          base: 'w-full tablet:px-1',
           wrapper: [
             'max-tablet:px-0.5 max-tablet:gap-x-2.5 border-0 bg-inherit rounded-none max-tablet:data-[focus=true]:bg-inherit',
             'data-[hover=true]:ring-0 data-[focus=true]:ring-0 max-tablet:data-[hover=true]:bg-inherit',
