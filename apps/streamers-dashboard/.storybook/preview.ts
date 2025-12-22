@@ -4,6 +4,13 @@ import '~app/styles/index.css'
 
 const preview: Preview = {
   parameters: {
+    options: {
+      storySort: {
+        method: 'alphabetical',
+        // 'Intro' and 'Pages' come first, then all others alphabetically
+        // order: ['Intro', 'Pages', ['Home', 'Login', 'Admin'], 'Components'],
+      },
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
