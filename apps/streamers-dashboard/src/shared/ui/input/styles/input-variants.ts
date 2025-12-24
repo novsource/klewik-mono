@@ -11,6 +11,8 @@ export type InputSlots
     | 'content'
     | 'description'
     | 'label'
+    | 'startContent'
+    | 'endContent'
 
 type ErrorCvaVariants = {
   isError: {
@@ -54,12 +56,12 @@ type InputVariants = SizesCvaVariants
     }
   }
 
-export const labelVariants = cva<LabelVariants>('select-none', {
+export const labelVariants = cva<LabelVariants>('select-none font-semibold', {
   variants: {
     size: {
-      default: 'text-sm tablet:text-md font-semibold font-superior',
-      lg: 'text-sm tablet:text-md font-semibold font-superior',
-      sm: 'text-xs tablet:text-sm font-medium font-superior',
+      default: 'text-sm tablet:text-md',
+      lg: 'text-sm tablet:text-md desktop:text-base',
+      sm: 'text-sm',
     },
     isError: {
       true: 'text-red',
@@ -73,17 +75,17 @@ export const labelVariants = cva<LabelVariants>('select-none', {
 })
 
 export const descriptionVariants = cva<DescriptionVariants>(
-  'font-medium text-gray-accent',
+  'font-regular',
   {
     variants: {
       size: {
-        default: 'text-sm font-superior',
-        lg: 'text-sm font-superior',
-        sm: 'text-sm font-superior',
+        default: 'text-sm',
+        lg: 'text-sm',
+        sm: 'text-sm',
       },
       isError: {
         true: 'text-red',
-        false: 'text-white',
+        false: 'text-gray-accent',
       },
     },
     defaultVariants: {
@@ -93,13 +95,29 @@ export const descriptionVariants = cva<DescriptionVariants>(
   },
 )
 
+export const sidesSectionsVariants = cva<SizesCvaVariants>([
+  'absolute top-1/2 -translate-y-1/2 flex justify-center items-center pointer-events-none',
+  'data-[side=start]:left-0 data-[side=end]:right-0',
+], {
+  variants: {
+    size: {
+      default: 'size-9',
+      sm: 'size-8',
+      lg: 'size-10',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+})
+
 export const contentVariants = cva<ContentBaseVariants>([
   'group flex flex-col gap-y-1.25 tablet:gap-y-2',
 ])
 
 export const contentWrapperVariants = cva<ContentWrapperVariants>(
   [
-    'flex w-full items-center rounded-medium transition-all bg-dark',
+    'relative flex w-full items-center rounded-medium transition-all bg-dark',
     'ring-gray/70 data-[focus=true]:ring-1 data-[focus=true]:ring-gray/70',
   ],
   {
@@ -109,9 +127,9 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
         ghost: 'data-[focus=true]:bg-dark-foreground data-[hover=true]:bg-dark-foreground/40 data-[focus=true]:data-[hover=true]:bg-dark-foreground',
       },
       size: {
-        default: 'h-10 gap-x-2 px-4',
-        sm: 'h-9 gap-x-1 px-3 py-2',
-        lg: 'h-11 gap-x-3 px-4',
+        default: 'h-10.5',
+        sm: 'h-9.5',
+        lg: 'h-11.5',
       },
       isError: { true: 'ring-1 ring-red/80', false: 'ring-gray-light' },
       isDisabled: {
@@ -136,14 +154,14 @@ export const inputVariants = cva<InputVariants>(
     'file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground',
     'disabled:cursor-not-allowed disabled:opacity-50',
     'focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-hidden',
-    'placeholder:text-gray',
+    'placeholder:text-gray placeholder:text-md',
   ],
   {
     variants: {
       size: {
-        default: 'text-md font-superior',
-        lg: 'text-md font-superior',
-        sm: 'text-sm font-superior',
+        default: 'text-base px-3.75',
+        lg: 'text-base px-4 placeholder:text-base',
+        sm: 'text-md px-3 py-2',
       },
       isError: {
         true: 'focus-visible:ring-red',
@@ -153,12 +171,68 @@ export const inputVariants = cva<InputVariants>(
         true: '',
       },
       startContent: {
-        true: 'px-0',
+        true: '',
       },
       endContent: {
-        true: 'px-0',
+        true: '',
       },
     },
+    compoundVariants: [
+      {
+        startContent: true,
+        endContent: false,
+        size: 'default',
+        className: 'pl-10',
+      },
+      {
+        startContent: false,
+        endContent: true,
+        size: 'default',
+        className: 'pr-10',
+      },
+      {
+        startContent: true,
+        endContent: true,
+        size: 'default',
+        className: 'px-10',
+      },
+      {
+        startContent: true,
+        endContent: false,
+        size: 'sm',
+        className: 'pl-8',
+      },
+      {
+        startContent: false,
+        endContent: true,
+        size: 'sm',
+        className: 'pr-8',
+      },
+      {
+        startContent: true,
+        endContent: true,
+        size: 'sm',
+        className: 'px-8',
+      },
+      {
+        startContent: true,
+        endContent: false,
+        size: 'lg',
+        className: 'pl-12',
+      },
+      {
+        startContent: false,
+        endContent: true,
+        size: 'lg',
+        className: 'pr-12',
+      },
+      {
+        startContent: true,
+        endContent: true,
+        size: 'lg',
+        className: 'px-12',
+      },
+    ],
     defaultVariants: {
       size: 'default',
       isError: false,

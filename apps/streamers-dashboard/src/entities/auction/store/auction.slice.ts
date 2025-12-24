@@ -20,8 +20,8 @@ const initialState: AuctionSliceState = {
     processedDonationsIds: [],
     ownerId: '',
     url: '',
-    createAt: new Date(),
-    endedAt: new Date(),
+    createAt: '',
+    endedAt: '',
     isBetsClosed: false,
     isEnded: false,
     wheelMode: 'classic',
@@ -37,12 +37,16 @@ const auctionSlice = createSlice({
 
       state.auctionInfo = { ...state.auctionInfo, ...auctionData }
     },
+    updateWheelMode(state, action: PayloadAction<Auction['wheelMode']>) {
+      state.auctionInfo.wheelMode = action.payload
+    },
   },
   selectors: {
     getAuctionUUID: state => state.auctionInfo.auctionUUID,
     getAuctionUrl: state => state.auctionInfo.url,
     getAuctionInfo: state => state.auctionInfo,
     getIsBetsClosed: state => state.auctionInfo.isBetsClosed,
+    getWheelMode: state => state.auctionInfo.wheelMode,
   },
   extraReducers: (builder) => {
     builder.addCase(getAuctionInfoThunk.fulfilled, (state, action) => {

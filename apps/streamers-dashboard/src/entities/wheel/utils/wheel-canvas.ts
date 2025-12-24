@@ -1,6 +1,8 @@
+import type { WheelSlicesSizeMode } from '../store/wheel-slice'
+
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
-import type { WheelMode, WheelSlot } from '~entities/wheel/model'
+import type { WheelSlot } from '~entities/wheel/model'
 
 import {
   clearCanvas,
@@ -48,7 +50,7 @@ export const drawEmptyWheel = (
 
 export const drawSlicesItems = (
   canvas: HTMLCanvasElement,
-  items: AuctionSlot[],
+  items: WheelSlot[],
 ) => {
   const context = canvas.getContext('2d') as CanvasRenderingContext2D
   const radius = canvas.width / 2
@@ -180,10 +182,6 @@ export const drawSlicesItemsWithSelectedItem = (
 export const getSliceInfo = (
   canvas: HTMLCanvasElement,
   items: WheelSlot[],
-  mouse: {
-    x: number
-    y: number
-  },
 ) => {
   const context = canvas.getContext('2d') as CanvasRenderingContext2D
   const center = canvas.width / 2
@@ -207,25 +205,24 @@ export const getSliceInfo = (
   )
 }
 
-export const getItemsWithAngles = <T extends AuctionSlot>(
+export const transformSlotsToWheelSlots = <T extends AuctionSlot>(
   lots: T[] | null,
-  wheelMode?: WheelMode,
+  sliceMode: WheelSlicesSizeMode = 'auto',
 ): WheelSlot[] => {
   if (!lots || lots.length === 0)
     return []
 
-  const newLots = wheelMode === 'dropout' ? reverseLotsByValue(lots) : [...lots]
-
-  const sumItemsValue = newLots.reduce((acc, lot) => acc + lot.points, 0)
+  const sumItemsValue = lots.reduce((acc, lot) => acc + lot.points, 0)
 
   // Radius size not important
   const radius = 1
 
   const maxWheelArcLength = getMaxCircleLength(radius)
 
+  let smallestAnglesDiff = Number.MAX_SAFE_INTEGER
   let startAngle = 0
 
-  return newLots.reduce((acc: WheelSlot[], item: AuctionSlot) => {
+  const lotsWithAngles = lots.reduce((acc: WheelSlot[], item: AuctionSlot) => {
     const itemArcLength
       = maxWheelArcLength * getPercentValue(sumItemsValue, item.points)
 
@@ -234,14 +231,41 @@ export const getItemsWithAngles = <T extends AuctionSlot>(
 
     acc.push({
       ...item,
+      color: getHEXColor(),
       startAngle,
       endAngle,
     })
+
+    const anglesDiff = Math.abs(endAngle - startAngle)
+
+    if (smallestAnglesDiff > anglesDiff) {
+      smallestAnglesDiff = anglesDiff
+    }
 
     startAngle = endAngle
 
     return acc
   }, [])
+
+  if (sliceMode === 'points' || (sliceMode === 'auto' && smallestAnglesDiff > 3))
+    return lotsWithAngles
+
+  startAngle = 0
+
+  const part = 360 / lots.length
+
+  const updatedAngles = lotsWithAngles.map((lot) => {
+    const endAngle = startAngle + part
+
+    lot.startAngle = startAngle
+    lot.endAngle = endAngle
+
+    startAngle = endAngle
+
+    return lot
+  })
+
+  return updatedAngles
 }
 
 export const getSlotNameOnSelector = (
@@ -278,26 +302,6 @@ export const getSlotNameOnSelector = (
   return ''
 }
 
-export const generateWinner = (slots: WheelSlot[]): WheelSlot => {
-  const winnerRadians = 2 * Math.PI * Math.random()
-
-  for (const slot of slots) {
-    const { startAngle, endAngle } = slot
-
-    const startAngleInRadians = convertDegreesToRadians(startAngle)
-    const endAngleInRadians = convertDegreesToRadians(endAngle)
-
-    if (
-      winnerRadians >= startAngleInRadians
-      && endAngleInRadians >= winnerRadians
-    ) {
-      return slot
-    }
-  }
-
-  return slots[0]
-}
-
 export const calculateRotateWheelCSSValue = (
   slotWithAngles: WheelSlot,
   spinCount: number = 10,
@@ -321,44 +325,6 @@ export const calculateRotateWheelCSSValue = (
     = 360 * spinCount + (selectorDegree - randomValueFromRange)
 
   return rotateCSSValue
-}
-
-const reverseLotsByValue = (slots: AuctionSlot[]) => {
-  // const sumOfLots = [...slots].reduce((acc, curr) => (acc += curr.value), 0);
-
-  // return [...slots].map((slot) => {
-  //   const reversedValue = (1 - slot.value / sumOfLots) / (slots.length - 1);
-
-  //   console.log(reversedValue * sumOfLots);
-
-  //   return { ...slot, value: reversedValue * sumOfLots };
-  // });
-
-  const sortedLots = slots
-    .map(slot => ({ ...slot }))
-    .sort((a, b) => a.points - b.points)
-
-  let leftPointer = 0
-  let rightPointer = slots.length - 1
-
-  while (leftPointer <= rightPointer) {
-    const buffer = sortedLots[leftPointer].points
-    sortedLots[leftPointer].points = sortedLots[rightPointer].points
-    sortedLots[rightPointer].points = buffer
-
-    leftPointer++
-    rightPointer--
-  }
-
-  return slots.map((lot) => {
-    const findingLot = sortedLots.find(item => item.id === lot.id)
-
-    if (findingLot) {
-      lot.points = findingLot.points
-    }
-
-    return { ...lot }
-  })
 }
 
 type SliceMouseProperties = {
@@ -398,7 +364,7 @@ export const sliceMouse = ({ canvas, slice, item }: SliceMouseProperties) => {
     }
 
     if (!isPointInPath && isSameSlice) {
-      activeItem.item === null
+      // activeItem.item === null
       clearCanvas(canvas)
     }
   })

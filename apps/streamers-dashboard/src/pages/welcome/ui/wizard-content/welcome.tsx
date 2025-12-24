@@ -5,6 +5,10 @@ import {
   WELCOME_PAGE_WIZARD_ITEMS_IDS,
 } from '~pages/welcome/constants'
 
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { useMediaQuery } from '~shared/hooks'
+
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
@@ -15,12 +19,12 @@ import { useWizardContext } from '~shared/ui/wizard/context'
 
 import { cn } from '~shared/utils'
 
-const nodesTitles = {
+const nodesTitles: Partial<Record<typeof WELCOME_PAGE_WIZARD_ITEMS_IDS[keyof typeof WELCOME_PAGE_WIZARD_ITEMS_IDS], string>> = {
   createAuction: 'Создать аукцион',
   loginAdmin: 'Войти в аукцион',
 }
 
-const WizardWelcomeItem = (
+export const WizardWelcomeItem = (
   props: Omit<WizardItemProps, 'value' | 'children'>,
 ) => {
   const { className, ...restProps } = props
@@ -28,6 +32,8 @@ const WizardWelcomeItem = (
   const { getNodesById } = useWizardContext()
 
   const nodes = getNodesById(WELCOME_PAGE_WIZARD_ITEMS_IDS.WELCOME)
+
+  const isMediaLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   const wizardNextTriggers = useMemo(() => {
     if (!nodes)
@@ -37,16 +43,15 @@ const WizardWelcomeItem = (
       (typeof WELCOME_PAGE_WIZARD_ITEMS_IDS)[keyof typeof WELCOME_PAGE_WIZARD_ITEMS_IDS]
     >
 
-    return welcomeNodes.map((node, index) => {
-      // @ts-expect-error
-      const triggerTitle = node in nodesTitles ? nodesTitles[node] : node
+    return welcomeNodes.map((node) => {
+      const triggerTitle = Reflect.has(nodesTitles, node) ? nodesTitles[node] : node
 
       return (
-        <WizardTrigger key={index} type="next" nextStepId={node}>
+        <WizardTrigger key={node} type="next" nextStepId={node}>
           <Button
             className="w-full"
             variant={node === 'createAuction' ? 'action' : 'default'}
-            size="sm"
+            size={isMediaLargeThenTablet ? 'default' : 'sm'}
             startContent={WELCOME_PAGE_WIZARD_IDS_ICONS[node]}
           >
             {triggerTitle}
@@ -54,7 +59,7 @@ const WizardWelcomeItem = (
         </WizardTrigger>
       )
     })
-  }, [nodes])
+  }, [nodes, isMediaLargeThenTablet])
 
   return (
     <WizardItem
@@ -63,7 +68,11 @@ const WizardWelcomeItem = (
       {...restProps}
     >
       <Flex className="relative gap-y-2" direction="column">
-        <Icons.Logo className="text-green-accent" width={42} height={42} />
+        <Icons.Logo
+          className="text-green-accent"
+          width={isMediaLargeThenTablet ? 42 : 36}
+          height={isMediaLargeThenTablet ? 42 : 36}
+        />
         <Typography tag="h1">
           Добро пожаловать в поинтовый аукцион!
         </Typography>
@@ -77,5 +86,3 @@ const WizardWelcomeItem = (
     </WizardItem>
   )
 }
-
-export { WizardWelcomeItem }

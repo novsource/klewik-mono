@@ -146,6 +146,36 @@ export class BaseHttpClient implements BaseHttpClientMethods {
   }
 
   protected _internalRequest<T>(url: string, config: HttpClientRequestOptions) {
-    return this._axiosInstance.request<T>({ url, ...config })
+    const requestConfig = this._setupRequestConfig(config)
+
+    return this._axiosInstance.request<T>({ url, ...requestConfig })
+  }
+
+  private _setupRequestConfig(config: HttpClientRequestOptions) {
+    if (config.method === 'POST') {
+      const isRequestContainsFormDataHeader = config.headers?.['Content-Type'] && config.headers['Content-Type'] === 'multipart/form-data'
+
+      if (isRequestContainsFormDataHeader) {
+        this._axiosInstance.defaults.headers.common['Content-Type'] = 'multipart/form-data'
+        // delete config.headers!['Content-Type']
+      }
+      else {
+        this._axiosInstance.defaults.headers.common['Content-Type'] = 'application/json'
+      }
+    }
+    else if (config.method === 'GET') {
+      if (config.headers?.['Content-Type']) {
+        this._axiosInstance.defaults.headers.common['Content-Type'] = config.headers['Content-Type']
+        // delete config.headers['Content-Type']
+      }
+      else {
+        this._axiosInstance.defaults.headers.common['Content-Type'] = 'application/json'
+      }
+    }
+    else {
+      this._axiosInstance.defaults.headers.common['Content-Type'] = 'application/json'
+    }
+
+    return config
   }
 }

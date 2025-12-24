@@ -14,12 +14,12 @@ import { WizardItem, WizardTrigger } from '~shared/ui/wizard'
 
 import { cn } from '~shared/utils'
 
-const WizardLoginAdminItem = (
-  props: Omit<WizardItemProps, 'value' | 'children'>,
-) => {
-  const navigate = useNavigate()
+type WizardLoginAdminItemProps = Omit<WizardItemProps, 'value' | 'children'>
 
+export const WizardLoginAdminItem = (props: WizardLoginAdminItemProps) => {
   const { className, ...restProps } = props
+
+  const navigate = useNavigate()
 
   return (
     <WizardItem
@@ -41,8 +41,8 @@ const WizardLoginAdminItem = (
       </Flex>
       <LoginAdminForm
         slotsClassnames={{ base: 'flex flex-col gap-y-4' }}
-        onSuccess={({ auctionId }) => {
-          navigate({ pathname: `/dashboard/${auctionId}/` })
+        onSuccess={({ auctionUUID }) => {
+          navigate({ pathname: `/dashboard/${auctionUUID}/` })
         }}
         onError={(error) => {
           toastErrorNotification('Не удалось войти в аукцион', error.message)
@@ -51,5 +51,3 @@ const WizardLoginAdminItem = (
     </WizardItem>
   )
 }
-
-export { WizardLoginAdminItem }

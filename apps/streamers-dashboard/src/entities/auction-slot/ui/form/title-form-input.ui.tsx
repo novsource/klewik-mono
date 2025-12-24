@@ -76,7 +76,6 @@ export const SlotTitleFormInput = <
 
   return (
     <Input
-      label={{ id: `${name}`, value: 'Название слота' }}
       placeholder="Название слота"
       slotClassNames={{
         base: 'w-full basis-1/2 grow',

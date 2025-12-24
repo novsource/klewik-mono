@@ -2,11 +2,11 @@ import { useRef } from 'react'
 
 import { Link } from 'react-router-dom'
 
+import { CopyToClipboardButton } from '~features/_common/copy-to-clipboard'
+
 import { WELCOME_PAGE_WIZARD_ITEMS_IDS } from '~pages/welcome/constants'
 
 import { auctionSelectors } from '~entities/auction/store'
-
-import { useCopyToClipboard } from '~shared/hooks/use-copy-to-clipboard'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -21,17 +21,15 @@ import { WizardItem } from '~shared/ui/wizard'
 
 import { cn } from '~shared/utils'
 
-const WizardSuccessCreatedItem = (
-  props: Omit<WizardItemProps, 'value' | 'children'>,
-) => {
+type WizardSuccessCreatedItemProps = Omit<WizardItemProps, 'value' | 'children'>
+
+export const WizardSuccessCreatedItem = (props: WizardSuccessCreatedItemProps) => {
   const { className, ...restProps } = props
 
   const auctionInfo = useStoreSelector(auctionSelectors.getAuctionInfo)
 
   const inputNumberRef = useRef<HTMLInputElement>(null)
   const inputURLRef = useRef<HTMLInputElement>(null)
-
-  const { copyToClipboard } = useCopyToClipboard()
 
   return (
     <WizardItem
@@ -56,15 +54,10 @@ const WizardSuccessCreatedItem = (
             slotClassNames={{ base: 'w-full', wrapper: 'pr-0' }}
             label={{ id: 'auctionUUID', value: 'Номер аукциона' }}
             endContent={(
-              <Button
-                className="text-gray-light hover:text-gray-accent"
-                variant="ghost"
-                isIconOnly
-                icon={<Icons.Copy size="sm" />}
-                onClick={() => {
-                  copyToClipboard(inputNumberRef.current?.value || '')
-                  toastSuccessNotification('Номер аукциона скопирован в буфер')
-                }}
+              <CopyToClipboardButton
+                className="pointer-events-auto"
+                value={inputNumberRef.current?.value || ''}
+                onClick={() => toastSuccessNotification('Номер аукциона успешно скопирован!')}
               />
             )}
           />
@@ -80,17 +73,10 @@ const WizardSuccessCreatedItem = (
             }}
             value={auctionInfo.url}
             endContent={(
-              <Button
-                className="text-gray-light hover:text-gray-accent"
-                variant="ghost"
-                isIconOnly
-                icon={<Icons.Copy size="sm" />}
-                onClick={() => {
-                  copyToClipboard(inputURLRef.current?.value || '')
-                  toastSuccessNotification(
-                    'Ссылка на аукцион скопирована в буфер',
-                  )
-                }}
+              <CopyToClipboardButton
+                className="pointer-events-auto"
+                value={inputURLRef.current?.value || ''}
+                onClick={() => toastSuccessNotification('Ссылка на аукцион успешна скопирована')}
               />
             )}
           />
@@ -108,5 +94,3 @@ const WizardSuccessCreatedItem = (
     </WizardItem>
   )
 }
-
-export { WizardSuccessCreatedItem }

@@ -1,7 +1,10 @@
-import { useRef, useState } from 'react'
+import type { SelectRootChangeEventDetails } from '@base-ui-components/react'
 
-import { DONATION_PROCESSED_STATUS } from '~entities/donation/constants'
+import { useState } from 'react'
+
 import type { ProcessedDonationStatus } from '~entities/donation/model'
+
+import { DONATION_STATUS_NAME } from '~shared/constants/donations'
 
 import { Icons } from '~shared/ui/icons'
 import type {
@@ -10,63 +13,82 @@ import type {
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
+  SelectList,
   SelectTrigger,
-  SelectValue,
 } from '~shared/ui/select'
 
-type DonationsProcessStatusFilterProps = SelectProps & {
+type DisplayedSelectItemData = {
+  value: NullablePossible<ProcessedDonationStatus>
+  label: string
+}
+
+const selectItems: DisplayedSelectItemData[] = [
+  {
+    value: null,
+    label: 'Все статусы',
+  },
+  {
+    value: 'added',
+    label: DONATION_STATUS_NAME.added,
+  },
+  {
+    value: 'checkRequested',
+    label: DONATION_STATUS_NAME.confirm,
+  },
+  {
+    value: 'empty',
+    label: DONATION_STATUS_NAME.empty,
+  },
+  {
+    value: 'error',
+    label: DONATION_STATUS_NAME.error,
+  },
+  {
+    value: 'rejected',
+    label: DONATION_STATUS_NAME.rejected,
+  },
+  {
+    value: 'inProgress',
+    label: 'В процессе',
+  },
+]
+
+type DonationsProcessStatusFilterProps = SelectProps<NullablePossible<ProcessedDonationStatus>, false> & {
   status?: NullablePossible<ProcessedDonationStatus>
 }
 
-export const DonationsFilterSelect = (
+export const DonationsStatusFilterSelect = (
   props: DonationsProcessStatusFilterProps,
 ) => {
   const { status, onValueChange, ...selectProps } = props
 
-  const [filterValue, setFilterValue] = useState<NullablePossible<ProcessedDonationStatus>>(status ?? null)
+  const [selectedStatus, setSelectedStatus] = useState<NullablePossible<ProcessedDonationStatus>>(status ?? null)
 
-  const resetToDefaultRef = useRef(false)
+  const handleOnValueChange = (status: NullablePossible<ProcessedDonationStatus>, event: SelectRootChangeEventDetails) => {
+    setSelectedStatus(status)
+    onValueChange?.(status, event)
+  }
 
   return (
     <Select
-      value={filterValue || ''}
+      items={selectItems}
+      value={selectedStatus}
       size="sm"
-      onValueChange={(status: ProcessedDonationStatus) => {
-        if (resetToDefaultRef.current) {
-          resetToDefaultRef.current = false
-
-          return onValueChange && onValueChange('')
-        }
-
-        setFilterValue(status)
-        onValueChange && onValueChange(status)
-      }}
+      onValueChange={handleOnValueChange}
       {...selectProps}
     >
-      <SelectTrigger className="text-gray-light">
-        <Icons.Status size="xs" />
-        <SelectValue placeholder="Cтатус" />
-      </SelectTrigger>
+      <SelectTrigger className="text-gray-light" leftIcon={<Icons.Status size="xs" />} />
       <SelectContent sideOffset={4}>
-        <SelectGroup>
-          {(Object.keys(DONATION_PROCESSED_STATUS) as Array<keyof typeof DONATION_PROCESSED_STATUS>).map(status => (
+        <SelectList>
+          {selectItems.map(item => (
             <SelectItem
-              key={status}
-              value={status}
-              onPointerDown={() => {
-                if (filterValue === status) {
-                  resetToDefaultRef.current = true
-
-                  setFilterValue(null)
-                }
-              }}
-            >
-              {DONATION_PROCESSED_STATUS[status]}
-            </SelectItem>
+              key={item.value}
+              value={item.value}
+              label={item.label}
+            />
           ))}
-        </SelectGroup>
+        </SelectList>
       </SelectContent>
     </Select>
   )

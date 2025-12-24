@@ -98,7 +98,8 @@ export class SSEClient<
       }
 
       const dataSchema = this._eventsDataSchemas[sseMessage.event]
-      const validatedData = dataSchema?.safeParse(JSON.parse(sseMessage.data))
+      const parsedData: unknown = JSON.parse(sseMessage.data)
+      const validatedData = dataSchema?.safeParse(parsedData)
 
       if (!validatedData?.success) {
         return this._sseEventsEmitter.notify('onerror', sseMessage)

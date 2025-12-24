@@ -57,7 +57,7 @@ class AuthHttpClient extends BaseHttpClient {
           release()
         }
         catch {
-          throw new Error(axiosError.message)
+          throw axiosError
         }
       }
 

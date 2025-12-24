@@ -2,7 +2,7 @@ import type { AuctionDTO } from '../http/auction'
 import type { CreateAuctionResponse } from '../http/auction/auction.api'
 
 import { faker } from '@faker-js/faker'
-import { checkPostFormRequestHeaders } from '~root/tests/mock-server/helpers'
+import { checkPostFormRequestHeaders } from '~root/tests/utils/mock-server/helpers'
 import { http, HttpResponse } from 'msw'
 import { z } from 'zod'
 
@@ -58,3 +58,30 @@ export const authApiMocksHandlers = [
     }, status: 200 })
   }),
 ]
+
+// const slotsSSEMessageId = 1
+// const donationsSSEMessageId = 1
+
+// export const sseApiMocksHandlers = [
+//   sse<AuctionSlotsEventsMap>('/api/v1/auctions/:uuid/sse/slots-events', ({ client }) => {
+//     const message = {
+//       id: slotsSSEMessageId.toString(),
+//       data: JSON.stringify(createFakeAuctionSlotsArray({ minLength: 5, maxLength: 10 })),
+//       event: 'auction-slots/add',
+//     } as const
+
+//     client.send(message)
+
+//     queueMicrotask(() => {
+//       client.close()
+//     })
+//   }),
+
+//   sse('/api/v1/auctions/:uuid/sse/donations-events', ({ client }) => {
+//     client.send({ id: donationsSSEMessageId.toString(), data: 'success', event: 'connect' })
+
+//     queueMicrotask(() => {
+//       client.close()
+//     })
+//   }),
+// ]

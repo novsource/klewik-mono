@@ -1,59 +1,51 @@
+import type { ButtonVariantsProps } from '../styles/button-variants'
+
 import * as React from 'react'
 
-import { Slot } from '@radix-ui/react-slot'
+import { cn, toBooleanString } from '~shared/utils'
 
-import { cn } from '~shared/utils'
+import { buttonVariants } from '../styles/button-variants'
 
-import { ButtonVariantsProps, buttonVariants } from '../styles/button-variants'
-
-export interface ButtonProps
-  extends React.ComponentProps<'button'>,
-    Omit<ButtonVariantsProps, 'startContent' | 'endContent'> {
-  asChild?: boolean
+export type ButtonProps = {
   startContent?: React.ReactNode
   endContent?: React.ReactNode
   icon?: React.ReactNode
-}
+} & React.ComponentProps<'button'> & Omit<ButtonVariantsProps, 'startContent' | 'endContent'>
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, isIconOnly, variant, size, icon, asChild = false, ...props },
-    ref
+    { className, isIconOnly, variant, size, icon, ...props },
+    ref,
   ) => {
     const { children, startContent, endContent, ...otherProps } = props
 
-    const Comp = asChild ? Slot : 'button'
-
-    const style = React.useMemo(
+    const classes = React.useMemo(
       () =>
-        cn(
-          buttonVariants({
-            variant,
-            size,
-            isIconOnly,
-            startContent: !!startContent,
-            endContent: !!endContent,
-          }),
-          className
-        ),
-      [isIconOnly, variant, size, startContent, endContent, className]
+        cn(buttonVariants({
+          variant,
+          size,
+          isIconOnly,
+          startContent: !!startContent,
+          endContent: !!endContent,
+          className,
+        }), className),
+      [isIconOnly, variant, size, startContent, endContent, className],
     )
 
     return (
-      <Comp
-        className={style}
+      <button
+        type="button"
+        className={classes}
         ref={ref}
-        data-icon-only={isIconOnly}
+        data-icon-only={toBooleanString(isIconOnly)}
         {...otherProps}
       >
-        {startContent}
+        {!isIconOnly && startContent}
         {!isIconOnly && children}
         {isIconOnly && icon}
-        {endContent}
-      </Comp>
+        {!isIconOnly && endContent}
+      </button>
     )
-  }
+  },
 )
 Button.displayName = 'Button'
-
-export { Button, buttonVariants }

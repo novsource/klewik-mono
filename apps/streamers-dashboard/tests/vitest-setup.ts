@@ -6,3 +6,5 @@ globalThis.ResizeObserver = vi.fn(() => ({
   unobserve: vi.fn(),
   disconnect: vi.fn(),
 }))
+
+globalThis.EventSource = require('undici')

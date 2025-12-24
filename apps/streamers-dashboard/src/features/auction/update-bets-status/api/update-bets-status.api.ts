@@ -1,15 +1,25 @@
 import { splittedAuctionApi } from '~entities/auction/api'
-import { Auction } from '~entities/auction/model'
+import type { Auction } from '~entities/auction/model'
 import { auctionActions } from '~entities/auction/store'
 
 type UpdateBetsStatusQueryArgs = {
-  auctionId: Auction['id']
+  auctionUUID: Auction['auctionUUID']
+  status: Auction['isBetsClosed']
 }
 
 const updateBetsStatusApi = splittedAuctionApi.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: builder => ({
+    updateBetsStatus: builder.query<void, UpdateBetsStatusQueryArgs>({
+      query: ({ auctionUUID, status }) => ({ url: `/${auctionUUID}/close-bets`, data: status, withCredentials: true }),
+
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        await queryFulfilled
+
+        dispatch(auctionActions.setAuction({ isBetsClosed: true }))
+      },
+    }),
     closeBets: builder.query<void, UpdateBetsStatusQueryArgs>({
-      query: ({ auctionId }) => ({ url: `/${auctionId}/close-bets` }),
+      query: ({ auctionUUID }) => ({ url: `/${auctionUUID}/close-bets` }),
 
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         await queryFulfilled
@@ -18,7 +28,7 @@ const updateBetsStatusApi = splittedAuctionApi.injectEndpoints({
       },
     }),
     openBets: builder.query<void, UpdateBetsStatusQueryArgs>({
-      query: ({ auctionId }) => ({ url: `/${auctionId}/open-bets` }),
+      query: ({ auctionUUID }) => ({ url: `/${auctionUUID}/open-bets` }),
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         await queryFulfilled
 

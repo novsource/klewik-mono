@@ -57,6 +57,7 @@ import { default as ReturnArrow } from './ReturnArrow';
 import { default as Save } from './Save';
 import { default as Settings } from './Settings';
 import { default as Signpost } from './Signpost';
+import { default as Size } from './Size';
 import { default as Slots } from './Slots';
 import { default as Sort } from './Sort';
 import { default as SortAlphabetAsc } from './SortAlphabetAsc';
@@ -136,6 +137,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Save,
   Settings,
   Signpost,
+  Size,
   Slots,
   Sort,
   SortAlphabetAsc,

@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 import type { ReactNode, SVGProps } from 'react'
 
+import { AnimatePresence } from 'motion/react'
+
 import type { StateRef, UseInfiniteListReturn } from '~shared/hooks'
 
 import type { FlexProps } from '~shared/ui/flex'
@@ -125,7 +127,9 @@ export const InfiniteList = <DataItem = unknown>(props: InfiniteListProps<DataIt
       {...restProps}
     >
       {isShouldShowEmptyContent && <InfiniteListEmptyContent {...emptyContentProps} />}
-      {virtualizedItems.map(renderVirtualListItem)}
+      <AnimatePresence>
+        {virtualizedItems.map(renderVirtualListItem)}
+      </AnimatePresence>
       {isShouldShowLoader && <InfiniteListLoader />}
     </ShadowVirtualList>
   )

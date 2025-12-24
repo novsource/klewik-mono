@@ -1,6 +1,24 @@
 import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'
 
+import {
+  DesktopAppDialog,
+  DesktopAppDialogClose,
+  DesktopAppDialogContent,
+  DesktopAppDialogHeader,
+  DesktopAppDialogHeaderActionsPanel,
+  DesktopAppDialogHeaderTopPanel,
+  DesktopAppDialogTitle,
+  DesktopAppDialogTrigger,
+  MobileAppDialog,
+  MobileAppDialogContent,
+  MobileAppDialogExtraActions,
+  MobileAppDialogFooter,
+  MobileAppDialogHeader,
+  MobileAppDialogHeaderTitle,
+  MobileAppDialogTrigger,
+} from '~shared/components/app-dialog'
+
 import { auctionSlotsActions as storeAuctionSlotsActions } from '~entities/auction-slot/store'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
@@ -13,16 +31,7 @@ import { Button } from '~shared/ui/button'
 import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '~shared/ui/sheet'
 import { closeAllToasts, toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
-import { Typography } from '~shared/ui/typograghy'
 
 import { twSlotsStyles } from '~shared/utils'
 import { getRandomHEXColor } from '~shared/utils/colors'
@@ -87,138 +96,119 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
     form.reset()
   }
 
-  const closeDialog = () => {
+  const resetAndCloseDialog = () => {
+    form.reset()
     setIsDialogOpen(false)
   }
 
   const isShouldDisableSubmit = isLoading || !formState.isValid || !formState.isDirty
 
-  const dialogContent = useMemo(() => {
-    return (
-      <ControlledCreateSlotForm
-        multiplySlots={multiplySlots}
-        form={form}
-      />
-    )
-  }, [multiplySlots, form])
-
   const sheetStyles = useMemo(() => twSlotsStyles(createSlotsSheetStyles), [])
 
   if (isMediaLargeThenTablet) {
     return (
-      <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen} dismissible={!formState.isDirty}>
-        <SheetTrigger>{trigger}</SheetTrigger>
-        <SheetContent side="right">
-          <Flex
-            className={sheetStyles.contentWrapper}
-            direction="column"
-            align="center"
-          >
-            <SheetHeader className={sheetStyles.header}>
-              <Flex className={sheetStyles.headerPanelWrapper} justify="between">
+      <DesktopAppDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} disablePointerDismissal={formState.isDirty}>
+        <DesktopAppDialogTrigger>{ trigger }</DesktopAppDialogTrigger>
+
+        <DesktopAppDialogContent>
+          <DesktopAppDialogHeader>
+            <DesktopAppDialogHeaderTopPanel>
+              <Button
+                className={sheetStyles.resetButton}
+                disabled={isLoading || !formState.isDirty}
+                isIconOnly
+                icon={<Icons.Reset size="xs" />}
+                onClick={resetForm}
+              />
+
+              <DesktopAppDialogHeaderActionsPanel>
                 <Button
-                  className={sheetStyles.resetButton}
-                  disabled={isLoading || !formState.isDirty}
-                  isIconOnly
-                  icon={<Icons.Reset size="xs" />}
-                  onClick={resetForm}
-                />
-                <Flex className={sheetStyles.panelActionsButtons} align="center">
-                  <Button
-                    className={sheetStyles.submitButton}
-                    size="sm"
-                    variant="action"
-                    disabled={isShouldDisableSubmit}
-                    startContent={<Icons.Plus size="sm" />}
-                    onClick={handleFormSubmit}
-                  >
-                    Добавить
-                  </Button>
-                  <Divider className="mx-1" orientation="vertical" />
+                  className={sheetStyles.submitButton}
+                  variant="action"
+                  size="xs"
+                  disabled={isShouldDisableSubmit}
+                  startContent={<Icons.Plus />}
+                  onClick={handleFormSubmit}
+                >
+                  Добавить
+                </Button>
+
+                <Divider className="mx-1" orientation="vertical" />
+
+                <DesktopAppDialogClose>
                   <Button
                     className={sheetStyles.closeButton}
                     isIconOnly
                     icon={<Icons.LargeCross width={14} height={14} />}
                     onClick={() => setIsDialogOpen(false)}
                   />
-                </Flex>
-              </Flex>
-              <Flex className={sheetStyles.titleWrapper} direction="row" align="center">
-                <CreateSlotDialogIcon />
-                <Flex direction="column" align="start">
-                  <SheetTitle>Добавление слотов</SheetTitle>
-                  <SheetDescription>
-                    <Typography
-                      className={sheetStyles.titleDescription}
-                      tag="p"
-                    >
-                      Увеличьте количество слотов в аукционе
-                    </Typography>
-                  </SheetDescription>
-                </Flex>
-              </Flex>
-            </SheetHeader>
-            <Divider />
-            {dialogContent}
-          </Flex>
-        </SheetContent>
-      </Sheet>
+                </DesktopAppDialogClose>
+
+              </DesktopAppDialogHeaderActionsPanel>
+            </DesktopAppDialogHeaderTopPanel>
+
+            <DesktopAppDialogTitle
+              icon={<CreateSlotDialogIcon />}
+              title="Добавление слотов"
+              description="Увеличьте количество слотов в аукционе"
+            />
+          </DesktopAppDialogHeader>
+
+          <ControlledCreateSlotForm
+            multiplySlots={multiplySlots}
+            form={form}
+          />
+
+        </DesktopAppDialogContent>
+      </DesktopAppDialog>
     )
   }
 
   return (
-    <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen} dismissible={!formState.isDirty}>
-      <SheetTrigger className="w-full">{trigger}</SheetTrigger>
-      <SheetContent className="px-0" side="bottom" isFullPageSize>
-        <div className={sheetStyles.contentWrapper}>
-          <SheetHeader className={sheetStyles.header}>
-            <CreateSlotDialogIcon />
-            <div className={sheetStyles.titleWrapper}>
-              <SheetTitle className={sheetStyles.title}>
-                Добавление слотов
-              </SheetTitle>
-              <SheetDescription>
-                <Typography
-                  className={sheetStyles.titleDescription}
-                  tag="p"
-                >
-                  Увеличьте количество слотов
-                </Typography>
-              </SheetDescription>
-            </div>
-            <Button
-              className={sheetStyles.closeButton}
-              isIconOnly
-              icon={<Icons.LargeCross width={14} height={14} />}
-              onClick={closeDialog}
-            />
-          </SheetHeader>
-          <Divider />
-          <div className="w-full h-full overflow-scroll">
-            {dialogContent}
-          </div>
-          <Flex className={sheetStyles.footer}>
-            <Button
-              className={sheetStyles.resetButton}
-              disabled={isLoading || !formState.isDirty}
-              startContent={<Icons.Reset size="xs" />}
-              onClick={resetForm}
-            >
-              Сбросить
-            </Button>
-            <Button
-              className={sheetStyles.submitButton}
-              variant="action"
-              disabled={isShouldDisableSubmit}
-              startContent={<Icons.Plus size="lg" />}
-              onClick={handleFormSubmit}
-            >
-              Добавить
-            </Button>
-          </Flex>
+    <MobileAppDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} disablePointerDismissal={formState.isDirty}>
+      <MobileAppDialogTrigger className="w-full">{ trigger }</MobileAppDialogTrigger>
+
+      <MobileAppDialogContent>
+        <MobileAppDialogHeader>
+          <MobileAppDialogHeaderTitle
+            icon={<CreateSlotDialogIcon />}
+            title="Добавление слотов"
+            description="Увеличьте количество слотов в аукционе"
+          />
+
+          <MobileAppDialogExtraActions>
+            <Button>Here</Button>
+          </MobileAppDialogExtraActions>
+        </MobileAppDialogHeader>
+
+        <div className="w-full h-full overflow-scroll">
+          <ControlledCreateSlotForm
+            multiplySlots={multiplySlots}
+            form={form}
+          />
         </div>
-      </SheetContent>
-    </Sheet>
+
+        <MobileAppDialogFooter className="gap-x-4" direction="row">
+          <Button
+            className={sheetStyles.submitButton}
+            variant="action"
+            disabled={isShouldDisableSubmit}
+            startContent={<Icons.Plus size="lg" />}
+            onClick={handleFormSubmit}
+          >
+            Добавить
+          </Button>
+          <Button
+            className={sheetStyles.resetButton}
+            disabled={isLoading}
+            onClick={resetAndCloseDialog}
+          >
+            Отмена
+          </Button>
+        </MobileAppDialogFooter>
+
+      </MobileAppDialogContent>
+    </MobileAppDialog>
   )
 }
 

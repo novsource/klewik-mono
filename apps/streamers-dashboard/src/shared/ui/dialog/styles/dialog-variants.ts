@@ -3,12 +3,11 @@ import type { VariantProps } from 'class-variance-authority'
 import { cva } from 'class-variance-authority'
 
 const dialogBackdropVariants = cva([
-  // 'fixed inset-0 z-50 bg-black/50 data-[open]:animate-in data-[closed]:animate-out data-[closed]:fade-out-0 data-[open]:fade-in-0',
   'fixed inset-0 z-50 bg-black/50 opacity-70 transition-all data-[ending-style]:opacity-0 data-[starting-style]:opacity-0 duration-150',
 ], {
   variants: { disableAnimation: {
     true: '',
-    false: 'data-[open]:animate-in data-[closed]:animate-out data-[closed]:fade-out-0 data-[open]:fade-in-0',
+    false: '',
   } },
   defaultVariants: {
     disableAnimation: false,

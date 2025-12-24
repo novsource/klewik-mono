@@ -1,10 +1,28 @@
 import type { ReactNode } from 'react'
-import { useMemo } from 'react'
+
+import { FormProvider, useFormContext } from 'react-hook-form'
+
+import {
+  DesktopAppDialog,
+  DesktopAppDialogClose,
+  DesktopAppDialogContent,
+  DesktopAppDialogHeader,
+  DesktopAppDialogHeaderActionsPanel,
+  DesktopAppDialogHeaderTopPanel,
+  DesktopAppDialogTitle,
+  DesktopAppDialogTrigger,
+  MobileAppDialog,
+  MobileAppDialogContent,
+  MobileAppDialogFooter,
+  MobileAppDialogHeader,
+  MobileAppDialogHeaderTitle,
+  MobileAppDialogTrigger,
+} from '~shared/components/app-dialog'
 
 import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
-import { SolidAuctionSlotCard } from '~entities/auction-slot/ui/card'
+import { SlotPointsFormInput, SlotTitleFormInput } from '~entities/auction-slot/ui/form'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
@@ -12,35 +30,19 @@ import { useMediaQuery } from '~shared/hooks'
 
 import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
-import { Divider } from '~shared/ui/divider'
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '~shared/ui/drawer'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import type {
   SheetProps,
 } from '~shared/ui/sheet'
 import {
-  Sheet,
   SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
 } from '~shared/ui/sheet'
-import { Typography } from '~shared/ui/typograghy'
 
-import { mergeProps, twSlotsStyles } from '~shared/utils'
+import { mergeProps } from '~shared/utils'
 
 import { useEditSlotDialog } from '../hooks'
-import { editSlotSheetStyles } from '../styles'
-import { ControlledEditSlotForm } from './edit-slot-form.ui'
+import { EditSlotDialogCard } from './dialog-card.ui'
 
 export type EditSlotDialogProps = SheetProps & {
   slot: AuctionSlot
@@ -68,26 +70,12 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
     greaterThenDeviceWidthMediaQueries.tablet,
   )
 
-  const dialogContent = useMemo(() => {
-    return (
-      <Flex className="h-full gap-y-6" direction="column">
-        <SolidAuctionSlotCard auctionSlot={inputSlot} />
-        <ControlledEditSlotForm
-          form={form}
-          onSubmit={e => e.preventDefault()}
-        />
-      </Flex>
-    )
-  }, [inputSlot, form])
-
   const closeDialog = () => {
     if (formState.isDirty || formQueryState.isLoading)
       return
 
     dialogState.setIsOpen(false)
   }
-
-  const sheetStyles = useMemo(() => twSlotsStyles(editSlotSheetStyles), [])
 
   const isDismissible = !formState.isDirty || formQueryState.isLoading
 
@@ -99,162 +87,110 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
 
   if (isMediaLargeThenTablet) {
     return (
-      <Sheet {...mergedSheetProps}>
-        {trigger && <SheetTrigger>{trigger}</SheetTrigger>}
-        <SheetContent>
-          <Flex className="h-full w-full gap-y-4" direction="column">
-            <SheetHeader className="flex flex-col w-full gap-y-5">
-              <Flex className="w-full h-8" justify="between">
-                <div className="h-full space-x-2">
-                  <DeleteSlotButton
-                    slotId={inputSlot.id}
-                    className="size-8"
-                    variant="error"
-                    disabled={formQueryState.isLoading}
-                    isIconOnly
-                    icon={<Icons.Bin size="xs" />}
-                    onClick={() => form.reset()}
-                  />
-                  <Button
-                    className="size-8"
-                    disabled={formQueryState.isLoading || !formState.isDirty}
-                    isIconOnly
-                    icon={<Icons.Reset size="sm" />}
-                    onClick={() => form.reset()}
-                  />
-                </div>
+      <DesktopAppDialog {...mergedSheetProps}>
+        {trigger && <DesktopAppDialogTrigger>{ trigger }</DesktopAppDialogTrigger>}
+        <DesktopAppDialogContent>
 
-                <Flex className="gap-x-2" align="center">
-                  <Button
-                    className="h-full"
-                    size="sm"
-                    variant="action"
-                    disabled={formQueryState.isLoading || !formState.isDirty}
-                    startContent={<Icons.Save width={14} height={14} />}
-                    onClick={submit}
-                  >
-                    Сохранить
-                  </Button>
-                  <div className="h-2/3 w-0.25 bg-dark-accent mx-1" />
-                  <SheetClose nativeButton={false} className="relative right-0 top-0">
-                    <Button
-                      className="size-8"
-                      isIconOnly
-                      icon={<Icons.LargeCross width={14} height={14} />}
-                      disabled={formQueryState.isLoading || formState.isDirty}
-                      onClick={closeDialog}
-                      {...closeButtonProps}
-                    />
-                  </SheetClose>
-                </Flex>
-              </Flex>
-              <Flex className="h-full gap-x-4" align="center">
-                <EditSlotDialogsIcon />
-                <Flex
+          <DesktopAppDialogHeader>
+            <DesktopAppDialogHeaderTopPanel>
+              <DesktopAppDialogHeaderActionsPanel>
+                <DeleteSlotButton
+                  slotId={inputSlot.id}
+                  className="size-8"
+                  variant="error"
+                  disabled={formQueryState.isLoading}
+                  isIconOnly
+                  icon={<Icons.Bin size="xs" />}
+                  onClick={() => form.reset()}
+                />
+                <Button
+                  className="size-8"
+                  disabled={formQueryState.isLoading || !formState.isDirty}
+                  isIconOnly
+                  icon={<Icons.Reset size="sm" />}
+                  onClick={() => form.reset()}
+                />
+              </DesktopAppDialogHeaderActionsPanel>
+              <DesktopAppDialogHeaderActionsPanel>
+                <Button
                   className="h-full"
-                  direction="column"
-                  align="start"
-                  justify="start"
+                  size="sm"
+                  variant="action"
+                  disabled={formQueryState.isLoading || !formState.isDirty}
+                  startContent={<Icons.Save width={14} height={14} />}
+                  onClick={submit}
                 >
-                  <SheetTitle>Обзор слота</SheetTitle>
-                  <Typography
-                    className="leading-4 font-normal text-gray-accent"
-                    tag="p"
-                  >
-                    Измените параметры у слота
-                  </Typography>
-                </Flex>
-              </Flex>
-            </SheetHeader>
-            <div className="w-full h-0.25 bg-dark-accent" />
-            {dialogContent}
-          </Flex>
-        </SheetContent>
-      </Sheet>
+                  Сохранить
+                </Button>
+                <div className="h-2/3 w-0.25 bg-dark-accent mx-1" />
+                <DesktopAppDialogClose />
+              </DesktopAppDialogHeaderActionsPanel>
+            </DesktopAppDialogHeaderTopPanel>
+
+            <DesktopAppDialogTitle
+              icon={<EditSlotDialogsIcon />}
+              title="Обзор слота"
+              description="Измените параметры слота"
+            />
+
+          </DesktopAppDialogHeader>
+
+          <FormProvider {...form}>
+            <EditSlotForm />
+          </FormProvider>
+
+        </DesktopAppDialogContent>
+      </DesktopAppDialog>
     )
   }
 
   return (
-    <Sheet {...mergedSheetProps}>
-      <SheetTrigger>{trigger}</SheetTrigger>
-      <SheetContent className="overflow-scroll" isFullPageSize side="bottom">
-        <Flex className="h-full w-full" direction="column">
-          <SheetHeader className={sheetStyles.header}>
-            <EditSlotDialogsIcon />
-            <div className={sheetStyles.titleWrapper}>
-              <SheetTitle className={sheetStyles.title}>
-                Обзор слота
-              </SheetTitle>
-              <SheetDescription>
-                <Typography
-                  className={sheetStyles.titleDescription}
-                  tag="p"
-                >
-                  Измените параметры слота
-                </Typography>
-              </SheetDescription>
-            </div>
-            <Drawer noBodyStyles>
-              <DrawerTrigger>
-                <Button
-                  className={sheetStyles.closeButton}
-                  isIconOnly
-                  icon={<Icons.Dots width={14} height={14} />}
-                />
-              </DrawerTrigger>
-              <DrawerContent className="px-4">
-                <DrawerHeader>
-                  <DrawerTitle>
-                    Действия
-                  </DrawerTitle>
-                </DrawerHeader>
-                <Flex className="w-full gap-y-3 pb-4" direction="column">
-                  <Button
-                    className="w-full"
-                    startContent={<Icons.Reset width={12} height={12} />}
-                  >
-                    Сбросить
-                  </Button>
-                  <Button
-                    className="w-full"
-                    variant="error"
-                    startContent={<Icons.Bin width={12} height={12} />}
-                  >
-                    Удалить слот
-                  </Button>
-                </Flex>
-              </DrawerContent>
-            </Drawer>
+    <MobileAppDialog {...mergedSheetProps}>
+      <MobileAppDialogTrigger>{ trigger }</MobileAppDialogTrigger>
 
-          </SheetHeader>
-          <Divider className="mb-4" />
-          {dialogContent}
-          <Flex className="gap-y-2 pt-2" direction="column">
-            <Button
-              className="w-full"
-              variant="action"
-              size="sm"
-              disabled={formQueryState.isLoading || !formState.isDirty}
-              startContent={<Icons.Save width={14} height={14} />}
-              onClick={submit}
-            >
-              Сохранить
-            </Button>
-            <SheetClose className="relative top-0 right-0">
+      <MobileAppDialogContent>
+        <MobileAppDialogHeader>
+
+          <MobileAppDialogHeaderTitle
+            icon={<EditSlotDialogsIcon />}
+            title="Обзор слота"
+            description="Измените параметры слота"
+          />
+
+        </MobileAppDialogHeader>
+
+        <FormProvider {...form}>
+          <EditSlotForm />
+        </FormProvider>
+
+        <MobileAppDialogFooter className="gap-x-4" direction="row">
+          <Button
+            className="w-full"
+            variant="action"
+            type="submit"
+            disabled={formQueryState.isLoading || !formState.isDirty}
+            startContent={<Icons.Save width={14} height={14} />}
+            onClick={submit}
+          >
+            Сохранить
+          </Button>
+          <SheetClose
+            className="relative top-0 right-0"
+            render={(
               <Button
                 className="w-full"
-                size="sm"
                 icon={<Icons.LargeCross width={14} height={14} />}
                 onClick={closeDialog}
                 {...closeButtonProps}
               >
                 Отмена
               </Button>
-            </SheetClose>
-          </Flex>
-        </Flex>
-      </SheetContent>
-    </Sheet>
+            )}
+          />
+        </MobileAppDialogFooter>
+
+      </MobileAppDialogContent>
+    </MobileAppDialog>
   )
 }
 
@@ -269,5 +205,46 @@ function EditSlotDialogsIcon() {
         <Icons.Pencil gradient />
       </Flex>
     </div>
+  )
+}
+
+function EditSlotForm() {
+  const { control } = useFormContext()
+
+  return (
+    <form className="flex flex-col gap-y-2 h-full">
+      <EditSlotDialogCard
+        className="pt-3 pb-1"
+        contentPosition="bottom"
+        title="Слот"
+        titleIcon={<Icons.Slots className="text-gray" size="xs" />}
+      >
+        <SlotTitleFormInput
+          variant="ghost"
+          name="title"
+          control={control}
+        />
+      </EditSlotDialogCard>
+      <EditSlotDialogCard
+        className="py-2"
+        contentPosition="right"
+        title="Очки"
+        titleIcon={<Icons.Coin className="text-gray" size="sm" />}
+      >
+        <SlotPointsFormInput
+          control={control}
+          name="points"
+          showPercentInput={false}
+          pointsInputProps={{
+            variant: 'ghost',
+            label: undefined,
+            startContent: undefined,
+            slotClassNames: { input: 'text-right text-white/80' },
+            isAllowed: value =>
+              value?.floatValue ? value.floatValue <= 1_000_000 : true,
+          }}
+        />
+      </EditSlotDialogCard>
+    </form>
   )
 }

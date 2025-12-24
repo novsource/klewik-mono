@@ -17,6 +17,7 @@ import {
   descriptionVariants,
   inputVariants,
   labelVariants,
+  sidesSectionsVariants,
 } from '../styles/input-variants'
 
 export type InputSlotsClassnames = {
@@ -40,7 +41,7 @@ export type InputProps = Omit<ComponentProps<'input'>, 'size' | 'className'>
     slotClassNames?: InputSlotsClassnames
   }
 
-const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const {
     description,
     size,
@@ -92,6 +93,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
   const baseInput = (
     <input
+      id={label?.id}
       type={type ?? 'text'}
       className={baseInputStyle}
       ref={ref}
@@ -127,11 +129,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     [classNames?.wrapper, size, errorMessage, disabled, variant],
   )
 
+  const sidesContentStyle = useMemo(() => cn(sidesSectionsVariants({ size })), [size])
+
   return (
     <div className={contentBaseStyle} data-slot="base">
       {label && (
         <label
-          htmlFor={label.id.toLocaleLowerCase()}
+          htmlFor={label.id}
           className={labelStyle}
           data-slot="label"
         >
@@ -150,9 +154,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           setIsHover(false)
         }}
       >
-        {startContent}
+        <div className={cn(sidesContentStyle, classNames?.startContent)} data-side="start">
+          {startContent}
+        </div>
         {baseInput}
-        {endContent}
+        <div className={cn(sidesContentStyle, classNames?.endContent)} data-side="end">
+          {endContent}
+        </div>
       </div>
       {(errorMessage || description) && (
         <Typography
@@ -167,5 +175,3 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   )
 })
 Input.displayName = 'Input'
-
-export { Input }

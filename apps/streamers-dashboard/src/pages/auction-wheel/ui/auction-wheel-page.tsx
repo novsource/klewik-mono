@@ -3,8 +3,8 @@ import { Flex } from '~shared/ui/flex'
 import { cn } from '~shared/utils'
 
 import { auctionWheelPageStyles } from '../styles'
-import { Wheel } from './wheel'
 import { WheelTabs } from './wheel-tabs'
+import { Wheel } from './wheel.ui'
 
 const AuctionWheelPage = () => {
   return (

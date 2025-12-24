@@ -1,8 +1,7 @@
 import { useRef, useState } from 'react'
 
+import { globalDialogsActions } from '~features/_common/display-dialogs'
 import { isAxiosError } from 'axios'
-
-import { useGlobalDialogsContext } from '~widgets/global-dialogs/context'
 
 import { useLazyLoadMoreDonationsQuery } from '~features/donations/watch-donations/api'
 import { useDonationsInfiniteList } from '~features/donations/watch-donations/hooks'
@@ -42,12 +41,12 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
     ...restProps
   } = props
 
+  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
+
   const [isShowingSkeletons, setIsShowingSkeletons] = useState(false)
 
-  const { dispatch: { setSelectedDonation, setIsProcessDonationDialogOpen } } = useGlobalDialogsContext()
-
   const { addDonation } = useActionCreators(donationsActions)
-  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
+  const { setDialogState } = useActionCreators(globalDialogsActions)
 
   const [loadMoreDonationsQuery] = useLazyLoadMoreDonationsQuery()
 
@@ -135,8 +134,9 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
         key={virtualizeItem.id}
         initial={{ opacity: 0, scaleY: 0.975, scaleX: 0.975 }}
         animate={{ opacity: 1, scaleY: 1, scaleX: 1 }}
+        exit={{ opacity: 0, scaleY: 0.975, scaleX: 0.975 }}
         transition={{
-          duration: 0.25,
+          duration: 0.2,
           ease: 'easeInOut',
         }}
       >
@@ -144,8 +144,7 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
           donation={donation}
           actionButtonProps={{
             onClick: () => {
-              setSelectedDonation(donation)
-              setIsProcessDonationDialogOpen(true)
+              setDialogState({ data: { initialData: donation, isOpen: true }, dialog: 'processDonation' })
             },
           }}
           style={{

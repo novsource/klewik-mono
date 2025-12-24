@@ -27,3 +27,5 @@ export const deleteAllSpacesFromString = (str: string) => {
 export const removeSpaceDuplicatingFromString = (str: string) => {
   return str.replace(/\s{2,}/g, ' ')
 }
+
+export const toBooleanString = (value: unknown): string => `${!!value}`

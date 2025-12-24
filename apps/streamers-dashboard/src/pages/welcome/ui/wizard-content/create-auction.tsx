@@ -46,8 +46,8 @@ const WizardCreateAuctionItem = (
           ввода нажмите кнопку "Создать"
         </Typography>
         <CreateAuctionForm
-          onSuccess={({ auctionUUID, auctionOwnerId, url }) => {
-            loginInAuction(auctionUUID, '3cac8f81-128b-4e5c-aa6d-a3fd25e3c50b').then(() => {
+          onSuccess={({ auctionUUID, auctionOwnerId, url, key }) => {
+            loginInAuction(auctionUUID, key).then(() => {
               setAuction({
                 ownerId: auctionOwnerId,
                 auctionUUID,
@@ -56,7 +56,7 @@ const WizardCreateAuctionItem = (
 
               toastSuccessNotification('Аукцион успешно создан!')
               next(WELCOME_PAGE_WIZARD_ITEMS_IDS.AUCTION_PARAMETERS)
-            }).catch((_) => {
+            }).catch(() => {
               toastErrorNotification('Аукцион был создан, однако произошла ошибка входа в аукцион. Попробуйте еще раз')
             })
           }}

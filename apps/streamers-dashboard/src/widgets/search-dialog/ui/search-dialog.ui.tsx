@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import { useMemo } from 'react'
 
+import { AnimatePresence } from 'motion/react'
+
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { useMediaQuery } from '~shared/hooks'
@@ -69,7 +71,7 @@ function DesktopSearchDialog(props: DesktopSearchDialogProps) {
   } = props
 
   const {
-    state: { isDialogOpen, searchValue, category },
+    state: { isLoading, isDialogOpen, searchValue, category },
     dispatch: { setIsDialogOpen, setSearchValue, setCategory },
     functions: { closeDialog },
   } = useSearchDialogContext()
@@ -89,15 +91,21 @@ function DesktopSearchDialog(props: DesktopSearchDialogProps) {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={handleOnOpenChange} {...dialogProps}>
-      <DialogTrigger {...triggerProps}>
-        {trigger}
-      </DialogTrigger>
+      <DialogTrigger
+        {...triggerProps}
+        render={(
+          <>
+            {trigger}
+          </>
+        )}
+      />
       <DialogContent {...dialogContentProps}>
         <Flex className="h-full w-full gap-y-6" direction="column">
           <DialogHeader {...dialogHeaderProps}>
             <Flex direction="column">
               <SearchBar
                 value={searchValue}
+                showLoader={isLoading}
                 endContent={(
                   <Button
                     className="text-gray hover:text-white"
@@ -141,14 +149,20 @@ function MobileSearchDialog(props: MobileSearchDialogProps) {
   const { trigger } = props
 
   const {
-    state: { isDialogOpen, searchValue, category },
+    state: { isLoading, isDialogOpen, searchValue, category },
     dispatch: { setIsDialogOpen, setSearchValue, setCategory },
   } = useSearchDialogContext()
 
   return (
     <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <SheetTrigger className="w-full" nativeButton={false}>
-        {trigger}
+      <SheetTrigger
+        className="w-full"
+        render={(
+          <>
+            {trigger}
+          </>
+        )}
+      >
       </SheetTrigger>
       <SheetContent className="flex flex-col h-full pb-0" isFullPageSize side="bottom">
         <SheetHeader className="gap-0 space-y-0">
@@ -165,6 +179,7 @@ function MobileSearchDialog(props: MobileSearchDialogProps) {
           <Flex direction="column">
             <SearchBar
               value={searchValue}
+              showLoader={isLoading}
               onChange={(event) => {
                 setSearchValue(event.target.value)
               }}
@@ -189,36 +204,49 @@ function MobileSearchDialog(props: MobileSearchDialogProps) {
   )
 }
 
-type SearchBarProps = Omit<InputProps, 'value'> & { value: string }
+type SearchBarProps = Omit<InputProps, 'value'> & { value: string, showLoader: boolean }
 
 function SearchBar(props: SearchBarProps) {
-  const { value, ...restProps } = props
+  const { value, showLoader, ...restProps } = props
 
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
-
-  const searchInputStartIcon = useMemo(() => {
-    return (
-      <MotionBox
-        initial={{ scale: 1 }}
-        exit={{ scale: 0 }}
-      >
-        <Icons.Magnifier className={cn(isStringEmpty(value) && 'text-gray')} size="sm" />
-      </MotionBox>
-    )
-  }, [value])
 
   return (
     <Input
       slotClassNames={
         {
-          base: 'w-full',
+          base: 'w-full tablet:px-1',
           wrapper: [
             'max-tablet:px-0.5 max-tablet:gap-x-2.5 border-0 bg-inherit rounded-none max-tablet:data-[focus=true]:bg-inherit',
             'data-[hover=true]:ring-0 data-[focus=true]:ring-0 max-tablet:data-[hover=true]:bg-inherit',
           ],
         }
       }
-      startContent={searchInputStartIcon}
+      startContent={(
+        <AnimatePresence>
+          {
+            !showLoader
+              ? (
+                  <MotionBox
+                    initial={{ scale: 0.95 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                  >
+                    <Icons.Magnifier className={cn(isStringEmpty(value) && 'text-gray')} size="sm" />
+                  </MotionBox>
+                )
+              : (
+                  <MotionBox
+                    initial={{ scale: 0.95 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                  >
+                    <Icons.Loading className="text-green-accent" />
+                  </MotionBox>
+                )
+          }
+        </AnimatePresence>
+      )}
       placeholder="Искать по слотам или донатам..."
       size={isLargeThenTablet ? 'default' : 'sm'}
       value={value}

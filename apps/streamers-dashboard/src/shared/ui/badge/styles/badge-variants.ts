@@ -1,6 +1,8 @@
-import { VariantProps, cva } from 'class-variance-authority'
+import type { VariantProps } from 'class-variance-authority'
 
-import { CvaClassValue } from '~shared/utils/types'
+import { cva } from 'class-variance-authority'
+
+import type { CvaClassValue } from '~shared/utils/types'
 
 type BadgeSizes = {
   size: Record<'sm' | 'default' | 'lg', CvaClassValue>
@@ -15,7 +17,7 @@ type BadgeVariants = {
   }
 }
 
-const badgeVariants = cva<BadgeVariants & BadgeSizes>(
+export const badgeVariants = cva<BadgeVariants & BadgeSizes>(
   'inline-flex items-center rounded-full border font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
   {
     variants: {
@@ -26,18 +28,16 @@ const badgeVariants = cva<BadgeVariants & BadgeSizes>(
         warning: 'border-transparent bg-yellow/20 text-yellow',
       },
       size: {
-        sm: 'text-xs px-1 py-0.25',
-        default: 'text-sm px-1.75 py-0.5',
-        lg: 'text-sm px-2 py-1',
+        sm: 'text-xs px-1.25 py-0.5',
+        default: 'text-sm px-1.5 py-0.5',
+        lg: 'text-sm px-1.75 py-1',
       },
     },
     defaultVariants: {
       variant: 'default',
       size: 'default',
     },
-  }
+  },
 )
 
-type BadgeStylesProps = VariantProps<typeof badgeVariants>
-
-export { badgeVariants, type BadgeStylesProps }
+export type BadgeStylesProps = VariantProps<typeof badgeVariants>

@@ -1,10 +1,8 @@
-import type {
-  SelectContextState,
-} from '../context'
+import type { SelectContextState } from '../context'
 
 import * as React from 'react'
 
-import * as SelectPrimitive from '@radix-ui/react-select'
+import * as SelectPrimitive from '@base-ui-components/react/select'
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
 
 import { cn } from '~shared/utils'
@@ -14,47 +12,56 @@ import {
   useSelectContext,
 } from '../context'
 import {
-  selectContentVariants,
   selectItemVariants,
-  selectLabelVariants,
+  selectListVariants,
+  selectPopupVariants,
+  selectPositionerVariants,
   selectScrollDownButtonVariants,
   selectScrollUpButtonVariants,
   selectSeparatorVariants,
   selectTriggerVariants,
-  selectViewportVariants,
 } from '../styles'
 
-export type SelectProps = React.ComponentProps<typeof SelectPrimitive.Root>
-  & Partial<SelectContextState>
+export type SelectProps<Value, Multiply extends boolean>
+= SelectPrimitive.SelectRoot.Props<Value, Multiply> & Partial<SelectContextState>
 
-function Select({ size, position, ...rootProps }: SelectProps) {
+export const Select = <Value, Multiply extends boolean>(props: SelectProps<Value, Multiply>) => {
+  const { size, position, ...rootProps } = props
+
   return (
     <SelectProvider size={size} position={position}>
-      <SelectPrimitive.Root data-slot="select" {...rootProps} />
+      <SelectPrimitive.Select.Root data-slot="select" {...rootProps} />
     </SelectProvider>
   )
 }
 
-function SelectGroup({
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Group>) {
-  return <SelectPrimitive.Group data-slot="select-group" {...props} />
+export type SelectGroupProps = SelectPrimitive.SelectGroup.Props
+
+export const SelectGroup = (props: SelectGroupProps) => {
+  return <SelectPrimitive.Select.Group data-slot="select-group" {...props} />
 }
 
-function SelectValue({
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Value>) {
-  return <SelectPrimitive.Value data-slot="select-value" {...props} />
+export type SelectValueProps = SelectPrimitive.SelectValue.Props
+
+export const SelectValue = (props: SelectValueProps) => {
+  return <SelectPrimitive.Select.Value data-slot="select-value" {...props} />
 }
 
-function SelectTrigger({
-  className,
-  asChild = false,
-  children,
-  ...triggerProps
-}: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
+export type SelectTriggerProps = SelectPrimitive.SelectTrigger.Props & {
   size?: 'sm' | 'default'
-}) {
+  leftIcon?: React.ReactNode
+  label?: string
+}
+
+export const SelectTrigger = (props: SelectTriggerProps) => {
+  const {
+    className,
+    children,
+    leftIcon,
+    label,
+    ...triggerProps
+  } = props
+
   const { size } = useSelectContext()
 
   const style = React.useMemo(() => {
@@ -62,141 +69,130 @@ function SelectTrigger({
   }, [size, className])
 
   return (
-    <SelectPrimitive.Trigger
+    <SelectPrimitive.Select.Trigger
       data-slot="select-trigger"
       data-size={size}
       className={style}
-      asChild={asChild}
       {...triggerProps}
     >
-      <>
-        {children}
-        {!asChild && (
-          <SelectPrimitive.Icon asChild>
-            <ChevronDownIcon className="size-4 opacity-50" />
-          </SelectPrimitive.Icon>
-        )}
-      </>
-    </SelectPrimitive.Trigger>
+      {leftIcon}
+      {!label && <SelectPrimitive.Select.Value />}
+      {label}
+      <SelectPrimitive.Select.Icon>
+        <ChevronDownIcon className="size-4 opacity-50" />
+      </SelectPrimitive.Select.Icon>
+    </SelectPrimitive.Select.Trigger>
   )
 }
 
-function SelectContent({
-  className,
-  children,
-  position: propPosition = 'popper',
-  ...contentProps
-}: React.ComponentProps<typeof SelectPrimitive.Content>) {
-  const { position } = useSelectContext()
+export type SelectContentProps = SelectPrimitive.SelectPositioner.Props & {
+  portalProps?: SelectPrimitive.SelectPortal.Props
+  popupProps?: SelectPrimitive.SelectPopup.Props
+}
 
-  const style = React.useMemo(() => {
-    return cn(selectContentVariants({ position: propPosition ?? position }), className)
-  }, [propPosition, position, className])
+export const SelectContent = (props: SelectContentProps) => {
+  const {
+    className,
+    children,
+    popupProps,
+    portalProps,
+    ...positionerProps
+  } = props
 
   return (
-    <SelectPrimitive.Portal>
-      <SelectPrimitive.Content
-        data-slot="select-content"
-        className={style}
-        position={propPosition ?? position}
-        {...contentProps}
-      >
-        <SelectScrollUpButton />
-        <SelectPrimitive.Viewport className={cn(selectViewportVariants())}>
+    <SelectPrimitive.Select.Portal {...portalProps}>
+      <SelectPrimitive.Select.Positioner className={cn(selectPositionerVariants())} sideOffset={12} {...positionerProps}>
+        <SelectPrimitive.Select.Popup className={cn(selectPopupVariants(), className)} {...popupProps}>
+          <SelectPrimitive.Select.ScrollUpArrow />
           {children}
-        </SelectPrimitive.Viewport>
-        <SelectScrollDownButton />
-      </SelectPrimitive.Content>
-    </SelectPrimitive.Portal>
+          <SelectPrimitive.Select.ScrollDownArrow />
+        </SelectPrimitive.Select.Popup>
+      </SelectPrimitive.Select.Positioner>
+    </SelectPrimitive.Select.Portal>
   )
 }
 
-function SelectLabel({
-  className,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Label>) {
-  return (
-    <SelectPrimitive.Label
-      data-slot="select-label"
-      className={cn(selectLabelVariants(), className)}
-      {...props}
-    />
-  )
+export type SelectListProps = SelectPrimitive.SelectList.Props
+
+export const SelectList = (props: SelectListProps) => {
+  const { className, ...restProps } = props
+
+  return <SelectPrimitive.Select.List className={cn(selectListVariants(), className)} {...restProps} />
 }
 
-function SelectItem({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Item>) {
+export type SelectItemProps = SelectPrimitive.SelectItem.Props & {
+  itemWrapperProps?: SelectPrimitive.SelectItemText.Props
+}
+
+export const SelectItem = (props: SelectItemProps) => {
+  const {
+    className,
+    itemWrapperProps,
+    label,
+    children,
+    ...restProps
+  } = props
+
   return (
-    <SelectPrimitive.Item
+    <SelectPrimitive.Select.Item
       data-slot="select-item"
       className={cn(selectItemVariants(), className)}
-      {...props}
+      {...restProps}
     >
       <span className="absolute right-2 flex size-3.5 items-center justify-center">
-        <SelectPrimitive.ItemIndicator>
+        <SelectPrimitive.Select.ItemIndicator>
           <CheckIcon className="size-4" />
-        </SelectPrimitive.ItemIndicator>
+        </SelectPrimitive.Select.ItemIndicator>
       </span>
-      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-    </SelectPrimitive.Item>
+      <SelectPrimitive.Select.ItemText {...itemWrapperProps}>
+        {label}
+      </SelectPrimitive.Select.ItemText>
+    </SelectPrimitive.Select.Item>
   )
 }
 
-function SelectSeparator({
-  className,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Separator>) {
+export type SelectSeparatorProps = SelectPrimitive.Select.Separator.Props
+
+export const SelectSeparator = (props: SelectSeparatorProps) => {
+  const { className, ...restProps } = props
+
   return (
-    <SelectPrimitive.Separator
+    <SelectPrimitive.Select.Separator
       data-slot="select-separator"
       className={cn(selectSeparatorVariants(), className)}
-      {...props}
+      {...restProps}
     />
   )
 }
 
-function SelectScrollUpButton({
-  className,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {
+export type SelectScrollUpButtonProps = SelectPrimitive.SelectScrollUpArrow.Props
+
+export const SelectScrollUpButton = (props: SelectScrollUpButtonProps) => {
+  const { className, ...restProps } = props
+
   return (
-    <SelectPrimitive.ScrollUpButton
+    <SelectPrimitive.Select.ScrollUpArrow
       data-slot="select-scroll-up-button"
       className={cn(selectScrollUpButtonVariants(), className)}
-      {...props}
+      {...restProps}
     >
       <ChevronUpIcon className="size-4" />
-    </SelectPrimitive.ScrollUpButton>
+    </SelectPrimitive.Select.ScrollUpArrow>
   )
 }
 
-function SelectScrollDownButton({
-  className,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollDownButton>) {
+export type SelectScrollDownArrowProps = SelectPrimitive.SelectScrollDownArrow.Props
+
+export const SelectScrollDownButton = (props: SelectScrollDownArrowProps) => {
+  const { className, ...restProps } = props
+
   return (
-    <SelectPrimitive.ScrollDownButton
+    <SelectPrimitive.Select.ScrollDownArrow
       data-slot="select-scroll-down-button"
       className={cn(selectScrollDownButtonVariants(), className)}
-      {...props}
+      {...restProps}
     >
       <ChevronDownIcon className="size-4" />
-    </SelectPrimitive.ScrollDownButton>
+    </SelectPrimitive.Select.ScrollDownArrow>
   )
-}
-
-export {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectScrollDownButton,
-  SelectScrollUpButton,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
 }

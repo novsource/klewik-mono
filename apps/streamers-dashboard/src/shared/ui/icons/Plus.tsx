@@ -16,6 +16,6 @@ const SvgPlus = (props: IconsProps) => {
     width: props.size ? sizes[props.size] : props.width ?? sizes['default'],
     height: props.size ? sizes[props.size] : props.height ?? sizes['default']
   };
-  return <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 24 25" {...props}><path fill="currentColor" fillRule="evenodd" d="M12.75 6.327a.75.75 0 0 0-1.5 0v5.25H6a.75.75 0 1 0 0 1.5h5.25v5.25a.75.75 0 0 0 1.5 0v-5.25H18a.75.75 0 0 0 0-1.5h-5.25z" clipRule="evenodd" /></svg>;
+  return <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M12 4a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5a1 1 0 0 1 1-1" /></svg>;
 };
 export default SvgPlus;

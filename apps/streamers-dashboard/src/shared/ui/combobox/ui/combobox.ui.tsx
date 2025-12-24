@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import { Check } from 'lucide-react'
 
 import type { SlotsSortingOptions } from '~shared/store/model'
+
 import { Button } from '~shared/ui/button'
 import type { ButtonProps } from '~shared/ui/button/ui/Button'
 import {
@@ -15,6 +16,7 @@ import {
   CommandList,
 } from '~shared/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '~shared/ui/popover'
+
 import { chain, cn } from '~shared/utils'
 
 export type ComboboxData = Array<

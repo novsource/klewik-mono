@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useState } from 'react'
 
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { sha256 } from 'js-sha256'
 
@@ -27,9 +27,8 @@ import { useLazyConnectSSEDonationAlertsQuery } from '../../api/donation-alerts'
 import { IntegrationCard } from '../connect-integration.ui'
 
 export const DonationAlertsRedirectDisplay = memo(() => {
+  const { auctionId: auctionUUID = '' } = useParams()
   const navigate = useNavigate()
-
-  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const [connectSSEDonationAlerts, { isSuccess }]
     = useLazyConnectSSEDonationAlertsQuery()

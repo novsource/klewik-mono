@@ -1,6 +1,6 @@
 import type { WizardItem } from '~shared/hooks/use-wizard'
 
-const WELCOME_PAGE_WIZARD_ITEMS_IDS = {
+export const WELCOME_PAGE_WIZARD_ITEMS_IDS = {
   WELCOME: 'welcome',
   LOGIN_ADMIN: 'loginAdmin',
   CREATE_AUCTION: 'createAuction',
@@ -8,7 +8,9 @@ const WELCOME_PAGE_WIZARD_ITEMS_IDS = {
   AUCTION_PARAMETERS: 'auctionParameters',
 } as const
 
-const welcomePageWizardMap: WizardItem<string>[] = [
+type WizardMap = WizardItem<typeof WELCOME_PAGE_WIZARD_ITEMS_IDS[keyof typeof WELCOME_PAGE_WIZARD_ITEMS_IDS]>[]
+
+export const welcomePageWizardMap: WizardMap = [
   {
     id: WELCOME_PAGE_WIZARD_ITEMS_IDS.WELCOME,
     nodes: [
@@ -25,5 +27,3 @@ const welcomePageWizardMap: WizardItem<string>[] = [
     nodes: [WELCOME_PAGE_WIZARD_ITEMS_IDS.SUCCESS_CREATE],
   },
 ] as const
-
-export { WELCOME_PAGE_WIZARD_ITEMS_IDS, welcomePageWizardMap }

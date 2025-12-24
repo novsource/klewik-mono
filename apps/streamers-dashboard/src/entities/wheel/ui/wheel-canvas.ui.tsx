@@ -1,22 +1,12 @@
-import type {
-  ComponentPropsWithoutRef,
-  CSSProperties,
-} from 'react'
-import {
-  useEffect,
-} from 'react'
+import type { ComponentPropsWithoutRef, CSSProperties } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
-
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Flex } from '~shared/ui/flex'
 
 import { cn } from '~shared/utils'
 
-import { useWheel } from '../hooks/use-wheel'
-import { wheelSelectors } from '../store'
-import { generateWinner } from '../utils'
+import { useWheelCanvas } from '../hooks'
 
 export type WheelCanvasProps = Omit<ComponentPropsWithoutRef<'canvas'>, 'children'> & {
   auctionSlots: AuctionSlot[]
@@ -25,25 +15,19 @@ export type WheelCanvasProps = Omit<ComponentPropsWithoutRef<'canvas'>, 'childre
 export const WheelCanvas = (props: WheelCanvasProps) => {
   const { auctionSlots, style, ...restProps } = props
 
-  const wheelSpinStatus = useStoreSelector(wheelSelectors.getWheelStatus)
-  const rotateValue = useStoreSelector(wheelSelectors.getRotateValue)
-  const { spinTime } = useStoreSelector(wheelSelectors.getSettings)
-
   const {
+    state: { isSpinning, wheelSlots, rotateValue },
     refs: { wheelRef, innerRef },
-    functions: { spinWheel },
-    state: { wheelSlots },
-  } = useWheel(auctionSlots)
+  } = useWheelCanvas(auctionSlots)
 
-  useEffect(() => {
-    const isShouldSpinWheel = wheelSpinStatus === 'prepare'
-
-    if (isShouldSpinWheel) {
-      const winner = generateWinner(wheelSlots)
-
-      spinWheel(winner, spinTime)
-    }
-  }, [wheelSpinStatus, spinTime, spinWheel, wheelSlots])
+  const wheelMask = `linear-gradient(
+    #000,
+    #000,
+    transparent 0,
+    #000 0px,
+    #000 90%,
+    transparent
+  )`
 
   return (
     <Flex className="shrink h-full w-full" align="start" justify="center">
@@ -53,25 +37,27 @@ export const WheelCanvas = (props: WheelCanvasProps) => {
         justify="center"
       >
         <WheelSelector className="absolute -top-3.5 landtop:-top-1.5 z-10 shadow-dark drop-shadow-md" />
-        <canvas
-          ref={wheelRef}
-          style={{
-            ...style,
-            willChange: 'transform',
-            transform: `rotateZ(${rotateValue.current}deg)`,
-          }}
-          {...restProps}
-        />
-        <canvas
-          ref={innerRef}
-          className={cn(
-            'absolute top-0',
-            wheelSpinStatus !== 'spinning'
-            && wheelSlots.length === 0 && 'animate-pulse duration-[4s] transition-opacity',
-            wheelSlots.length === 0 && 'bg-dark-foreground animate-none',
-          )}
-          style={{ clipPath: 'circle(46%)' }}
-        />
+        <div className="h-1/2! overflow-clip" style={{ maskImage: wheelMask }}>
+          <canvas
+            ref={wheelRef}
+            style={{
+              ...style,
+              willChange: 'transform',
+              transform: `rotateZ(${rotateValue}deg)`,
+            }}
+            {...restProps}
+          />
+          <canvas
+            ref={innerRef}
+            className={cn(
+              'absolute top-0',
+              !isSpinning
+              && wheelSlots.length === 0 && 'animate-pulse duration-[4s] transition-opacity',
+              wheelSlots.length === 0 && 'bg-dark-foreground animate-none',
+            )}
+            style={{ clipPath: 'circle(46%)' }}
+          />
+        </div>
       </Flex>
     </Flex>
   )

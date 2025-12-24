@@ -1,4 +1,5 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import { globalDialogsReducer } from '~features/_common/display-dialogs'
 import { initMessageListener } from 'redux-state-sync'
 
 import { splittedAuctionApi as auctionApi } from '~entities/auction/api'
@@ -12,13 +13,16 @@ import {
 
 import { splittedDonationApi as donationsApi } from '~entities/donation/api'
 import { donationsReducer } from '~entities/donation/store'
+import { donationsListenerMiddlewares } from '~entities/donation/store/donations.middlewares'
 
 import { splittedIntegrationsApi as integrationsApi } from '~entities/integrations/api'
 import { integrationsReducer } from '~entities/integrations/store'
 
+import { splittedWheelApi as wheelApi } from '~entities/wheel/api'
 import { wheelReducer } from '~entities/wheel/store'
 
-import { auctionSlotsSSEApi, splittedAuthApi as authApi, donationsSSEApi } from '~shared/store/api'
+import { auctionSlotsSSEApi, splittedAuthApi as authApi, donationsSSEApi, integrationsSSEApi } from '~shared/store/api'
+import { sseConnectionsListenerMiddlewares } from '~shared/store/middlewares'
 import { appReducer, sseReducer } from '~shared/store/slices'
 
 const rootReducer = combineReducers({
@@ -26,9 +30,11 @@ const rootReducer = combineReducers({
   auction: auctionReducer,
   auctionSlots: auctionSlotsReducer,
   donations: donationsReducer,
+  globalDialogs: globalDialogsReducer,
   integrations: integrationsReducer,
   sse: sseReducer,
   wheel: wheelReducer,
+  [wheelApi.reducerPath]: wheelApi.reducer,
   [auctionApi.reducerPath]: auctionApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [auctionSlotsApi.reducerPath]: auctionSlotsApi.reducer,
@@ -36,6 +42,7 @@ const rootReducer = combineReducers({
   [donationsApi.reducerPath]: donationsApi.reducer,
   [donationsSSEApi.reducerPath]: donationsSSEApi.reducer,
   [auctionSlotsSSEApi.reducerPath]: auctionSlotsSSEApi.reducer,
+  [integrationsSSEApi.reducerPath]: integrationsSSEApi.reducer,
 })
 
 // const persistedReducer = persistReducer(
@@ -59,24 +66,29 @@ const rootReducer = combineReducers({
 
 // const syncMiddleware = createStateSyncMiddleware(syncStoreConfig)
 
-export const store = configureStore({
+export const createStore = () => configureStore({
   reducer: rootReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
       .prepend(
         ...auctionSlotsListenerMiddlewares,
-        // ...donationsListenerMiddlewares,
+        ...donationsListenerMiddlewares,
+        ...sseConnectionsListenerMiddlewares,
       )
       .concat(
         auctionApi.middleware,
         authApi.middleware,
         auctionSlotsApi.middleware,
         donationsApi.middleware,
+        wheelApi.middleware,
         integrationsApi.middleware,
         donationsSSEApi.middleware,
         auctionSlotsSSEApi.middleware,
+        integrationsSSEApi.middleware,
       ),
 })
+
+export const store = createStore()
 
 // export const persistor = persistStore(store)
 

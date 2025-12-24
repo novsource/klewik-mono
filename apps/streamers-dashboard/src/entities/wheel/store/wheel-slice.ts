@@ -6,28 +6,33 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { validateWheelSlotsPayload } from '../lib/react-redux'
 
+export type WheelSlicesSizeMode = 'auto' | 'points' | 'equals'
+
 type WheelSettings = {
   spinTime: number
+  sizeMode: WheelSlicesSizeMode
 }
 
-type WheelSpinStatus = 'idle' | 'prepare' | 'spinning'
+type SpinStatus = 'idle' | 'prepare' | 'spinning'
 
-type WheelRotateValues = {
+type RotateValues = {
   current: number
   final: number
 }
 
 export type WheelState = {
+  spinTarget: NullablePossible<WheelSlot>
   highlightedSlotId: NullablePossible<number>
-  wheelSpinStatus: WheelSpinStatus
-  rotateValue: WheelRotateValues
+  spinStatus: SpinStatus
+  rotateValue: RotateValues
   selectorTargetTitle: string
   slots: WheelSlot[]
   settings: WheelSettings
 }
 
 const initialState: WheelState = {
-  wheelSpinStatus: 'idle',
+  spinTarget: null,
+  spinStatus: 'idle',
   highlightedSlotId: null,
   rotateValue: {
     current: 0,
@@ -37,6 +42,7 @@ const initialState: WheelState = {
   slots: [],
   settings: {
     spinTime: 2,
+    sizeMode: 'auto',
   },
 }
 
@@ -71,26 +77,33 @@ const wheelSlice = createSlice({
     setSelectorTitleName: (state, action: PayloadAction<string>) => {
       state.selectorTargetTitle = action.payload
     },
-    setWheelStatus: (state, action: PayloadAction<WheelSpinStatus>) => {
-      state.wheelSpinStatus = action.payload
+    setWheelStatus: (state, action: PayloadAction<SpinStatus>) => {
+      state.spinStatus = action.payload
     },
     setSettings: (state, action: PayloadAction<Partial<WheelSettings>>) => {
       state.settings = { ...state.settings, ...action.payload }
     },
-    setRotateValue: (state, action: PayloadAction<WheelRotateValues>) => {
+    setRotateValue: (state, action: PayloadAction<RotateValues>) => {
       state.rotateValue = action.payload
+    },
+    setSliceMode: (state, action: PayloadAction<WheelSlicesSizeMode>) => {
+      state.settings.sizeMode = action.payload
     },
     setHighlightedSlotId: (state, action: PayloadAction<NullablePossible<number>>) => {
       state.highlightedSlotId = action.payload
+    },
+    setSpinTarget: (state, action: PayloadAction<NullablePossible<WheelSlot>>) => {
+      state.spinTarget = action.payload
     },
   },
   selectors: {
     getSlots: state => state.slots,
     getSettings: state => state.settings,
     getSelectorTargetTitle: state => state.selectorTargetTitle,
-    getIsWheelSpinning: state => state.wheelSpinStatus === 'spinning',
+    getIsWheelSpinning: state => state.spinStatus === 'spinning',
     getRotateValue: state => state.rotateValue,
-    getWheelStatus: state => state.wheelSpinStatus,
+    getSpinTarget: state => state.spinTarget,
+    getWheelStatus: state => state.spinStatus,
     getHighlightedSlotId: state => state.highlightedSlotId,
   },
 })

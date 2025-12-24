@@ -9,7 +9,7 @@ export const wheelTabsStyles: Record<WheelTabsStylesSlots, string> = {
 export type SlotsWheelTabSlots = 'content'
 
 export const slotsWheelTabStyles: Record<SlotsWheelTabSlots, string> = {
-  content: /* tw */ 'data-[state=active]:h-full',
+  content: /* tw */ 'relative flex flex-col mt-5 gap-y-3 data-[state=active]:h-full',
 }
 
 export type ControlWheelTabSlots = 'content' | 'controlsWrapper' | 'spinWheelButton'
@@ -18,4 +18,12 @@ export const controlWheelTabStyles: Record<ControlWheelTabSlots, string> = {
   content: /* tw */ 'mt-5 flex flex-col gap-y-3 data-[state=active]:h-full overflow-scroll pb-4',
   controlsWrapper: /* tw */ 'w-full gap-x-2',
   spinWheelButton: /* tw */ 'w-full',
+}
+
+export type PreferencesWheelTabSlots = 'content' | 'recolorButtonWrapper'
+
+export const preferencesWheelTabStyles: Record<PreferencesWheelTabSlots, string> = {
+  content: /* tw */ 'mt-5 flex flex-col gap-y-3 data-[state=active]:h-full overflow-scroll pb-4',
+  recolorButtonWrapper: /* tw */ 'w-full',
+  // controlsWrapper: /* tw */ 'w-full gap-x-2',
 }
