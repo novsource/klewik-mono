@@ -6,20 +6,26 @@ import { SSE_CHANNELS } from '~shared/constants/api'
 import type { SSEChannels } from '~shared/constants/api'
 
 type SSESliceState = {
-  [key in SSEChannels]: {
-    isConnected: boolean
-    lastMessageId: number
+  isAllConnected: boolean
+  channels: {
+    [key in SSEChannels]: {
+      isConnected: boolean
+      lastMessageId: number
+    }
   }
 }
 
-const initialState = SSE_CHANNELS.reduce((state, channel) => {
-  state[channel] = {
-    isConnected: false,
-    lastMessageId: 0,
-  }
+const initialState: SSESliceState = {
+  isAllConnected: false,
+  channels: SSE_CHANNELS.reduce((state, channel) => {
+    state[channel] = {
+      isConnected: false,
+      lastMessageId: 0,
+    }
 
-  return state
-}, {} as SSESliceState)
+    return state
+  }, {} as SSESliceState['channels']),
+}
 
 type UpdateConnectStatus = { isConnected: boolean, eventType: SSEChannels }
 type UpdateMessageId = { eventType: SSEChannels, id: number }
@@ -34,17 +40,15 @@ const sseSlice = createSlice({
     ) {
       const { isConnected, eventType } = action.payload
 
-      state[eventType] = { ...state[eventType], isConnected }
+      state.channels[eventType] = { ...state.channels[eventType], isConnected }
     },
     updateMessageId(state, action: PayloadAction<UpdateMessageId>) {
       const { eventType, id } = action.payload
 
-      state[eventType] = { ...state[eventType], lastMessageId: id }
+      state.channels[eventType] = { ...state.channels[eventType], lastMessageId: id }
     },
     setAllConnected(state, action: PayloadAction<boolean>) {
-      (Object.keys(state) as Array<keyof typeof state>).forEach((key) => {
-        state[key].isConnected = action.payload
-      })
+      state.isAllConnected = action.payload
     },
     resetState() {
       return initialState
@@ -53,10 +57,10 @@ const sseSlice = createSlice({
   selectors: {
     getState: state => state,
     getEventStatus: (state, eventType: SSEChannels) => {
-      return state[eventType]
+      return state.channels[eventType]
     },
     getIsAllEventsConnected: (state) => {
-      return (Object.keys(state) as Array<keyof typeof state>).every(key => state[key].isConnected)
+      return state.isAllConnected
     },
   },
 })

@@ -15,8 +15,9 @@ import { ErrorPage } from '~pages/error/ui/error-page.ui'
 import type { Auction } from '~entities/auction/model'
 import { auctionActions } from '~entities/auction/store'
 
+import { getDonationsStatsThunk } from '~entities/donation/api'
+
 import { getAuctionInfo } from '~shared/api/http/auction/auction.api'
-import { getDonationsStats } from '~shared/api/http/donations'
 
 import type { ErrorStatusesWithReason } from '~shared/constants/router'
 import { errorStatusReasons } from '~shared/constants/router'
@@ -33,11 +34,13 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
     ),
     loader: async ({ params }) => {
       const storeState = store.getState()
+      const dispatch = store.dispatch
+
       const storedAuctionInfo = storeState.auction.auctionInfo
 
-      const isAlreadyLoaded = !!storedAuctionInfo.id
+      const isAuctionInfoHasBeenLoaded = !!storedAuctionInfo.id
 
-      if (isAlreadyLoaded)
+      if (isAuctionInfoHasBeenLoaded)
         return storedAuctionInfo
 
       const validatedParams = z
@@ -57,7 +60,7 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
       try {
         const auctionUUID = validatedParams.data.auctionId
 
-        const requestsArr = [getAuctionInfo<Auction>(auctionUUID), getDonationsStats(auctionUUID)]
+        const requestsArr = [getAuctionInfo<Auction>(auctionUUID), dispatch(getDonationsStatsThunk(auctionUUID))] as const
         const responses = await Promise.all(requestsArr)
 
         responses.forEach((response) => {
@@ -66,9 +69,7 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
           }
         })
 
-        const auctionInfoResponse = responses[0]
-
-        const auctionInfo = auctionInfoResponse.data as Auction
+        const auctionInfo = responses[0].data
         store.dispatch(auctionActions.setAuction(auctionInfo))
 
         return auctionInfo

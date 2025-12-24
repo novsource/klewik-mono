@@ -1,9 +1,10 @@
 import type { NumberFlowProps } from '@number-flow/react'
 
 import type { ComponentProps, ReactNode } from 'react'
-import { forwardRef } from 'react'
+import { forwardRef, useMemo } from 'react'
 
 import NumberFlow from '@number-flow/react'
+import { transform } from 'motion'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
@@ -137,13 +138,24 @@ export const AuctionSlotCardContentInfoWrapper = (props: AuctionSlotCardContentI
 
 export type AuctionSlotCardWinPercentsProps = Omit<ComponentProps<'div'>, 'children'> & {
   winPercents: number
+  bounds?: {
+    min: number
+    max: number
+  }
   numberFlowProps?: NumberFlowProps
 }
 
 export const AuctionSlotCardWinPercents = (props: AuctionSlotCardWinPercentsProps) => {
-  const { winPercents, numberFlowProps, ...restProps } = props
+  const { winPercents, numberFlowProps, bounds, ...restProps } = props
 
-  const isLargeThenTablet = useMediaQuery(tailwindScreens.tablet)
+  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+
+  const color = useMemo(() => {
+    if (!bounds)
+      return 'var(--color-green)'
+
+    return transform(winPercents, [bounds.min, bounds.max], ['#f76b63', '#3f9663'])
+  }, [bounds, winPercents])
 
   return (
     <AuctionSlotCardContentInfoWrapper
@@ -155,7 +167,7 @@ export const AuctionSlotCardWinPercents = (props: AuctionSlotCardWinPercentsProp
       {...restProps}
     >
       <NumberFlow
-        className="text-green font-golos-f font-semibold text-sm tablet:text-md tablet:leading-4"
+        className={cn('font-golos-f font-semibold text-sm tablet:text-md tablet:leading-4')}
         willChange
         trend={0}
         value={winPercents}
@@ -165,6 +177,7 @@ export const AuctionSlotCardWinPercents = (props: AuctionSlotCardWinPercentsProp
         }}
         locales="ru-RU"
         suffix="%"
+        style={{ color }}
         {...numberFlowProps}
       />
     </AuctionSlotCardContentInfoWrapper>
