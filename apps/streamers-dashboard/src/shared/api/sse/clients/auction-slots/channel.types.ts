@@ -15,6 +15,5 @@ export type AuctionSlotsEventsMap = {
 }
 
 export type AuctionSlotsEventsCallbacks = {
-  'auction-slots/add': (data: AuctionSlotDTO[]) => void
-  'auction-slots/update': (data: AuctionSlotDTO) => void
+  [Event in keyof AuctionSlotsEventsMap]: (data: AuctionSlotsEventsMap[Event]) => void
 }

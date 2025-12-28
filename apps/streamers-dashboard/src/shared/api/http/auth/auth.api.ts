@@ -12,7 +12,7 @@ export const loginInAuction = async (
 ) => {
   return authHttpClient.post<void>(AUTH_ENDPOINTS.LOGIN, {
     ...fetchOptions,
-    data: { auctionId: uuid, password },
+    data: { auctionUUID: uuid, password },
   })
 }
 

@@ -7,10 +7,10 @@ import { GlobalDialogs } from '~features/_common/display-dialogs'
 import { isAxiosError } from 'axios'
 import { z } from 'zod'
 
-import { DashboardLayout } from '~app/layouts'
-import { store } from '~app/store'
+import { rootStore } from '~app/store/store'
 
-import { ErrorPage } from '~pages/error/ui/error-page.ui'
+import { DashboardLayout } from '~pages/dashboard-layout'
+import { ErrorPage } from '~pages/error/ui'
 
 import type { Auction } from '~entities/auction/model'
 import { auctionActions } from '~entities/auction/store'
@@ -33,8 +33,8 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
       </>
     ),
     loader: async ({ params }) => {
-      const storeState = store.getState()
-      const dispatch = store.dispatch
+      const storeState = rootStore.getState()
+      const dispatch = rootStore.dispatch
 
       const storedAuctionInfo = storeState.auction.auctionInfo
 
@@ -70,7 +70,7 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
         })
 
         const auctionInfo = responses[0].data
-        store.dispatch(auctionActions.setAuction(auctionInfo))
+        rootStore.dispatch(auctionActions.setAuction(auctionInfo))
 
         return auctionInfo
       }
