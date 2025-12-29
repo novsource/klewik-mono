@@ -65,6 +65,7 @@ export const splittedAuctionApi = createApi({
     getAuctionInfo: builder.query<Auction, GetAuctionInfoQueryArgs>({
       query: ({ auctionUUID }) => ({ url: `/${auctionUUID}` }),
       providesTags: ['Info'],
+
     }),
     updateBetsStatus: builder.mutation<void, UpdateBetsStatusQueryArgs>({
       query: ({ auctionUUID, status }) => ({

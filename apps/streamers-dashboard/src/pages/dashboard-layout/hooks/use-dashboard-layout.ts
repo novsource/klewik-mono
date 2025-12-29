@@ -10,6 +10,12 @@ export type useDashboardLayoutReturn = {
 }
 
 export const useDashboardLayout = (auctionUUID: Auction['auctionUUID']): useDashboardLayoutReturn => {
+  const sseHookReturn = useConnectToDashboardSSEEvents(auctionUUID)
+
+  return { ...sseHookReturn }
+}
+
+function useConnectToDashboardSSEEvents(auctionUUID: string) {
   const { isAllEventsConnected, connectToSSEEvents, isPending, isTabLeader } = useAppSSE()
 
   const isTabInitAsLeaderRef = useRef(isTabLeader)

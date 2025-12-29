@@ -39,8 +39,8 @@ export const DonationSchema = z.object({
   messageType: z.enum(['audio', 'empty', 'text']),
   amount: z.number(),
   currency: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.string().date(),
+  updatedAt: z.string().date(),
 })
 
 export const ProcessedDonationSchema = DonationSchema.extend({

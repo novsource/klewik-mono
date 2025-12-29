@@ -12,12 +12,12 @@ import { rootStore } from '~app/store/store'
 import { DashboardLayout } from '~pages/dashboard-layout'
 import { ErrorPage } from '~pages/error/ui'
 
-import type { Auction } from '~entities/auction/model'
+import { splittedAuctionApi } from '~entities/auction/api'
 import { auctionActions } from '~entities/auction/store'
 
-import { getDonationsStatsThunk } from '~entities/donation/api'
+import { splittedDonationApi } from '~entities/donation/api'
 
-import { getAuctionInfo } from '~shared/api/http/auction/auction.api'
+import { splittedIntegrationsApi } from '~entities/integrations/api/integrations.api'
 
 import type { ErrorStatusesWithReason } from '~shared/constants/router'
 import { errorStatusReasons } from '~shared/constants/router'
@@ -60,7 +60,11 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
       try {
         const auctionUUID = validatedParams.data.auctionId
 
-        const requestsArr = [getAuctionInfo<Auction>(auctionUUID), dispatch(getDonationsStatsThunk(auctionUUID))] as const
+        const requestsArr = [
+          dispatch(splittedAuctionApi.endpoints.getAuctionInfo.initiate({ auctionUUID })),
+          dispatch(splittedDonationApi.endpoints.getDonationsStats.initiate({ auctionUUID })),
+          dispatch(splittedIntegrationsApi.endpoints.getConnectedIntegrations.initiate({ auctionUUID })),
+        ] as const
         const responses = await Promise.all(requestsArr)
 
         responses.forEach((response) => {
@@ -70,6 +74,13 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
         })
 
         const auctionInfo = responses[0].data
+
+        if (!auctionInfo) {
+          throw json({
+            reason: 'Аукцион не найден',
+          }, { status: 404 })
+        }
+
         rootStore.dispatch(auctionActions.setAuction(auctionInfo))
 
         return auctionInfo
