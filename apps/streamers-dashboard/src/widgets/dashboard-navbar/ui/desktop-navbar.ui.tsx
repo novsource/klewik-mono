@@ -26,7 +26,7 @@ export const DesktopNavbar = memo(() => {
   const menuItems = useMemo(() => {
     return paths.reduce<ReactNode[]>((acc, curr: (typeof paths)[number]) => {
       const menuIcon = {
-        '/wheel': <Icons.Wheel size={isLargeThenTablet ? 'sm' : 'default'} />,
+        '/wheel': <Icons.Gamepad size={isLargeThenTablet ? 'sm' : 'default'} />,
         '/donations': (
           <Icons.MoneyHand size={isLargeThenTablet ? 'default' : 'default'} />
         ),

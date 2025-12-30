@@ -16,12 +16,17 @@ const dialogBackdropVariants = cva([
 
 const dialogContentVariants = cva([
   'bg-dark z-50 grid w-full max-w-[calc(100%-2rem)] gap-4 rounded-lg border py-3.5 pl-4 pr-3.5 shadow-lg sm:max-w-lg',
-  'fixed translate-x-[-50%] translate-y-[-50%] top-[50%] left-[50%] shadow-md',
+  'fixed -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 shadow-md',
 ], {
   variants: {
     disableAnimation: {
       true: '',
-      false: ['duration-200', 'data-[closed]:zoom-out-95 data-[open]:zoom-in-95', 'data-[open]:animate-in data-[closed]:animate-out data-[closed]:fade-out-0 data-[open]:fade-in-0'],
+      false: [
+        'duration-200',
+        'data-[closed]:zoom-out-95 data-[open]:zoom-in-95',
+        'data-[open]:animate-in data-[closed]:animate-out data-[closed]:fade-out-0 data-[open]:fade-in-0',
+        'top-[calc(50%+1.25rem*var(--nested-dialogs))] scale-[calc(1-0.1*var(--nested-dialogs))]',
+      ],
     },
   },
   defaultVariants: {

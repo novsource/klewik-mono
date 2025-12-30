@@ -248,7 +248,7 @@ function SearchBar(props: SearchBarProps) {
         </AnimatePresence>
       )}
       placeholder="Искать по слотам или донатам..."
-      size={isLargeThenTablet ? 'default' : 'sm'}
+      size={isLargeThenTablet ? 'lg' : 'default'}
       value={value}
       {...restProps}
     />

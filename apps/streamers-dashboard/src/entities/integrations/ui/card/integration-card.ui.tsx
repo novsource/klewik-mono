@@ -93,7 +93,7 @@ export type BaseIntegrationCardFooterProps = CardFooterProps
 export const BaseIntegrationCardFooter = (props: BaseIntegrationCardFooterProps) => {
   const { className, ...restProps } = props
 
-  return <CardFooter className={cn('bg-dark/30 border-t-dark-accent border-t-1 px-4 py-1.5 rounded-b-medium', className)} {...restProps} />
+  return <CardFooter className={cn('px-4 py-1.5 rounded-b-medium', className)} {...restProps} />
 }
 
 export type BaseIntegrationCardPlatformIconProps = ComponentPropsWithoutRef<'div'> & {

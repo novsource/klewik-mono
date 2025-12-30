@@ -127,9 +127,9 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
         ghost: 'data-[focus=true]:bg-dark-foreground data-[hover=true]:bg-dark-foreground/40 data-[focus=true]:data-[hover=true]:bg-dark-foreground',
       },
       size: {
-        default: 'h-10.5',
-        sm: 'h-9.5',
-        lg: 'h-11.5',
+        default: 'h-9.75',
+        sm: 'h-9.25',
+        lg: 'h-10.25',
       },
       isError: { true: 'ring-1 ring-red/80', false: 'ring-gray-light' },
       isDisabled: {
@@ -159,9 +159,9 @@ export const inputVariants = cva<InputVariants>(
   {
     variants: {
       size: {
-        default: 'text-base px-3.75',
-        lg: 'text-base px-4 placeholder:text-base',
-        sm: 'text-md px-3 py-2',
+        default: 'text-base px-3 py-1.5',
+        lg: 'text-lg placeholder:text-lg',
+        sm: 'text-md px-2.5 py-1.25',
       },
       isError: {
         true: 'focus-visible:ring-red',
@@ -218,19 +218,19 @@ export const inputVariants = cva<InputVariants>(
         startContent: true,
         endContent: false,
         size: 'lg',
-        className: 'pl-12',
+        className: 'pl-10',
       },
       {
         startContent: false,
         endContent: true,
         size: 'lg',
-        className: 'pr-12',
+        className: 'pr-10',
       },
       {
         startContent: true,
         endContent: true,
         size: 'lg',
-        className: 'px-12',
+        className: 'px-10',
       },
     ],
     defaultVariants: {
