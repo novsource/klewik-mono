@@ -18,8 +18,10 @@ import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import type { SortingOptions } from '~shared/store/model'
 
+import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
 import type { ComboboxData } from '~shared/ui/combobox'
+import type { CommandProps } from '~shared/ui/command'
 import { Command, CommandItem, CommandList } from '~shared/ui/command'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
@@ -33,6 +35,7 @@ import {
   SelectList,
   SelectTrigger,
 } from '~shared/ui/select'
+import type { SheetProps } from '~shared/ui/sheet'
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~shared/ui/sheet'
 
 import { cn, twSlotsStyles } from '~shared/utils'
@@ -86,8 +89,6 @@ export const SortingSlotsCombobox = memo((props: SortingSlotsComboboxProps) => {
     greaterThenDeviceWidthMediaQueries.tablet,
   )
 
-  const drawerStyles = useMemo(() => twSlotsStyles(sortingDrawerStyles, drawerClassnames), [drawerClassnames])
-
   const defaultSortValue = useMemo(() => {
     const defaultOptions = sortingSlotsVariants.find(variant =>
       shallowEqual(variant.sortingOptions, options),
@@ -119,69 +120,41 @@ export const SortingSlotsCombobox = memo((props: SortingSlotsComboboxProps) => {
 
   if (!isLargeThenTablet) {
     return (
-      <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetTrigger render={<Button isIconOnly icon={<Icons.Sort />} size="sm" />} />
-        <SheetContent
-          className="w-full h-fit min-h-60 top-auto rounded-t-large border-t-1 border-t-dark-light gap-y-1.5"
-          side="bottom"
-          isFullPageSize
-        >
-          <SheetHeader className="w-full h-fit flex flex-row justify-between shrink pt-2 items-start mb-2.5">
-            <Flex className="justify-start" direction="column">
-              <SheetTitle className="text-title font-semibold text-start">
-                Сортировать по
-              </SheetTitle>
-            </Flex>
-            <SheetClose
-              className="text-gray-light hover:text-gray-accent"
-            >
-              <Icons.LargeCross />
-            </SheetClose>
-          </SheetHeader>
-          <Command
-            value={defaultSortValue}
-            className={drawerStyles.content}
-            onValueChange={handleOnValueChange}
-            disablePointerSelection
-          >
-            <CommandList>
-              {sortingSlotsVariants.map(variant => (
-                <CommandItem key={variant.value} className={drawerStyles.contentItem} value={variant.value}>
-                  {variant.icon}
-                  <Flex className="w-full" justify="between" align="center">
-                    {variant.label}
-                    {shallowEqual(storeSlotsSortOptions, variant.sortingOptions) && <LucideCheck className="size-5" />}
-                  </Flex>
-                </CommandItem>
-              ))}
-            </CommandList>
-          </Command>
-          <Flex className="gap-y-2 mt-4" direction="column">
-            <Button
-              className={drawerStyles.footerActionButton}
-              variant="action"
-              disabled={isConfirmButtonDisabled}
-              onClick={handleOnConfirm}
-            >
-              Применить
-            </Button>
-            <Button className={drawerStyles.footerResetButton} onClick={() => setIsOpen(false)}>Закрыть</Button>
-          </Flex>
-        </SheetContent>
-      </Sheet>
+      <MobileSortingSlotsSheet
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        commandProps={{
+          value: defaultSortValue,
+          onValueChange: handleOnValueChange,
+        }}
+        confirmSortingButtonProps={{
+          disabled: isConfirmButtonDisabled,
+          onClick: handleOnConfirm,
+        }}
+        closeSheetButtonProps={{
+          onClick: () => setIsOpen(false),
+        }}
+      />
     )
   }
 
   return (
-    <Select
-      items={sortingSlotsVariants}
+    <DesktopSortingSlotsSelect
       open={isOpen}
       defaultValue={defaultSortValue}
       onValueChange={handleOnValueChange}
       onOpenChange={setIsOpen}
-      size="sm"
-      {...restProps}
-    >
+    />
+  )
+})
+
+type DesktopSortingSlotsSelectProps = SelectProps<string, false>
+
+function DesktopSortingSlotsSelect(props: DesktopSortingSlotsSelectProps) {
+  const storeSlotsSortOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
+
+  return (
+    <Select items={sortingSlotsVariants} {...props}>
       <SelectTrigger
         className="text-gray-accent"
         leftIcon={(
@@ -206,4 +179,77 @@ export const SortingSlotsCombobox = memo((props: SortingSlotsComboboxProps) => {
       </SelectContent>
     </Select>
   )
-})
+}
+
+type MobileSortingSlotsSheetProps = SheetProps & {
+  commandProps: Omit<CommandProps, 'className'>
+  drawerClassnames?: Partial<Record<SortingDrawerStylesSlots, string>>
+  confirmSortingButtonProps?: ButtonProps
+  closeSheetButtonProps?: ButtonProps
+}
+
+function MobileSortingSlotsSheet(props: MobileSortingSlotsSheetProps) {
+  const {
+    drawerClassnames,
+    commandProps: { defaultValue, ...commandProps },
+    confirmSortingButtonProps,
+    closeSheetButtonProps,
+    ...restProps
+  } = props
+
+  const storeSlotsSortOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
+
+  const drawerStyles = useMemo(() => twSlotsStyles(sortingDrawerStyles, drawerClassnames), [drawerClassnames])
+
+  return (
+    <Sheet {...restProps}>
+      <SheetTrigger render={<Button isIconOnly icon={<Icons.Sort />} size="sm" />} />
+      <SheetContent
+        className="w-full h-fit min-h-60 top-auto rounded-t-large border-t-1 border-t-dark-light gap-y-1.5"
+        side="bottom"
+        isFullPageSize
+      >
+        <SheetHeader className="w-full h-fit flex flex-row justify-between shrink pt-2 items-start mb-2.5">
+          <Flex className="justify-start" direction="column">
+            <SheetTitle className="text-title font-semibold text-start">
+              Сортировать по
+            </SheetTitle>
+          </Flex>
+          <SheetClose
+            className="text-gray-light hover:text-gray-accent"
+          >
+            <Icons.LargeCross />
+          </SheetClose>
+        </SheetHeader>
+        <Command
+          value={defaultValue}
+          className={drawerStyles.content}
+          disablePointerSelection
+          {...commandProps}
+        >
+          <CommandList>
+            {sortingSlotsVariants.map(variant => (
+              <CommandItem key={variant.value} className={drawerStyles.contentItem} value={variant.value}>
+                {variant.icon}
+                <Flex className="w-full" justify="between" align="center">
+                  {variant.label}
+                  {shallowEqual(storeSlotsSortOptions, variant.sortingOptions) && <LucideCheck className="size-5" />}
+                </Flex>
+              </CommandItem>
+            ))}
+          </CommandList>
+        </Command>
+        <Flex className="gap-y-2 mt-4" direction="column">
+          <Button
+            className={drawerStyles.footerActionButton}
+            variant="action"
+            {...confirmSortingButtonProps}
+          >
+            Применить
+          </Button>
+          <Button className={drawerStyles.footerResetButton} {...closeSheetButtonProps}>Закрыть</Button>
+        </Flex>
+      </SheetContent>
+    </Sheet>
+  )
+}

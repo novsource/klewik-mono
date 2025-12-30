@@ -88,7 +88,6 @@ function ListActionsPanel(props: ListActionsPanelProps) {
               className="z-50 w-full max-tablet:hidden"
               variant="action"
               startContent={<Icons.Plus size="sm" />}
-              size="sm"
               disabled={disabled}
             >
               Добавить слоты
