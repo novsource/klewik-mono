@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
-import type { MutableRefObject, Ref } from 'react'
+import type { LegacyRef, MutableRefObject, Ref } from 'react'
 
 import { isFunction } from '~shared/utils'
 
-export type MaybeRef<T> = Ref<T> | undefined
+export type MaybeRef<T> = Ref<T> | LegacyRef<T> | undefined
 
 export const useMergedRefs = <T>(...refs: Array<MaybeRef<T>>) => {
   return useCallback((instance: NullablePossible<T>) => {

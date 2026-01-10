@@ -59,7 +59,7 @@ export const selectListVariants = cva([
 
 export const selectPopupVariants = cva(
   [
-    'bg-dark relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin)',
+    'group bg-dark relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-[var(--transform-origin)] bg-clip-padding',
     'text-gray overflow-x-hidden overflow-y-auto rounded-md border border-dark-accent shadow-md',
     'data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.9]',
     'data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.9]',
