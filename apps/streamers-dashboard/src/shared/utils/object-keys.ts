@@ -21,7 +21,3 @@ export const objectToDeps = <Obj extends Record<string, unknown>, Keys extends A
 
   return Object.values(depsObject)
 }
-
-const test = { hello: 'world', test: 'test2' }
-
-const test2 = objectToDeps(test)

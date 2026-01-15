@@ -2,6 +2,7 @@ import { default as ArrowRight } from './ArrowRight';
 import { default as Bill } from './Bill';
 import { default as Bin } from './Bin';
 import { default as Bold } from './Bold';
+import { default as BulletList } from './BulletList';
 import { default as CardSend } from './CardSend';
 import { default as Check } from './Check';
 import { default as Close } from './Close';
@@ -24,6 +25,8 @@ import { default as Filter } from './Filter';
 import { default as Gamepad } from './Gamepad';
 import { default as Github } from './Github';
 import { default as Hamburger } from './Hamburger';
+import { default as Heading1 } from './Heading1';
+import { default as Heading2 } from './Heading2';
 import { default as HeadingSymbol } from './HeadingSymbol';
 import { default as Home } from './Home';
 import { default as Id } from './Id';
@@ -47,6 +50,7 @@ import { default as MoneyBag } from './MoneyBag';
 import { default as MoneyHand } from './MoneyHand';
 import { default as OpenArrow } from './OpenArrow';
 import { default as OpenBets } from './OpenBets';
+import { default as OrderedList } from './OrderedList';
 import { default as Palette } from './Palette';
 import { default as Pause } from './Pause';
 import { default as Pencil } from './Pencil';
@@ -74,6 +78,7 @@ import { default as Status } from './Status';
 import { default as Stop } from './Stop';
 import { default as Success } from './Success';
 import { default as Telegram } from './Telegram';
+import { default as Text } from './Text';
 import { default as Timer } from './Timer';
 import { default as Tuning } from './Tuning';
 import { default as TwitchLogo } from './TwitchLogo';
@@ -89,6 +94,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Bill,
   Bin,
   Bold,
+  BulletList,
   CardSend,
   Check,
   Close,
@@ -111,6 +117,8 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Gamepad,
   Github,
   Hamburger,
+  Heading1,
+  Heading2,
   HeadingSymbol,
   Home,
   Id,
@@ -134,6 +142,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   MoneyHand,
   OpenArrow,
   OpenBets,
+  OrderedList,
   Palette,
   Pause,
   Pencil,
@@ -161,6 +170,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Stop,
   Success,
   Telegram,
+  Text,
   Timer,
   Tuning,
   TwitchLogo,

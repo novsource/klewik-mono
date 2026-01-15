@@ -1,3 +1,4 @@
+import { WysiwygEditorProvider } from '~shared/components/editor/context'
 import { domAnimation, LazyMotion } from 'motion/react'
 
 import { AppRouter } from './routing'
@@ -7,7 +8,9 @@ export const App = () => {
   return (
     <StoreProvider>
       <LazyMotion features={domAnimation}>
-        <AppRouter />
+        <WysiwygEditorProvider>
+          <AppRouter />
+        </WysiwygEditorProvider>
       </LazyMotion>
     </StoreProvider>
   )

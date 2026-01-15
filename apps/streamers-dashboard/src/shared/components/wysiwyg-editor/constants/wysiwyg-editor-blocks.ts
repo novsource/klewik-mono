@@ -1,1 +1,0 @@
-export const WYSIWYG_EDITOR_BLOCK_ELEMENTS = ['P', 'H1', 'H2', 'H3', 'BLOCKQUOTE', 'PRE']

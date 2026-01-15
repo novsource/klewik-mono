@@ -150,10 +150,10 @@ export const inputVariants = cva<InputVariants>(
   [
     'flex h-full w-full items-center',
     'dark bg-transparent',
-    'font-medium text-white caret-white',
+    'font-medium text-white/70 caret-white',
     'file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground',
     'disabled:cursor-not-allowed disabled:opacity-50',
-    'focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-hidden',
+    'focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-hidden focus-visible:text-white',
     'placeholder:text-gray placeholder:text-md',
   ],
   {
