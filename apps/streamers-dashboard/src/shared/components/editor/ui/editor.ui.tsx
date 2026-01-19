@@ -3,6 +3,7 @@ import type { BubbleMenuProps } from '@tiptap/react/menus'
 
 import type { WysiwygEditorPossibleCommands } from '../constants/editor-commands'
 
+import type { ComponentPropsWithoutRef } from 'react'
 import { useMemo, useState } from 'react'
 
 import { EditorContent, useEditorState } from '@tiptap/react'
@@ -35,16 +36,17 @@ import {
   WysiwygEditorViewedCommandsGroup,
 } from './editor-commands.ui'
 
-type WysiwygEditorProps = {
+export type WysiwygEditorProps = Omit<ComponentPropsWithoutRef<'div'>, 'className'> & {
   editor: TiptapEditor
+  slotsClassNames?: Partial<Record<'base' | 'wrapper', string>>
 }
 
 export const WysiwygEditor = (props: WysiwygEditorProps) => {
-  const { editor } = props
+  const { editor, slotsClassNames, ...restProps } = props
 
   return (
-    <div id={editor.instanceId} className="relative w-full h-full">
-      <div className="flex flex-col gap-y-4 h-full w-full px-4 py-2">
+    <div id={editor.instanceId} className={cn('relative w-full h-full overflow-y-scroll', slotsClassNames?.base)} {...restProps}>
+      <div className={cn('flex flex-col gap-y-4 h-full w-full px-4 py-2', slotsClassNames?.wrapper)}>
         <WysiwygEditorToolbar editor={editor} />
         <EditorContent editor={editor} className="focus:outline-none min-h-24 grow" />
         <WysiwygEditorBubbleMenu editor={editor} />
@@ -52,7 +54,6 @@ export const WysiwygEditor = (props: WysiwygEditorProps) => {
         <WysiwygEditorCharactersCounter editor={editor} />
       </div>
     </div>
-
   )
 }
 

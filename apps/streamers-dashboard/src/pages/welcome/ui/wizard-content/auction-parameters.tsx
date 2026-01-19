@@ -1,20 +1,27 @@
+import { useCurrentEditor } from '@tiptap/react'
+import { AuctionTextRulesWysiwygEditorDialog } from '~features/settings/set-text-rules/ui'
+import { Text, Title } from '~shared/components/typography'
+
 import { WELCOME_PAGE_WIZARD_ITEMS_IDS } from '~pages/welcome/constants'
 
 import { AuctionInitialParametersForm } from '~features/auction/set-initial-parameters/ui'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
-import { Typography } from '~shared/ui/typograghy'
+import { Skeleton } from '~shared/ui/skeleton'
+import { toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
 import type { WizardItemProps } from '~shared/ui/wizard'
 import { WizardItem, WizardTrigger } from '~shared/ui/wizard'
 import { useWizardContext } from '~shared/ui/wizard/context'
 
 import { cn } from '~shared/utils'
 
-const WizardAuctionParametersItem = (
+export const WizardAuctionParametersItem = (
   props: Omit<WizardItemProps, 'value' | 'children'>,
 ) => {
   const { className, ...restProps } = props
+
+  const { editor } = useCurrentEditor()
 
   const { next, getNodesById } = useWizardContext()
 
@@ -31,27 +38,35 @@ const WizardAuctionParametersItem = (
           <Button size="sm">Пропустить этот шаг</Button>
         </WizardTrigger>
         <Flex className="gap-y-2" direction="column">
-          <Typography tag="h1">
-            Настройки данных страницы аукциона для гостей
-          </Typography>
-          <Typography tag="p" className="text-gray">
+          <Title>
+            Настройки деталей аукциона
+          </Title>
+          <Text className="text-gray">
             Здесь вы можете настроить название аукциона, которое будет
             отображаться на сайте для гостей (участников) аукциона
-          </Typography>
-          <Typography tag="p" className="text-gray">
-            Также вы можете добавить ссылки на стриминговые платформы где будет
+          </Text>
+          <Text className="text-gray">
+            Также, по желанию, вы можете добавить ссылки на стриминговые платформы где будет
             проводиться трансляция аукциона (на данный момент доступен Twitch и
             Youtube)
-          </Typography>
+          </Text>
         </Flex>
 
+        {editor
+          ? <AuctionTextRulesWysiwygEditorDialog editor={editor} />
+          : <Skeleton className="w-full h-10" />}
+
         <AuctionInitialParametersForm
-          onSuccess={() => next(nextIds ? nextIds[0] : '')}
+          onError={() => {
+            toastErrorNotification('Не удалось сохранить параметры. Попробуйте еще раз')
+          }}
+          onSuccess={() => {
+            toastSuccessNotification('Параметры успешно сохранены!')
+            next(nextIds ? nextIds[0] : '')
+          }}
         />
       </Flex>
 
     </WizardItem>
   )
 }
-
-export { WizardAuctionParametersItem }
