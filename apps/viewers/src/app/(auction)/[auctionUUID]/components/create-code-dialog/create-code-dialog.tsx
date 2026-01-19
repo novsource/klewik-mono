@@ -116,6 +116,7 @@ export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
 		if (isClosedManually) {
 			setIsDialogOpen(false)
 			setSelectedSlot(null)
+			setCode('')
 		}
 
 		if (isOpenManually) {
@@ -225,7 +226,11 @@ function CreateCodeForm(props: CreateCodeFormProps) {
 	const [titleLength, setTitleLength] = useState(selectedSlot?.title.length ?? 0)
 
 	const [state, formAction, isPending] = useActionState<CreateCodeFormState, FormData>(
-		(state, formData) => createDonationCodeAction({ auctionUUID, formData, formState: state }),
+		(state, formData) => {
+			formData.set('slotId', String(selectedSlot?.id ?? null))
+
+			return createDonationCodeAction({ auctionUUID, formData, formState: state })
+		},
 		{
 			errorTitleLength: '',
 		},

@@ -62,10 +62,12 @@ export const SlotsList = memo((props: SlotsListProps) => {
 	} = props
 
 	const [showedSlots, setShowedSlots] = useState(() => {
-		if (!filterTitle)
-			return slots
+		const sortedSlots = slots.sort((a, b) => b.points - a.points)
 
-		return slots.filter(slot => slot.title
+		if (!filterTitle)
+			return sortedSlots
+
+		return sortedSlots.filter(slot => slot.title
 			.toLowerCase()
 			.includes(filterTitle.toLowerCase()))
 	})

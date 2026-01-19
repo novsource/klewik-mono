@@ -13,12 +13,14 @@ export async function createDonationCodeAction(payload: CreateCodeActionPayload)
 	const { auctionUUID, formData } = payload
 
 	const slotTitle = formData.get('title')
+	const slotId = formData.get('slotId')
 
-	if (!slotTitle || slotTitle.toString().length < 3)
+	if (!slotTitle || !slotId || slotTitle.toString().length < 3)
 		return { errorTitleLength: 'Слишком короткое название слота. Минимальный размер - 3 символа' }
 
 	const rawFormData = {
 		title: slotTitle.toString(),
+		slotId: Number.isInteger(Number.parseInt(slotId.toString())) ? Number(slotId) : null,
 	}
 
 	try {

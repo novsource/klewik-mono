@@ -22,10 +22,11 @@ export const FiltredSlotsList = memo((
 		return (
 			<SearchSlotsInput
 				ref={inputRef}
+				disabled={slots.length === 0}
 				onChange={e => setSearchText(e.target.value)}
 			/>
 		)
-	}, [inputRef, setSearchText])
+	}, [inputRef, setSearchText, slots])
 
 	const handleSelectSlot = (slot: AuctionSlot) => {
 		setSelectedSlot(slot)

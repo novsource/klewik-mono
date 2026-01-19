@@ -3,6 +3,7 @@ import process from 'node:process'
 import { notFound } from 'next/navigation'
 import { Flex } from '~ui/flex'
 import { AuctionCaptions } from './components/auction-captions'
+import { AuctionRulesDialog } from './components/auction-rules-dialog/auction-rules-dialog'
 import { AuctionTitle } from './components/auction-title'
 import { CreateCodeDialog } from './components/create-code-dialog'
 import { FiltredSlotsList } from './components/slots-list/filtred-slots-list.ui'
@@ -10,16 +11,16 @@ import { FiltredSlotsList } from './components/slots-list/filtred-slots-list.ui'
 export const revalidate = 120
 export const dynamicParams = true
 
-async function getSlots(id: string) {
+async function getSlots(slug: string) {
 	const headers = new Headers()
 	headers.append('Content-type', 'application/json')
 
 	const response = await fetch(
-		`${process.env.SERVER_API_URL}/auctions/${id}/slots`,
+		`${process.env.SERVER_API_URL}/auctions/${slug}/slots`,
 		{
 			method: 'POST',
-			headers,
 			body: JSON.stringify({ secret: process.env.REVALIDATE_SECRET_KEY }),
+			headers,
 			cache: 'force-cache',
 		},
 	)
@@ -33,14 +34,14 @@ async function getSlots(id: string) {
 	return slots
 }
 
-async function getAuctionInfo(id: string) {
+async function getAuctionInfo(slug: string) {
 	const headers = new Headers()
 	headers.append('Content-type', 'application/json')
 
-	const response = await fetch(`${process.env.SERVER_API_URL}/auctions/${id}`, {
+	const response = await fetch(`${process.env.SERVER_API_URL}/auctions/${slug}`, {
 		method: 'POST',
-		headers,
 		body: JSON.stringify({ secret: process.env.REVALIDATE_SECRET_KEY }),
+		headers,
 	})
 
 	if (response.status === 404 || response.status === 400)
@@ -48,6 +49,20 @@ async function getAuctionInfo(id: string) {
 
 	const auction = (await response.json()) as Auction
 	return auction
+}
+
+async function getAuctionRules(slug: string) {
+	const headers = new Headers()
+	headers.append('Content-type', 'application/json')
+
+	const response = await fetch(`${process.env.SERVER_API_URL}/auctions/${slug}/info/rules`, {
+		method: 'POST',
+		body: JSON.stringify({ secret: process.env.REVALIDATE_SECRET_KEY }),
+	})
+
+	const rules = (await response.json()) ?? '' as string
+
+	return rules
 }
 
 export const generateStaticParams = async () => []
@@ -77,9 +92,10 @@ export default async function AuctionPage(props: AuctionPageProps) {
 
 	const auctionUUID = (await params).auctionUUID
 
-	const [slots, auctionInfo] = await Promise.all([
+	const [slots, auctionInfo, rules] = await Promise.all([
 		getSlots(auctionUUID),
 		getAuctionInfo(auctionUUID),
+		getAuctionRules(auctionUUID),
 	])
 
 	const date = new Intl.DateTimeFormat('ru-RU', {
@@ -102,7 +118,11 @@ export default async function AuctionPage(props: AuctionPageProps) {
 					>
 						<Flex className="gap-x-6 tablet:gap-x-8" justify="between" align="start">
 							<AuctionTitle title={auctionInfo.id} date={date} />
-							<CreateCodeDialog slots={slots} auctionUUID={auctionUUID} />
+
+							<Flex className="gap-x-2">
+								<AuctionRulesDialog rules={rules} />
+								<CreateCodeDialog slots={slots} auctionUUID={auctionUUID} />
+							</Flex>
 						</Flex>
 						<AuctionCaptions
 							createAt={date}

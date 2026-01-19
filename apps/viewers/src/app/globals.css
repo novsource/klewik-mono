@@ -258,3 +258,37 @@ input:-webkit-autofill:active {
 input:not(:-webkit-autofill) {
     animation-name: onAutoFillCancel;
 }
+
+.auction_rules h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.auction_rules h2 {
+    font-size: 21px;
+    font-weight: 600;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.auction_rules ol {
+    @apply pl-6 mb-2 tablet:pl-12 tablet:mb-3;
+}
+
+.auction_rules ol li {
+    list-style-type: decimal;
+}
+
+.auction_rules ul {
+    @apply pl-6 mb-2 tablet:pl-12 tablet:mb-3;
+}
+
+.auction_rules ul li {
+    list-style-type: disc;
+}
+
+.auction_rules {
+    @apply text-white/85;
+}
