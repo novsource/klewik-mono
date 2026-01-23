@@ -8,40 +8,37 @@ import type { ProcessedDonation } from '~entities/donation/model'
 
 import { DIALOGS_SLICE_INITIAL_STATE } from '../constants/slice-initial-state'
 
-type GlobalDialogState<Data = unknown> = {
+type DialogState<Data> = {
   isOpen: boolean
   initialData: Data
 }
 
 export type GlobalDialogsSliceState = {
-  mobileMenu: GlobalDialogState
-  search: GlobalDialogState
-  editSlot: GlobalDialogState<NullablePossible<AuctionSlot>>
-  processDonation: GlobalDialogState<NullablePossible<ProcessedDonation>>
-  createSlot: GlobalDialogState
-  settings: GlobalDialogState
+  mobileMenu: DialogState<null>
+  search: DialogState<null>
+  editSlot: DialogState<NullablePossible<AuctionSlot>>
+  processDonation: DialogState<NullablePossible<ProcessedDonation>>
+  createSlot: DialogState<null>
+  settings: DialogState<null>
 }
-
-export type GlobalDialogsNames = keyof GlobalDialogsSliceState
 
 const globalDialogsSlice = createSlice({
   initialState: DIALOGS_SLICE_INITIAL_STATE,
   name: 'globalDialogs',
   reducers: {
-    setDialogOpenStatus: (state, action: PayloadAction<{ dialog: GlobalDialogsNames, status: boolean }>) => {
+    setDialogOpenStatus: (state, action: PayloadAction<{ dialog: keyof GlobalDialogsSliceState, status: boolean }>) => {
       const { dialog, status } = action.payload
 
       state[dialog].isOpen = status
     },
-    setDialogState: (state, action: PayloadAction<{ dialog: GlobalDialogsNames, data: GlobalDialogState }>) => {
+    setDialogState: <DialogName extends keyof GlobalDialogsSliceState>(state: GlobalDialogsSliceState, action: PayloadAction<{ dialog: DialogName, data: GlobalDialogsSliceState[DialogName] }>) => {
       const { data, dialog } = action.payload
 
-      // @ts-expect-error TODO: rework slice
       state[dialog] = data
     },
   },
   selectors: {
-    getDialogState: (state, dialog: GlobalDialogsNames) => {
+    getDialogState: (state, dialog: keyof GlobalDialogsSliceState) => {
       return state[dialog]
     },
     getAllDialogsStates: (state) => {

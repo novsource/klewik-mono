@@ -4,11 +4,11 @@ import { deleteAllSpacesFromString } from '~shared/utils/string-format'
 
 import { createSlotSchema } from '../model'
 
-type TransformedCreateSlotsFormData = { slots: Array<Omit<AuctionSlot, 'id' | 'color'>> }
+type TransformedCreateSlotsFormData = { slots: Array<Omit<AuctionSlot, 'id' | 'color' | 'auctionSlotOrder'>> }
 
 const transformCreateSlotsFormData = () => {
-  return createSlotSchema.transform<TransformedCreateSlotsFormData>((val) => {
-    const transformedSlots = val.slots.map(slot => ({
+  return createSlotSchema.transform<TransformedCreateSlotsFormData>((value) => {
+    const transformedSlots = value.slots.map(slot => ({
       ...slot,
       points: typeof slot.points === 'number' ? slot.points : Number(deleteAllSpacesFromString(slot.points)),
     }))

@@ -51,7 +51,7 @@ describe('### Form with single slot', () => {
     const dublicatedTitle = 'Exist slot'
 
     await act(() => [
-      rootStore.dispatch(auctionSlotsActions.addSlots([{ color: '#FFF', id: 100, points: 1000, title: dublicatedTitle }])),
+      rootStore.dispatch(auctionSlotsActions.addSlots([{ auctionSlotOrder: 1, id: 100, points: 1000, title: dublicatedTitle }])),
     ])
 
     const firstTabTitleInput = screen.getByPlaceholderText('Название слота') satisfies HTMLInputElement
@@ -294,7 +294,7 @@ describe('### Slots percents input', () => {
     const pointsToPercents = (100 * defaultPointsValue) / (defaultPointsValue + auctionSlots.slotsPointsSum)
 
     expect(pointsInput.value).toBe(targetFormattedString)
-    expect(percentsInput.value).toBe(pointsToPercents.toFixed(2))
+    expect(Number(percentsInput.value)).toBe(pointsToPercents)
   })
 })
 

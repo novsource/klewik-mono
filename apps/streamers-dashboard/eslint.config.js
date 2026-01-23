@@ -24,6 +24,7 @@ const perfectionistFSDImportsGroups = [
   'entities:wheel',
   'shared:api',
   'shared:constants',
+  'shared:components',
   'shared:hooks',
   'shared:lib',
   'shared:router',
@@ -86,6 +87,10 @@ const perfectionistFSDImportsSharedSlice = [
   {
     groupName: 'shared:constants',
     elementNamePattern: ['^~shared/constants'],
+  },
+  {
+    groupName: 'shared:components',
+    elementNamePattern: ['^~shared/components'],
   },
   {
     groupName: 'shared:hooks',

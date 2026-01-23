@@ -37,13 +37,11 @@ describe('auction slots slice reducers', () => {
       points,
       id: 1000,
       auctionSlotOrder: 1000,
-      color: '#FFF',
       title: 'Test',
     }, {
       points,
       id: 1001,
       auctionSlotOrder: 1001,
-      color: '#FFF',
       title: 'Test 2',
     }]
 
@@ -54,20 +52,46 @@ describe('auction slots slice reducers', () => {
   })
 
   it('should update slot', () => {
+    const addedSlotArr: AuctionSlot[] = [{
+      points: 1000,
+      id: 1000,
+      auctionSlotOrder: 1000,
+      title: 'Test',
+    }, {
+      points: 1000,
+      id: 1001,
+      auctionSlotOrder: 1001,
+      title: 'Test 2',
+    }]
+
+    dispatch(auctionSlotsActions.addSlots(addedSlotArr))
+
     const randomSlotIndex = Math.floor(Math.random() * state.slots.length)
     const targetSlot = state.slots[randomSlotIndex]
 
     dispatch(auctionSlotsActions.updateSlot({ id: targetSlot.id, data: { ...targetSlot, title: 'Updated slot' } }))
-
     expect(state.slots[randomSlotIndex]).toEqual({ ...targetSlot, title: 'Updated slot' })
   })
 
   it('should delete slot', () => {
+    const addedSlotArr: AuctionSlot[] = [{
+      points: 1000,
+      id: 1000,
+      auctionSlotOrder: 1000,
+      title: 'Test',
+    }, {
+      points: 1000,
+      id: 1001,
+      auctionSlotOrder: 1001,
+      title: 'Test 2',
+    }]
+
+    dispatch(auctionSlotsActions.addSlots(addedSlotArr))
+
     const randomSlotIndex = Math.floor(Math.random() * state.slots.length)
     const targetSlot = state.slots[randomSlotIndex]
 
     dispatch(auctionSlotsActions.deleteSlot({ id: targetSlot.id }))
-
     expect(state.slots).not.include(targetSlot)
   })
 
@@ -78,13 +102,11 @@ describe('auction slots slice reducers', () => {
       points,
       id: 1000,
       auctionSlotOrder: 1000,
-      color: '#FFF',
       title: 'Test',
     }, {
       points,
       id: 1001,
       auctionSlotOrder: 1001,
-      color: '#FFF',
       title: 'Test 2',
     }]
 

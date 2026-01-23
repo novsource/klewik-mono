@@ -1,5 +1,5 @@
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 import { auctionSelectors } from '~entities/auction/store'
 
@@ -66,15 +66,16 @@ export const ProcessDonationContextProvider = (props: ProcessDonationContextProv
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const [donationCode, setDonationCode] = useState<ProcessDonationContextState['state']['donationCode']>(null)
-
   const [isBlockedActions, setIsBlockedActions] = useState(false)
   const [isConflict, setIsConflict] = useState(false)
+
+  const processedDonationIdRef = useRef(donation.id)
 
   const [getDonationCodeMutation, donationCodeMutationState]
     = useGetDonationCodeInfoMutation()
 
   const donationCodeQuery = useCallback(async (message: string | null) => {
-    if (!message || donationCodeMutationState.isLoading || donationCode || donation.id > 0)
+    if (!message || donationCodeMutationState.isLoading || donationCode || donation.id <= 0)
       return
 
     const code = getDonationCodeFromMessage(message || '')
@@ -92,14 +93,22 @@ export const ProcessDonationContextProvider = (props: ProcessDonationContextProv
 
     setDonationCode(response.data)
   }, [
+    getDonationCodeMutation,
     auctionUUID,
     donationCode,
     donationCodeMutationState.isLoading,
+    donation.id,
   ])
 
   useEffect(() => {
     donationCodeQuery(donation.message)
-  }, [donation.id])
+  }, [donation.id, donation.message, donationCodeQuery])
+
+  if (donation.id !== processedDonationIdRef.current) {
+    processedDonationIdRef.current = donation.id
+
+    setDonationCode(null)
+  }
 
   const contextValue = useMemo<ProcessDonationContextState>(() => ({
     state: {

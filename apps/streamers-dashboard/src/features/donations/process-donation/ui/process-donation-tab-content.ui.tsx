@@ -1,11 +1,8 @@
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
 
-import { useFormContext } from 'react-hook-form'
-
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
-import { SlotPointsFormInput } from '~entities/auction-slot/ui/form'
 
 import { DONATION_PROCESSED_STATUS } from '~entities/donation/constants'
 import type {
@@ -14,6 +11,8 @@ import type {
   ProcessedDonationStatus,
 } from '~entities/donation/model'
 import { getDonationCodeFromMessage } from '~entities/donation/utils'
+
+import { Text } from '~shared/components/typography'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -28,10 +27,9 @@ import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
-import { PROCESS_DONATION_FORM_ID } from '../constants'
 import { useProcessDonationContext } from '../context'
 import { ProcessDonationCard } from './dialog-card.ui'
-import { ProcessedDonationSlotTitleFormInput } from './form-fields.ui'
+import { ProcessDonationFormComposer } from './form-composer.ui'
 
 export type ProcessDonationTabContentProps = Omit<TabsContentProps, 'value'> & {
   donation: ProcessedDonation
@@ -45,9 +43,7 @@ export const ProcessDonationTabContent = (
 
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
-  const { state: { isConflict } } = useProcessDonationContext()
-
-  const { control } = useFormContext()
+  const { state: { isConflict, isDonationCodeLoading } } = useProcessDonationContext()
 
   return (
     <TabsContent
@@ -57,55 +53,43 @@ export const ProcessDonationTabContent = (
     >
       {isConflict && (
         <Caption variant="warn" className="w-full mb-4" title="Конфликт">
-          <Typography tag="p">
-            Внимание!!! Донат-код ссылается на слот, который был переименован или удален
-          </Typography>
-          <Typography tag="p">
-            В случае если слота с названием из поля "Желаемое название" (смотрите ниже) нет в аукционе, слот будет создан с данным названием.
-            Если вы хотите этого избежать этого, тогда измените содержание поля "Слот" на актуальное название слота
-          </Typography>
+          <Text className="max-tablet:text-sm">
+            Донат-код ссылается на слот, который был переименован или удален
+          </Text>
+          <Text className="max-tablet:text-sm">
+            Если слота с названием из поля "Желаемый слот" (смотрите ниже) нет в аукционе, то он будет создан.
+            При желании вы можете измените содержание поля "Слот" на актуальное название слота или любое другое название
+          </Text>
         </Caption>
       )}
-      <form id={PROCESS_DONATION_FORM_ID}>
-        <Flex className="w-full gap-y-1.5 tablet:gap-y-2" direction="column">
-          <ProcessedDonationCodeCard donation={donation} slots={auctionSlots} />
-          <DonationProcessStatusCard status={donation.processData.status} />
-          <ProcessDonationCard
-            className="pt-3 pb-1"
-            contentPosition="bottom"
-            title="Слот"
-            titleIcon={<Icons.Slots className="text-gray" size="xs" />}
-          >
-            <ProcessedDonationSlotTitleFormInput
-              items={auctionSlots}
-              formControllerProps={{
-                control,
-                name: 'title',
-              }}
-            />
-          </ProcessDonationCard>
-          <ProcessDonationCard
-            className="py-2"
-            contentPosition="right"
-            title="Очки"
-            titleIcon={<Icons.Coin className="text-gray" size="sm" />}
-          >
-            <SlotPointsFormInput
-              control={control}
-              name="points"
-              showPercentInput={false}
-              pointsInputProps={{
-                variant: 'ghost',
-                label: undefined,
-                startContent: undefined,
-                slotClassNames: { input: 'text-right text-white/80' },
-                isAllowed: value =>
-                  value?.floatValue ? value.floatValue <= 1_000_000 : true,
-              }}
-            />
-          </ProcessDonationCard>
-        </Flex>
-      </form>
+      <Flex className="w-full gap-y-1.5 tablet:gap-y-2" direction="column">
+        <ProcessedDonationCodeCard donation={donation} slots={auctionSlots} />
+        <DonationProcessStatusCard status={donation.processData.status} />
+        <ProcessDonationCard
+          className="pt-3 pb-1"
+          contentPosition="bottom"
+          title="Итоговое название слота"
+          titleIcon={<Icons.Slots className="text-gray" size="xs" />}
+        >
+          {isDonationCodeLoading
+            ? <Skeleton className="w-full h-9" />
+            : (
+                <ProcessDonationFormComposer.SlotTitleInput auctionSlots={auctionSlots} />
+              )}
+        </ProcessDonationCard>
+        <ProcessDonationCard
+          className="py-2"
+          contentPosition="right"
+          title="Очки"
+          titleIcon={<Icons.Coin className="text-gray" size="sm" />}
+        >
+          {isDonationCodeLoading
+            ? <Skeleton className="w-20 h-9" />
+            : (
+                <ProcessDonationFormComposer.SlotPointsInput />
+              )}
+        </ProcessDonationCard>
+      </Flex>
     </TabsContent>
   )
 }
@@ -119,10 +103,10 @@ function DonationProcessStatusCard(props: DonationProcessStatusCardProps) {
 
   const statusIcons: Record<ProcessedDonationStatus, ReactNode> = {
     added: <Icons.Success size="xs" />,
-    checkRequested: <Icons.Warning size="xs" />,
+    checkRequested: <Icons.Hourglass size="xs" />,
     empty: <Icons.LargeCross size="xs" />,
     error: <Icons.Close size="xs" />,
-    inProgress: <Icons.Warning size="xs" />,
+    inProgress: <Icons.Timer size="xs" />,
     rejected: <Icons.Decline size="xs" />,
   }
 

@@ -29,6 +29,7 @@ import { default as Heading1 } from './Heading1';
 import { default as Heading2 } from './Heading2';
 import { default as HeadingSymbol } from './HeadingSymbol';
 import { default as Home } from './Home';
+import { default as Hourglass } from './Hourglass';
 import { default as Id } from './Id';
 import { default as Info } from './Info';
 import { default as Integrations } from './Integrations';
@@ -121,6 +122,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Heading2,
   HeadingSymbol,
   Home,
+  Hourglass,
   Id,
   Info,
   Integrations,

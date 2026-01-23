@@ -1,6 +1,6 @@
-import { createSlotsFormResolver } from './form-resolver'
-import { transformCreateSlotsFormData } from './transform-form-data'
-import { TransformedCreateSlotsFormData } from './transform-form-data'
+import type { TransformedCreateSlotsFormData } from './transform-form-data'
 
-export { transformCreateSlotsFormData, createSlotsFormResolver }
+import { createSlotsFormResolver } from './form-resolver'
+
+export { createSlotsFormResolver }
 export type { TransformedCreateSlotsFormData }

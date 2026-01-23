@@ -41,13 +41,11 @@ describe('auction slots slice middlewares', () => {
       points,
       id: 1000,
       auctionSlotOrder: 1000,
-      color: '#FFF',
       title: 'Test',
     }, {
       points,
       id: 1001,
       auctionSlotOrder: 1001,
-      color: '#FFF',
       title: 'Test 2',
     }]
 
@@ -58,6 +56,20 @@ describe('auction slots slice middlewares', () => {
   })
 
   it('should update slots points sum on slot updating', () => {
+    const addedSlotArr: AuctionSlot[] = [{
+      points: 1000,
+      id: 1000,
+      auctionSlotOrder: 1000,
+      title: 'Test',
+    }, {
+      points: 1000,
+      id: 1001,
+      auctionSlotOrder: 1001,
+      title: 'Test 2',
+    }]
+
+    dispatch(auctionSlotsActions.addSlots(addedSlotArr))
+
     const randomSlotIndex = Math.floor(Math.random() * state.slots.length)
     const targetSlot = state.slots[randomSlotIndex]
 

@@ -1,7 +1,9 @@
 import type { CreateSlotForm } from '../model'
 import type { TransformedCreateSlotsFormData } from './transform-form-data'
 
-import type { FieldErrors, ResolverError, ResolverSuccess } from 'react-hook-form'
+import type { FieldError, FieldErrors, ResolverError, ResolverSuccess } from 'react-hook-form'
+
+import z from 'zod'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
@@ -21,8 +23,8 @@ type CreateSlotsFormZodResolver = (
 
 const zodFormValidation: CreateSlotsFormZodResolver = (values: unknown) => {
   const validationResult = createSlotSchema
-    .transform<TransformedCreateSlotsFormData>((val) => {
-      const transformedValuesArray = val.slots.map(slot => ({
+    .transform<TransformedCreateSlotsFormData>((value) => {
+      const transformedValuesArray: TransformedCreateSlotsFormData['slots'] = value.slots.map(slot => ({
         ...slot,
         points: typeof slot.points === 'number' ? slot.points : Number(deleteAllSpacesFromString(slot.points)),
       }))
@@ -31,35 +33,37 @@ const zodFormValidation: CreateSlotsFormZodResolver = (values: unknown) => {
     })
     .safeParse(values)
 
-  if (!validationResult.success) {
-    const formatedErrors = validationResult.error.errors.reduce<
-      FieldErrors<CreateSlotForm>
-    >(
-      (acc, error) => {
-        const fieldIndex = Number(error.path[1])
-        const fieldName = error.path[2]
+  if (!validationResult.success && validationResult.error) {
+    const errors = z.treeifyError(validationResult.error)
 
-        const fieldError = {
-          [fieldName]: {
-            message: error.message,
-            type: error.code,
-          },
-        }
+    if (!errors.properties?.slots?.items) {
+      return { values: {}, errors: {} }
+    }
 
-        if (acc.slots && !acc.slots[fieldIndex]) {
-          acc.slots[fieldIndex] = fieldError
-        }
+    const slotsErrorItems = errors.properties.slots.items
 
-        if (acc.slots && acc.slots[fieldIndex]) {
-          acc.slots[fieldIndex] = { ...acc.slots[fieldIndex], ...fieldError }
+    const formattedErrors = slotsErrorItems.reduce((acc, curr, index) => {
+      const tabFieldsErrors = curr.properties!
+
+      const formattedFields = (Object.keys(tabFieldsErrors) as Array<keyof typeof tabFieldsErrors>).reduce((acc, fieldName) => {
+        const fieldErrorValue = tabFieldsErrors[fieldName]
+
+        acc[fieldName] = {
+          type: 'validate',
+          message: fieldErrorValue?.errors.join('; '),
         }
 
         return acc
-      },
-      { slots: {} },
-    )
+      }, {} as Record<keyof typeof tabFieldsErrors, FieldError>)
 
-    return { values: {}, errors: formatedErrors }
+      if (acc.slots) {
+        acc.slots[index] = formattedFields
+      }
+
+      return acc
+    }, { slots: {} } as FieldErrors<CreateSlotForm>)
+
+    return { values: {}, errors: formattedErrors }
   }
 
   return { values: validationResult.data, errors: {} }
@@ -162,7 +166,7 @@ const checkSlotsDublicated: CheckSlotsOnDublicates = (
   return { values: { slots: slotsFromForm }, errors: {} }
 }
 
-const createSlotsFormResolver = (slots: AuctionSlot[]) => (values: unknown) => {
+export const createSlotsFormResolver = (slots: AuctionSlot[]) => (values: unknown) => {
   const validatedFormData = zodFormValidation(values)
 
   if (Object.keys(validatedFormData.errors).length !== 0)
@@ -179,5 +183,3 @@ const createSlotsFormResolver = (slots: AuctionSlot[]) => (values: unknown) => {
 
   return checkSlotsDublicated(castFormData, slots)
 }
-
-export { createSlotsFormResolver }

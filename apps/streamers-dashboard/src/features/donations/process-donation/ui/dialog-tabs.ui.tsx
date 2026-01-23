@@ -36,6 +36,7 @@ export const ProcessDonationDialogTabs = (props: ProcessDonationDialogTabsProps)
           Статус обработки
         </TabsTrigger>
       </TabsList>
+
       <DonationInfoTabContent donation={donation} />
       <ProcessDonationTabContent donation={donation} />
     </Tabs>

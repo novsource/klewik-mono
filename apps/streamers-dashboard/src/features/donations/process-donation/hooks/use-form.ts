@@ -5,7 +5,6 @@ import type { ProcessDonationForm } from '../model'
 
 import { useForm, useFormState } from 'react-hook-form'
 
-import { zodResolver } from '@hookform/resolvers/zod'
 import { isAxiosError } from 'axios'
 
 import type { Auction } from '~entities/auction/model'
@@ -26,7 +25,6 @@ export type UseProcessDonationFormArgs = {
 }
 
 const formDefaultValue: TransformedProcessDonationFormData = {
-  donationId: -1,
   title: '',
   points: 0,
 }
@@ -38,7 +36,7 @@ export const useProcessDonationForm = (args: UseProcessDonationFormArgs) => {
       title: args.defaultFormValues?.title || formDefaultValue.title,
       points: formatNumberToIntlString(args.defaultFormValues?.points || formDefaultValue.points),
     },
-    resolver: zodResolver(processDonationFormResolver()),
+    resolver: processDonationFormResolver,
   })
 
   const state = useFormState({ control: form.control })
