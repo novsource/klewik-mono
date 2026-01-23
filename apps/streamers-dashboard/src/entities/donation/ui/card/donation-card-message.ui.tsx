@@ -5,11 +5,12 @@ import { useRef, useState } from 'react'
 
 import { AnimatePresence } from 'motion/react'
 
+import { Text } from '~shared/components/typography'
+
 import { useElementSize } from '~shared/hooks'
 
 import { Accordion, AccordionItem, AccordionPanel, AccordionTrigger } from '~shared/ui/accordion'
 import { MotionBox } from '~shared/ui/motion-box'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
@@ -28,6 +29,8 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
 
   const { ref: messageContainerParentRef, value: messageContainerSizes } = useElementSize<HTMLDivElement>()
 
+  const toggleOpen = () => setIsOpen(curr => !curr)
+
   return (
     <div
       ref={messageContainerParentRef}
@@ -35,13 +38,13 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
       {...restProps}
     >
       <div
-        className="bg-dark-light rounded-md transition-[width] duration-500 px-2"
+        className="bg-dark-light rounded-md transition-[width] duration-500"
         onAnimationStart={() => setAccordionAnimatinoStatus('animating')}
         onAnimationEnd={() => setAccordionAnimatinoStatus('animated')}
       >
         <Accordion
           className="w-fit"
-          onValueChange={() => setIsOpen(curr => !curr)}
+          onValueChange={toggleOpen}
           style={{ width: isOpen ? messageContainerSizes.width : 'auto' }}
         >
           <AccordionItem>
@@ -53,7 +56,7 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
                 : 'Показать текст пожертвования'}
             </AccordionTrigger>
             <AccordionPanel className="bg-dark-light">
-              <div className="relative pb-2 px-1 font-golos-f text-md font-medium tracking-normal">
+              <div className="relative pb-2 px-3 font-golos-f text-md font-medium tracking-normal">
                 {accordionAnimationStatus === 'animating' && (
                   <span
                     ref={textRef}
@@ -81,9 +84,9 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
                     }}
                     transition={{ duration: 0.25, ease: 'easeInOut' }}
                   >
-                    <Typography className="max-mobile:text-sm max-mobile:font-normal text-white/80" tag="p">
+                    <Text className="max-mobile:text-sm max-mobile:font-normal text-white/80">
                       {value}
-                    </Typography>
+                    </Text>
                   </MotionBox>
                 </AnimatePresence>
               </div>

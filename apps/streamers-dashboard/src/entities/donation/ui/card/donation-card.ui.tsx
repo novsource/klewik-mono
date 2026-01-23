@@ -11,6 +11,8 @@ import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donat
 import { FORMATTED_INTEGRATIONS_PLATFORMS_NAMES } from '~shared/constants/integrations'
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
+import { Text } from '~shared/components/typography'
+
 import { useMediaQuery } from '~shared/hooks'
 
 import type { BadgeProps } from '~shared/ui/badge'
@@ -25,10 +27,10 @@ import {
   CardHeader,
 } from '~shared/ui/card'
 import { Divider } from '~shared/ui/divider'
+import type { FlexProps } from '~shared/ui/flex'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Skeleton } from '~shared/ui/skeleton'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn, formatNumberToIntlString } from '~shared/utils'
 
@@ -77,6 +79,15 @@ export const BaseDonationCardFooter = (props: BaseDonationCardFooterProps) => {
   )
 }
 
+const donationStatusToBadgeVariants: Record<ProcessedDonationStatus, BadgeProps['variant']> = {
+  added: 'success',
+  inProgress: 'warning',
+  checkRequested: 'warning',
+  empty: 'default',
+  error: 'error',
+  rejected: 'error',
+} as const
+
 export type DonationCardStatusBadgeProps = DonationCardBadgeProps & {
   status: ProcessedDonationStatus
 }
@@ -84,21 +95,9 @@ export type DonationCardStatusBadgeProps = DonationCardBadgeProps & {
 export const DonationCardStatusBadge = (props: DonationCardStatusBadgeProps) => {
   const { status, ...badgeProps } = props
 
-  const donationStatusToBadgeVariants: Record<
-    ProcessedDonationStatus,
-    NonNullable<BadgeProps['variant']>
-  >[ProcessedDonationStatus] = {
-    added: 'success',
-    inProgress: 'warning',
-    checkRequested: 'warning',
-    empty: 'default',
-    error: 'error',
-    rejected: 'error',
-  }[status]
-
   return (
     <DonationCardBadge
-      variant={donationStatusToBadgeVariants}
+      variant={donationStatusToBadgeVariants[status]}
       {...badgeProps}
     >
       {DONATION_PROCESSED_STATUS[status]}
@@ -116,22 +115,20 @@ export const SolidDonationCardHeader = (props: SolidDonationCardHeaderProps) => 
   return (
     <BaseDonationCardHeader {...restProps}>
       <>
-        <DonationCardBadge>
-
-        </DonationCardBadge>
+        <DonationCardBadge />
         <Badge className="bg-orange/20 text-orange">
           <Flex className="gap-x-1" align="center">
             <Icons.DonationAlerts width={14} height={14} />
             {FORMATTED_INTEGRATIONS_PLATFORMS_NAMES[donationData.source]}
           </Flex>
         </Badge>
-        <DonationCardBadge status={donationData.processData.status} />
+        <DonationCardStatusBadge status={donationData.processData.status} />
       </>
     </BaseDonationCardHeader>
   )
 }
 
-export type DonationCardUsernameInfoProps = ComponentProps<'div'> & {
+export type DonationCardUsernameInfoProps = FlexProps & {
   donationData: Pick<ProcessedDonation, 'username' | 'amount' | 'currency'>
 }
 
@@ -144,18 +141,18 @@ export const DonationCardUsernameInfo = (props: DonationCardUsernameInfoProps) =
       align="center"
       {...restProps}
     >
-      <Typography tag="span" className="text-md tablet:text-title font-bold text-white-accent">
+      <Text className="text-md tablet:text-title font-bold text-white-accent" asSpan>
         {donationData.username}
-      </Typography>
-      <Typography tag="span" className="text-md font-semibold">
+      </Text>
+      <Text className="text-md font-semibold" asSpan>
         отправил
-      </Typography>
-      <Typography
+      </Text>
+      <Text
         className="font-semibold text-green text-md tablet:text-title font-golos-f"
-        tag="span"
+        asSpan
       >
         {`${formatNumberToIntlString(donationData.amount)} ${donationData.currency.toUpperCase()}`}
-      </Typography>
+      </Text>
     </Flex>
   )
 }
@@ -183,23 +180,26 @@ export const SolidDonationCardContent = (props: SolidDonationCardContentProps) =
     if (isEmptyMessage)
       return
 
-    if (donationData.messageType === 'text') {
+    const isTextMessage = donationData.messageType === 'text'
+    const isAudioMessage = donationData.messageType === 'audio'
+
+    if (isTextMessage) {
       return <DonationCardMessage value={donationData.message!} />
     }
 
-    if (donationData.messageType === 'audio') {
+    if (isAudioMessage) {
       return (
         <Flex
           className="w-fit bg-dark-accent/70 px-1 py-1 gap-x-1 rounded-md tablet:gap-x-1.5 whitespace-nowrap tablet:px-2 tablet:py-1.5"
           align="center"
         >
           <Icons.Sound className="text-gray-light" size={isLargeThenTablet ? 'default' : 'sm'} />
-          <Typography
+          <Text
             className="text-gray-light text-xs font-medium font-golos-f text-wrap tablet:text-sm"
-            tag="span"
+            asSpan
           >
             Аудио-сообщения не поддерживаются
-          </Typography>
+          </Text>
         </Flex>
       )
     }
@@ -238,33 +238,35 @@ export const SolidDonationCardFooter = (props: SolidDonationCardFooterProps) => 
             <>
               <Flex className="gap-x-1" align="center" justify="center">
                 <Icons.Id className="text-gray-accent" size="sm" />
-                <Typography
-                  tag="span"
+                <Text
                   className="font-golos-f text-gray-accent"
+                  asSpan
                 >
                   {formatNumberToIntlString(
                     Math.floor(
                       (donationData.processData.slotsIds && donationData.processData.slotsIds[0]) || 0,
                     ),
                   )}
-                </Typography>
+                </Text>
               </Flex>
+
               <Divider className="border-1 h-3/4 border-gray mx-1.5" />
+
               <Flex className="gap-x-1" align="center" justify="center">
                 <Icons.Coin className="text-gray-accent" size="sm" />
-                <Typography
-                  tag="span"
+                <Text
                   className="font-golos-f text-gray-accent"
+                  asSpan
                 >
                   {formatNumberToIntlString(Math.floor(donationData.amount))}
-                </Typography>
+                </Text>
               </Flex>
             </>
           </DonationCardChip>
         </Flex>
-        <Typography className="text-gray" tag="span">
+        <Text className="text-gray" asSpan>
           {new Intl.RelativeTimeFormat().format(-5, 'seconds')}
-        </Typography>
+        </Text>
       </>
     </BaseDonationCardFooter>
   )
