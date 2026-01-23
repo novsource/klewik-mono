@@ -13,7 +13,7 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
 import { Text, Title } from '~shared/components/typography'
 
-import { useUrlSearchParam } from '~shared/hooks'
+import { useDocumentTitle, useUrlSearchParam } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -30,7 +30,7 @@ const DonationFilterStatusSchema = z.literal<DonationsStatusFilterValue[]>(['add
 export const AuctionDonationsPage = () => {
   const storedDonations = useStoreSelector(donationsSelectors.getAllDonations)
 
-  const { set, value } = useUrlSearchParam<DonationsStatusFilterValue>('status', { initialValue: 'all' })
+  const { set: setStatusSearchParam, value } = useUrlSearchParam<DonationsStatusFilterValue>('status', { initialValue: 'all' })
 
   const [donationsFilterValue, setDonationsFilterValue]
     = useState<DonationsStatusFilterValue>(value ?? 'all')
@@ -43,9 +43,11 @@ export const AuctionDonationsPage = () => {
     const isDonationFilterStatusURLStateValid = DonationFilterStatusSchema.safeParse(value).success
 
     if (!isDonationFilterStatusURLStateValid) {
-      set('all')
+      setStatusSearchParam('all')
     }
-  }, [value, set])
+  }, [value, setStatusSearchParam])
+
+  useDocumentTitle('Пожертвования | Поинтовый аукцион Klewik')
 
   return (
     <div

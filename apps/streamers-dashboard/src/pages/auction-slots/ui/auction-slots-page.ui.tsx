@@ -7,7 +7,7 @@ import { SkeletonAuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useDumbedTransition, useMediaQuery } from '~shared/hooks'
+import { useDocumentTitle, useDumbedTransition, useMediaQuery } from '~shared/hooks'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
@@ -26,6 +26,8 @@ export const AuctionSlotsPage = () => {
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   const isListShowed = useDumbedTransition()
+
+  useDocumentTitle('Слоты | Поинтовый аукцион Klewik')
 
   return (
     <div
