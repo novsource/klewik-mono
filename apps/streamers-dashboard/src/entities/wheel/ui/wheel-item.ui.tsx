@@ -25,9 +25,9 @@ export const WheelItem = (props: WheelItemProps) => {
     ...restProps
   } = props
 
-  const bottomRadius = radius * 0.9
-
   const coords = useMemo(() => {
+    const bottomRadius = radius * 0.9
+
     const radStartAngleWithPadding = convertDegreesToRadians(slot.startAngle + gapAngle / 2)
     const radEndAngleWithPadding = convertDegreesToRadians(slot.endAngle - gapAngle / 2)
 
@@ -79,14 +79,17 @@ export const WheelItem = (props: WheelItemProps) => {
   }, [radius, gapAngle, center, slot.startAngle, slot.endAngle])
 
   const path = useMemo(() => {
-    const startPointQuery = `M${coords[1].x},${coords[1].y}`
+    const bottomRadius = radius * 0.9
 
+    const isLargeArc = Math.abs(slot.endAngle - slot.startAngle) >= 180
+
+    const startPointQuery = `M${coords[1].x},${coords[1].y}`
     const topLeftRoundQuery = `Q${coords[2].x},${coords[2].y} ${coords[3].x},${coords[3].y}`
-    const topArcQuery = `A${radius},${radius} 0 0 1 ${coords[4].x},${coords[4].y}`
+    const topArcQuery = `A${radius},${radius} 0 ${isLargeArc ? 1 : 0} 1 ${coords[4].x},${coords[4].y}`
     const topRightRoundQuery = `Q${coords[5].x},${coords[5].y} ${coords[6].x},${coords[6].y}`
     const connectToBottomRightRoundQuery = `L${coords[7].x},${coords[7].y}`
     const bottomRightRoundQuery = `Q${coords[8].x},${coords[8].y} ${coords[9].x},${coords[9].y}`
-    const bottomArcQuery = `A${bottomRadius},${bottomRadius} 0 0 0 ${coords[10].x},${coords[10].y}`
+    const bottomArcQuery = `A${bottomRadius},${bottomRadius} 0 ${isLargeArc ? 1 : 0} 0 ${coords[10].x},${coords[10].y}`
     const bottomLeftRoundQuery = `Q${coords[11].x},${coords[11].y} ${coords[12].x},${coords[12].y}`
 
     const figureParts = [
@@ -101,7 +104,7 @@ export const WheelItem = (props: WheelItemProps) => {
     ]
 
     return `${figureParts.join(' ')} Z`
-  }, [coords, radius])
+  }, [coords, radius, slot.startAngle, slot.endAngle])
 
   return (
     <path
