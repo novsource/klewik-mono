@@ -1,19 +1,23 @@
-import { useState } from 'react'
+import type { DonationsStatusFilterValue } from './donations-filter-select.ui'
+
+import { useLayoutEffect, useState } from 'react'
+
+import z from 'zod'
 
 import { DonationsStats } from '~widgets/dashboard-header/ui/donations-stats'
 
-import type { ProcessedDonationStatus } from '~entities/donation/model'
 import { donationsSelectors } from '~entities/donation/store'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useMediaQuery } from '~shared/hooks'
+import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
+import { Text, Title } from '~shared/components/typography'
+
+import { useUrlSearchParam } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
@@ -21,76 +25,74 @@ import { useFiltredDonations } from '../lib'
 import { DonationsStatusFilterSelect } from './donations-filter-select.ui'
 import { AuctionDonationsInfiniteList } from './donations-infinity-list.ui'
 
+const DonationFilterStatusSchema = z.literal<DonationsStatusFilterValue[]>(['added', 'all', 'checkRequested', 'empty', 'error', 'rejected'])
+
 export const AuctionDonationsPage = () => {
   const storedDonations = useStoreSelector(donationsSelectors.getAllDonations)
 
+  const { set, value } = useUrlSearchParam<DonationsStatusFilterValue>('status', { initialValue: 'all' })
+
   const [donationsFilterValue, setDonationsFilterValue]
-    = useState<NullablePossible<ProcessedDonationStatus>>(null)
+    = useState<DonationsStatusFilterValue>(value ?? 'all')
 
   const filtredDonationsByStatus = useFiltredDonations(storedDonations, {
     status: donationsFilterValue,
   })
 
-  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+  useLayoutEffect(() => {
+    const isDonationFilterStatusURLStateValid = DonationFilterStatusSchema.safeParse(value).success
+
+    if (!isDonationFilterStatusURLStateValid) {
+      set('all')
+    }
+  }, [value, set])
 
   return (
     <div
       className={cn([
-        'grid grid-rows-slots-table gap-y-3 pt-3 pb-20 tablet:grid-rows-slots-desktop',
-        'relative mx-auto w-full h-full tablet:pt-5 tablet:mb-4 tablet:pb-0',
-        'tablet:min-h-[var(--height-page)] tablet:h-auto',
+        'mx-auto grid h-full w-full grid-rows-slots-table gap-y-3 pt-3 pb-26 tablet:pt-5 tablet:min-h-[var(--height-page)] tablet:h-auto',
         'mobile:gap-y-5',
-        'tablet:gap-y-0 tablet:pb-0 tablet:pl-4',
-        'max-tablet:max-w-[1100px] tablet:gap-y-7',
+        'max-tablet:max-w-[1100px] tablet:grid-rows-slots-desktop tablet:pb-0 tablet:pl-4',
         'desktop:max-w-[1750px] desktop-lg:max-w-[2100px]',
         'landtop:max-w-[1600px]',
       ])}
     >
-      {isLargeThenTablet
-        && (
-          <Flex
-            className="w-full gap-x-4 pt-6 tablet:pt-1"
-            wrap="nowrap"
-            align="center"
-            justify="between"
-          >
-            <PageTitle />
+      <MediaQueryViewToggler query={greaterThenDeviceWidthMediaQueries.tablet}>
 
+        <MediaQueryViewToggler.MatchedItem>
+          <PageHeader />
+
+          <DonationsStatusFilterSelect
+            className="justify-self-end"
+            status={donationsFilterValue}
+            onValueChange={setDonationsFilterValue}
+          />
+        </MediaQueryViewToggler.MatchedItem>
+
+        <MediaQueryViewToggler.NotMatchedItem>
+          <Flex className="w-full mt-3.5" justify="between">
+            <DonationsStats />
             <DonationsStatusFilterSelect
               status={donationsFilterValue}
               onValueChange={setDonationsFilterValue}
             />
-
           </Flex>
-        )}
+        </MediaQueryViewToggler.NotMatchedItem>
 
-      {!isLargeThenTablet && (
-        <Flex className="w-full mt-3.5" justify="between">
-          <DonationsStats />
-          <DonationsStatusFilterSelect
-            status={donationsFilterValue}
-            onValueChange={setDonationsFilterValue}
-          />
-        </Flex>
-      )}
-      <Divider className="border-gray/10 mt-1.5 mb-3" />
+      </MediaQueryViewToggler>
+
       <AuctionDonationsInfiniteList data={filtredDonationsByStatus} filterStatus={donationsFilterValue} />
     </div>
   )
 }
 
-function PageTitle() {
+function PageHeader() {
   return (
-    <Flex className="gap-y-0.5 tablet:gap-y-1.25 w-full" direction="column">
-      <Typography className="tablet:text-title-xl" tag="h1">
-        Пожертвования
-      </Typography>
-      <Typography
-        className="text-gray/80 max-tablet:text-sm"
-        tag="span"
-      >
+    <Flex className="gap-y-0.5 tablet:gap-y-1.25 tablet:mb-12 w-full" direction="column">
+      <Title className="tablet:text-title-xl desktop:text-title-2xl">Пожертвования</Title>
+      <Text className="text-gray/80">
         Просмотр и модерирование входящих пожертвований
-      </Typography>
+      </Text>
     </Flex>
   )
 }

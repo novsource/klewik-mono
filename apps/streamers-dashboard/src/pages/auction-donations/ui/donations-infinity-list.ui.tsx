@@ -1,3 +1,5 @@
+import type { DonationsStatusFilterValue } from './donations-filter-select.ui'
+
 import { useRef, useState } from 'react'
 
 import { globalDialogsActions } from '~features/_common/display-dialogs'
@@ -10,7 +12,7 @@ import { DonationsInfiniteList } from '~features/donations/watch-donations/ui'
 
 import { auctionSelectors } from '~entities/auction/store'
 
-import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
+import type { ProcessedDonation } from '~entities/donation/model'
 import { donationsActions } from '~entities/donation/store'
 
 import { useDidUpdate, useUnmount } from '~shared/hooks'
@@ -28,7 +30,7 @@ export type AuctionDonationsInfiniteListProps
 'data' | 'listRef' | 'isCanBeLoadMore' | 'isPending' | 'children' | 'state'
 > & {
   data: ProcessedDonation[]
-  filterStatus: NullablePossible<ProcessedDonationStatus>
+  filterStatus: DonationsStatusFilterValue
   offset?: number
 }
 
@@ -63,7 +65,7 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
         limit,
         before: lastDonationIdRef.current || 0,
         order: 'descending',
-        status: filterStatus || 'all',
+        status: filterStatus,
       })
 
       queryRef.current = request
