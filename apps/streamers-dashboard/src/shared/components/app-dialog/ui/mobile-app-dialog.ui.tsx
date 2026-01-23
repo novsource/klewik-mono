@@ -18,9 +18,17 @@ export const MobileAppDialog = (props: MobileAppDialogProps) => {
   return <Sheet {...props} />
 }
 
+MobileAppDialog.Trigger = MobileAppDialogTrigger
+MobileAppDialog.Content = MobileAppDialogContent
+MobileAppDialog.Header = MobileAppDialogHeader
+MobileAppDialog.HeaderTitle = MobileAppDialogHeaderTitle
+MobileAppDialog.ExtraActionsDialog = MobileAppDialogExtraActions
+MobileAppDialog.HeaderActionsPanel = MobileAppDialogHeaderActionsPanel
+MobileAppDialog.Footer = MobileAppDialogFooter
+
 export type MobileAppDialogTriggerProps = SheetTriggerProps
 
-export const MobileAppDialogTrigger = (props: MobileAppDialogTriggerProps) => {
+function MobileAppDialogTrigger(props: MobileAppDialogTriggerProps) {
   return <SheetTrigger {...props} />
 }
 
@@ -28,7 +36,7 @@ export type MobileAppDialogContentProps = Omit<SheetContentProps, 'isFullPageSiz
   contentWrapperProps?: FlexProps<'div'>
 }
 
-export const MobileAppDialogContent = (props: MobileAppDialogContentProps) => {
+function MobileAppDialogContent(props: MobileAppDialogContentProps) {
   const { className, contentWrapperProps, children, ...restProps } = props
 
   const mergedContentWrapperProps = mergeProps({
@@ -50,7 +58,7 @@ export const MobileAppDialogContent = (props: MobileAppDialogContentProps) => {
 
 export type MobileAppDialogHeaderProps = SheetHeaderProps
 
-export const MobileAppDialogHeader = (props: MobileAppDialogHeaderProps) => {
+function MobileAppDialogHeader(props: MobileAppDialogHeaderProps) {
   const { className, ...restProps } = props
 
   return (
@@ -62,19 +70,19 @@ export const MobileAppDialogHeader = (props: MobileAppDialogHeaderProps) => {
 }
 
 export type MobileAppDialogHeaderTitleProps = {
-  title: string
+  value: string
   description?: string
   icon?: ReactNode
 }
 
-export const MobileAppDialogHeaderTitle = (props: MobileAppDialogHeaderTitleProps) => {
-  const { title, description, icon } = props
+function MobileAppDialogHeaderTitle(props: MobileAppDialogHeaderTitleProps) {
+  const { value, description, icon } = props
 
   return (
     <>
       {icon}
       <div className="w-full">
-        <SheetTitle>{title}</SheetTitle>
+        <SheetTitle>{value}</SheetTitle>
         {description && (
           <SheetDescription>
             <Typography
@@ -94,7 +102,7 @@ export type MobileAppDialogExtraActionsProps = SheetProps & {
   children: ReactNode
 }
 
-export const MobileAppDialogExtraActions = (props: MobileAppDialogExtraActionsProps) => {
+function MobileAppDialogExtraActions(props: MobileAppDialogExtraActionsProps) {
   const { children, ...restProps } = props
 
   return (
@@ -115,7 +123,7 @@ export const MobileAppDialogExtraActions = (props: MobileAppDialogExtraActionsPr
 
 export type MobileAppDialogHeaderActionsPanelProps = FlexProps<'div'>
 
-export const MobileAppDialogHeaderActionsPanel = (props: MobileAppDialogHeaderActionsPanelProps) => {
+function MobileAppDialogHeaderActionsPanel(props: MobileAppDialogHeaderActionsPanelProps) {
   const { className, ...restProps } = props
 
   return <Flex className={cn('w-full gap-y-3 pb-4', className)} direction="column" {...restProps} />
@@ -123,7 +131,7 @@ export const MobileAppDialogHeaderActionsPanel = (props: MobileAppDialogHeaderAc
 
 export type MobileAppDialogFooterProps = FlexProps<'div'>
 
-export const MobileAppDialogFooter = (props: MobileAppDialogFooterProps) => {
+function MobileAppDialogFooter(props: MobileAppDialogFooterProps) {
   const { className, ...restProps } = props
 
   return <Flex className={cn('gap-y-2 pt-2', className)} direction="column" {...restProps} />

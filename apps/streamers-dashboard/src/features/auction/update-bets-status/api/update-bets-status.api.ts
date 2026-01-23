@@ -9,8 +9,8 @@ type UpdateBetsStatusQueryArgs = {
 
 const updateBetsStatusApi = splittedAuctionApi.injectEndpoints({
   endpoints: builder => ({
-    updateBetsStatus: builder.query<void, UpdateBetsStatusQueryArgs>({
-      query: ({ auctionUUID, status }) => ({ url: `/${auctionUUID}/close-bets`, data: status, withCredentials: true }),
+    updateBetsStatus: builder.mutation<void, UpdateBetsStatusQueryArgs>({
+      query: ({ auctionUUID, status }) => ({ url: `/${auctionUUID}/bets/status`, data: status, withCredentials: true }),
 
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         await queryFulfilled
@@ -18,8 +18,8 @@ const updateBetsStatusApi = splittedAuctionApi.injectEndpoints({
         dispatch(auctionActions.setAuction({ isBetsClosed: true }))
       },
     }),
-    closeBets: builder.query<void, UpdateBetsStatusQueryArgs>({
-      query: ({ auctionUUID }) => ({ url: `/${auctionUUID}/close-bets` }),
+    closeBets: builder.mutation<void, UpdateBetsStatusQueryArgs>({
+      query: ({ auctionUUID }) => ({ url: `/${auctionUUID}/bets/status` }),
 
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         await queryFulfilled
@@ -27,8 +27,8 @@ const updateBetsStatusApi = splittedAuctionApi.injectEndpoints({
         dispatch(auctionActions.setAuction({ isBetsClosed: true }))
       },
     }),
-    openBets: builder.query<void, UpdateBetsStatusQueryArgs>({
-      query: ({ auctionUUID }) => ({ url: `/${auctionUUID}/open-bets` }),
+    openBets: builder.mutation<void, UpdateBetsStatusQueryArgs>({
+      query: ({ auctionUUID }) => ({ url: `/${auctionUUID}/bets/status` }),
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         await queryFulfilled
 
@@ -40,8 +40,7 @@ const updateBetsStatusApi = splittedAuctionApi.injectEndpoints({
 })
 
 export const {
-  useCloseBetsQuery,
-  useLazyCloseBetsQuery,
-  useOpenBetsQuery,
-  useLazyOpenBetsQuery,
+  useCloseBetsMutation,
+  useOpenBetsMutation,
+  useUpdateBetsStatusMutation,
 } = updateBetsStatusApi

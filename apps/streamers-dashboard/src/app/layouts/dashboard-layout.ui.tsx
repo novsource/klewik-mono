@@ -12,7 +12,7 @@ import { donationsActions } from '~entities/donation/store'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useAppSSE, useDidUpdate, useMediaQuery, useUnmount } from '~shared/hooks'
+import { useAppSSE, useDidUpdate, useDonationsSSE, useMediaQuery, useUnmount } from '~shared/hooks'
 
 import { useActionCreators } from '~shared/lib/redux-toolkit'
 
@@ -29,15 +29,12 @@ export const DashboardLayout = () => {
   const { setAllConnected, resetState } = useActionCreators(sseActions)
   const { addDonation, updateDonationsStatusesCounts } = useActionCreators(donationsActions)
 
-  const { isAllConnected, connectToSSEEvents, isPending, isTabLeader } = useAppSSE({
-    donations: {
-      'donations/add': (donation) => {
-        try {
-          addDonation(donation)
-          updateDonationsStatusesCounts({ [donation.processData.status]: 1 })
-        }
-        catch {}
-      },
+  const { isAllEventsConnected, connectToSSEEvents, isPending, isTabLeader } = useAppSSE()
+
+  useDonationsSSE({
+    'donations/add': (donation) => {
+      addDonation(donation)
+      updateDonationsStatusesCounts({ [donation.processData.status]: 1 })
     },
   })
 
@@ -62,14 +59,14 @@ export const DashboardLayout = () => {
 
       connectToSSE(auctionUUID)
     }
-  }, [isPending, isAllConnected, auctionUUID, isTabLeader])
+  }, [isPending, isAllEventsConnected, auctionUUID, isTabLeader])
 
   useEffect(() => {
-    if (isAllConnected || isPending || !isTabLeader)
+    if (isAllEventsConnected || isPending || !isTabLeader)
       return
 
     connectToSSE(auctionUUID)
-  }, [isPending, isAllConnected, auctionUUID, isTabLeader])
+  }, [isPending, isAllEventsConnected, auctionUUID, isTabLeader])
 
   useUnmount(() => {
     setAllConnected(false)

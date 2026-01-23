@@ -8,24 +8,20 @@ import { toastPromiseNotification } from '~shared/ui/toaster/lib'
 
 import { cn } from '~shared/utils'
 
-import { useLazyCloseBetsQuery, useLazyOpenBetsQuery } from '../api'
+import { useUpdateBetsStatusMutation } from '../api'
 
 export const UpdateBetsStatusButton = () => {
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
   const isBetsClosed = useStoreSelector(auctionSelectors.getIsBetsClosed)
 
-  const [openBetsQuery, { isLoading: openBetsQueryLoading }]
-    = useLazyOpenBetsQuery()
-  const [closeBetsQuery, { isLoading: closeBetsQueryLoading }]
-    = useLazyCloseBetsQuery()
+  const [betsStatusMutation, { isLoading }]
+    = useUpdateBetsStatusMutation()
 
   const handleClick = async () => {
-    if (openBetsQueryLoading || closeBetsQueryLoading)
+    if (isLoading)
       return
 
-    const request = isBetsClosed
-      ? openBetsQuery({ auctionUUID, status: isBetsClosed })
-      : closeBetsQuery({ auctionUUID, status: isBetsClosed })
+    const request = betsStatusMutation({ auctionUUID, status: !isBetsClosed })
 
     toastPromiseNotification(
       request,
@@ -49,7 +45,7 @@ export const UpdateBetsStatusButton = () => {
       startContent={
         !isBetsClosed ? <Icons.Close size="lg" /> : <Icons.OpenBets size="sm" />
       }
-      disabled={openBetsQueryLoading || closeBetsQueryLoading}
+      disabled={isLoading}
       onClick={handleClick}
     >
       {isBetsClosed ? 'Открыть ставки' : 'Закрыть ставки'}

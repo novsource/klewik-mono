@@ -12,6 +12,7 @@ import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
+
 import { twSlotsStyles } from '~shared/utils'
 
 import { useLoginAdminForm } from '../hooks/use-form'
@@ -25,11 +26,11 @@ type ControlledLoginAdminFormProps = Omit<ComponentPropsWithRef<'form'>, 'onSubm
 export const ControlledLoginAdminForm = (props: ControlledLoginAdminFormProps) => {
   const { form, slotsClassnames, ...formProps } = props
 
-  const styles = useMemo(() => twSlotsStyles(loginAdminStyles, slotsClassnames), [slotsClassnames])
+  const classesSlots = useMemo(() => twSlotsStyles(loginAdminStyles, slotsClassnames), [slotsClassnames])
 
   return (
     <form
-      className={styles.base}
+      className={classesSlots.base}
       {...formProps}
     >
       <LoginAdminFormFields control={form.control} />
@@ -46,13 +47,13 @@ export const LoginAdminForm = (props: LoginAdminFormProps) => {
 
   const { form, state, submitForm } = useLoginAdminForm({ onSuccess, onError })
 
-  const styles = useMemo(() => twSlotsStyles(loginAdminStyles, slotsClassnames), [slotsClassnames])
+  const classesSlots = useMemo(() => twSlotsStyles(loginAdminStyles, slotsClassnames), [slotsClassnames])
 
   const isSubmitButtonDisabled = Object.values(state.dirtyFields).length !== 2 || !Object.values(state.dirtyFields).every(Boolean)
 
   return (
     <form
-      className={styles.base}
+      className={classesSlots.base}
       onSubmit={form.handleSubmit(submitForm)}
       {...formProps}
     >
@@ -72,43 +73,44 @@ type LoginAdminFormFieldsProps = {
 function LoginAdminFormFields({ control, slotsClassnames }: LoginAdminFormFieldsProps) {
   const [isPasswordHidden, setIsPasswordHidden] = useState(true)
 
-  const auctionUUIDController = useController({ control, name: 'auctionId' })
+  const auctionUUIDController = useController({ control, name: 'auctionUUID' })
   const passwordController = useController({ control, name: 'password' })
 
-  const styles = useMemo(() => twSlotsStyles(loginAdminStyles, slotsClassnames), [slotsClassnames])
+  const classesSlots = useMemo(() => twSlotsStyles(loginAdminStyles, slotsClassnames), [slotsClassnames])
 
   return (
-    <Flex className={styles.inputsWrapper} direction="column">
+    <Flex className={classesSlots.inputsWrapper} direction="column">
       <Input
-        slotClassNames={{ input: 'font-semibold tracking-wide' }}
-        type="text"
         label={{ id: 'auctionUUID', value: 'Номер аукциона' }}
         placeholder="xxxxxxxx&mdash;xxxx&mdash;xxxx&mdash;xxxx&mdash;xxxxxxxxxxxx"
         startContent={
-          <Icons.Id size="default" className={styles.idIcon} />
+          <Icons.Id size="default" className={classesSlots.idIcon} />
         }
         {...auctionUUIDController.field}
       />
       <Input
         type={isPasswordHidden ? 'password' : 'text'}
+        slotClassNames={{
+          endContent: 'pointer-events-auto',
+        }}
         label={{ id: 'password', value: 'Пароль от аукциона' }}
         placeholder="••••••••"
         startContent={
-          <Icons.Key size="default" className={styles.keyIcon} />
+          <Icons.Key className={classesSlots.keyIcon} />
         }
         endContent={
           isPasswordHidden
             ? (
                 <Icons.EyeClosed
                   size="default"
-                  className={styles.closedEyeIcon}
+                  className={classesSlots.closedEyeIcon}
                   onClick={() => setIsPasswordHidden(false)}
                 />
               )
             : (
                 <Icons.EyeOpen
                   size="default"
-                  className={styles.openEyeIcon}
+                  className={classesSlots.openEyeIcon}
                   onClick={() => setIsPasswordHidden(true)}
                 />
               )

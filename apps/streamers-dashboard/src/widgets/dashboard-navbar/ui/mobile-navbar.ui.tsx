@@ -3,9 +3,10 @@ import { useMemo } from 'react'
 
 import { NavLink } from 'react-router-dom'
 
-import { DASHBOARD_ROUTES } from '~shared/constants/router'
+import { DASHBOARD_ROUTES, ROUTES_TITLES } from '~shared/constants/router'
 
 import { Icons } from '~shared/ui/icons'
+import { Sheet, SheetContent, SheetTrigger } from '~shared/ui/sheet'
 
 import { cn } from '~shared/utils'
 
@@ -21,26 +22,51 @@ export const MobileNavbar = () => {
   const navLinks = useMemo(() => {
     return paths.reduce<ReactNode[]>((acc, curr: (typeof paths)[number]) => {
       const navIcon = {
-        '/wheel': <Icons.Wheel size="sm" />,
+        '/wheel': <Icons.Gamepad size="sm" />,
         '/donations': <Icons.MoneyHand size="default" />,
         '/slots': <Icons.Slots size="sm" />,
       }[curr.path]
 
       const routerLink = curr.path.replace('/', '')
 
-      const navTitle = {
-        wheel: 'Колесо',
-        donations: 'Донаты',
-        slots: 'Слоты',
-      }[routerLink]
+      // @ts-expect-error Waiting router link from routes titles
+      const navTitle = Reflect.has(ROUTES_TITLES, routerLink) ? ROUTES_TITLES[routerLink] : ''
+
+      // On mobile devices wheel is disabled
+      if (routerLink === 'wheel') {
+        acc.push(
+          <li key={routerLink} className="flex justify-center">
+            <DisabledWheelRouteSheet>
+              <div className="flex size-5 justify-center">
+                {navIcon}
+              </div>
+              {navTitle}
+
+              {/* <Button
+                variant="ghost"
+                className={cn('flex flex-col items-center justify-start gap-y-0.25 w-full text-[11px] font-regular h-full px-4 text-dark-accent')}
+              >
+                <>
+                  <div className="flex size-5 justify-center">
+                    {navIcon}
+                  </div>
+                  {navTitle}
+                </>
+              </Button> */}
+            </DisabledWheelRouteSheet>
+          </li>,
+        )
+
+        return acc
+      }
 
       acc.push(
-        <li key={routerLink} className="cursor-pointer">
+        <li className="flex justify-center" key={routerLink}>
           <NavLink
             to={routerLink}
             className={({ isActive }) =>
               cn(
-                'flex flex-col items-center justify-start gap-y-0.25 w-full text-[11px] font-regular h-full px-4',
+                'w-fit flex flex-col items-center justify-start gap-y-0.25 text-[11px] font-regular h-full px-4 cursor-pointer',
                 isActive && 'text-gray-accent',
                 !isActive && 'hover:text-gray-light text-gray/50',
               )}
@@ -66,5 +92,22 @@ export const MobileNavbar = () => {
         </>
       </ul>
     </nav>
+  )
+}
+
+type DisabledWheelRouteSheetProps = {
+  children: ReactNode
+}
+
+function DisabledWheelRouteSheet(props: DisabledWheelRouteSheetProps) {
+  const { children } = props
+
+  return (
+    <Sheet>
+      <SheetTrigger className="flex flex-col items-center justify-start gap-y-0.25 w-full text-[11px] font-regular h-full px-4 text-dark-accent">{children}</SheetTrigger>
+      <SheetContent className="h-fit" side="bottom">
+        Колесо все еще дорабатывается на мобильных устройствах (будет добавлено в будущем).
+      </SheetContent>
+    </Sheet>
   )
 }

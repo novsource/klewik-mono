@@ -1,4 +1,5 @@
-import { ChangeEvent, memo, useRef, useState } from 'react'
+import type { ChangeEvent } from 'react'
+import { memo, useRef, useState } from 'react'
 
 import { useDeleteAuctionMutation } from '~pages/auction-settings/api/base-auction-settings'
 
@@ -11,7 +12,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -51,7 +51,8 @@ const DeleteAuctionSettingsArea = memo(() => {
 
     if (clearInputValue.length !== 0) {
       setIsInputEmpty(false)
-    } else {
+    }
+    else {
       setIsInputEmpty(true)
     }
   }
@@ -71,24 +72,25 @@ const DeleteAuctionSettingsArea = memo(() => {
       description="Отправьте аукцион в небытие"
     >
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogTrigger asChild>
+        <DialogTrigger>
           <Button
-            variant={'error'}
+            variant="error"
             startContent={<Icons.Bin width={14} height={14} />}
           >
             Удалить аукцион
           </Button>
         </DialogTrigger>
         <DialogContent
-          onInteractOutside={(e) => {
-            if (!isInputEmpty) e.preventDefault()
-          }}
-          slotsClassNames={{
-            close: 'cursor-pointer',
-            overlay: 'backdrop-blur-[1px] bg-black/80',
-            content:
-              'w-full max-w-[500px] border-0 rounded-[16px] bg-dark-foreground',
-          }}
+          // onInteractOutside={(e) => {
+          //   if (!isInputEmpty)
+          //     e.preventDefault()
+          // }}
+          // slotsClassNames={{
+          //   close: 'cursor-pointer',
+          //   overlay: 'backdrop-blur-[1px] bg-black/80',
+          //   content:
+          //     'w-full max-w-[500px] border-0 rounded-[16px] bg-dark-foreground',
+          // }}
         >
           <DialogHeader>
             <DialogTitle className="text-start">
@@ -128,22 +130,22 @@ const DeleteAuctionSettingsArea = memo(() => {
               onChange={handleInputOnChange}
             />
           </Flex>
-          <DialogFooter className="flex flex-row gap-x-2 justify-end pt-2">
+          {/* <DialogFooter className="flex flex-row gap-x-2 justify-end pt-2">
             <Button
-              variant={'error'}
+              variant="error"
               onClick={deleteAuction}
               disabled={isInputEmpty}
             >
               {!isLoading ? 'Удалить аукцион' : 'Удаляем аукцион...'}
             </Button>
             <Button
-              variant={'outline'}
+              variant="outline"
               className="border-1 border-dark-accent hover:border-gray font-medium"
               onClick={() => setIsDialogOpen(false)}
             >
               Вернуться
             </Button>
-          </DialogFooter>
+          </DialogFooter> */}
         </DialogContent>
       </Dialog>
     </SettingsArea>

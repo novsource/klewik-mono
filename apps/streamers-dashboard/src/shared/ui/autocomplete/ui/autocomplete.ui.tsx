@@ -1,7 +1,8 @@
 import type { ChangeEvent, ComponentProps, ReactNode } from 'react'
 import { useMemo } from 'react'
 
-import { mergeProps, Autocomplete as PrimitiveAutocomplete } from '@base-ui-components/react'
+import { mergeProps } from '@base-ui-components/react'
+import { Autocomplete as PrimitiveAutocomplete } from '@base-ui/react/autocomplete'
 
 import type { InputProps } from '~shared/ui/input'
 import { Input } from '~shared/ui/input'
@@ -27,11 +28,11 @@ export type AutocompleteItemProps = ComponentProps<typeof PrimitiveAutocomplete.
 export const AutocompleteItem = (props: AutocompleteItemProps) => {
   const { className, value, tag, ...restProps } = props
 
-  const styles = useMemo(() => cn(autocompleteItemVariants(), className), [className])
+  const classes = useMemo(() => cn(autocompleteItemVariants(), className), [className])
 
   return (
     <PrimitiveAutocomplete.Item
-      className={styles}
+      className={classes}
       value={tag}
       {...restProps}
     >

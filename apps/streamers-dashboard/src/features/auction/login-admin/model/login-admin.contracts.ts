@@ -1,8 +1,6 @@
 import { z } from 'zod'
 
-const loginAdminSchema = z.object({
-  auctionId: z.string().uuid(),
+export const loginAdminSchema = z.object({
+  auctionUUID: z.string().uuid(),
   password: z.string().uuid(),
 })
-
-export { loginAdminSchema }

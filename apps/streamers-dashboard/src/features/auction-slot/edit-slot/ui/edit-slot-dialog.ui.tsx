@@ -2,22 +2,7 @@ import type { ReactNode } from 'react'
 
 import { FormProvider, useFormContext } from 'react-hook-form'
 
-import {
-  DesktopAppDialog,
-  DesktopAppDialogClose,
-  DesktopAppDialogContent,
-  DesktopAppDialogHeader,
-  DesktopAppDialogHeaderActionsPanel,
-  DesktopAppDialogHeaderTopPanel,
-  DesktopAppDialogTitle,
-  DesktopAppDialogTrigger,
-  MobileAppDialog,
-  MobileAppDialogContent,
-  MobileAppDialogFooter,
-  MobileAppDialogHeader,
-  MobileAppDialogHeaderTitle,
-  MobileAppDialogTrigger,
-} from '~shared/components/app-dialog'
+import { DesktopAppDialog, MobileAppDialog } from '~shared/components/app-dialog'
 
 import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
 
@@ -88,12 +73,13 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
   if (isMediaLargeThenTablet) {
     return (
       <DesktopAppDialog {...mergedSheetProps}>
-        {trigger && <DesktopAppDialogTrigger>{ trigger }</DesktopAppDialogTrigger>}
-        <DesktopAppDialogContent>
+        {trigger && <DesktopAppDialog.Trigger>{ trigger }</DesktopAppDialog.Trigger>}
+        <DesktopAppDialog.Content>
 
-          <DesktopAppDialogHeader>
-            <DesktopAppDialogHeaderTopPanel>
-              <DesktopAppDialogHeaderActionsPanel>
+          <DesktopAppDialog.Header>
+            <DesktopAppDialog.TopPanel>
+
+              <DesktopAppDialog.HeaderActionsPanel>
                 <DeleteSlotButton
                   slotId={inputSlot.id}
                   className="size-8"
@@ -110,8 +96,9 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
                   icon={<Icons.Reset size="sm" />}
                   onClick={() => form.reset()}
                 />
-              </DesktopAppDialogHeaderActionsPanel>
-              <DesktopAppDialogHeaderActionsPanel>
+              </DesktopAppDialog.HeaderActionsPanel>
+
+              <DesktopAppDialog.HeaderActionsPanel>
                 <Button
                   className="h-full"
                   size="sm"
@@ -123,47 +110,45 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
                   Сохранить
                 </Button>
                 <div className="h-2/3 w-0.25 bg-dark-accent mx-1" />
-                <DesktopAppDialogClose />
-              </DesktopAppDialogHeaderActionsPanel>
-            </DesktopAppDialogHeaderTopPanel>
+                <DesktopAppDialog.CloseButton />
+              </DesktopAppDialog.HeaderActionsPanel>
+            </DesktopAppDialog.TopPanel>
 
-            <DesktopAppDialogTitle
+            <DesktopAppDialog.Title
               icon={<EditSlotDialogsIcon />}
               title="Обзор слота"
               description="Измените параметры слота"
             />
 
-          </DesktopAppDialogHeader>
+          </DesktopAppDialog.Header>
 
           <FormProvider {...form}>
             <EditSlotForm />
           </FormProvider>
 
-        </DesktopAppDialogContent>
+        </DesktopAppDialog.Content>
       </DesktopAppDialog>
     )
   }
 
   return (
     <MobileAppDialog {...mergedSheetProps}>
-      <MobileAppDialogTrigger>{ trigger }</MobileAppDialogTrigger>
+      <MobileAppDialog.Trigger>{ trigger }</MobileAppDialog.Trigger>
 
-      <MobileAppDialogContent>
-        <MobileAppDialogHeader>
-
-          <MobileAppDialogHeaderTitle
-            icon={<EditSlotDialogsIcon />}
-            title="Обзор слота"
+      <MobileAppDialog.Content>
+        <MobileAppDialog.Header>
+          <MobileAppDialog.HeaderTitle
+            value="Обзор слота"
             description="Измените параметры слота"
+            icon={<EditSlotDialogsIcon />}
           />
-
-        </MobileAppDialogHeader>
+        </MobileAppDialog.Header>
 
         <FormProvider {...form}>
           <EditSlotForm />
         </FormProvider>
 
-        <MobileAppDialogFooter className="gap-x-4" direction="row">
+        <MobileAppDialog.Footer className="gap-x-4" direction="row">
           <Button
             className="w-full"
             variant="action"
@@ -187,9 +172,9 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
               </Button>
             )}
           />
-        </MobileAppDialogFooter>
+        </MobileAppDialog.Footer>
 
-      </MobileAppDialogContent>
+      </MobileAppDialog.Content>
     </MobileAppDialog>
   )
 }

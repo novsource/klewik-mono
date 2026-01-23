@@ -35,14 +35,14 @@ export const DashboardLayout = () => {
       ) }
       <Flex className="w-full h-full flex flex-col">
         <DashboardHeader />
-        <DashboardMainContent />
+        <DashboardLayoutContent />
         {!isLargeThenTablet && <MobileNav />}
       </Flex>
     </div>
   )
 }
 
-function DashboardMainContent() {
+function DashboardLayoutContent() {
   return (
     <main className="relative w-full overflow-y-scroll tablet:h-full tablet:overflow-x-hidden tablet:overflow-y-scroll">
       <Flex className="h-full w-full px-4">

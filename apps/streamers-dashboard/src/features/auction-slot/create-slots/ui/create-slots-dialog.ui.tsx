@@ -1,23 +1,7 @@
 import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'
 
-import {
-  DesktopAppDialog,
-  DesktopAppDialogClose,
-  DesktopAppDialogContent,
-  DesktopAppDialogHeader,
-  DesktopAppDialogHeaderActionsPanel,
-  DesktopAppDialogHeaderTopPanel,
-  DesktopAppDialogTitle,
-  DesktopAppDialogTrigger,
-  MobileAppDialog,
-  MobileAppDialogContent,
-  MobileAppDialogExtraActions,
-  MobileAppDialogFooter,
-  MobileAppDialogHeader,
-  MobileAppDialogHeaderTitle,
-  MobileAppDialogTrigger,
-} from '~shared/components/app-dialog'
+import { DesktopAppDialog, MobileAppDialog } from '~shared/components/app-dialog'
 
 import { auctionSlotsActions as storeAuctionSlotsActions } from '~entities/auction-slot/store'
 
@@ -107,12 +91,16 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
 
   if (isMediaLargeThenTablet) {
     return (
-      <DesktopAppDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} disablePointerDismissal={formState.isDirty}>
-        <DesktopAppDialogTrigger>{ trigger }</DesktopAppDialogTrigger>
+      <DesktopAppDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        disablePointerDismissal={formState.isDirty}
+      >
+        <DesktopAppDialog.Trigger>{ trigger }</DesktopAppDialog.Trigger>
 
-        <DesktopAppDialogContent>
-          <DesktopAppDialogHeader>
-            <DesktopAppDialogHeaderTopPanel>
+        <DesktopAppDialog.Content>
+          <DesktopAppDialog.Header>
+            <DesktopAppDialog.TopPanel>
               <Button
                 className={sheetStyles.resetButton}
                 disabled={isLoading || !formState.isDirty}
@@ -121,7 +109,7 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
                 onClick={resetForm}
               />
 
-              <DesktopAppDialogHeaderActionsPanel>
+              <DesktopAppDialog.HeaderActionsPanel>
                 <Button
                   className={sheetStyles.submitButton}
                   variant="action"
@@ -135,51 +123,55 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
 
                 <Divider className="mx-1" orientation="vertical" />
 
-                <DesktopAppDialogClose>
+                <DesktopAppDialog.CloseButton>
                   <Button
                     className={sheetStyles.closeButton}
                     isIconOnly
                     icon={<Icons.LargeCross width={14} height={14} />}
                     onClick={() => setIsDialogOpen(false)}
                   />
-                </DesktopAppDialogClose>
+                </DesktopAppDialog.CloseButton>
 
-              </DesktopAppDialogHeaderActionsPanel>
-            </DesktopAppDialogHeaderTopPanel>
+              </DesktopAppDialog.HeaderActionsPanel>
+            </DesktopAppDialog.TopPanel>
 
-            <DesktopAppDialogTitle
+            <DesktopAppDialog.Title
               icon={<CreateSlotDialogIcon />}
               title="Добавление слотов"
               description="Увеличьте количество слотов в аукционе"
             />
-          </DesktopAppDialogHeader>
+          </DesktopAppDialog.Header>
 
           <ControlledCreateSlotForm
             multiplySlots={multiplySlots}
             form={form}
           />
 
-        </DesktopAppDialogContent>
+        </DesktopAppDialog.Content>
       </DesktopAppDialog>
     )
   }
 
   return (
-    <MobileAppDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} disablePointerDismissal={formState.isDirty}>
-      <MobileAppDialogTrigger className="w-full">{ trigger }</MobileAppDialogTrigger>
+    <MobileAppDialog
+      open={isDialogOpen}
+      onOpenChange={setIsDialogOpen}
+      disablePointerDismissal={formState.isDirty}
+    >
+      <MobileAppDialog.Trigger className="w-full">{ trigger }</MobileAppDialog.Trigger>
 
-      <MobileAppDialogContent>
-        <MobileAppDialogHeader>
-          <MobileAppDialogHeaderTitle
+      <MobileAppDialog.Content>
+        <MobileAppDialog.Header>
+          <MobileAppDialog.HeaderTitle
             icon={<CreateSlotDialogIcon />}
-            title="Добавление слотов"
+            value="Добавление слотов"
             description="Увеличьте количество слотов в аукционе"
           />
 
-          <MobileAppDialogExtraActions>
+          <MobileAppDialog.ExtraActionsDialog>
             <Button>Here</Button>
-          </MobileAppDialogExtraActions>
-        </MobileAppDialogHeader>
+          </MobileAppDialog.ExtraActionsDialog>
+        </MobileAppDialog.Header>
 
         <div className="w-full h-full overflow-scroll">
           <ControlledCreateSlotForm
@@ -188,7 +180,7 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
           />
         </div>
 
-        <MobileAppDialogFooter className="gap-x-4" direction="row">
+        <MobileAppDialog.Footer className="gap-x-4" direction="row">
           <Button
             className={sheetStyles.submitButton}
             variant="action"
@@ -205,9 +197,9 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
           >
             Отмена
           </Button>
-        </MobileAppDialogFooter>
+        </MobileAppDialog.Footer>
 
-      </MobileAppDialogContent>
+      </MobileAppDialog.Content>
     </MobileAppDialog>
   )
 }
