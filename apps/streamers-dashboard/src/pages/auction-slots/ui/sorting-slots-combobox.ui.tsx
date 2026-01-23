@@ -3,6 +3,7 @@ import { memo, useEffect, useMemo, useState } from 'react'
 import { shallowEqual } from 'react-redux'
 
 import { LucideCheck } from 'lucide-react'
+import z from 'zod'
 
 import { sortingDrawerStyles } from '~pages/auction-slots/styles'
 import type { SortingDrawerStylesSlots } from '~pages/auction-slots/styles'
@@ -12,13 +13,14 @@ import { auctionSlotsActions, auctionSlotsSelectors } from '~entities/auction-sl
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useMediaQuery } from '~shared/hooks'
+import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
+
+import { useUrlSearchParams } from '~shared/hooks'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import type { SortingOptions } from '~shared/store/model'
 
-import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
 import type { ComboboxData } from '~shared/ui/combobox'
 import type { CommandProps } from '~shared/ui/command'
@@ -70,81 +72,76 @@ const sortingSlotsVariants: Array<
   },
 ]
 
-type SortingSlotsComboboxProps = SelectProps<string, false> & {
+const SortingSlotsSchema = z.object({
+  type: z.literal(['ascending', 'descending']),
+  field: z.literal<Array<keyof AuctionSlot>>(['points', 'id']),
+})
+
+type SortingSlotsComboboxProps = {
   onSortingChange?: (sortOptions: SortingOptions<AuctionSlot>) => void
-  drawerClassnames?: Partial<Record<SortingDrawerStylesSlots, string>>
 }
 
 export const SortingSlotsCombobox = memo((props: SortingSlotsComboboxProps) => {
-  const { onSortingChange, drawerClassnames, ...restProps } = props
-
-  const storeSlotsSortOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
+  const { onSortingChange } = props
 
   const [isOpen, setIsOpen] = useState(false)
-  const [options, setOptions] = useState<SortingOptions<AuctionSlot>>(storeSlotsSortOptions)
 
+  const { value, set } = useUrlSearchParams<ReturnType<typeof auctionSlotsSelectors.getSlotsSortOptions>>()
+
+  const storeSlotsSortOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
   const { setSlotsSortOptions } = useActionCreators(auctionSlotsActions)
-
-  const isLargeThenTablet = useMediaQuery(
-    greaterThenDeviceWidthMediaQueries.tablet,
-  )
-
-  const defaultSortValue = useMemo(() => {
-    const defaultOptions = sortingSlotsVariants.find(variant =>
-      shallowEqual(variant.sortingOptions, options),
-    )
-
-    return defaultOptions?.value
-  }, [options])
 
   const handleOnValueChange = (value: unknown) => {
     const sortOptions = sortingSlotsVariants.find(sort => sort.value === value)
     const options = sortOptions?.sortingOptions ?? defaultOptions
 
-    setOptions(options)
-  }
-
-  const handleOnConfirm = () => {
-    setSlotsSortOptions(options)
+    set(options)
     onSortingChange?.(options)
   }
 
   useEffect(() => {
-    if (isLargeThenTablet) {
-      setSlotsSortOptions(options)
-      onSortingChange?.(options)
+    const isSearchParamsValid = SortingSlotsSchema.safeParse(value).success
+
+    if (!isSearchParamsValid && !shallowEqual(value, storeSlotsSortOptions)) {
+      set(storeSlotsSortOptions)
     }
-  }, [options, isLargeThenTablet, onSortingChange])
 
-  const isConfirmButtonDisabled = shallowEqual(options, storeSlotsSortOptions)
+    if (isSearchParamsValid && !shallowEqual(value, storeSlotsSortOptions)) {
+      setSlotsSortOptions(value!)
+    }
+  }, [storeSlotsSortOptions, value, setSlotsSortOptions, set])
 
-  if (!isLargeThenTablet) {
-    return (
-      <MobileSortingSlotsSheet
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        commandProps={{
-          value: defaultSortValue,
-          onValueChange: handleOnValueChange,
-        }}
-        confirmSortingButtonProps={{
-          disabled: isConfirmButtonDisabled,
-          onClick: handleOnConfirm,
-        }}
-        closeSheetButtonProps={{
-          onClick: () => setIsOpen(false),
-        }}
-      />
+  const defaultSortValue = useMemo(() => {
+    const defaultOptions = sortingSlotsVariants.find(variant =>
+      shallowEqual(variant.sortingOptions, value ?? storeSlotsSortOptions),
     )
-  }
+
+    return defaultOptions?.value
+  }, [storeSlotsSortOptions, value])
 
   return (
-    <DesktopSortingSlotsSelect
-      open={isOpen}
-      defaultValue={defaultSortValue}
-      onValueChange={handleOnValueChange}
-      onOpenChange={setIsOpen}
-    />
+    <MediaQueryViewToggler query={greaterThenDeviceWidthMediaQueries.tablet}>
+
+      <MediaQueryViewToggler.MatchedItem>
+        <DesktopSortingSlotsSelect
+          open={isOpen}
+          defaultValue={defaultSortValue}
+          onValueChange={handleOnValueChange}
+          onOpenChange={setIsOpen}
+        />
+      </MediaQueryViewToggler.MatchedItem>
+
+      <MediaQueryViewToggler.NotMatchedItem>
+        <MobileSortingSlotsSheet
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          commandProps={{
+            value: defaultSortValue,
+            onValueChange: handleOnValueChange,
+          }}
+        />
+      </MediaQueryViewToggler.NotMatchedItem>
+    </MediaQueryViewToggler>
   )
 })
 
@@ -163,7 +160,7 @@ function DesktopSortingSlotsSelect(props: DesktopSortingSlotsSelectProps) {
           />
         )}
       />
-      <SelectContent side="bottom" align="start">
+      <SelectContent side="bottom" align="start" alignItemWithTrigger={false}>
         <SelectList>
           {sortingSlotsVariants.map((variant) => {
             return (
@@ -184,16 +181,12 @@ function DesktopSortingSlotsSelect(props: DesktopSortingSlotsSelectProps) {
 type MobileSortingSlotsSheetProps = SheetProps & {
   commandProps: Omit<CommandProps, 'className'>
   drawerClassnames?: Partial<Record<SortingDrawerStylesSlots, string>>
-  confirmSortingButtonProps?: ButtonProps
-  closeSheetButtonProps?: ButtonProps
 }
 
 function MobileSortingSlotsSheet(props: MobileSortingSlotsSheetProps) {
   const {
     drawerClassnames,
     commandProps: { defaultValue, ...commandProps },
-    confirmSortingButtonProps,
-    closeSheetButtonProps,
     ...restProps
   } = props
 
@@ -210,7 +203,7 @@ function MobileSortingSlotsSheet(props: MobileSortingSlotsSheetProps) {
         isFullPageSize
       >
         <SheetHeader className="w-full h-fit flex flex-row justify-between shrink pt-2 items-start mb-2.5">
-          <Flex className="justify-start" direction="column">
+          <Flex className="px-2 justify-start" direction="column">
             <SheetTitle className="text-title font-semibold text-start">
               Сортировать по
             </SheetTitle>
@@ -239,16 +232,6 @@ function MobileSortingSlotsSheet(props: MobileSortingSlotsSheetProps) {
             ))}
           </CommandList>
         </Command>
-        <Flex className="gap-y-2 mt-4" direction="column">
-          <Button
-            className={drawerStyles.footerActionButton}
-            variant="action"
-            {...confirmSortingButtonProps}
-          >
-            Применить
-          </Button>
-          <Button className={drawerStyles.footerResetButton} {...closeSheetButtonProps}>Закрыть</Button>
-        </Flex>
       </SheetContent>
     </Sheet>
   )
