@@ -1,23 +1,22 @@
-import { splittedAuctionApi } from '~entities/auction/api'
-import { Auction } from '~entities/auction/model'
+import type { SetAuctionViewParametersFormData } from '../model'
 
-import { SetAuctionViewParametersFormData } from '../model'
+import { splittedAuctionApi } from '~entities/auction/api'
+import type { Auction } from '~entities/auction/model'
 
 type SetAuctionViewParametersQueryArgs = {
-  auctionId: Auction['id']
-  parameters: SetAuctionViewParametersFormData
+  auctionUUID: Auction['auctionUUID']
+  details: SetAuctionViewParametersFormData
 }
 
 const setAuctionViewParametersApi = splittedAuctionApi.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     setAuctionViewParameters: builder.mutation<
       void,
       SetAuctionViewParametersQueryArgs
     >({
-      query: ({ auctionId, parameters }) => ({
-        url: `/${auctionId}/view/parameters`,
-        data: parameters,
-        headers: { 'Content-Type': 'application/json' },
+      query: ({ auctionUUID, details }) => ({
+        url: `/${auctionUUID}/view/parameters`,
+        data: details,
         method: 'POST',
       }),
     }),
@@ -25,5 +24,5 @@ const setAuctionViewParametersApi = splittedAuctionApi.injectEndpoints({
   overrideExisting: false,
 })
 
-export const { useSetAuctionViewParametersMutation } =
-  setAuctionViewParametersApi
+export const { useSetAuctionViewParametersMutation }
+  = setAuctionViewParametersApi

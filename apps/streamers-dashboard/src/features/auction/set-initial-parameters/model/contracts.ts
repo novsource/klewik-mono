@@ -1,23 +1,22 @@
-import { ZodOptional, ZodString, z } from 'zod'
+import { z } from 'zod'
 
 const streamingPlatformsLinks = ['twitch', 'youtube'] as const
-
 const donatePlatformsLinks = ['donationAlerts'] as const
 
-const auctionLinks = [
+export const auctionInitialDetailsFormLinks = [
   ...streamingPlatformsLinks,
   ...donatePlatformsLinks,
 ] as const
 
-const LinksSchemas = {
-  youtube: z.string().url().optional(),
-  donationAlerts: z.string().url().optional(),
-  twitch: z.string().url().optional(),
-} satisfies { [T in (typeof auctionLinks)[number]]: ZodOptional<ZodString> }
+// export const AuctionViewParametersFormSchema = z.object({
+//   title: z.string().min(6).max(40),
+//   links: z.object({
+//     youtube: YoutubeURLSchema.or(z.string().max(0)),
+//     donationAlerts: DonationAlertsURLSchema.or(z.string().max(0)),
+//     twitch: TwitchURLSchema.or(z.string().max(0)),
+//   }),
+// })
 
-const AuctionViewParametersFormSchema = z.object({
+export const AuctionViewParametersFormSchema = z.object({
   title: z.string().min(6).max(40),
-  links: z.object(LinksSchemas),
 })
-
-export { AuctionViewParametersFormSchema, auctionLinks }
