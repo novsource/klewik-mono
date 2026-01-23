@@ -5,14 +5,16 @@ import { useMemo } from 'react'
 
 import { Radio as RadioPrimitive } from '@base-ui-components/react'
 
+import type { TextProps } from '~shared/components/typography'
+import { Text } from '~shared/components/typography'
+
 import { Card, CardContent } from '~shared/ui/card'
 import { Flex } from '~shared/ui/flex'
-import type { TypographyProps } from '~shared/ui/typograghy'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn, mergeProps } from '~shared/utils'
 
 import { radioIndicatorVariants, radioLabelVariants, radioVariants } from '../styles'
+import { radioCardVariants } from '../styles/radio-card.variants'
 
 export type RadioCardProps = RadioProps & {
   icon?: ReactNode
@@ -23,6 +25,7 @@ export const RadioCard = (props: RadioCardProps) => {
     children,
     slotsClassnames,
     indicatorProps,
+    disabled,
     labelProps,
     variant,
     size,
@@ -30,22 +33,22 @@ export const RadioCard = (props: RadioCardProps) => {
     ...restProps
   } = props
 
-  const rootStyles = useMemo(() =>
+  const rootClasses = useMemo(() =>
     cn(radioVariants({ variant, size }), slotsClassnames?.root), [slotsClassnames?.root, variant, size])
-
-  const labelStyles = useMemo(() =>
+  const labelClasses = useMemo(() =>
     cn(radioLabelVariants({ variant, size }), slotsClassnames?.label), [slotsClassnames?.label, variant, size])
-
-  const indicatorStyles = useMemo(() =>
+  const indicatorClasses = useMemo(() =>
     cn(radioIndicatorVariants({ variant, size }), slotsClassnames?.indicator), [slotsClassnames?.indicator, variant, size])
 
+  const cardBaseClasses = useMemo(() => cn(radioCardVariants()), [])
+
   const mergedLabelProps = mergeProps(labelProps, {
-    className: labelStyles,
+    className: labelClasses,
   })
 
   return (
     <label {...mergedLabelProps}>
-      <Card className="w-full flex flex-row justify-between pt-1.5 pb-0.5">
+      <Card className={cardBaseClasses} aria-disabled={disabled}>
         <CardContent className="w-full flex-row gap-x-3 justify-between">
           <Flex className={cn(!!icon && 'gap-x-4')}>
             <Flex className="h-full shrink-0 items-center">
@@ -56,8 +59,8 @@ export const RadioCard = (props: RadioCardProps) => {
             </Flex>
           </Flex>
           <Flex className="h-full w-fit items-start">
-            <RadioPrimitive.Root className={rootStyles} {...restProps}>
-              <RadioPrimitive.Indicator className={indicatorStyles} {...indicatorProps} />
+            <RadioPrimitive.Root className={rootClasses} disabled={disabled} {...restProps}>
+              <RadioPrimitive.Indicator className={indicatorClasses} {...indicatorProps} />
             </RadioPrimitive.Root>
           </Flex>
         </CardContent>
@@ -66,18 +69,14 @@ export const RadioCard = (props: RadioCardProps) => {
   )
 }
 
-export type RadioCardTitleProps = Omit<TypographyProps<'span'>, 'tag'>
-
-export const RadioCardTitle = (props: RadioCardTitleProps) => {
+export const RadioCardTitle = (props: TextProps) => {
   const { className, ...restProps } = props
 
-  return <Typography className={cn('text-white/80 font-semibold', className)} tag="span" {...restProps} />
+  return <Text className={cn('text-white/80 font-semibold', className)} asSpan {...restProps} />
 }
 
-export type RadioCardDescriptionProps = Omit<TypographyProps<'span'>, 'tag'>
-
-export const RadioCardDescription = (props: RadioCardTitleProps) => {
+export const RadioCardDescription = (props: TextProps) => {
   const { className, ...restProps } = props
 
-  return <Typography className={cn('text-gray-light', className)} tag="span" {...restProps} />
+  return <Text className={cn('text-gray-light', className)} asSpan {...restProps} />
 }

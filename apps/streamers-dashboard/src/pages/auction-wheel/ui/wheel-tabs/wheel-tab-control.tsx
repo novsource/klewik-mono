@@ -13,6 +13,8 @@ import { auctionActions, auctionSelectors } from '~entities/auction/store'
 
 import { wheelSelectors } from '~entities/wheel/store'
 
+import { Title } from '~shared/components/typography'
+
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Divider } from '~shared/ui/divider'
@@ -20,7 +22,6 @@ import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { RadioCard, RadioCardDescription, RadioCardTitle, RadioGroup } from '~shared/ui/radio'
 import { TabsContent } from '~shared/ui/tabs'
-import { Typography } from '~shared/ui/typograghy'
 
 import { twSlotsStyles } from '~shared/utils'
 
@@ -50,11 +51,15 @@ export const ControlWheelTabContent = (props: ControlWheelTabContentProps) => {
 
 function WheelControl() {
   const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
+  const wheelSlots = useStoreSelector(wheelSelectors.getSlots)
+
   const tabsContentStyles = useMemo(() => twSlotsStyles(controlWheelTabStyles), [])
+
+  const isSpinWheelButtonDisabled = isWheelSpinning || wheelSlots.length < 2
 
   return (
     <Flex className={tabsContentStyles.controlsWrapper}>
-      <SpinWheelButton className={tabsContentStyles.spinWheelButton} disabled={isWheelSpinning} />
+      <SpinWheelButton className={tabsContentStyles.spinWheelButton} disabled={isSpinWheelButtonDisabled} />
       <SpinTimeInput disabled={isWheelSpinning} />
     </Flex>
   )
@@ -69,14 +74,15 @@ function GameModeChooseRadioGroup() {
 
   return (
     <Flex direction="column">
-      <Typography
+      <Title
         className="text-white/80 font-medium font-golos-f mb-2.5"
-        tag="h3"
+        order={3}
       >
         Режим игры
-      </Typography>
+      </Title>
+
       <RadioGroup
-        className="w-full flex flex-col gap-y-2 desktop:gap-x-3 desktop:justify-between desktop:flex-row"
+        className="w-full flex flex-col gap-y-2 px-0.5 desktop:gap-x-3 desktop:justify-between desktop:flex-row"
         value={wheelMode}
         disabled={isWheelSpinning}
         // @ts-expect-error value can be only wheel mode
@@ -112,14 +118,14 @@ function GamesChooseRadioGroup() {
 
   return (
     <Flex direction="column">
-      <Typography
+      <Title
         className="text-white/80 font-medium font-golos-f mb-2.5"
-        tag="h3"
+        order={3}
       >
         Формат
-      </Typography>
+      </Title>
       <RadioGroup
-        className="w-full flex flex-col gap-y-2 desktop:gap-x-3 desktop:justify-between desktop:flex-row"
+        className="w-full flex flex-col gap-y-2 px-0.5 desktop:gap-x-3 desktop:justify-between desktop:flex-row"
         value={choosenGame}
         disabled={isWheelSpinning}
       >

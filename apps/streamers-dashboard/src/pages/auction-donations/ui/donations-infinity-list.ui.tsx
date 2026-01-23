@@ -166,6 +166,7 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
       gap={8}
       placeholder={<InfiniteDonationsListSkeletonCard />}
       showPlaceholders={isShowingSkeletons}
+      emptyContentProps={{ placeholder: 'Пусто :(' }}
       {...restProps}
     >
       { renderListItem }

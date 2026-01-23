@@ -38,6 +38,7 @@ export type InfiniteListProps<DataItem> = Omit<
   placeholder?: ReactNode
   showPlaceholders?: boolean
   showEmptyContent?: boolean
+  emptyPlaceholder?: ReactNode
   offset?: number
   emptyContentProps?: InfiniteListEmptyContentProps
   loaderProps?: InfiniteListLoaderProps
@@ -55,6 +56,7 @@ export const InfiniteList = <DataItem = unknown>(props: InfiniteListProps<DataIt
     showPlaceholders = false,
     showEmptyContent = true,
     emptyContentProps,
+    emptyPlaceholder,
     ...restProps
   } = props
 
@@ -126,7 +128,7 @@ export const InfiniteList = <DataItem = unknown>(props: InfiniteListProps<DataIt
       scrollElementRef={listRef}
       {...restProps}
     >
-      {isShouldShowEmptyContent && <InfiniteListEmptyContent {...emptyContentProps} />}
+      {isShouldShowEmptyContent && (emptyPlaceholder ?? <InfiniteListEmptyContent {...emptyContentProps} />)}
       <AnimatePresence>
         {virtualizedItems.map(renderVirtualListItem)}
       </AnimatePresence>
