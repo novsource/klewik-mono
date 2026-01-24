@@ -4,8 +4,9 @@ import type { ReactNode } from 'react'
 import { memo, useCallback, useRef } from 'react'
 
 import NumberFlow from '@number-flow/react'
-import { globalDialogsActions } from '~features/_common/display-dialogs'
 import { AnimatePresence } from 'motion/react'
+
+import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -213,7 +214,7 @@ export const SearchAuctionSlots = (props: SearchAuctionSlotsProps) => {
         </SearchResultItemContainer>
       )
     },
-    [],
+    [closeDialog, setDialogState],
   )
 
   return (
@@ -294,7 +295,7 @@ export const SearchDonations = (props: SearchAuctionSlotsProps) => {
         </SearchResultItemContainer>
       )
     },
-    [],
+    [closeDialog, setDialogState],
   )
 
   return (

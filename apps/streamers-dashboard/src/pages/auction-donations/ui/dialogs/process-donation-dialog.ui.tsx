@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 
-import { globalDialogsActions } from '~features/_common/display-dialogs'
+/* @TODO Refactor global dialogs */
+import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
 import { processDonationDialogStyles } from '~pages/auction-donations/styles/process-donation-dialog.styles'
 
@@ -65,7 +66,7 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
 
   const [isDialogOpened, setIsDialogOpened] = useState(false)
 
-  const { state: { donationCode }, dispatch: { setDonationCode } } = useProcessDonationContext()
+  const { state: { donationCode } } = useProcessDonationContext()
 
   const formSlotTitle = useMemo(() => {
     const existedSlotByDonationCodeId = storedSlots.find(slot => slot.id === donationCode?.slotId)

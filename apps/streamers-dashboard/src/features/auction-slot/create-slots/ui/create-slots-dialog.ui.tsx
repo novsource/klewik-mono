@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'
 
-import { DesktopAppDialog, MobileAppDialog } from '~shared/components/app-dialog'
-
 import { auctionSlotsActions as storeAuctionSlotsActions } from '~entities/auction-slot/store'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { DesktopAppDialog, MobileAppDialog } from '~shared/components/app-dialog'
 
 import { useMediaQuery } from '~shared/hooks'
 

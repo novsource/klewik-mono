@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { createContext, useContext, useMemo, useState } from 'react'
 
-import { globalDialogsActions, globalDialogsSelectors } from '~features/_common/display-dialogs'
+import { globalDialogsActions, globalDialogsSelectors } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 

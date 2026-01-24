@@ -2,7 +2,7 @@ import type { VirtualizerHandle } from 'virtua'
 
 import { useCallback, useRef, useState } from 'react'
 
-import { globalDialogsActions } from '~features/_common/display-dialogs'
+import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
 import { useSortingSlots } from '~pages/auction-slots/lib'
 

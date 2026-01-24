@@ -1,8 +1,8 @@
-import type { PopoverProps } from '@radix-ui/react-popover'
+import type { PopoverRootProps } from '@base-ui/react'
 
 import { useRef, useState } from 'react'
 
-import { globalDialogsActions } from '~features/_common/display-dialogs'
+import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
 import { useUpdateBetsStatusMutation } from '~entities/auction/api'
 import { auctionSelectors } from '~entities/auction/store'
@@ -17,7 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '~shared/ui/popover'
 
 import { cn, mergeProps } from '~shared/utils'
 
-export type DashboardHeaderMenuProps = PopoverProps & {
+export type DashboardHeaderMenuProps = PopoverRootProps & {
   isTimerVisible?: boolean
   onTimerVisibilityChanges?: () => void
 }

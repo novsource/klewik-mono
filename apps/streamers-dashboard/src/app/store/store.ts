@@ -1,6 +1,7 @@
 import { combineReducers, configureStore, isAction } from '@reduxjs/toolkit'
-import { globalDialogsActions, globalDialogsReducer } from '~features/_common/display-dialogs'
 import { createStateSyncMiddleware, initStateWithPrevTab, withReduxStateSync } from 'redux-state-sync'
+
+import { globalDialogsActions, globalDialogsReducer } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
 import { splittedAuctionApi as auctionApi } from '~entities/auction/api'
 import { auctionReducer } from '~entities/auction/store'

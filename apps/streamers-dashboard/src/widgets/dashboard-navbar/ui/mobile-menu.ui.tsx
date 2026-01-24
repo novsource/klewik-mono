@@ -3,7 +3,8 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
 import NumberFlow from '@number-flow/react'
-import { globalDialogsActions } from '~features/_common/display-dialogs'
+
+import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
 import { useUpdateBetsStatusMutation } from '~features/auction/update-bets-status/api'
 

@@ -2,8 +2,9 @@ import type { DonationsStatusFilterValue } from '../selects/donations-filter-sel
 
 import { useRef, useState } from 'react'
 
-import { globalDialogsActions } from '~features/_common/display-dialogs'
 import { isAxiosError } from 'axios'
+
+import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
 import { useLazyLoadMoreDonationsQuery } from '~features/donations/watch-donations/api'
 import { useDonationsInfiniteList } from '~features/donations/watch-donations/hooks'
