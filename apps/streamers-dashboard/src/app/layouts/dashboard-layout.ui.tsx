@@ -72,7 +72,7 @@ export const DashboardLayout = () => {
     setAllConnected(false)
   })
 
-  if (!isAllConnected) {
+  if (!isAllEventsConnected) {
     return <DashboardLayoutLoader />
   }
 

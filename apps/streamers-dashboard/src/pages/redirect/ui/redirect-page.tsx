@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { RedirectDisplay } from '~features/integrations/connect-integration/ui'
 
@@ -8,6 +8,23 @@ import { Flex } from '~shared/ui/flex'
 
 const RedirectPage = () => {
   const params = useSearchParams()
+  const navigate = useNavigate()
+
+  useLayoutEffect(() => {
+    const rootElement = document.getElementById('root')
+
+    if (!rootElement) {
+      return navigate('/')
+    }
+
+    const initialHeightStyle = rootElement.style.height
+
+    rootElement.style.height = '100%'
+
+    return () => {
+      rootElement.style.height = initialHeightStyle
+    }
+  }, [navigate])
 
   useEffect(() => {
     const provider = params[0].get('provider')

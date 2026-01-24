@@ -1,4 +1,4 @@
-import { NonIndexRouteObject } from 'react-router-dom'
+import type { NonIndexRouteObject } from 'react-router-dom'
 
 import { lazyLoadModule } from '~shared/lib/react-router-dom'
 
@@ -16,7 +16,7 @@ type AuctionSlotsRouteProps = Partial<
 const REDIRECT_ROUTE_PATH = 'redirect'
 
 export const redirectPageRoute = (
-  options?: AuctionSlotsRouteProps
+  options?: AuctionSlotsRouteProps,
 ): NonIndexRouteObject => {
   if (options?.enableLazyLoading) {
     return {
@@ -28,13 +28,15 @@ export const redirectPageRoute = (
 
   return {
     path: REDIRECT_ROUTE_PATH,
-    element: options?.disableTransition ? (
-      <RedirectPage />
-    ) : (
-      <AnimatedRoute>
-        <RedirectPage />
-      </AnimatedRoute>
-    ),
+    element: options?.disableTransition
+      ? (
+          <RedirectPage />
+        )
+      : (
+          <AnimatedRoute>
+            <RedirectPage />
+          </AnimatedRoute>
+        ),
     ...options,
   }
 }
