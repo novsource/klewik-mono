@@ -1,1 +1,1 @@
-export * from './process-donation-dialog.ui'
+export * from './process-donation-form-composer.ui'

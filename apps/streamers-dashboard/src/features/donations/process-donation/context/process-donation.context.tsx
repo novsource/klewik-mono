@@ -1,14 +1,14 @@
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
+import { useGetDonationCodeInfoMutation } from '~features/donations/process-donation/api'
+
 import { auctionSelectors } from '~entities/auction/store'
 
 import type { DonationCode, ProcessedDonation } from '~entities/donation/model'
 import { getDonationCodeFromMessage } from '~entities/donation/utils'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import { useGetDonationCodeInfoMutation } from '../api'
 
 type ProcessDonationContextState = {
   state: {

@@ -3,7 +3,11 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { globalDialogsActions } from '~features/_common/display-dialogs'
 
+import { processDonationDialogStyles } from '~pages/auction-donations/styles/process-donation-dialog.styles'
+
+import { ProcessDonationContextProvider, useProcessDonationContext } from '~features/donations/process-donation/context'
 import { useProcessDonationForm } from '~features/donations/process-donation/hooks'
+import { ProcessDonationFormComposer } from '~features/donations/process-donation/ui'
 
 import { auctionSelectors } from '~entities/auction/store'
 
@@ -29,10 +33,7 @@ import type {
 
 import { formatNumberToIntlString, mergeProps, twSlotsStyles } from '~shared/utils'
 
-import { ProcessDonationContextProvider, useProcessDonationContext } from '../context'
-import { processDonationDialogStyles } from '../styles'
-import { ProcessDonationDialogTabs } from './dialog-tabs.ui'
-import { ProcessDonationFormComposer } from './form-composer.ui'
+import { ProcessDonationDialogTabs } from '../tabs/process-donation-dialog/process-donation-dialog-tabs.ui'
 
 export type ProcessDonationDialogProps = SheetProps & {
   donation: ProcessedDonation

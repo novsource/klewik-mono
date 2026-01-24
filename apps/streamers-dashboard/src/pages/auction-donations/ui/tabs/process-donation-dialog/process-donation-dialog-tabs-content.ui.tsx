@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
 
+import { useProcessDonationContext } from '~features/donations/process-donation/context'
+import { ProcessDonationFormComposer } from '~features/donations/process-donation/ui'
+
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
@@ -11,6 +14,8 @@ import type {
   ProcessedDonationStatus,
 } from '~entities/donation/model'
 import { getDonationCodeFromMessage } from '~entities/donation/utils'
+
+import { IntegrationBadge } from '~entities/integrations/ui/badge'
 
 import { Text } from '~shared/components/typography'
 
@@ -25,11 +30,9 @@ import type { TabsContentProps } from '~shared/ui/tabs'
 import { TabsContent } from '~shared/ui/tabs'
 import { Typography } from '~shared/ui/typograghy'
 
-import { cn } from '~shared/utils'
+import { cn, formatNumberToIntlString } from '~shared/utils'
 
-import { useProcessDonationContext } from '../context'
-import { ProcessDonationCard } from './dialog-card.ui'
-import { ProcessDonationFormComposer } from './form-composer.ui'
+import { ProcessDonationCard } from '../../cards/process-donation-dialog-card.ui'
 
 export type ProcessDonationTabContentProps = Omit<TabsContentProps, 'value'> & {
   donation: ProcessedDonation
@@ -250,7 +253,6 @@ function ProcessedDonationCodeCard(props: ProcessedDonationCodeCardProps) {
           <Flex>
             <Typography tag="span">Не удалось загрузить данные</Typography>
             <Button
-              variant="link"
               onClick={() => reloadDonationCode(donation.message)}
             >
               Загрузить еще раз
@@ -267,7 +269,6 @@ function ProcessedDonationCodeCard(props: ProcessedDonationCodeCardProps) {
           <Flex>
             <Typography tag="span">Не удалось загрузить данные</Typography>
             <Button
-              variant="link"
               onClick={() => reloadDonationCode(donation.message)}
             >
               Загрузить еще раз
@@ -309,5 +310,73 @@ function ProcessedDonationCodeCard(props: ProcessedDonationCodeCardProps) {
         {targetSlot ? targetSlot.title : 'Не ссылался ни на один слот'}
       </ProcessDonationCard>
     </>
+  )
+}
+
+type ProcessDonationInfoTabContentProps = Omit<TabsContentProps, 'value'> & {
+  donation: ProcessedDonation
+}
+
+export function ProcessDonationInfoTabContent(props: ProcessDonationInfoTabContentProps) {
+  const { donation, className, ...restProps } = props
+
+  return (
+    <TabsContent
+      className={cn('w-full h-full mt-4', className)}
+      value="info"
+      {...restProps}
+    >
+      <Flex className="w-full gap-y-1.5 tablet:gap-y-2" direction="column">
+        <ProcessDonationCard
+          contentPosition="bottom"
+          title="Никнейм"
+          titleIcon={<Icons.User className="text-gray" size="sm" />}
+        >
+          {donation.username}
+        </ProcessDonationCard>
+        <ProcessDonationCard
+          title="Сумма"
+          titleIcon={<Icons.Money className="text-gray" size="sm" />}
+        >
+          {donation.amount && (
+            <div className="space-x-1.5">
+              <Typography className="font-semibold" tag="span">
+                {formatNumberToIntlString(donation.amount)}
+              </Typography>
+              <Typography className="text-gray font-semibold" tag="span">{donation?.currency}</Typography>
+            </div>
+          )}
+        </ProcessDonationCard>
+        <ProcessDonationCard
+          title="Источник"
+          titleIcon={<Icons.Source className="text-gray" size="sm" />}
+        >
+          <IntegrationBadge integration={donation.source} />
+        </ProcessDonationCard>
+        <ProcessDonationCard
+          title="Дата создания"
+          titleIcon={<Icons.Timer className="text-gray" size="sm" />}
+        >
+          {new Intl.DateTimeFormat('ru', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(donation.createdAt))}
+        </ProcessDonationCard>
+        <ProcessDonationCard
+          contentPosition="bottom"
+          title="Сообщение"
+          titleIcon={
+            donation.messageType === 'audio'
+              ? (
+                  <Icons.Sound className="text-gray" size="sm" />
+                )
+              : (
+                  <Icons.Message className="text-gray" size="sm" />
+                )
+          }
+        >
+          {donation.messageType === 'audio'
+            ? 'Аудио-формат сообщений не поддерживается'
+            : donation.message}
+        </ProcessDonationCard>
+      </Flex>
+    </TabsContent>
   )
 }

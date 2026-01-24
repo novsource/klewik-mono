@@ -1,15 +1,15 @@
 export type ProcessDonationDialogStylesSlots
   = 'contentWrapper'
-  | 'header'
-  | 'headerPanelWrapper'
-  | 'resetButton'
-  | 'panelActionsButtons'
-  | 'submitButton'
-  | 'closeButton'
-  | 'titleDescription'
-  | 'titleWrapper'
-  | 'title'
-  | 'footer'
+    | 'header'
+    | 'headerPanelWrapper'
+    | 'resetButton'
+    | 'panelActionsButtons'
+    | 'submitButton'
+    | 'closeButton'
+    | 'titleDescription'
+    | 'titleWrapper'
+    | 'title'
+    | 'footer'
 
 export const processDonationDialogStyles: SlotsStyles<ProcessDonationDialogStylesSlots> = {
   contentWrapper: /* tw */ 'h-full w-full gap-y-4 max-tablet:relative max-tablet:flex max-tablet:flex-col max-tablet:w-full max-tablet:h-full max-tablet:pb-2 max-tablet:overflow-scroll max-tablet:gap-y-3',
