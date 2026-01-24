@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react'
 
+import { Text } from '~shared/components/typography'
+
 import type { CardProps } from '~shared/ui/card'
 import { Card, CardContent, CardHeader } from '~shared/ui/card'
 import { Flex } from '~shared/ui/flex'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
@@ -36,9 +37,9 @@ export const EditSlotDialogCard = (props: EditSlotDialogCardProps) => {
       <CardHeader className="p-0">
         <Flex className="gap-x-1.5" align="center">
           {titleIcon}
-          <Typography className="text-sm text-gray-light font-golos-f font-medium" tag="span">
+          <Text className="text-sm text-gray-light font-golos-f font-medium" asSpan>
             {title}
-          </Typography>
+          </Text>
         </Flex>
       </CardHeader>
       <CardContent

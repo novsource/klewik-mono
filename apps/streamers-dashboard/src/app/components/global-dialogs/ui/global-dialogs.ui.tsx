@@ -1,8 +1,7 @@
 import { ProcessDonationDialog } from '~pages/auction-donations/ui/dialogs/process-donation-dialog.ui'
+import { EditSlotDialog } from '~pages/auction-slots/ui/dialogs/edit-slot-dialog.ui'
 
 import { AuctionSettingsDialog } from '~widgets/dashboard-settings-dialog'
-
-import { EditSlotDialog } from '~features/auction-slot/edit-slot/ui'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { createSingleFakeAuctionSlot } from '~entities/auction-slot/model/__tests__/auction-slot.mocks'

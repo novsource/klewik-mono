@@ -32,7 +32,7 @@ export type AuctionSlotsListProps = {
   className?: string
 } & Omit<WindowVirtualListProps<AuctionSlot>, 'children' | 'virtualizer' | 'data'>
 
-export const AuctionSlotsList = (props: AuctionSlotsListProps) => {
+export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
   const {
     data,
     className,

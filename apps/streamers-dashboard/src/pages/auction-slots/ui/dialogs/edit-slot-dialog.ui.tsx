@@ -1,6 +1,9 @@
 import type { MouseEvent, ReactNode } from 'react'
 
+import { useEditSlotDialog } from '~pages/auction-slots/hooks/use-edit-slot-dialog'
+
 import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
+import { EditSlotFormComposer } from '~features/auction-slot/edit-slot/ui'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
@@ -24,9 +27,7 @@ import {
 
 import { mergeProps } from '~shared/utils'
 
-import { useEditSlotDialog } from '../hooks'
-import { EditSlotDialogCard } from './dialog-card.ui'
-import { EditSlotFormComposer } from './form-composer.ui'
+import { EditSlotDialogCard } from '../cards/edit-slot-dialog-card.ui'
 
 export type EditSlotDialogProps = SheetProps & {
   slot: AuctionSlot

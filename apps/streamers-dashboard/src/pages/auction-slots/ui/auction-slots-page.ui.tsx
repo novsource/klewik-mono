@@ -17,8 +17,8 @@ import { Typography } from '~shared/ui/typograghy'
 import { cn, twSlotsStyles } from '~shared/utils'
 
 import { auctionSlotsPageStyles } from '../styles'
-import { AuctionSlotsList } from './slots-list.ui'
-import { SortingSlotsCombobox } from './sorting-slots-combobox.ui'
+import { SortingSlotsCombobox } from './combobox/sorting-slots-combobox.ui'
+import { AuctionSlotsVirtualList } from './virtual-lists/slots-virtual-list.ui'
 
 export const AuctionSlotsPage = () => {
   const pageStyles = useMemo(() => twSlotsStyles(auctionSlotsPageStyles), [])
@@ -44,7 +44,7 @@ export const AuctionSlotsPage = () => {
         </Flex>
       )}
       <ListActionsPanel disabled={!isListShowed} />
-      <AuctionSlotsVirtualList isShowed={isListShowed} />
+      <AuctionSlotsList isShowed={isListShowed} />
     </div>
   )
 }
@@ -115,13 +115,13 @@ type AuctionSlotsVirtualListProps = {
   isShowed: boolean
 }
 
-function AuctionSlotsVirtualList(props: AuctionSlotsVirtualListProps) {
+function AuctionSlotsList(props: AuctionSlotsVirtualListProps) {
   const { isShowed } = props
 
   if (!isShowed)
     return <SkeletonVirtualList />
 
-  return <AuctionSlotsList />
+  return <AuctionSlotsVirtualList />
 }
 
 function SkeletonVirtualList() {
