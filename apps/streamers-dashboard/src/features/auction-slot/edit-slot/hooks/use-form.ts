@@ -5,8 +5,6 @@ import { useEffect } from 'react'
 
 import { useForm, useFormState } from 'react-hook-form'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-
 import { auctionSelectors } from '~entities/auction/store'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
@@ -17,7 +15,7 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { formatNumberToIntlString } from '~shared/utils'
 
 import { useEditSlotMutation } from '../api'
-import { transformEditSlotFormData } from '../lib'
+import { editSlotFormResolver } from '../lib/form-resolver'
 
 export type UseEditSlotFormOptions = {
   onSuccess?: (formData: TransformedEditSlotFormData) => void
@@ -38,8 +36,7 @@ export const useEditSlotForm = (target: AuctionSlot, options: UseEditSlotFormOpt
       title: target.title,
       points: formatNumberToIntlString(target.points),
     },
-    resolver: zodResolver(transformEditSlotFormData()),
-    reValidateMode: 'onChange',
+    resolver: (values, _, options) => editSlotFormResolver(values, options),
   })
 
   useEffect(() => {

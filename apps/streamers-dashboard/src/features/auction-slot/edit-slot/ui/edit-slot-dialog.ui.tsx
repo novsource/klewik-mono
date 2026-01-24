@@ -1,20 +1,18 @@
-import type { ReactNode } from 'react'
-
-import { FormProvider, useFormContext } from 'react-hook-form'
-
-import { DesktopAppDialog, MobileAppDialog } from '~shared/components/app-dialog'
+import type { MouseEvent, ReactNode } from 'react'
 
 import { DeleteSlotButton } from '~features/auction-slot/delete-slot/ui'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
-import { SlotPointsFormInput, SlotTitleFormInput } from '~entities/auction-slot/ui/form'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useMediaQuery } from '~shared/hooks'
+import { DesktopAppDialog, MobileAppDialog } from '~shared/components/app-dialog'
+import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
 
 import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
+import type { DialogProps } from '~shared/ui/dialog'
+import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import type {
@@ -28,6 +26,7 @@ import { mergeProps } from '~shared/utils'
 
 import { useEditSlotDialog } from '../hooks'
 import { EditSlotDialogCard } from './dialog-card.ui'
+import { EditSlotFormComposer } from './form-composer.ui'
 
 export type EditSlotDialogProps = SheetProps & {
   slot: AuctionSlot
@@ -51,131 +50,173 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
     submit,
   } = useEditSlotDialog(inputSlot)
 
-  const isMediaLargeThenTablet = useMediaQuery(
-    greaterThenDeviceWidthMediaQueries.tablet,
-  )
+  const handleSubmit = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    submit()
+  }
 
   const closeDialog = () => {
-    if (formState.isDirty || formQueryState.isLoading)
+    if (formQueryState.isLoading)
       return
 
     dialogState.setIsOpen(false)
+    form.reset()
   }
 
   const isDismissible = !formState.isDirty || formQueryState.isLoading
 
-  const mergedSheetProps = mergeProps({
+  const mergedSheetProps = mergeProps<DialogProps[]>({
     open: dialogState.isOpen,
     onOpenChange: dialogState.setIsOpen,
-    dismissible: isDismissible,
+    disablePointerDismissal: !isDismissible,
   }, restProps)
 
-  if (isMediaLargeThenTablet) {
-    return (
-      <DesktopAppDialog {...mergedSheetProps}>
-        {trigger && <DesktopAppDialog.Trigger>{ trigger }</DesktopAppDialog.Trigger>}
-        <DesktopAppDialog.Content>
+  return (
+    <MediaQueryViewToggler query={greaterThenDeviceWidthMediaQueries.tablet}>
 
-          <DesktopAppDialog.Header>
-            <DesktopAppDialog.TopPanel>
+      <MediaQueryViewToggler.MatchedItem>
+        <DesktopAppDialog {...mergedSheetProps}>
+          {trigger && <DesktopAppDialog.Trigger>{ trigger }</DesktopAppDialog.Trigger>}
+          <DesktopAppDialog.Content>
 
-              <DesktopAppDialog.HeaderActionsPanel>
-                <DeleteSlotButton
-                  slotId={inputSlot.id}
-                  className="size-8"
-                  variant="error"
-                  disabled={formQueryState.isLoading}
-                  isIconOnly
-                  icon={<Icons.Bin size="xs" />}
-                  onClick={() => form.reset()}
+            <EditSlotFormComposer form={form}>
+
+              <DesktopAppDialog.Header className="mb-4">
+                <DesktopAppDialog.TopPanel>
+
+                  <DesktopAppDialog.HeaderActionsPanel>
+                    <DeleteSlotButton
+                      slotId={inputSlot.id}
+                      className="size-8"
+                      variant="error"
+                      disabled={formQueryState.isLoading}
+                      isIconOnly
+                      icon={<Icons.Bin size="xs" />}
+                    />
+                    <Button
+                      className="size-8"
+                      disabled={formQueryState.isLoading || !formState.isDirty}
+                      isIconOnly
+                      icon={<Icons.Reset size="sm" />}
+                      onClick={() => form.reset()}
+                    />
+                  </DesktopAppDialog.HeaderActionsPanel>
+
+                  <DesktopAppDialog.HeaderActionsPanel>
+                    <EditSlotFormComposer.SubmitButton
+                      className="h-full"
+                      size="sm"
+                      startContent={<Icons.Save width={14} height={14} />}
+                      onClick={handleSubmit}
+                    />
+
+                    <Divider className="mx-1" />
+
+                    <DesktopAppDialog.CloseButton />
+                  </DesktopAppDialog.HeaderActionsPanel>
+                </DesktopAppDialog.TopPanel>
+
+                <DesktopAppDialog.Title
+                  icon={<EditSlotDialogsIcon />}
+                  title="Обзор слота"
+                  description="Измените параметры слота"
                 />
-                <Button
-                  className="size-8"
-                  disabled={formQueryState.isLoading || !formState.isDirty}
-                  isIconOnly
-                  icon={<Icons.Reset size="sm" />}
-                  onClick={() => form.reset()}
-                />
-              </DesktopAppDialog.HeaderActionsPanel>
 
-              <DesktopAppDialog.HeaderActionsPanel>
-                <Button
+              </DesktopAppDialog.Header>
+
+              <Flex className="flex-col h-full gap-y-2">
+                <EditSlotDialogCard
+                  className="pt-3 pb-1"
+                  contentPosition="bottom"
+                  title="Слот"
+                  titleIcon={<Icons.Slots className="text-gray" size="xs" />}
+                >
+                  <EditSlotFormComposer.TitleFieldInput variant="ghost" />
+                </EditSlotDialogCard>
+
+                <EditSlotDialogCard
+                  className="py-2"
+                  contentPosition="right"
+                  title="Очки"
+                  titleIcon={<Icons.Coin className="text-gray" size="sm" />}
+                >
+                  <EditSlotFormComposer.PointsFieldInput variant="ghost" />
+                </EditSlotDialogCard>
+              </Flex>
+
+            </EditSlotFormComposer>
+
+          </DesktopAppDialog.Content>
+        </DesktopAppDialog>
+
+      </MediaQueryViewToggler.MatchedItem>
+
+      <MediaQueryViewToggler.NotMatchedItem>
+        <MobileAppDialog {...mergedSheetProps}>
+          <MobileAppDialog.Trigger>{ trigger }</MobileAppDialog.Trigger>
+
+          <MobileAppDialog.Content>
+
+            <EditSlotFormComposer form={form}>
+
+              <MobileAppDialog.Header>
+                <MobileAppDialog.HeaderTitle
+                  value="Обзор слота"
+                  description="Измените параметры слота"
+                  icon={<EditSlotDialogsIcon />}
+                />
+              </MobileAppDialog.Header>
+
+              <Flex className="gap-y-2">
+                <EditSlotDialogCard
+                  className="pt-3 pb-1"
+                  contentPosition="bottom"
+                  title="Слот"
+                  titleIcon={<Icons.Slots className="text-gray" size="xs" />}
+                >
+                  <EditSlotFormComposer.TitleFieldInput variant="ghost" />
+                </EditSlotDialogCard>
+
+                <EditSlotDialogCard
+                  className="py-2"
+                  contentPosition="right"
+                  title="Очки"
+                  titleIcon={<Icons.Coin className="text-gray" size="sm" />}
+                >
+                  <EditSlotFormComposer.PointsFieldInput variant="ghost" />
+                </EditSlotDialogCard>
+              </Flex>
+
+              <MobileAppDialog.Footer className="gap-x-4" direction="row">
+                <EditSlotFormComposer.SubmitButton
                   className="h-full"
                   size="sm"
-                  variant="action"
-                  disabled={formQueryState.isLoading || !formState.isDirty}
                   startContent={<Icons.Save width={14} height={14} />}
-                  onClick={submit}
-                >
-                  Сохранить
-                </Button>
-                <div className="h-2/3 w-0.25 bg-dark-accent mx-1" />
-                <DesktopAppDialog.CloseButton />
-              </DesktopAppDialog.HeaderActionsPanel>
-            </DesktopAppDialog.TopPanel>
+                  onClick={handleSubmit}
+                />
 
-            <DesktopAppDialog.Title
-              icon={<EditSlotDialogsIcon />}
-              title="Обзор слота"
-              description="Измените параметры слота"
-            />
+                <SheetClose
+                  className="relative top-0 right-0"
+                  render={(
+                    <Button
+                      className="w-full"
+                      icon={<Icons.LargeCross width={14} height={14} />}
+                      onClick={closeDialog}
+                      {...closeButtonProps}
+                    >
+                      Отмена
+                    </Button>
+                  )}
+                />
+              </MobileAppDialog.Footer>
 
-          </DesktopAppDialog.Header>
+            </EditSlotFormComposer>
 
-          <FormProvider {...form}>
-            <EditSlotForm />
-          </FormProvider>
+          </MobileAppDialog.Content>
+        </MobileAppDialog>
 
-        </DesktopAppDialog.Content>
-      </DesktopAppDialog>
-    )
-  }
-
-  return (
-    <MobileAppDialog {...mergedSheetProps}>
-      <MobileAppDialog.Trigger>{ trigger }</MobileAppDialog.Trigger>
-
-      <MobileAppDialog.Content>
-        <MobileAppDialog.Header>
-          <MobileAppDialog.HeaderTitle
-            value="Обзор слота"
-            description="Измените параметры слота"
-            icon={<EditSlotDialogsIcon />}
-          />
-        </MobileAppDialog.Header>
-
-        <FormProvider {...form}>
-          <EditSlotForm />
-        </FormProvider>
-
-        <MobileAppDialog.Footer className="gap-x-4" direction="row">
-          <Button
-            className="w-full"
-            variant="action"
-            type="submit"
-            disabled={formQueryState.isLoading || !formState.isDirty}
-            startContent={<Icons.Save width={14} height={14} />}
-            onClick={submit}
-          >
-            Сохранить
-          </Button>
-          <SheetClose
-            className="relative top-0 right-0"
-            render={(
-              <Button
-                className="w-full"
-                icon={<Icons.LargeCross width={14} height={14} />}
-                onClick={closeDialog}
-                {...closeButtonProps}
-              >
-                Отмена
-              </Button>
-            )}
-          />
-        </MobileAppDialog.Footer>
-
-      </MobileAppDialog.Content>
-    </MobileAppDialog>
+      </MediaQueryViewToggler.NotMatchedItem>
+    </MediaQueryViewToggler>
   )
 }
 
@@ -190,46 +231,5 @@ function EditSlotDialogsIcon() {
         <Icons.Pencil gradient />
       </Flex>
     </div>
-  )
-}
-
-function EditSlotForm() {
-  const { control } = useFormContext()
-
-  return (
-    <form className="flex flex-col gap-y-2 h-full">
-      <EditSlotDialogCard
-        className="pt-3 pb-1"
-        contentPosition="bottom"
-        title="Слот"
-        titleIcon={<Icons.Slots className="text-gray" size="xs" />}
-      >
-        <SlotTitleFormInput
-          variant="ghost"
-          name="title"
-          control={control}
-        />
-      </EditSlotDialogCard>
-      <EditSlotDialogCard
-        className="py-2"
-        contentPosition="right"
-        title="Очки"
-        titleIcon={<Icons.Coin className="text-gray" size="sm" />}
-      >
-        <SlotPointsFormInput
-          control={control}
-          name="points"
-          showPercentInput={false}
-          pointsInputProps={{
-            variant: 'ghost',
-            label: undefined,
-            startContent: undefined,
-            slotClassNames: { input: 'text-right text-white/80' },
-            isAllowed: value =>
-              value?.floatValue ? value.floatValue <= 1_000_000 : true,
-          }}
-        />
-      </EditSlotDialogCard>
-    </form>
   )
 }
