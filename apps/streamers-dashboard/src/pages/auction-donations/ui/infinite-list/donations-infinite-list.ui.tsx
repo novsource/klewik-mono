@@ -1,4 +1,4 @@
-import type { DonationsStatusFilterValue } from './donations-filter-select.ui'
+import type { DonationsStatusFilterValue } from '../selects/donations-filter-select.ui'
 
 import { useRef, useState } from 'react'
 
@@ -22,7 +22,7 @@ import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 import type { InfiniteListRenderFunction } from '~shared/ui/infinite-list'
 import { MotionBox } from '~shared/ui/motion-box'
 
-import { InfiniteDonationsListCard, InfiniteDonationsListSkeletonCard } from './donations-list-card.ui'
+import { InfiniteDonationsListCard, InfiniteDonationsListSkeletonCard } from '../cards/donations-infinite-list-card.ui'
 
 export type AuctionDonationsInfiniteListProps
   = Omit<

@@ -1,4 +1,4 @@
-import type { DonationsStatusFilterValue } from '../ui/donations-filter-select.ui'
+import type { DonationsStatusFilterValue } from '../ui/selects/donations-filter-select.ui'
 
 /** @todo Rework with all donations properties */
 import { useEffect, useMemo, useState } from 'react'

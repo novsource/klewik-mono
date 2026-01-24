@@ -1,4 +1,4 @@
-import type { SelectRootChangeEventDetails } from '@base-ui-components/react'
+import type { SelectRootChangeEventDetails } from '@base-ui/react'
 
 import type { ProcessedDonationStatus } from '~entities/donation/model'
 

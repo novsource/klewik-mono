@@ -1,4 +1,4 @@
-import type { DonationsStatusFilterValue } from './donations-filter-select.ui'
+import type { DonationsStatusFilterValue } from './selects/donations-filter-select.ui'
 
 import { useLayoutEffect, useState } from 'react'
 
@@ -21,9 +21,9 @@ import { Flex } from '~shared/ui/flex'
 
 import { cn } from '~shared/utils'
 
-import { useFiltredDonations } from '../lib'
-import { DonationsStatusFilterSelect } from './donations-filter-select.ui'
-import { AuctionDonationsInfiniteList } from './donations-infinity-list.ui'
+import { useFiltredDonations } from '../lib/use-filtred-donations'
+import { AuctionDonationsInfiniteList } from './infinite-list/donations-infinite-list.ui'
+import { DonationsStatusFilterSelect } from './selects/donations-filter-select.ui'
 
 const DonationFilterStatusSchema = z.literal<DonationsStatusFilterValue[]>(['added', 'all', 'checkRequested', 'empty', 'error', 'rejected'])
 
