@@ -116,7 +116,7 @@ export const SolidDonationCardHeader = (props: SolidDonationCardHeaderProps) => 
     <BaseDonationCardHeader {...restProps}>
       <>
         <DonationCardBadge />
-        <Badge className="bg-orange/20 text-orange">
+        <Badge className="bg-orange/10 text-orange">
           <Flex className="gap-x-1" align="center">
             <Icons.DonationAlerts width={14} height={14} />
             {FORMATTED_INTEGRATIONS_PLATFORMS_NAMES[donationData.source]}

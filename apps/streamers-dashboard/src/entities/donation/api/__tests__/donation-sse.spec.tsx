@@ -6,7 +6,7 @@ import { act, renderHook, waitFor } from '@testing-library/react'
 import { sse } from 'msw'
 import { setupServer } from 'msw/node'
 
-import { store as appStore, createStore } from '~app/store/store'
+import { rootStore as appStore, createStore } from '~app/store/store'
 
 import { createSingleFakeDonation } from '~entities/donation/model/__tests__/donations.mocks'
 

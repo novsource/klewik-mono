@@ -24,7 +24,7 @@ export const badgeVariants = cva<BadgeVariants & BadgeSizes>(
       variant: {
         default: 'border-transparent bg-gray-accent/20 text-gray-accent',
         error: 'border-transparent bg-red/20 text-red',
-        success: 'border-transparent bg-green/20 text-green',
+        success: 'border-transparent bg-green/10 text-green-accent/60',
         warning: 'border-transparent bg-yellow/20 text-yellow',
       },
       size: {

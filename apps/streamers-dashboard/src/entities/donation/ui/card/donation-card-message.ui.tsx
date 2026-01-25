@@ -1,5 +1,3 @@
-import type { AccordionTriggerProps } from '@radix-ui/react-accordion'
-
 import type { ComponentProps } from 'react'
 import { useRef, useState } from 'react'
 
@@ -7,8 +5,7 @@ import { AnimatePresence } from 'motion/react'
 
 import { Text } from '~shared/components/typography'
 
-import { useElementSize } from '~shared/hooks'
-
+import type { AccordionTriggerProps } from '~shared/ui/accordion'
 import { Accordion, AccordionItem, AccordionPanel, AccordionTrigger } from '~shared/ui/accordion'
 import { MotionBox } from '~shared/ui/motion-box'
 
@@ -27,33 +24,29 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
 
   const textRef = useRef<HTMLSpanElement>(null)
 
-  const { ref: messageContainerParentRef, value: messageContainerSizes } = useElementSize<HTMLDivElement>()
-
   const toggleOpen = () => setIsOpen(curr => !curr)
 
   return (
     <div
-      ref={messageContainerParentRef}
       className={cn('w-full h-full', className)}
       {...restProps}
     >
       <div
-        className="bg-dark-light rounded-md transition-[width] duration-500"
+        className="bg-dark-light rounded-md duration-500"
         onAnimationStart={() => setAccordionAnimatinoStatus('animating')}
         onAnimationEnd={() => setAccordionAnimatinoStatus('animated')}
       >
         <Accordion
-          className="w-fit"
+          className="w-full max-w-full"
           onValueChange={toggleOpen}
-          style={{ width: isOpen ? messageContainerSizes.width : 'auto' }}
         >
           <AccordionItem>
             <AccordionTrigger
               className={cn('bg-dark-light text-sm', isOpen && 'rounded-b-none')}
             >
               {isOpen
-                ? 'Скрыть текст пожертвования'
-                : 'Показать текст пожертвования'}
+                ? 'Скрыть сообщение'
+                : 'Показать сообщение'}
             </AccordionTrigger>
             <AccordionPanel className="bg-dark-light">
               <div className="relative pb-2 px-3 font-golos-f text-md font-medium tracking-normal">
