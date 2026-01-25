@@ -15,6 +15,6 @@ import { DonationsEventSourceMessageSchema, ProcessedDonationDTOSchema } from '.
 export const donationsSSEClient = new SSEClient<DonationsSSEChannelEventsMap>({
   baseMessageSchema: DonationsEventSourceMessageSchema,
   eventsDataSchemas: {
-    'donations/add': ProcessedDonationDTOSchema.array(),
+    'donations/add': ProcessedDonationDTOSchema,
   },
 })

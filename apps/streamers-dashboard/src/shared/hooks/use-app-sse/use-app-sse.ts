@@ -11,7 +11,6 @@ import { integrationsSSEClient } from '~shared/api/sse/clients/integrations/inte
 
 import type { SSE_CHANNELS } from '~shared/constants/api'
 
-import { BroadcastLeaderChannel } from '~shared/lib/broadcast-channel'
 import type { SSEClient } from '~shared/lib/fetch-event-source'
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -20,33 +19,28 @@ import { sseActions, sseSelectors } from '~shared/store/slices'
 
 import { chain } from '~shared/utils'
 
+import { useTabLeader } from '../use-tab-leader/use-tab-leader'
+
 type UseAppSSEOptions = {
   onTabBecomesLeader?: () => void
   onNewTabLeader?: () => void
 }
 
-const appSSEBroadcastChannel = new BroadcastLeaderChannel('appSSEChannel')
+// const appSSEBroadcastChannel = new BroadcastLeaderChannel('appSSEChannel')
 
 export const useAppSSE = (options?: UseAppSSEOptions) => {
   const isAllEventsConnected = useStoreSelector(sseSelectors.getIsAllEventsConnected)
 
   const { resetState } = useActionCreators(sseActions)
 
-  const [isTabLeader, setIsTabLeader] = useState(() => {
-    appSSEBroadcastChannel.onChannelLeadership(() => {
-      options?.onTabBecomesLeader?.()
-
-      setIsTabLeader(true)
-    })
-
-    return appSSEBroadcastChannel.isLeader
-  })
   const [isPending, setIsPending] = useState(false)
   const internalIsPendingRef = useRef(false)
 
   const { connect: connectAuctionSlotsSSEQuery, queryState: { reset: resetSlotsQuery } } = useAuctionSlotsSSE()
   const { connect: connectDonationsSSEQuery, queryState: { reset: resetDonationsQuery } } = useDonationsSSE()
   const { connect: connectIntegrationsSSEQuery, queryState: { reset: resetIntegrationsQuery } } = useIntegrationsSSE()
+
+  const { channel: tabLeaderChannel } = useTabLeader()
 
   const resetConnectionQueries = () => {
     [resetDonationsQuery, resetSlotsQuery, resetIntegrationsQuery].forEach(resetFn => resetFn())
@@ -90,14 +84,14 @@ export const useAppSSE = (options?: UseAppSSEOptions) => {
         ? chain(options.onNewTabLeader, resetState)
         : resetState
 
-    appSSEBroadcastChannel.onNewLeader(onNewLeaderHandler)
+    tabLeaderChannel.onNewLeader(onNewLeaderHandler)
 
     return () => {
-      appSSEBroadcastChannel.off('new-leader', onNewLeaderHandler)
+      tabLeaderChannel.off('new-leader', onNewLeaderHandler)
     }
-  }, [resetState])
+  }, [resetState, options?.onNewTabLeader, tabLeaderChannel])
 
-  return { isAllEventsConnected, isTabLeader, isPending, connectToSSEEvents }
+  return { isAllEventsConnected, isPending, connectToSSEEvents }
 }
 
 type UseBaseChannelSSEOptions<EventsCallbacksMap extends Record<string, (data: any) => void>> = {

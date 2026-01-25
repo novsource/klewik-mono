@@ -54,6 +54,7 @@ export const ProcessedDonationSchema = DonationSchema.extend({
     ),
     addedPoints: z.number().nullable(),
     title: z.string().max(40).nullable(),
+    donationCode: z.string().max(8).nullable(),
   }),
 })
 

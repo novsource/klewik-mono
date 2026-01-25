@@ -1,4 +1,4 @@
-import type { ZodSchema } from 'zod'
+import type { ZodType } from 'zod'
 
 import type {
   EventSourceMessage,
@@ -11,9 +11,9 @@ import { BaseEmitter } from '../emitter'
 import { BaseSSEClient } from './base-sse-client'
 import { SSEEmiter } from './sse-emitter'
 
-export type SSEClientOptions<EventMap extends Record<string, any>> = {
-  baseMessageSchema: ZodSchema
-  eventsDataSchemas?: Record<keyof EventMap, ZodSchema>
+export type SSEClientOptions<SourceMessage extends EventSourceMessage = EventSourceMessage, EventMap extends Record<string, any> = Record<string, any>> = {
+  baseMessageSchema: ZodType<SourceMessage>
+  eventsDataSchemas?: Record<keyof EventMap, ZodType>
 }
 
 export class SSEClient<
@@ -22,12 +22,12 @@ export class SSEClient<
 > extends BaseSSEClient {
   private readonly _sseEventsEmitter = new SSEEmiter()
   private readonly _eventsEmitter = new BaseEmitter<EventsMap>()
-  private readonly _messageSchema: ZodSchema<SourceMessage>
-  private readonly _eventsDataSchemas: Maybe<Partial<Record<keyof EventsMap, ZodSchema>>>
+  private readonly _messageSchema: ZodType<SourceMessage>
+  private readonly _eventsDataSchemas: Maybe<Partial<Record<keyof EventsMap, ZodType>>>
 
   public isConnected = false
 
-  constructor(options: SSEClientOptions<EventsMap>) {
+  constructor(options: SSEClientOptions<SourceMessage, EventsMap>) {
     super()
 
     const { baseMessageSchema, eventsDataSchemas } = options
@@ -54,7 +54,7 @@ export class SSEClient<
     url: string,
     options?: SSEClientConnectOptions & { lastMessageId?: number },
   ): Promise<void> {
-    const listeners: SSEClientListeners = {
+    const defaultListeners: SSEClientListeners = {
       onopen: async (response) => {
         if (response.status === 200) {
           this.isConnected = true
@@ -66,19 +66,21 @@ export class SSEClient<
           this._sseEventsEmitter.notify('onerror', err)
         }
       },
-      onmessage: (message) => {
-        if (message.event === 'connected')
+      onmessage: (rawMessage) => {
+        if (rawMessage.event === 'connected')
           return
 
-        const validatedMessage = this._messageSchema.safeParse(message)
-        const isMessageNotValidated = !validatedMessage.success
+        const validateMessageResults = this._messageSchema.safeParse(rawMessage)
+        const isMessageNotValid = !validateMessageResults.success
 
-        if (isMessageNotValidated) {
-          return this._sseEventsEmitter.notify('onerror', validatedMessage.error)
+        if (isMessageNotValid) {
+          return this._sseEventsEmitter.notify('onerror', validateMessageResults.error)
         }
 
-        this._sseEventsEmitter.notify('onmessage', validatedMessage.data)
-        this._processMesage(validatedMessage.data)
+        const message = validateMessageResults.data
+
+        this._sseEventsEmitter.notify('onmessage', message)
+        this._processMessage(message)
       },
       onclose: () => {
         this.isConnected = false
@@ -86,26 +88,27 @@ export class SSEClient<
       },
     }
 
-    return this.connect(url, listeners, options)
+    return this.connect(url, defaultListeners, options)
   }
 
-  private _processMesage(sseMessage: SourceMessage) {
-    const isMessageDataSchemaExist = this._eventsDataSchemas && sseMessage.event in this._eventsDataSchemas
+  private _processMessage(message: SourceMessage) {
+    const isMessageDataSchemaExist = this._eventsDataSchemas && Reflect.has(this._eventsDataSchemas, message.event)
+    if (!isMessageDataSchemaExist) {
+      return
+    }
+
+    const event = message.event as keyof EventsMap
+    const validateSchemaForEventData = this._eventsDataSchemas[event]!
 
     try {
-      if (!isMessageDataSchemaExist) {
-        return
+      const parsedData: unknown = JSON.parse(message.data)
+      const validatedData = validateSchemaForEventData.safeParse(parsedData)
+
+      if (!validatedData.success) {
+        return this._sseEventsEmitter.notify('onerror', message)
       }
 
-      const dataSchema = this._eventsDataSchemas[sseMessage.event]
-      const parsedData: unknown = JSON.parse(sseMessage.data)
-      const validatedData = dataSchema?.safeParse(parsedData)
-
-      if (!validatedData?.success) {
-        return this._sseEventsEmitter.notify('onerror', sseMessage)
-      }
-
-      this._eventsEmitter.emit(sseMessage.event, validatedData.data)
+      this._eventsEmitter.emit(event, validatedData.data)
     }
     catch (error) {
       if (error instanceof Error)

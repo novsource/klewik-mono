@@ -131,7 +131,10 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
         sm: 'h-9.25',
         lg: 'h-10.25',
       },
-      isError: { true: 'ring-1 ring-red/80', false: 'ring-gray-light' },
+      isError: {
+        true: 'ring-1 ring-[#de6059] data-[focus=true]:ring-[#de6059] data-[hover=true]:ring-red data-[hover=true]:bg-[#190b0a] bg-[#0c0505] data-[focus=true]:bg-[#0c0505] data-[focus=true]:data-[hover=true]:bg-[#0c0505]',
+        false: 'ring-gray-light',
+      },
       isDisabled: {
         true: 'ring-0 data-[hover=true]:ring-0',
         false: '',
@@ -164,7 +167,7 @@ export const inputVariants = cva<InputVariants>(
         sm: 'text-md px-2.5 py-1.25',
       },
       isError: {
-        true: 'focus-visible:ring-red',
+        true: 'focus-visible:ring-red focus:ring-red placeholder:text-[#de6059]',
         false: 'focus-visible:ring-gray',
       },
       withLabel: {

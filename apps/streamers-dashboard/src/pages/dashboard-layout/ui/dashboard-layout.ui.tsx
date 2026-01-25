@@ -1,3 +1,5 @@
+import { useLayoutEffect } from 'react'
+
 import { Outlet, useLoaderData } from 'react-router-dom'
 
 import { MobileDashboardFooter } from '~widgets/dashboard-footer/ui'
@@ -7,6 +9,8 @@ import { DesktopNavbar, MobileNavbar } from '~widgets/dashboard-navbar/ui'
 import type { Auction } from '~entities/auction/model'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
 
 import { useMediaQuery } from '~shared/hooks'
 
@@ -20,25 +24,32 @@ export const DashboardLayout = () => {
 
   const { isSSEConnected } = useDashboardLayout(auctionUUID)
 
-  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
-
   if (!isSSEConnected) {
     return <DashboardLayoutLoader />
   }
 
   return (
-    <div className="w-full h-full tablet:inline-flex tablet:h-auto">
-      {isLargeThenTablet && (
-        <aside className="sticky top-0 h-screen py-4 border-r-1 border-r-dark bg-dark-foreground-light">
-          <DesktopNavbar />
-        </aside>
-      ) }
-      <Flex className="w-full h-full flex flex-col">
-        <DashboardHeader />
-        <DashboardLayoutContent />
-        {!isLargeThenTablet && <MobileNav />}
-      </Flex>
-    </div>
+    <MediaQueryViewToggler query={greaterThenDeviceWidthMediaQueries.tablet}>
+      <div className="w-full h-full tablet:inline-flex tablet:h-auto">
+
+        <MediaQueryViewToggler.MatchedItem>
+          <aside className="sticky top-0 h-screen py-4 border-r-1 border-r-dark bg-dark-foreground-light">
+            <DesktopNavbar />
+          </aside>
+        </MediaQueryViewToggler.MatchedItem>
+
+        <Flex className="w-full h-full flex flex-col">
+          <DashboardHeader />
+          <DashboardLayoutContent />
+
+          <MediaQueryViewToggler.NotMatchedItem>
+            <MobileNav />
+          </MediaQueryViewToggler.NotMatchedItem>
+
+        </Flex>
+      </div>
+    </MediaQueryViewToggler>
+
   )
 }
 
@@ -62,6 +73,22 @@ function MobileNav() {
 
 function DashboardLayoutLoader() {
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+
+  useLayoutEffect(() => {
+    const rootElement = document.getElementById('root')
+
+    if (!rootElement) {
+      return
+    }
+
+    const initialHeight = rootElement.style.height
+
+    rootElement.style.height = '100%'
+
+    return () => {
+      rootElement.style.height = initialHeight
+    }
+  })
 
   return (
     <Flex

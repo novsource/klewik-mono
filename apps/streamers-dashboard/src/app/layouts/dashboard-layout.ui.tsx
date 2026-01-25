@@ -8,11 +8,9 @@ import { DesktopNavbar, MobileNavbar } from '~widgets/dashboard-navbar/ui'
 
 import type { Auction } from '~entities/auction/model'
 
-import { donationsActions } from '~entities/donation/store'
-
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useAppSSE, useDidUpdate, useDonationsSSE, useMediaQuery, useUnmount } from '~shared/hooks'
+import { useAppSSE, useDidUpdate, useMediaQuery, useTabLeader, useUnmount } from '~shared/hooks'
 
 import { useActionCreators } from '~shared/lib/redux-toolkit'
 
@@ -27,16 +25,9 @@ export const DashboardLayout = () => {
   const [isSSEStateReseted, setIsSSEStateReseted] = useState(false)
 
   const { setAllConnected, resetState } = useActionCreators(sseActions)
-  const { addDonation, updateDonationsStatusesCounts } = useActionCreators(donationsActions)
 
-  const { isAllEventsConnected, connectToSSEEvents, isPending, isTabLeader } = useAppSSE()
-
-  useDonationsSSE({
-    'donations/add': (donation) => {
-      addDonation(donation)
-      updateDonationsStatusesCounts({ [donation.processData.status]: 1 })
-    },
-  })
+  const { isAllEventsConnected, connectToSSEEvents, isPending } = useAppSSE()
+  const { isTabLeader } = useTabLeader()
 
   const isTabLeaderRef = useRef(isTabLeader)
 
@@ -66,7 +57,13 @@ export const DashboardLayout = () => {
       return
 
     connectToSSE(auctionUUID)
-  }, [isPending, isAllEventsConnected, auctionUUID, isTabLeader])
+  }, [
+    isTabLeader,
+    isPending,
+    isAllEventsConnected,
+    auctionUUID,
+    connectToSSE,
+  ])
 
   useUnmount(() => {
     setAllConnected(false)
