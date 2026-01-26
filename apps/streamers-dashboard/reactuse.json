@@ -3,5 +3,6 @@
   "aliases": {
     "hooks": "@/shared/hooks",
     "utils": "@/shared/utils"
-  }
+  },
+  "case": "kebab"
 }

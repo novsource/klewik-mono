@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -59,6 +59,18 @@ export const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) 
     setSlots(data)
   }
 
+  const winPercentsBounds = useMemo(() => {
+    if (!slots)
+      return { min: 0, max: 0 }
+
+    const sortedSlots = [...storedSlots].sort((a, b) => a.points - b.points)
+
+    const minPercents = (sortedSlots[0].points / storedPointsSum) * 100
+    const maxPercents = (sortedSlots[sortedSlots.length - 1].points / storedPointsSum) * 100
+
+    return { min: minPercents, max: maxPercents }
+  }, [slots, storedPointsSum])
+
   const renderVirtualListItem = useCallback<VirtualListRenderFunction<AuctionSlot>>(
     (data, virtualizedItem) => {
       const slot = data[virtualizedItem.index]
@@ -101,7 +113,7 @@ export const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) 
                 && (
                   <>
                     <AuctionSlotCardContentInfoDivider />
-                    <AuctionSlotCardWinPercents winPercents={slotWinPercents} />
+                    <AuctionSlotCardWinPercents winPercents={slotWinPercents} bounds={{ min: winPercentsBounds.min, max: winPercentsBounds.max }} />
                   </>
                 )}
             </Flex>
@@ -109,7 +121,7 @@ export const VirtualizedSlotsList = (props: AuctionSlotsListProps<AuctionSlot>) 
         </BaseAuctionSlotCard>
       )
     },
-    [renderCard, storedPointsSum],
+    [renderCard, storedPointsSum, winPercentsBounds],
   )
 
   if (slots.length === 0) {

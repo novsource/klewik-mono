@@ -145,7 +145,7 @@ export const SlotPointsFormInput = <
     onKeyDown: preventEnterFn,
   }
 
-  const mergedPointsInputProps = mergeProps(pointsInputProps, pointsInputHandlers)
+  const mergedPointsInputProps = mergeProps(pointsInputHandlers, pointsInputProps)
   const mergedPercentsInputProps = mergeProps(percentsInputHandlers, percentInputProps)
 
   if (!showPercentInput) {

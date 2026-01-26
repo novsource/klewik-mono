@@ -77,7 +77,6 @@ export const SlotsWheelTabContent = (props: SlotsWheelTabContentProps) => {
           />
         )}
         placeholder="Искать по названию..."
-        size="sm"
         onChange={handleSearchInputOnChange}
       />
       <VirtualizedSlotsList data={searchedSlots} gap={8} />

@@ -39,8 +39,8 @@ export const selectTriggerVariants = cva<SelectTriggerSizes>(
       },
       size: {
         default:
-          'h-10 px-3 py-2 text-md gap-2 [&_svg:not([class*=\'size-\'])]:size-4.5',
-        sm: 'h-9 text-sm px-2 py-1 gap-1 [&_svg:not([class*=\'size-\'])]:size-4',
+          'h-9.5 px-3 py-2 text-md gap-2 [&_svg:not([class*=\'size-\'])]:size-4.5',
+        sm: 'h-8 text-sm px-2 py-1 gap-1 [&_svg:not([class*=\'size-\'])]:size-4',
       },
     },
     defaultVariants: {
@@ -59,7 +59,7 @@ export const selectListVariants = cva([
 
 export const selectPopupVariants = cva(
   [
-    'bg-dark relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin)',
+    'group bg-dark relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-[var(--transform-origin)] bg-clip-padding',
     'text-gray overflow-x-hidden overflow-y-auto rounded-md border border-dark-accent shadow-md',
     'data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.9]',
     'data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.9]',

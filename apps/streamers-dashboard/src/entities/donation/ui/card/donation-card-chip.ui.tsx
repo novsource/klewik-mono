@@ -1,6 +1,6 @@
-import { ComponentProps, ReactNode } from 'react'
+import type { ClassValue } from 'clsx'
 
-import { ClassValue } from 'clsx'
+import type { ComponentProps, ReactNode } from 'react'
 
 import { Flex } from '~shared/ui/flex'
 import { Skeleton } from '~shared/ui/skeleton'
@@ -24,7 +24,7 @@ const DonationCardChip = (props: DonationCardChipProps) => {
     <Flex
       className={cn(
         'px-2 py-1 bg-dark-accent gap-x-1 rounded-md',
-        classNames?.base
+        classNames?.base,
       )}
       align="center"
       justify="center"

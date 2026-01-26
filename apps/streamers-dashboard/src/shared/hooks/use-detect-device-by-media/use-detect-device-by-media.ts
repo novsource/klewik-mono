@@ -2,22 +2,22 @@ import { useCallback, useRef, useState, useSyncExternalStore } from 'react'
 
 type MediaQuery = string
 
-export type UseDetectDeviceByMediaQueries<Device extends string> = Record<Device, MediaQuery>
-export type UseDetectDeviceByMediaQueriesOptions<BooleanPrefix extends string | undefined> = {
+export type UseDetectDeviceByMediaQueries<Device extends string = string> = Record<Device, MediaQuery>
+export type UseDetectDeviceByMediaQueriesOptions<BooleanPrefix extends string | undefined = undefined> = {
   booleanPrefix?: BooleanPrefix
 }
 
-type BooleanKey<Value extends string, BooleanPrefix extends string | undefined = undefined>
+type BooleanKey<Value extends string = string, BooleanPrefix extends string | undefined = undefined>
 = BooleanPrefix extends string ? `${BooleanPrefix}${Capitalize<Value>}` : Value
 
 export type UseDetectDeviceByMediaQueriesReturn<Device extends string, BooleanPrefix extends string | undefined = undefined>
 = Record<BooleanKey<Device, BooleanPrefix>, boolean>
 
-const getBooleanKey = <T extends string, K extends string | undefined>
+const getBooleanKey = <T extends string, K extends string | undefined = undefined>
 (value: T,
   booleanPrefix?: K,
 ): BooleanKey<T, K> => {
-  const key = `${value[0].toUpperCase()}${value.slice(1, value.length).toLowerCase()}` as BooleanKey<T, K>
+  const key = `${value[0].toLowerCase()}${value.slice(1, value.length).toUpperCase()}` as BooleanKey<T, K>
 
   if (!booleanPrefix) {
     return key
@@ -27,7 +27,7 @@ const getBooleanKey = <T extends string, K extends string | undefined>
 }
 
 const getDefaultDeviceMediaQueriesResult
-  = <Device extends string, BooleanPrefix extends string | undefined>(
+  = <Device extends string, BooleanPrefix extends string | undefined = undefined>(
     mediaQueries: UseDetectDeviceByMediaQueries<Device>,
     options?: UseDetectDeviceByMediaQueriesOptions<BooleanPrefix>,
   ): UseDetectDeviceByMediaQueriesReturn<Device, BooleanPrefix> => {
@@ -43,11 +43,11 @@ const getDefaultDeviceMediaQueriesResult
   }
 
 export const useDetectDeviceByMedia
-  = <Device extends string, BooleanPrefix extends string | undefined>
+  = <Device extends string, BooleanPrefix extends string | undefined = undefined>
   (queries: UseDetectDeviceByMediaQueries<Device>,
     options?: UseDetectDeviceByMediaQueriesOptions<BooleanPrefix>,
   ): UseDetectDeviceByMediaQueriesReturn<Device, BooleanPrefix> => {
-    const defaultDeviceMediaQueriesRef = useRef(getDefaultDeviceMediaQueriesResult(queries))
+    const defaultDeviceMediaQueriesRef = useRef(getDefaultDeviceMediaQueriesResult(queries, options))
 
     const [mediaQueriesResults, setMediaQueriesResults] = useState(() => {
       const devices = Object.keys(queries) as Array<keyof UseDetectDeviceByMediaQueries<Device>>

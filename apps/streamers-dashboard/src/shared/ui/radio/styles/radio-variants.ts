@@ -10,6 +10,7 @@ const radioVariants = cva('flex items-center justify-center rounded-full outline
         'data-[checked]:bg-green-dark data-[unchecked]:border-1 data-[unchecked]:border-dark-accent',
       ],
       ghost: 'data-[checked]:bg-dark data-[checked]:border-green-accent data-[checked]:border-1 data-[unchecked]:border-1 data-[unchecked]:border-dark-accent',
+      tab: 'hidden',
     },
     size: {
       lg: 'size-4.5',
@@ -54,11 +55,16 @@ const radioLabelVariants = cva('flex items-center font-breeze text-sm cursor-poi
         'bg-dark rounded-small border-1 border-dark-light text-gray',
         'has-[:checked]:bg-green-dark has-[:checked]:border-green-accent/60 has-[:checked]:text-green-accent/80',
       ],
+      tab: [
+        'bg-none hover:bg-dark/80 rounded-small text-gray',
+        'has-[:checked]:bg-green-dark has-[:checked]:text-green-accent/80',
+        'transition-all',
+      ],
     },
     size: {
       lg: 'p-2.75 gap-2.25',
-      default: 'p-2.25 gap-2',
-      sm: 'p-1.75 gap-1.5',
+      default: 'p-2.5 gap-2',
+      sm: 'p-2 gap-1.5',
     },
   },
   defaultVariants: {

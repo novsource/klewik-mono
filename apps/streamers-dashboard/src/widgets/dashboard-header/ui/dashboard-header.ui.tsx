@@ -4,8 +4,9 @@ import { memo, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import NumberFlow from '@number-flow/react'
-import { globalDialogsActions } from '~features/_common/display-dialogs'
 import { AnimatePresence } from 'motion/react'
+
+import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
 import { SearchDialog } from '~widgets/search-dialog/ui'
 

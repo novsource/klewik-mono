@@ -75,6 +75,18 @@ const processDonationApi = splittedDonationApi.injectEndpoints({
         },
       }),
     }),
+    updateDonationInfo: builder.mutation<void, ApproveDonationMutationArgs>(({
+      query: ({ auctionUUID, id, ...args }) => ({
+        url: `/${auctionUUID}/donations/${id}/update`,
+        method: 'POST',
+        data: {
+          ...args,
+        },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }),
+    })),
   }),
 })
 
@@ -83,4 +95,5 @@ export const {
   useGetDonationCodeInfoMutation,
   useApproveDonationMutation,
   useDeclineDonationMutation,
+  useUpdateDonationInfoMutation,
 } = processDonationApi

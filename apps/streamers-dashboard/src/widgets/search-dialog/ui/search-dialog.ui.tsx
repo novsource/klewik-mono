@@ -5,6 +5,9 @@ import { AnimatePresence } from 'motion/react'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
+import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
+import { Text } from '~shared/components/typography'
+
 import { useMediaQuery } from '~shared/hooks'
 
 import { Button } from '~shared/ui/button'
@@ -26,9 +29,9 @@ import { Icons } from '~shared/ui/icons'
 import type { InputProps } from '~shared/ui/input'
 import { Input } from '~shared/ui/input'
 import { MotionBox } from '~shared/ui/motion-box'
+import type { RadioGroupProps } from '~shared/ui/radio'
+import { Radio, RadioGroup } from '~shared/ui/radio'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~shared/ui/sheet'
-import type { TabsProps } from '~shared/ui/tabs'
-import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
 
 import { cn, isStringEmpty, mergeProps } from '~shared/utils'
 
@@ -44,12 +47,17 @@ export type SearchDialogProps = {
 export const SearchDialog = (props: SearchDialogProps) => {
   const { trigger } = props
 
-  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
-
   return (
     <SearchDialogContextProvider>
-      {isLargeThenTablet && <DesktopSearchDialog trigger={trigger} /> }
-      {!isLargeThenTablet && <MobileSearchDialog trigger={trigger} /> }
+      <MediaQueryViewToggler query={greaterThenDeviceWidthMediaQueries.tablet}>
+        <MediaQueryViewToggler.MatchedItem>
+          <DesktopSearchDialog trigger={trigger} />
+        </MediaQueryViewToggler.MatchedItem>
+
+        <MediaQueryViewToggler.NotMatchedItem>
+          <MobileSearchDialog trigger={trigger} />
+        </MediaQueryViewToggler.NotMatchedItem>
+      </MediaQueryViewToggler>
     </SearchDialogContextProvider>
   )
 }
@@ -89,6 +97,9 @@ function DesktopSearchDialog(props: DesktopSearchDialogProps) {
   }), [contentProps])
   const dialogHeaderProps = useMemo(() => mergeProps(headerProps, { className: 'gap-0' }), [headerProps])
 
+  const isShouldShowSlots = category === 'slots'
+  const isShouldShowDonations = category === 'donations'
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={handleOnOpenChange} {...dialogProps}>
       <DialogTrigger
@@ -122,7 +133,7 @@ function DesktopSearchDialog(props: DesktopSearchDialogProps) {
               <Divider />
             </Flex>
             <SearchCategoriesGroup
-              className="px-4"
+              className="px-4 my-3"
               defaultValue={category}
               onValueChange={(value) => {
                 const category = value as SearchCategories
@@ -132,8 +143,8 @@ function DesktopSearchDialog(props: DesktopSearchDialogProps) {
             <Divider />
           </DialogHeader>
           <Flex className="relative h-full">
-            {category === 'slots' && <SearchAuctionSlots searchValue={searchValue} />}
-            {category === 'donations' && <SearchDonations searchValue={searchValue} />}
+            {isShouldShowSlots && <SearchAuctionSlots searchValue={searchValue} />}
+            {isShouldShowDonations && <SearchDonations searchValue={searchValue} />}
           </Flex>
         </Flex>
       </DialogContent>
@@ -187,6 +198,7 @@ function MobileSearchDialog(props: MobileSearchDialogProps) {
             <Divider />
           </Flex>
           <SearchCategoriesGroup
+            className="px-2 my-3"
             defaultValue={category}
             onValueChange={(value) => {
               const category = value as SearchCategories
@@ -248,41 +260,71 @@ function SearchBar(props: SearchBarProps) {
         </AnimatePresence>
       )}
       placeholder="Искать по слотам или донатам..."
-      size={isLargeThenTablet ? 'default' : 'sm'}
+      size={isLargeThenTablet ? 'lg' : 'default'}
       value={value}
       {...restProps}
     />
   )
 }
 
-type SearchCategoriesGroupProps = TabsProps
+type SearchCategoriesGroupProps = RadioGroupProps
 
 function SearchCategoriesGroup(props: SearchCategoriesGroupProps) {
-  const { className, defaultValue, ...restProps } = props
+  const { className, ...restProps } = props
 
   return (
-    <Tabs
-      className={cn('flex', className)}
-      variant="bottomLine"
-      defaultValue={defaultValue}
+    <RadioGroup
+      className={cn('flex flex-col w-full gap-y-3 tablet:gap-y-2 px-6', className)}
       {...restProps}
     >
-      <TabsList>
-        <TabsTrigger
-          value="slots"
-          className="gap-x-2"
-          startContent={<Icons.Slots size="xs" />}
-        >
-          Слоты
-        </TabsTrigger>
-        <TabsTrigger
-          className="gap-x-2"
-          value="donations"
-          startContent={<Icons.MoneyHand size="xs" />}
-        >
-          Донаты
-        </TabsTrigger>
-      </TabsList>
-    </Tabs>
+
+      <Text className="text-gray-light/60 font-medium text-start" asSpan>Я хочу искать...</Text>
+
+      <Flex className="gap-x-3">
+        <Radio value="slots" variant="tab">
+          <Flex className="gap-x-1.5" align="center">
+            <Icons.Slots size="sm" />
+            <Text>
+              Слоты
+            </Text>
+          </Flex>
+        </Radio>
+        <Radio value="donations" variant="tab">
+          <Flex className="gap-x-1.5" align="center">
+            <Icons.MoneyHand size="sm" />
+            <Text>
+              Донаты
+            </Text>
+          </Flex>
+        </Radio>
+      </Flex>
+
+    </RadioGroup>
   )
+
+  // return (
+  //   <Tabs
+  //     className={cn('flex', className)}
+  //     variant="bottomLine"
+  //     defaultValue={defaultValue}
+  //     {...restProps}
+  //   >
+  //     <TabsList>
+  //       <TabsTrigger
+  //         value="slots"
+  //         className="gap-x-2"
+  //         startContent={<Icons.Slots size="xs" />}
+  //       >
+  //         Слоты
+  //       </TabsTrigger>
+  //       <TabsTrigger
+  //         className="gap-x-2"
+  //         value="donations"
+  //         startContent={<Icons.MoneyHand size="xs" />}
+  //       >
+  //         Донаты
+  //       </TabsTrigger>
+  //     </TabsList>
+  //   </Tabs>
+  // )
 }

@@ -1,8 +1,9 @@
-import { memo, useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { sha256 } from 'js-sha256'
+import z from 'zod'
 
 import { auctionSelectors } from '~entities/auction/store'
 
@@ -12,6 +13,8 @@ import { refreshTokens } from '~shared/api/http/auth/auth.api'
 
 import { DONATION_ALERTS_ENDPOINTS } from '~shared/constants/integrations'
 
+import { Text } from '~shared/components/typography'
+
 import { useLocalStorage } from '~shared/hooks/use-local-storage'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -19,7 +22,7 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import { Typography } from '~shared/ui/typograghy'
+import { toastErrorNotification } from '~shared/ui/toaster/lib'
 
 import { cn } from '~shared/utils'
 
@@ -27,49 +30,86 @@ import { useLazyConnectSSEDonationAlertsQuery } from '../../api/donation-alerts'
 import { IntegrationCard } from '../connect-integration.ui'
 
 export const DonationAlertsRedirectDisplay = memo(() => {
-  const { auctionId: auctionUUID = '' } = useParams()
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
-  const [connectSSEDonationAlerts, { isSuccess }]
+  const [isConnected, setIsConnected] = useState(false)
+
+  const [connectSSEDonationAlerts, { isSuccess, isLoading }]
     = useLazyConnectSSEDonationAlertsQuery()
 
+  const internalIsConnectLoadingRef = useRef(false)
+
   const { set } = useLocalStorage('donationAlerts')
-  const { value, remove } = useLocalStorage('redirect:donalerts')
+  const { remove: removeDonalertsLSRedirectData } = useLocalStorage('redirect:donalerts')
+
+  const auctionUUID = useMemo(() => {
+    const uuid = searchParams.get('auction')
+
+    const uuidValidationResult = z.uuid().safeParse(uuid)
+    const isValidUUID = uuidValidationResult.success
+
+    return isValidUUID ? uuid : null
+  }, [searchParams])
+
+  // useEffect(() => {
+  //   if (!auctionUUID) {
+  //     return navigate('/')
+  //   }
+
+  //   const isNotRedirect = !donalertsLSRedirectData || !Reflect.has(donalertsLSRedirectData, 'auctionUUID')
+  //   if (isNotRedirect) {
+  //     return navigate(`/dashboard/${auctionUUID}/wheel`)
+  //   }
+
+  //   const time = donalertsLSRedirectData[auctionUUID].time
+  //   const redirectKey = donalertsLSRedirectData[auctionUUID].key
+
+  //   const key = sha256.hmac(
+  //     import.meta.env.VITE_REDIRECT_KEY,
+  //     import.meta.env.VITE_REDIRECT_SECRET + time,
+  //   )
+
+  //   if (redirectKey !== key) {
+  //     removeDonalertsLSRedirectData()
+
+  //     return navigate(`/dashboard/${auctionUUID}/wheel`)
+  //   }
+  // }, [auctionUUID, donalertsLSRedirectData, navigate, removeDonalertsLSRedirectData])
 
   useEffect(() => {
-    if (value === undefined || !value[auctionUUID]) {
-      return navigate(`/dashboard/${auctionUUID}/wheel`)
-    }
-
-    const time = value[auctionUUID].time
-    const redirectKey = value[auctionUUID].key
-
-    const key = sha256.hmac(
-      import.meta.env.VITE_REDIRECT_KEY,
-      import.meta.env.VITE_REDIRECT_SECRET + time,
-    )
-
-    if (redirectKey !== key) {
-      remove()
-      return navigate(`/dashboard/${auctionUUID}/wheel`)
-    }
-  }, [auctionUUID, value])
-
-  useEffect(() => {
-    const connect = async () => {
+    const connect = async (auctionUUID: string) => {
       const response = await connectSSEDonationAlerts({ auctionUUID })
 
       if (response.isSuccess) {
-        remove()
-        set({ [auctionUUID]: response.data })
+        setIsConnected(true)
 
-        setTimeout(() => {
-          navigate(`/dashboard/${auctionUUID}/wheel`)
-        }, 5000)
+        removeDonalertsLSRedirectData()
+        set({ [auctionUUID]: response.data })
+        navigate(`/dashboard/${auctionUUID}/wheel`)
+      }
+
+      if (response.isError) {
+        toastErrorNotification('Не удалось подключить Donation Alerts к аукциону')
+        navigate(`/dashboard/${auctionUUID}/wheel`)
       }
     }
-    connect()
-  }, [connectSSEDonationAlerts, auctionUUID])
+
+    const isPossibleToSendConnectRequest = !internalIsConnectLoadingRef.current && !isLoading && auctionUUID && !isConnected
+
+    if (isPossibleToSendConnectRequest) {
+      internalIsConnectLoadingRef.current = true
+      connect(auctionUUID)
+    }
+  }, [
+    connectSSEDonationAlerts,
+    navigate,
+    auctionUUID,
+    isConnected,
+    isLoading,
+    removeDonalertsLSRedirectData,
+    set,
+  ])
 
   return (
     <Flex
@@ -83,26 +123,27 @@ export const DonationAlertsRedirectDisplay = memo(() => {
           <div
             className={cn(
               'w-full h-full rounded-b-lg border-l-4 border-r-4 border-b-4 transition-colors',
-              !isSuccess && 'animate-pulse border-gray/80 duration-[3s]',
+              !isSuccess && 'animate-pulse border-gray-light/60 duration-[3s]',
               isSuccess && 'border-green-accent/80 duration-1000',
             )}
           >
           </div>
-          <Typography
-            tag="span"
+          <Text
             className={cn(
               'absolute -translate-x-1/2 left-1/2 top-6 text-md text-nowrap text-gray-accent font-medium',
               isSuccess
               && 'text-green-accent/80 animate-fadeIn duration-[3s] font-medium',
             )}
+            asSpan
           >
             {isSuccess
               ? 'DonationAlerts успешно подключен!'
               : 'Подключаем Donation Alerts... Пожалуйста подождите'}
-          </Typography>
+          </Text>
         </div>
       </div>
     </Flex>
+
   )
 })
 
@@ -145,7 +186,7 @@ export const DonationAlertsIntegrationButton = () => {
       })
       window.open(url, '_self')
     }
-  }, [isConnected])
+  }, [isConnected, auctionUUID, set])
 
   return (
     <Button

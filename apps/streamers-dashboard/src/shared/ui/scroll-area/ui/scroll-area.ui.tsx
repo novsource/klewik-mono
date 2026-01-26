@@ -1,7 +1,7 @@
 import type { ComponentProps } from 'react'
 import { forwardRef } from 'react'
 
-import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
+import { ScrollArea as ScrollAreaPrimitive } from '@base-ui/react'
 
 import { cn } from '~shared/utils'
 
@@ -48,23 +48,23 @@ const ScrollArea = forwardRef<HTMLDivElement, ScrollAreaProps>(
   },
 )
 
-export type ScrollBarProps = ComponentProps<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>
+export type ScrollBarProps = ComponentProps<typeof ScrollAreaPrimitive.Scrollbar>
 
 function ScrollBar(props: ScrollBarProps) {
   const { className, orientation = 'vertical', ...restProps } = props
 
   return (
-    <ScrollAreaPrimitive.ScrollAreaScrollbar
+    <ScrollAreaPrimitive.Scrollbar
       data-slot="scroll-area-scrollbar"
       orientation={orientation}
       className={cn(scrollAreaScrollbarVariants({ orientation }), className)}
       {...restProps}
     >
-      <ScrollAreaPrimitive.ScrollAreaThumb
+      <ScrollAreaPrimitive.Thumb
         data-slot="scroll-area-thumb"
         className={scrollAreaThumbVariants()}
       />
-    </ScrollAreaPrimitive.ScrollAreaScrollbar>
+    </ScrollAreaPrimitive.Scrollbar>
   )
 }
 

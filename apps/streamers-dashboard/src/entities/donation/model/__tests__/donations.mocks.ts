@@ -1,4 +1,4 @@
-import type { DonationAlertsDonation } from '..'
+import type { DonationAlertsDonation, ProcessedDonation } from '..'
 
 import { faker } from '@faker-js/faker'
 
@@ -10,7 +10,7 @@ const getFromFakerArray = <T>(...elements: T[]) => {
   return faker.helpers.arrayElement<T>(elements)
 }
 
-export const createSingleFakeDonation = (options?: CreateSingleFakeDonationOptions) => ({
+export const createSingleFakeDonation = (options?: CreateSingleFakeDonationOptions): ProcessedDonation => ({
   id: options?.id ?? 1,
   auctionId: 2,
   amount: faker.number.int({ min: 200, max: 50000 }),
@@ -26,6 +26,9 @@ export const createSingleFakeDonation = (options?: CreateSingleFakeDonationOptio
     action: getFromFakerArray<DonationAlertsDonation['processData']['action']>('createSlot', 'noAction', 'updateSlot'),
     slotsIds: [faker.number.int(), faker.number.int()],
     status: getFromFakerArray<DonationAlertsDonation['processData']['status']>('added', 'checkRequested', 'empty', 'error', 'inProgress', 'rejected'),
+    addedPoints: faker.number.int(),
+    title: faker.word.words({ count: { min: 2, max: 6 } }),
+    donationCode: getFromFakerArray(faker.string.fromCharacters(['a', 'b', 'c'], { min: 8, max: 8 }), null),
   },
 })
 

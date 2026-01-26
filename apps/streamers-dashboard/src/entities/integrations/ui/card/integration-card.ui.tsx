@@ -45,7 +45,7 @@ const integrationsIcons: Record<IntegrationsPlatforms, NullablePossible<ReactNod
   donationAlerts: <Icons.DonationAlerts width={24} height={28} />,
   donatePay: <Icons.DonatePay width={32} height={32} />,
   twitch: <Icons.TwitchLogo />,
-  userInput: null,
+  custom: null,
 } as const
 
 export type BaseIntegrationCardProps = CardProps
@@ -93,7 +93,7 @@ export type BaseIntegrationCardFooterProps = CardFooterProps
 export const BaseIntegrationCardFooter = (props: BaseIntegrationCardFooterProps) => {
   const { className, ...restProps } = props
 
-  return <CardFooter className={cn('bg-dark/30 border-t-dark-accent border-t-1 px-4 py-1.5 rounded-b-medium', className)} {...restProps} />
+  return <CardFooter className={cn('px-4 py-1.5 rounded-b-medium', className)} {...restProps} />
 }
 
 export type BaseIntegrationCardPlatformIconProps = ComponentPropsWithoutRef<'div'> & {

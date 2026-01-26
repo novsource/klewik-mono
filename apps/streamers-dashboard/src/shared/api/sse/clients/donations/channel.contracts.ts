@@ -43,6 +43,9 @@ export const ProcessedDonationDTOSchema = DonationSchema.extend({
     status: z.enum(
       zodEnum<ProcessedDonationDTOStatus>(processedDonationStatuses),
     ),
+    addedPoints: z.number().nullable(),
+    title: z.string().max(35).nullable(),
+    donationCode: z.string().max(8).nullable(),
   }),
 })
 

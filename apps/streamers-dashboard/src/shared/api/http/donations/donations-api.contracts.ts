@@ -2,6 +2,8 @@ import type { ProcessedDonationDTOAction, ProcessedDonationDTOStatus } from './d
 
 import { z } from 'zod'
 
+import { integrationsPlatforms } from '~shared/constants/integrations'
+
 import { zodEnum } from '~shared/lib/zod'
 
 const processedDonationStatuses = [
@@ -19,21 +21,21 @@ const processedDonationAction = [
   'updateSlot',
 ] as const satisfies ProcessedDonationDTOAction[]
 
-const DonationSchema = z.object({
+const DonationDTOSchema = z.object({
   id: z.number(),
   auctionId: z.number(),
   sourceDonationId: z.number().positive().nullable(),
   username: z.string(),
-  source: z.enum(['donatePay', 'donationAlerts', 'twitch', 'userInput']),
+  source: z.enum(integrationsPlatforms),
   message: z.string().max(210).nullable(),
   messageType: z.enum(['audio', 'empty', 'text']),
   amount: z.number(),
   currency: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.string().date(),
+  updatedAt: z.string().date(),
 })
 
-export const ProcessedDonationDTOSchema = DonationSchema.extend({
+export const ProcessedDonationDTOSchema = DonationDTOSchema.extend({
   processData: z.object({
     action: z.enum(
       zodEnum<ProcessedDonationDTOAction>(processedDonationAction),

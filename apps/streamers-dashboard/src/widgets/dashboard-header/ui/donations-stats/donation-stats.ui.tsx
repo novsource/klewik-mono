@@ -53,17 +53,10 @@ export const DonationsStats = memo((props: DonationsStatsCardProps) => {
           />
         </Flex>
         <Flex className="gap-x-1" align="center">
-          <Icons.Warning width="16" height="16" />
+          <Icons.Hourglass width="16" height="16" />
           <NumberFlow
             className="font-azeret-mono font-medium tracking-tight"
             value={statusesCount.checkRequested}
-          />
-        </Flex>
-        <Flex className="gap-x-0.5" align="center">
-          <Icons.LargeCross size="sm" />
-          <NumberFlow
-            className="font-azeret-mono font-medium tracking-tight"
-            value={statusesCount.error}
           />
         </Flex>
       </Flex>

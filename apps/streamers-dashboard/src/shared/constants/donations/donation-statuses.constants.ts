@@ -1,10 +1,9 @@
-/**@todo i18 */
-const DONATION_STATUS_NAME = {
-  added: 'Обработано',
-  confirm: 'Необходима проверка',
-  error: 'Ошибка обработки',
-  empty: 'Данные не найдены',
+/** @todo i18 */
+export const DONATION_STATUS_NAME = {
+  added: 'Добавлено',
+  inProgress: 'Обрабатывается',
+  checkRequested: 'Ожидание проверки',
+  error: 'Ошибка',
+  empty: 'Нет данных',
   rejected: 'Отклонено',
 }
-
-export { DONATION_STATUS_NAME }

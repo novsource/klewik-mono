@@ -9,6 +9,7 @@ type ButtonVariant
     | 'action'
     | 'error'
     | 'ghost'
+    | 'borderless'
 
 type ButtonSize = 'sm' | 'default' | 'lg' | 'xs'
 
@@ -44,20 +45,21 @@ export const buttonVariants = cva<ButtonVariants>(
         default:
           'border-1 border-gray/20 bg-dark text-gray-accent hover:border-gray/40 hover:bg-dark-accent/40 hover:text-white active:bg-dark/80',
         action:
-          'bg-green-dark text-green-accent/80 hover:bg-green-accent/10 hover:text-green-accent',
+          'bg-green-dark text-green-accent/80 hover:bg-green/10 hover:text-green-accent',
         error: 'border-1 border-red/20 bg-red/10 text-red hover:bg-red/15 hover:border-red/30',
         ghost: 'border-transparent bg-transparent',
+        borderless: 'border-transparent bg-dark text-gray-accent hover:border-gray/40 hover:bg-dark-accent/40 hover:text-white active:bg-dark/80',
       },
       isIconOnly: {
         true: '',
         false: '',
       },
       size: {
+        xs: 'font-regular h-7 rounded-md px-2 py-1.5 text-sm leading-4 data-[icon-only=false]:[&_svg]:size-4',
+        sm: 'h-8 rounded-md px-2.5 py-1.75 text-sm leading-4.5 font-medium data-[icon-only=false]:[&_svg]:size-4',
         default:
-          'h-10 rounded-md px-2.5 py-1.25 text-md leading-6 font-medium data-[icon-only=false]:[&_svg]:size-4.25',
-        xs: 'font-regular h-9 rounded-md px-1.5 text-sm leading-5 data-[icon-only=false]:[&_svg]:size-3.5',
-        sm: 'h-9.5 rounded-md px-2.25 py-0.75 text-md leading-6 font-medium data-[icon-only=false]:[&_svg]:size-4',
-        lg: 'h-10.5 text-base rounded-md px-3 font-medium data-[icon-only=false]:[&_svg]:size-4.5',
+          'h-9.5 rounded-md px-3.25 py-2 px-3 text-md leading-4.5 font-medium data-[icon-only=false]:[&_svg]:size-4.5',
+        lg: 'h-10 text-base rounded-md px-4 py-2.5 font-medium data-[icon-only=false]:[&_svg]:size-4.5',
       },
       startContent: {
         true: 'flex items-center justify-center gap-x-1.25',
@@ -74,8 +76,9 @@ export const buttonVariants = cva<ButtonVariants>(
       isIconOnly: false,
     },
     compoundVariants: [
-      { isIconOnly: true, size: 'default', className: 'size-10' },
-      { isIconOnly: true, size: 'sm', className: 'size-9 px-2 py-2' },
+      { isIconOnly: true, size: 'default', className: 'size-9 [&_svg]:size-4.5' },
+      { isIconOnly: true, size: 'sm', className: 'size-7.5 [&_svg]:size-3.75' },
+      { isIconOnly: true, size: 'xs', className: 'size-7 [&_svg]:size-4' },
     ],
   },
 )

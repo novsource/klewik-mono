@@ -6,9 +6,9 @@ import { act, renderHook, waitFor } from '@testing-library/react'
 import { sse } from 'msw'
 import { setupServer } from 'msw/node'
 
-import { store as appStore, createStore } from '~app/store/store'
+import { rootStore as appStore, createStore } from '~app/store/store'
 
-import { createFakeDonationsArray } from '~entities/donation/model/__tests__/donations.mocks'
+import { createSingleFakeDonation } from '~entities/donation/model/__tests__/donations.mocks'
 
 import { donationsSSEClient } from '~shared/api/sse/clients/donations'
 import type { DonationsEventSourceMessage, DonationsSSEEventsMap } from '~shared/api/sse/clients/donations'
@@ -37,7 +37,7 @@ describe('### sse auction slots api', () => {
       sse<DonationsSSEEventsMap>(DONATIONS_SSE_URL, ({ client }) => {
         const message: DonationsEventSourceMessage = {
           id: '1',
-          data: JSON.stringify(createFakeDonationsArray()),
+          data: JSON.stringify(createSingleFakeDonation()),
           event: 'donations/add',
         }
 
@@ -75,7 +75,7 @@ describe('### sse auction slots api', () => {
       sse<DonationsSSEEventsMap>(DONATIONS_SSE_URL, ({ client }) => {
         const message: DonationsEventSourceMessage = {
           id: '1',
-          data: JSON.stringify(createFakeDonationsArray()),
+          data: JSON.stringify(createSingleFakeDonation()),
           event: 'donations/add',
         }
 
@@ -138,7 +138,7 @@ describe('### sse auction slots api', () => {
       sse<DonationsSSEEventsMap>(DONATIONS_SSE_URL, async ({ client }) => {
         const validMessage: DonationsEventSourceMessage = {
           id: '1',
-          data: JSON.stringify(createFakeDonationsArray()),
+          data: JSON.stringify(createSingleFakeDonation()),
           event: 'donations/add',
           retry: undefined,
         }
@@ -195,7 +195,7 @@ describe('### sse auction slots api', () => {
       sse<DonationsSSEEventsMap>(DONATIONS_SSE_URL, async ({ client }) => {
         const addingEventMessage: DonationsEventSourceMessage = {
           id: '1',
-          data: JSON.stringify(createFakeDonationsArray()),
+          data: JSON.stringify(createSingleFakeDonation()),
           event: 'donations/add',
           retry: undefined,
         }

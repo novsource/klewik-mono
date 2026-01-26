@@ -113,7 +113,7 @@ export class BroadcastLeaderChannel<
 
     this._elector.awaitLeadership().then(() => {
       // @ts-expect-error Emitter can't give a opportunity emit without data
-      this._emitter.emit('new-leader')
+      this._emitter.emit('new-leader', null)
     })
   }
 
@@ -143,25 +143,6 @@ export class BroadcastLeaderChannel<
     }
   }
 
-  // once<
-  //   Event extends keyof (ChannelEventMap
-  //     & DefaultChannelEventMap<SourceMessage>),
-  //   EventMap extends ChannelEventMap & DefaultChannelEventMap<SourceMessage>,
-  // >(eventName: Event,
-  //   handler: (...args: Parameters<EventMap[Event]>) => void,
-  // ) {
-  //   // Delete handler if exist
-  //   this.off(eventName, handler)
-
-  //   const fn = (...args: EventMap[Event]) => handler(...args)
-
-  //   this.on(eventName, (...args) => {
-  //     handler(...args)
-
-  //     this.off(eventName, fn)
-  //   })
-  // }
-
   off<
     Event extends keyof (ChannelEventMap
       & DefaultChannelEventMap<SourceMessage>),
@@ -188,6 +169,10 @@ export class BroadcastLeaderChannel<
     return () => {
       this.removeOnMessageHandler(handler)
     }
+  }
+
+  onNewLeader(handler: () => void) {
+    this.on('new-leader', handler)
   }
 
   onChannelLeadership(handler: () => void) {

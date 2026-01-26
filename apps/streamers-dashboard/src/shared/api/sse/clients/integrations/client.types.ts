@@ -10,6 +10,6 @@ export type IntegrationsSSEEventsMap = {
 }
 
 export type IntegrationsSSEEventsCallbacksMap = {
-  open: () => void
-  close: () => void
+  open: (data: z.infer<typeof IntegrationsSSEEventsDataSchema>) => void
+  close: (data: z.infer<typeof IntegrationsSSEEventsDataSchema>) => void
 }

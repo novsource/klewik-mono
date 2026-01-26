@@ -23,9 +23,9 @@ const IntegrationBadge = (props: IntegrationsBadgeProps) => {
   const styles = useMemo(() => {
     const integrationsStyles: Record<IntegrationsPlatforms, string> = {
       donatePay: 'bg-green-accent/20 text-white/80',
-      donationAlerts: 'bg-orange/20 text-orange',
+      donationAlerts: 'bg-orange/10 text-orange',
       twitch: 'bg-gray text-white/80',
-      userInput: 'bg-gray text-white/80',
+      custom: 'bg-gray text-white/80',
     }
     return cn(integrationsStyles[integration], 'text-[11px] leading-4 max-tablet:h-5 max-tablet:text-[10px]', className)
   }, [integration, className])

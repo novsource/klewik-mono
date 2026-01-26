@@ -1,4 +1,4 @@
-import { integrationsPlatforms } from './integrations.contracts'
+import type { integrationsPlatforms } from '~shared/constants/integrations'
 
 type IntegrationsPlatforms = (typeof integrationsPlatforms)[number]
 

@@ -1,2 +1,1 @@
-export * from './edit-slot-dialog.ui'
-export * from './edit-slot-form.ui'
+export * from './form-composer.ui'

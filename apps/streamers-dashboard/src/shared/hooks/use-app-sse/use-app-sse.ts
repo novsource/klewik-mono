@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { isAxiosError } from 'axios'
 
@@ -11,14 +11,88 @@ import { integrationsSSEClient } from '~shared/api/sse/clients/integrations/inte
 
 import type { SSE_CHANNELS } from '~shared/constants/api'
 
-import { BroadcastLeaderChannel } from '~shared/lib/broadcast-channel'
 import type { SSEClient } from '~shared/lib/fetch-event-source'
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { useLazyConnectAuctionSlotsSSEQuery, useLazyConnectDonationsSSEQuery, useLazyConnectIntegrationsSSEQuery } from '~shared/store/api'
 import { sseActions, sseSelectors } from '~shared/store/slices'
 
-const mainSSEBroadcastChannel = new BroadcastLeaderChannel('mainSSEChannel')
+import { chain } from '~shared/utils'
+
+import { useTabLeader } from '../use-tab-leader/use-tab-leader'
+
+type UseAppSSEOptions = {
+  onTabBecomesLeader?: () => void
+  onNewTabLeader?: () => void
+}
+
+// const appSSEBroadcastChannel = new BroadcastLeaderChannel('appSSEChannel')
+
+export const useAppSSE = (options?: UseAppSSEOptions) => {
+  const isAllEventsConnected = useStoreSelector(sseSelectors.getIsAllEventsConnected)
+
+  const { resetState } = useActionCreators(sseActions)
+
+  const [isPending, setIsPending] = useState(false)
+  const internalIsPendingRef = useRef(false)
+
+  const { connect: connectAuctionSlotsSSEQuery, queryState: { reset: resetSlotsQuery } } = useAuctionSlotsSSE()
+  const { connect: connectDonationsSSEQuery, queryState: { reset: resetDonationsQuery } } = useDonationsSSE()
+  const { connect: connectIntegrationsSSEQuery, queryState: { reset: resetIntegrationsQuery } } = useIntegrationsSSE()
+
+  const { channel: tabLeaderChannel } = useTabLeader()
+
+  const resetConnectionQueries = () => {
+    [resetDonationsQuery, resetSlotsQuery, resetIntegrationsQuery].forEach(resetFn => resetFn())
+  }
+
+  const connectToSSEEvents = async (auctionUUID: string) => {
+    const isShouldSkipConnection = internalIsPendingRef.current
+
+    if (isShouldSkipConnection)
+      return
+
+    resetConnectionQueries()
+
+    internalIsPendingRef.current = true
+    setIsPending(true)
+
+    const eventsConnectionsQueryArr
+      = [
+        connectAuctionSlotsSSEQuery,
+        connectDonationsSSEQuery,
+        connectIntegrationsSSEQuery,
+      ].map(query => query({ auctionUUID }).unwrap())
+
+    try {
+      await Promise.all(eventsConnectionsQueryArr)
+    }
+    catch (error) {
+      if (error instanceof Error || isAxiosError(error))
+        throw error
+    }
+    finally {
+      internalIsPendingRef.current = false
+
+      setIsPending(false)
+    }
+  }
+
+  useEffect(() => {
+    const onNewLeaderHandler
+      = options?.onNewTabLeader
+        ? chain(options.onNewTabLeader, resetState)
+        : resetState
+
+    tabLeaderChannel.onNewLeader(onNewLeaderHandler)
+
+    return () => {
+      tabLeaderChannel.off('new-leader', onNewLeaderHandler)
+    }
+  }, [resetState, options?.onNewTabLeader, tabLeaderChannel])
+
+  return { isAllEventsConnected, isPending, connectToSSEEvents }
+}
 
 type UseBaseChannelSSEOptions<EventsCallbacksMap extends Record<string, (data: any) => void>> = {
   name: typeof SSE_CHANNELS[number]
@@ -46,7 +120,6 @@ const useBaseSSEClient
 
     useEffect(() => {
       const unsubcribe = client.onSSEEvent('onclose', () => {
-        console.log('close')
         updateConnectStatus({ eventType: nameRef.current, isConnected: false })
       })
 
@@ -87,91 +160,38 @@ const useBaseSSEClient
     }
   }
 
-export const useDonationsSSE = (listeners?: Partial<DonationsSSEChannelEventsMap>) => {
-  const baseSSEClient = useBaseSSEClient(donationsSSEClient, { name: 'donations', eventListeners: listeners })
+export function useDonationsSSE(listeners?: Partial<DonationsSSEChannelEventsMap>) {
+  const client = useBaseSSEClient(donationsSSEClient, { name: 'donations', eventListeners: listeners })
 
   const [connectQuery, queryState] = useLazyConnectDonationsSSEQuery()
 
   return {
     connect: connectQuery,
     queryState,
-    ...baseSSEClient,
+    ...client,
   }
 }
 
-export const useAuctionSlotsSSE = (listeners?: Partial<AuctionSlotsEventsCallbacks>) => {
-  const baseSSEClient = useBaseSSEClient(auctionSlotsSSEClient, { name: 'auctionSlots', eventListeners: listeners })
+export function useAuctionSlotsSSE(listeners?: Partial<AuctionSlotsEventsCallbacks>) {
+  const client = useBaseSSEClient(auctionSlotsSSEClient, { name: 'auctionSlots', eventListeners: listeners })
 
   const [connectQuery, queryState] = useLazyConnectAuctionSlotsSSEQuery()
 
   return {
     connect: connectQuery,
     queryState,
-    ...baseSSEClient,
+    ...client,
   }
 }
 
-export const useIntegrationsSSE = (listeners?: Partial<IntegrationsSSEEventsCallbacksMap>) => {
-  const baseSSEClient = useBaseSSEClient(integrationsSSEClient, { name: 'integrations', eventListeners: listeners })
+export function useIntegrationsSSE(listeners?: Partial<IntegrationsSSEEventsCallbacksMap>) {
+  const client = useBaseSSEClient(integrationsSSEClient, { name: 'integrations', eventListeners: listeners })
 
   const [connectQuery, queryState] = useLazyConnectIntegrationsSSEQuery()
 
   return {
     connect: connectQuery,
     queryState,
-    ...baseSSEClient,
+    ...client,
   }
-}
-
-type UseAppSSEListeners = {
-  donations?: Partial<DonationsSSEChannelEventsMap>
-  auctionSlots?: Partial<AuctionSlotsEventsCallbacks>
-  integrations?: Partial<IntegrationsSSEEventsCallbacksMap>
-}
-
-export const useAppSSE = (listeners?: UseAppSSEListeners) => {
-  const isAllConnected = useStoreSelector(sseSelectors.getIsAllEventsConnected)
-
-  const [isTabLeader, setIsTabLeader] = useState(() => {
-    mainSSEBroadcastChannel.onChannelLeadership(() => setIsTabLeader(true))
-    return mainSSEBroadcastChannel.isLeader
-  })
-  const [isPending, setIsPending] = useState(false)
-  const internalIsPendingRef = useRef(false)
-
-  const { connect: connectAuctionSlotsSSEQuery } = useAuctionSlotsSSE(listeners?.auctionSlots)
-  const { connect: connectDonationsSSEQuery } = useDonationsSSE(listeners?.donations)
-  const { connect: connectIntegrationsSSEQuery } = useIntegrationsSSE(listeners?.integrations)
-
-  const connectToSSEEvents = useCallback(async (auctionUUID: string) => {
-    const isShouldSkipQuery = isAllConnected || internalIsPendingRef.current
-
-    if (isShouldSkipQuery)
-      return
-
-    internalIsPendingRef.current = true
-    setIsPending(true)
-
-    const connectToSSEArr
-      = [
-        connectAuctionSlotsSSEQuery,
-        connectDonationsSSEQuery,
-        connectIntegrationsSSEQuery,
-      ].map(query => query({ auctionUUID }).unwrap())
-
-    try {
-      await Promise.all(connectToSSEArr)
-    }
-    catch (error) {
-      if (error instanceof Error || isAxiosError(error))
-        throw error
-    }
-    finally {
-      internalIsPendingRef.current = false
-
-      setIsPending(false)
-    }
-  }, [isAllConnected, connectAuctionSlotsSSEQuery, connectDonationsSSEQuery, connectIntegrationsSSEQuery])
-
-  return { isAllConnected, isTabLeader, isPending, connectToSSEEvents }
 }

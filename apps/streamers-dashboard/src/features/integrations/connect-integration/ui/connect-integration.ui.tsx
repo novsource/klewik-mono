@@ -27,14 +27,14 @@ type IntegrationCardProps = {
   isConnected?: boolean
 }
 
-const IntegrationCard = (props: IntegrationCardProps) => {
+export const IntegrationCard = (props: IntegrationCardProps) => {
   const { platform, description, isConnected = false } = props
 
   const integrationButtons: Record<IntegrationsPlatforms, NullablePossible<ReactNode>> = {
     donationAlerts: <DonationAlertsIntegrationButton />,
     donatePay: <DonatePayIntegrationButton />,
     twitch: null,
-    userInput: null,
+    custom: null,
   }
 
   return (
@@ -63,15 +63,13 @@ type RedirectDisplayProps = {
   platform: IntegrationsPlatforms
 }
 
-const RedirectDisplay = memo((props: RedirectDisplayProps) => {
+export const RedirectDisplay = memo((props: RedirectDisplayProps) => {
   const redirectDisplay = {
     donationAlerts: <DonationAlertsRedirectDisplay />,
     donatePay: <></>,
     twitch: <></>,
-    userInput: <></>,
+    custom: <></>,
   }[props.platform]
 
   return redirectDisplay
 })
-
-export { IntegrationCard, RedirectDisplay }

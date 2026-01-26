@@ -19,11 +19,19 @@ export const DesktopAppDialog = (props: DesktopAppDialogProps) => {
   return <Sheet {...props} />
 }
 
+DesktopAppDialog.Content = DesktopAppDialogContent
+DesktopAppDialog.Trigger = DesktopAppDialogTrigger
+DesktopAppDialog.Header = DesktopAppDialogHeader
+DesktopAppDialog.HeaderActionsPanel = DesktopAppDialogHeaderActionsPanel
+DesktopAppDialog.TopPanel = DesktopAppDialogHeaderTopPanel
+DesktopAppDialog.Title = DesktopAppDialogTitle
+DesktopAppDialog.CloseButton = DesktopAppDialogClose
+
 export type DesktopAppDialogContentProps = SheetContentProps & {
   contentWrapperProps?: Omit<FlexProps<'div'>, 'children'>
 }
 
-export const DesktopAppDialogContent = (props: DesktopAppDialogContentProps) => {
+function DesktopAppDialogContent(props: DesktopAppDialogContentProps) {
   const { contentWrapperProps, children, ...restProps } = props
 
   const mergedContentWrapperProps = mergeProps({
@@ -41,13 +49,13 @@ export const DesktopAppDialogContent = (props: DesktopAppDialogContentProps) => 
 
 export type DesktopAppDialogTriggerProps = SheetTriggerProps
 
-export const DesktopAppDialogTrigger = (props: DesktopAppDialogTriggerProps) => {
+function DesktopAppDialogTrigger(props: DesktopAppDialogTriggerProps) {
   return <SheetTrigger {...props} />
 }
 
 export type DesktopAppDialogHeaderProps = SheetHeaderProps
 
-export const DesktopAppDialogHeader = (props: SheetHeaderProps) => {
+function DesktopAppDialogHeader(props: SheetHeaderProps) {
   const { className, ...restProps } = props
 
   return (
@@ -57,7 +65,7 @@ export const DesktopAppDialogHeader = (props: SheetHeaderProps) => {
 
 export type DesktopAppDialogCloseProps = ButtonProps
 
-export const DesktopAppDialogClose = (props: DesktopAppDialogCloseProps) => {
+function DesktopAppDialogClose(props: DesktopAppDialogCloseProps) {
   const { className, ...restProps } = props
 
   return (
@@ -74,7 +82,7 @@ export const DesktopAppDialogClose = (props: DesktopAppDialogCloseProps) => {
 
 export type DesktopAppDialogHeaderTopPanelProps = FlexProps<'div'>
 
-export const DesktopAppDialogHeaderTopPanel = (props: DesktopAppDialogHeaderTopPanelProps) => {
+function DesktopAppDialogHeaderTopPanel(props: DesktopAppDialogHeaderTopPanelProps) {
   const { className, ...restProps } = props
 
   return <Flex className={cn('w-full h-8', className)} justify="between" {...restProps} />
@@ -82,7 +90,7 @@ export const DesktopAppDialogHeaderTopPanel = (props: DesktopAppDialogHeaderTopP
 
 export type DesktopAppDialogHeaderActionsPanelProps = FlexProps<'div'>
 
-export const DesktopAppDialogHeaderActionsPanel = (props: DesktopAppDialogHeaderActionsPanelProps) => {
+function DesktopAppDialogHeaderActionsPanel(props: DesktopAppDialogHeaderActionsPanelProps) {
   const { className, ...restProps } = props
 
   return <Flex className={cn('gap-x-2', className)} align="center" {...restProps} />
@@ -94,7 +102,7 @@ export type DesktopAppDialogTitleProps = FlexProps<'div'> & {
   icon?: ReactNode
 }
 
-export const DesktopAppDialogTitle = (props: DesktopAppDialogTitleProps) => {
+function DesktopAppDialogTitle(props: DesktopAppDialogTitleProps) {
   const { title, description, icon, className, ...restProps } = props
 
   return (

@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { DonatePayIntegrationCard } from '~features/integrations/connect-integration/ui/donate-pay'
 import { DonationAlertsIntegrationCard } from '~features/integrations/connect-integration/ui/donation-alerts'
 
+import { Title } from '~shared/components/typography'
+
 import { Button } from '~shared/ui/button'
 import type { CommandItemProps } from '~shared/ui/command'
 import { CommandItem } from '~shared/ui/command'
@@ -10,9 +12,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import { ScrollArea } from '~shared/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~shared/ui/tabs'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
@@ -86,23 +86,22 @@ function SettingsTabs() {
           </TabsTrigger>
         </TabsList>
       </Flex>
-      <ScrollArea className="w-full h-full bg-black/10">
-        <TabsContent className="w-full h-full px-6 py-3" value="auction">
-          Auction content
-        </TabsContent>
-        <TabsContent className="w-full h-full m-0" value="integrations">
-          <Flex className="h-full w-full gap-y-3 px-6 py-6" direction="column">
-            <Typography tag="h3">Платформы для пожертвований</Typography>
-            <div className="w-full grid landtop:grid-cols-2 desktop:grid-cols-3 gap-2">
-              <DonationAlertsIntegrationCard />
-              <DonatePayIntegrationCard />
-            </div>
-          </Flex>
-        </TabsContent>
-        <TabsContent className="w-full h-full px-6 py-3" value="timer">
-          timer content
-        </TabsContent>
-      </ScrollArea>
+      <TabsContent className="w-full h-full px-6 py-3 mt-10" value="auction">
+        Auction content
+      </TabsContent>
+      <TabsContent className="w-full h-full m-0" value="integrations">
+        <Flex className="h-full w-full gap-y-3 px-6 py-6" direction="column">
+          <Title order={3}>Платформы для пожертвований</Title>
+          <div className="w-full grid landtop:grid-cols-2 desktop:grid-cols-3 gap-2">
+            <DonationAlertsIntegrationCard />
+            <DonatePayIntegrationCard />
+          </div>
+        </Flex>
+      </TabsContent>
+      <TabsContent className="w-full h-full px-6 py-3" value="timer">
+        timer content
+      </TabsContent>
+
     </Tabs>
   )
 }

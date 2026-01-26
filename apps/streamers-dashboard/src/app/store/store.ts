@@ -1,6 +1,7 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit'
-import { globalDialogsReducer } from '~features/_common/display-dialogs'
-import { initMessageListener } from 'redux-state-sync'
+import { combineReducers, configureStore, isAction } from '@reduxjs/toolkit'
+import { createStateSyncMiddleware, initStateWithPrevTab, withReduxStateSync } from 'redux-state-sync'
+
+import { globalDialogsActions, globalDialogsReducer } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
 import { splittedAuctionApi as auctionApi } from '~entities/auction/api'
 import { auctionReducer } from '~entities/auction/store'
@@ -23,7 +24,7 @@ import { wheelReducer } from '~entities/wheel/store'
 
 import { auctionSlotsSSEApi, splittedAuthApi as authApi, donationsSSEApi, integrationsSSEApi } from '~shared/store/api'
 import { sseConnectionsListenerMiddlewares } from '~shared/store/middlewares'
-import { appReducer, sseReducer } from '~shared/store/slices'
+import { appReducer, sseActions, sseReducer } from '~shared/store/slices'
 
 const rootReducer = combineReducers({
   app: appReducer,
@@ -45,35 +46,33 @@ const rootReducer = combineReducers({
   [integrationsSSEApi.reducerPath]: integrationsSSEApi.reducer,
 })
 
-// const persistedReducer = persistReducer(
-//   {
-//     key: '-persist',
-//     storage: localStorage,
-//     keyPrefix: 'store',
-//     blacklist: ['sse', 'sseApi'],
-//   },
-//   rootReducer,
-// )
+const actionsBlacklist = [
+  globalDialogsActions.setDialogOpenStatus.type,
+  globalDialogsActions.setDialogState.type,
+  sseActions.resetState.type,
+  sseActions.setAllConnected.type,
+] as const
 
-// const syncStoreConfig: ReduxStateSyncConfig = {
-//   blacklist: [
-//     'persist/PERSIST',
-//     'persist/REHYDRATE',
-//     'sseApi/endpoints/connectSlotsSSE',
-//     'sseApi/endpoints/connectDonationsSSE',
-//   ],
-// }
+const syncMiddleware = createStateSyncMiddleware({
+  predicate: (action) => {
+    if (isAction(action) && Array.isArray(actionsBlacklist)) {
+      return !actionsBlacklist.includes(action.type)
+    }
 
-// const syncMiddleware = createStateSyncMiddleware(syncStoreConfig)
+    return false
+  },
+})
+const syncReducer = withReduxStateSync(rootReducer)
 
 export const createStore = () => configureStore({
-  reducer: rootReducer,
+  reducer: syncReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
       .prepend(
         ...auctionSlotsListenerMiddlewares,
         ...donationsListenerMiddlewares,
         ...sseConnectionsListenerMiddlewares,
+        syncMiddleware,
       )
       .concat(
         auctionApi.middleware,
@@ -88,11 +87,9 @@ export const createStore = () => configureStore({
       ),
 })
 
-export const store = createStore()
+export const rootStore = createStore()
 
-// export const persistor = persistStore(store)
+initStateWithPrevTab(rootStore)
 
-initMessageListener(store)
-
-export type RootState = ReturnType<typeof store.getState>
-export type StoreDispatch = typeof store.dispatch
+export type RootState = ReturnType<typeof rootStore.getState>
+export type StoreDispatch = typeof rootStore.dispatch

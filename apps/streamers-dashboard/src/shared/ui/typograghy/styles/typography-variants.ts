@@ -19,8 +19,8 @@ export const typographyVariants = cva<TypographyVariants>('', {
       h2: 'font-breeze text-[18.5px] tablet:text-title-lg font-bold',
       h3: 'font-breeze text-title font-semibold',
       h4: 'font-breeze text-md font-semibold',
-      span: 'font-breeze text-md font-medium leading-4',
-      p: 'font-golos-f text-md font-regular leading-5',
+      span: 'font-breeze text-md font-medium leading-4 tablet:leading-5',
+      p: 'font-golos-f text-md font-regular leading-4 tablet:leading-5',
     },
   },
 })

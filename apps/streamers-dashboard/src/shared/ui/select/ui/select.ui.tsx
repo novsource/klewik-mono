@@ -2,7 +2,7 @@ import type { SelectContextState } from '../context'
 
 import * as React from 'react'
 
-import * as SelectPrimitive from '@base-ui-components/react/select'
+import { Select as SelectPrimitive } from '@base-ui/react/select'
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
 
 import { cn } from '~shared/utils'
@@ -23,33 +23,35 @@ import {
 } from '../styles'
 
 export type SelectProps<Value, Multiply extends boolean>
-= SelectPrimitive.SelectRoot.Props<Value, Multiply> & Partial<SelectContextState>
+= SelectPrimitive.Root.Props<Value, Multiply> & Partial<SelectContextState>
 
 export const Select = <Value, Multiply extends boolean>(props: SelectProps<Value, Multiply>) => {
   const { size, position, ...rootProps } = props
 
   return (
     <SelectProvider size={size} position={position}>
-      <SelectPrimitive.Select.Root data-slot="select" {...rootProps} />
+      <SelectPrimitive.Root data-slot="select" {...rootProps} />
     </SelectProvider>
   )
 }
 
-export type SelectGroupProps = SelectPrimitive.SelectGroup.Props
+export type SelectGroupProps = SelectPrimitive.Group.Props
 
 export const SelectGroup = (props: SelectGroupProps) => {
-  return <SelectPrimitive.Select.Group data-slot="select-group" {...props} />
+  return <SelectPrimitive.Group data-slot="select-group" {...props} />
 }
 
-export type SelectValueProps = SelectPrimitive.SelectValue.Props
+export type SelectValueProps = SelectPrimitive.Value.Props
 
 export const SelectValue = (props: SelectValueProps) => {
-  return <SelectPrimitive.Select.Value data-slot="select-value" {...props} />
+  return <SelectPrimitive.Value data-slot="select-value" {...props} />
 }
 
-export type SelectTriggerProps = SelectPrimitive.SelectTrigger.Props & {
+export type SelectTriggerProps = SelectPrimitive.Trigger.Props & {
   size?: 'sm' | 'default'
   leftIcon?: React.ReactNode
+  hideChevron?: boolean
+  hideSelectedValue?: boolean
   label?: string
 }
 
@@ -59,6 +61,8 @@ export const SelectTrigger = (props: SelectTriggerProps) => {
     children,
     leftIcon,
     label,
+    hideChevron = false,
+    hideSelectedValue = false,
     ...triggerProps
   } = props
 
@@ -69,25 +73,27 @@ export const SelectTrigger = (props: SelectTriggerProps) => {
   }, [size, className])
 
   return (
-    <SelectPrimitive.Select.Trigger
+    <SelectPrimitive.Trigger
       data-slot="select-trigger"
       data-size={size}
       className={style}
       {...triggerProps}
     >
       {leftIcon}
-      {!label && <SelectPrimitive.Select.Value />}
+      {!label && !hideSelectedValue && <SelectPrimitive.Value />}
       {label}
-      <SelectPrimitive.Select.Icon>
-        <ChevronDownIcon className="size-4 opacity-50" />
-      </SelectPrimitive.Select.Icon>
-    </SelectPrimitive.Select.Trigger>
+      {!hideChevron && (
+        <SelectPrimitive.Icon>
+          <ChevronDownIcon className="size-4 opacity-50" />
+        </SelectPrimitive.Icon>
+      )}
+    </SelectPrimitive.Trigger>
   )
 }
 
-export type SelectContentProps = SelectPrimitive.SelectPositioner.Props & {
-  portalProps?: SelectPrimitive.SelectPortal.Props
-  popupProps?: SelectPrimitive.SelectPopup.Props
+export type SelectContentProps = SelectPrimitive.Positioner.Props & {
+  portalProps?: SelectPrimitive.Portal.Props
+  popupProps?: SelectPrimitive.Popup.Props
 }
 
 export const SelectContent = (props: SelectContentProps) => {
@@ -100,28 +106,28 @@ export const SelectContent = (props: SelectContentProps) => {
   } = props
 
   return (
-    <SelectPrimitive.Select.Portal {...portalProps}>
-      <SelectPrimitive.Select.Positioner className={cn(selectPositionerVariants())} sideOffset={12} {...positionerProps}>
-        <SelectPrimitive.Select.Popup className={cn(selectPopupVariants(), className)} {...popupProps}>
-          <SelectPrimitive.Select.ScrollUpArrow />
+    <SelectPrimitive.Portal {...portalProps}>
+      <SelectPrimitive.Positioner className={cn(selectPositionerVariants())} sideOffset={12} {...positionerProps}>
+        <SelectPrimitive.Popup className={cn(selectPopupVariants(), className)} {...popupProps}>
+          <SelectPrimitive.ScrollUpArrow />
           {children}
-          <SelectPrimitive.Select.ScrollDownArrow />
-        </SelectPrimitive.Select.Popup>
-      </SelectPrimitive.Select.Positioner>
-    </SelectPrimitive.Select.Portal>
+          <SelectPrimitive.ScrollDownArrow />
+        </SelectPrimitive.Popup>
+      </SelectPrimitive.Positioner>
+    </SelectPrimitive.Portal>
   )
 }
 
-export type SelectListProps = SelectPrimitive.SelectList.Props
+export type SelectListProps = SelectPrimitive.List.Props
 
 export const SelectList = (props: SelectListProps) => {
   const { className, ...restProps } = props
 
-  return <SelectPrimitive.Select.List className={cn(selectListVariants(), className)} {...restProps} />
+  return <SelectPrimitive.List className={cn(selectListVariants(), className)} {...restProps} />
 }
 
-export type SelectItemProps = SelectPrimitive.SelectItem.Props & {
-  itemWrapperProps?: SelectPrimitive.SelectItemText.Props
+export type SelectItemProps = SelectPrimitive.Item.Props & {
+  itemWrapperProps?: SelectPrimitive.ItemText.Props
 }
 
 export const SelectItem = (props: SelectItemProps) => {
@@ -134,30 +140,30 @@ export const SelectItem = (props: SelectItemProps) => {
   } = props
 
   return (
-    <SelectPrimitive.Select.Item
+    <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(selectItemVariants(), className)}
       {...restProps}
     >
       <span className="absolute right-2 flex size-3.5 items-center justify-center">
-        <SelectPrimitive.Select.ItemIndicator>
+        <SelectPrimitive.ItemIndicator>
           <CheckIcon className="size-4" />
-        </SelectPrimitive.Select.ItemIndicator>
+        </SelectPrimitive.ItemIndicator>
       </span>
-      <SelectPrimitive.Select.ItemText {...itemWrapperProps}>
+      <SelectPrimitive.ItemText {...itemWrapperProps}>
         {label}
-      </SelectPrimitive.Select.ItemText>
-    </SelectPrimitive.Select.Item>
+      </SelectPrimitive.ItemText>
+    </SelectPrimitive.Item>
   )
 }
 
-export type SelectSeparatorProps = SelectPrimitive.Select.Separator.Props
+export type SelectSeparatorProps = SelectPrimitive.Separator.Props
 
 export const SelectSeparator = (props: SelectSeparatorProps) => {
   const { className, ...restProps } = props
 
   return (
-    <SelectPrimitive.Select.Separator
+    <SelectPrimitive.Separator
       data-slot="select-separator"
       className={cn(selectSeparatorVariants(), className)}
       {...restProps}
@@ -165,34 +171,34 @@ export const SelectSeparator = (props: SelectSeparatorProps) => {
   )
 }
 
-export type SelectScrollUpButtonProps = SelectPrimitive.SelectScrollUpArrow.Props
+export type SelectScrollUpButtonProps = SelectPrimitive.ScrollUpArrow.Props
 
 export const SelectScrollUpButton = (props: SelectScrollUpButtonProps) => {
   const { className, ...restProps } = props
 
   return (
-    <SelectPrimitive.Select.ScrollUpArrow
+    <SelectPrimitive.ScrollUpArrow
       data-slot="select-scroll-up-button"
       className={cn(selectScrollUpButtonVariants(), className)}
       {...restProps}
     >
       <ChevronUpIcon className="size-4" />
-    </SelectPrimitive.Select.ScrollUpArrow>
+    </SelectPrimitive.ScrollUpArrow>
   )
 }
 
-export type SelectScrollDownArrowProps = SelectPrimitive.SelectScrollDownArrow.Props
+export type SelectScrollDownArrowProps = SelectPrimitive.ScrollDownArrow.Props
 
 export const SelectScrollDownButton = (props: SelectScrollDownArrowProps) => {
   const { className, ...restProps } = props
 
   return (
-    <SelectPrimitive.Select.ScrollDownArrow
+    <SelectPrimitive.ScrollDownArrow
       data-slot="select-scroll-down-button"
       className={cn(selectScrollDownButtonVariants(), className)}
       {...restProps}
     >
       <ChevronDownIcon className="size-4" />
-    </SelectPrimitive.Select.ScrollDownArrow>
+    </SelectPrimitive.ScrollDownArrow>
   )
 }

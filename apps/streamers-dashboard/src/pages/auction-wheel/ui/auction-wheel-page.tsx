@@ -1,3 +1,5 @@
+import { useDocumentTitle } from '~shared/hooks'
+
 import { Flex } from '~shared/ui/flex'
 
 import { cn } from '~shared/utils'
@@ -7,6 +9,8 @@ import { WheelTabs } from './wheel-tabs'
 import { Wheel } from './wheel.ui'
 
 const AuctionWheelPage = () => {
+  useDocumentTitle('Игра | Поинтовый аукцион Klewik')
+
   return (
     <div className={cn(auctionWheelPageStyles.pageWrapper)}>
       <Flex className={cn(auctionWheelPageStyles.wheelWrapper)}>

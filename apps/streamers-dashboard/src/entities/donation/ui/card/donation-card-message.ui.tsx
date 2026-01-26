@@ -1,15 +1,13 @@
-import type { AccordionTriggerProps } from '@radix-ui/react-accordion'
-
 import type { ComponentProps } from 'react'
 import { useRef, useState } from 'react'
 
 import { AnimatePresence } from 'motion/react'
 
-import { useElementSize } from '~shared/hooks'
+import { Text } from '~shared/components/typography'
 
+import type { AccordionTriggerProps } from '~shared/ui/accordion'
 import { Accordion, AccordionItem, AccordionPanel, AccordionTrigger } from '~shared/ui/accordion'
 import { MotionBox } from '~shared/ui/motion-box'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
@@ -26,34 +24,32 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
 
   const textRef = useRef<HTMLSpanElement>(null)
 
-  const { ref: messageContainerParentRef, value: messageContainerSizes } = useElementSize<HTMLDivElement>()
+  const toggleOpen = () => setIsOpen(curr => !curr)
 
   return (
     <div
-      ref={messageContainerParentRef}
       className={cn('w-full h-full', className)}
       {...restProps}
     >
       <div
-        className="bg-dark-light rounded-md transition-[width] duration-500 px-2"
+        className="bg-dark-light rounded-md duration-500"
         onAnimationStart={() => setAccordionAnimatinoStatus('animating')}
         onAnimationEnd={() => setAccordionAnimatinoStatus('animated')}
       >
         <Accordion
-          className="w-fit"
-          onValueChange={() => setIsOpen(curr => !curr)}
-          style={{ width: isOpen ? messageContainerSizes.width : 'auto' }}
+          className="w-full max-w-full"
+          onValueChange={toggleOpen}
         >
           <AccordionItem>
             <AccordionTrigger
               className={cn('bg-dark-light text-sm', isOpen && 'rounded-b-none')}
             >
               {isOpen
-                ? 'Скрыть текст пожертвования'
-                : 'Показать текст пожертвования'}
+                ? 'Скрыть сообщение'
+                : 'Показать сообщение'}
             </AccordionTrigger>
             <AccordionPanel className="bg-dark-light">
-              <div className="relative pb-2 px-1 font-golos-f text-md font-medium tracking-normal">
+              <div className="relative pb-2 px-3 font-golos-f text-md font-medium tracking-normal">
                 {accordionAnimationStatus === 'animating' && (
                   <span
                     ref={textRef}
@@ -81,9 +77,9 @@ export const DonationCardMessage = (props: DonationCardMessageProps) => {
                     }}
                     transition={{ duration: 0.25, ease: 'easeInOut' }}
                   >
-                    <Typography className="max-mobile:text-sm max-mobile:font-normal text-white/80" tag="p">
+                    <Text className="max-mobile:text-sm max-mobile:font-normal text-white/80">
                       {value}
-                    </Typography>
+                    </Text>
                   </MotionBox>
                 </AnimatePresence>
               </div>

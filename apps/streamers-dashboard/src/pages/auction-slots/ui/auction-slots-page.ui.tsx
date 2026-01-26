@@ -7,7 +7,7 @@ import { SkeletonAuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useDumbedTransition, useMediaQuery } from '~shared/hooks'
+import { useDocumentTitle, useDumbedTransition, useMediaQuery } from '~shared/hooks'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
@@ -17,8 +17,8 @@ import { Typography } from '~shared/ui/typograghy'
 import { cn, twSlotsStyles } from '~shared/utils'
 
 import { auctionSlotsPageStyles } from '../styles'
-import { AuctionSlotsList } from './slots-list.ui'
-import { SortingSlotsCombobox } from './sorting-slots-combobox.ui'
+import { SortingSlotsCombobox } from './combobox/sorting-slots-combobox.ui'
+import { AuctionSlotsVirtualList } from './virtual-lists/slots-virtual-list.ui'
 
 export const AuctionSlotsPage = () => {
   const pageStyles = useMemo(() => twSlotsStyles(auctionSlotsPageStyles), [])
@@ -26,6 +26,8 @@ export const AuctionSlotsPage = () => {
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   const isListShowed = useDumbedTransition()
+
+  useDocumentTitle('Слоты | Поинтовый аукцион Klewik')
 
   return (
     <div
@@ -42,7 +44,7 @@ export const AuctionSlotsPage = () => {
         </Flex>
       )}
       <ListActionsPanel disabled={!isListShowed} />
-      <AuctionSlotsVirtualList isShowed={isListShowed} />
+      <AuctionSlotsList isShowed={isListShowed} />
     </div>
   )
 }
@@ -88,7 +90,6 @@ function ListActionsPanel(props: ListActionsPanelProps) {
               className="z-50 w-full max-tablet:hidden"
               variant="action"
               startContent={<Icons.Plus size="sm" />}
-              size="sm"
               disabled={disabled}
             >
               Добавить слоты
@@ -114,13 +115,13 @@ type AuctionSlotsVirtualListProps = {
   isShowed: boolean
 }
 
-function AuctionSlotsVirtualList(props: AuctionSlotsVirtualListProps) {
+function AuctionSlotsList(props: AuctionSlotsVirtualListProps) {
   const { isShowed } = props
 
   if (!isShowed)
     return <SkeletonVirtualList />
 
-  return <AuctionSlotsList />
+  return <AuctionSlotsVirtualList />
 }
 
 function SkeletonVirtualList() {

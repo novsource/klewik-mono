@@ -1,7 +1,8 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { store, StoreProvider } from '~app/store'
+import { rootStore } from '~app/store/store'
+import { StoreProvider } from '~app/store/store-provider'
 
 import { auctionSlotsActions } from '~entities/auction-slot/store'
 
@@ -50,7 +51,7 @@ describe('### Form with single slot', () => {
     const dublicatedTitle = 'Exist slot'
 
     await act(() => [
-      store.dispatch(auctionSlotsActions.addSlots([{ color: '#FFF', id: 100, points: 1000, title: dublicatedTitle }])),
+      rootStore.dispatch(auctionSlotsActions.addSlots([{ auctionSlotOrder: 1, id: 100, points: 1000, title: dublicatedTitle }])),
     ])
 
     const firstTabTitleInput = screen.getByPlaceholderText('Название слота') satisfies HTMLInputElement
@@ -163,7 +164,7 @@ describe('### Slots points input', () => {
       </StoreProvider>,
     )
 
-    const { auctionSlots } = store.getState()
+    const { auctionSlots } = rootStore.getState()
     const newPoints = 20000
 
     const pointsInput = screen.getByPlaceholderText('Очки') satisfies HTMLInputElement
@@ -199,7 +200,7 @@ describe('### Slots points input', () => {
 
     const defaultPointsValue = Number(CREATE_SLOT_FORM_DEFAULT_VALUE.points)
 
-    const { auctionSlots } = store.getState()
+    const { auctionSlots } = rootStore.getState()
 
     const formattedDefaultValue
       = formatNumberToIntlString(defaultPointsValue)
@@ -284,7 +285,7 @@ describe('### Slots percents input', () => {
       fireEvent.blur(percentsInput)
     })
 
-    const { auctionSlots } = store.getState()
+    const { auctionSlots } = rootStore.getState()
 
     const defaultPointsValue = Number(CREATE_SLOT_FORM_DEFAULT_VALUE.points)
 
@@ -293,7 +294,7 @@ describe('### Slots percents input', () => {
     const pointsToPercents = (100 * defaultPointsValue) / (defaultPointsValue + auctionSlots.slotsPointsSum)
 
     expect(pointsInput.value).toBe(targetFormattedString)
-    expect(percentsInput.value).toBe(pointsToPercents.toFixed(2))
+    expect(Number(percentsInput.value)).toBe(pointsToPercents)
   })
 })
 

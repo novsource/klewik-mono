@@ -1,13 +1,15 @@
+import type { DonationsStatusFilterValue } from '../ui/selects/donations-filter-select.ui'
+
 /** @todo Rework with all donations properties */
 import { useEffect, useMemo, useState } from 'react'
 
-import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
+import type { ProcessedDonation } from '~entities/donation/model'
 
 type FiltredDonationsOptions = {
-  status: NullablePossible<ProcessedDonationStatus>
+  status: DonationsStatusFilterValue
 }
 
-type FiltredDonations = Record<ProcessedDonationStatus | 'all', ProcessedDonation[]>
+type FiltredDonations = Record<DonationsStatusFilterValue, ProcessedDonation[]>
 
 const initialFilterDonationsState: FiltredDonations = {
   all: [],

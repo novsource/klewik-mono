@@ -84,7 +84,7 @@ function SlicesResizerSection() {
         <RadioCard
           slotsClassnames={{ label: 'w-full grow p-0' }}
           value="auto"
-          icon={<Icons.Settings className="text-gray-accent" />}
+          icon={<Icons.MagicStick className="text-gray-accent" />}
         >
           <RadioCardTitle>Авто (рекомендуется)</RadioCardTitle>
           <RadioCardDescription>Автоматически определяется оптимальный режим (по очкам или соразмерные)</RadioCardDescription>

@@ -12,6 +12,6 @@ export const AuctionDTOSchema = z.object({
   dropoutSlotsIds: z.number().array(),
   isBetsClosed: z.boolean(),
   isEnded: z.boolean(),
-  createAt: z.date(),
-  endedAt: z.date(),
+  createAt: z.string().date(),
+  endedAt: z.string().date(),
 })
