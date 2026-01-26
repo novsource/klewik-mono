@@ -66,8 +66,8 @@ export const ProcessDonationTabContent = (
         </Caption>
       )}
       <Flex className="w-full gap-y-1.5 tablet:gap-y-2" direction="column">
-        <ProcessedDonationCodeCard donation={donation} slots={auctionSlots} />
         <DonationProcessStatusCard status={donation.processData.status} />
+        <ProcessedDonationCodeCard donation={donation} slots={auctionSlots} />
         <ProcessDonationCard
           className="pt-3 pb-1"
           contentPosition="bottom"
@@ -126,7 +126,7 @@ function DonationProcessStatusCard(props: DonationProcessStatusCardProps) {
     <ProcessDonationCard
       contentPosition="right"
       title="Статус"
-      titleIcon={<Icons.Status className="text-gray" size="xs" />}
+      titleIcon={<Icons.Tag className="text-gray" size="xs" />}
     >
       <div
         className={cn(
@@ -267,7 +267,7 @@ function ProcessedDonationCodeCard(props: ProcessedDonationCodeCardProps) {
           }
         >
           <Flex>
-            <Typography tag="span">Не удалось загрузить данные</Typography>
+            <Text asSpan>Не удалось загрузить данные</Text>
             <Button
               onClick={() => reloadDonationCode(donation.message)}
             >

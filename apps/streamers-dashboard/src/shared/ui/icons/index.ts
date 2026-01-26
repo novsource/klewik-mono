@@ -78,6 +78,7 @@ import { default as Source } from './Source';
 import { default as Status } from './Status';
 import { default as Stop } from './Stop';
 import { default as Success } from './Success';
+import { default as Tag } from './Tag';
 import { default as Telegram } from './Telegram';
 import { default as Text } from './Text';
 import { default as Timer } from './Timer';
@@ -171,6 +172,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Status,
   Stop,
   Success,
+  Tag,
   Telegram,
   Text,
   Timer,

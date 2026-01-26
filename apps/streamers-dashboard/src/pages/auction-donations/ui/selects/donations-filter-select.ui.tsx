@@ -82,7 +82,7 @@ export const DonationsStatusFilterSelect = (
       onValueChange={handleOnValueChange}
       {...selectProps}
     >
-      <SelectTrigger className={cn('text-gray-light', className)} leftIcon={<Icons.Status size="xs" />} size="sm" />
+      <SelectTrigger className={cn('text-gray-light', className)} leftIcon={<Icons.Tag size="sm" />} size="sm" />
       <SelectContent sideOffset={8} align="start" alignItemWithTrigger={false}>
         <SelectList>
           {selectItems.map(item => (
