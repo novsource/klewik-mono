@@ -1,17 +1,15 @@
 import { useEffect } from 'react'
-import type { ComponentProps } from 'react'
 
 import { wheelActions, wheelSelectors } from '~entities/wheel/store'
 import { generateWinner } from '~entities/wheel/utils'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
+import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 
-type SpinWheelButtonProps = ComponentProps<'button'>
-
-const SpinWheelButton = (props: SpinWheelButtonProps) => {
+const SpinWheelButton = (props: ButtonProps) => {
   const { className, ...restProps } = props
 
   const { setWheelStatus, setSpinTarget } = useActionCreators(wheelActions)

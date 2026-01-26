@@ -50,6 +50,9 @@ export const Example: StoryObj<Meta<ButtonProps>> = {
     isIconOnly: {
       control: 'boolean',
     },
+    loading: {
+      control: 'boolean',
+    },
   },
   args: {
     variant: 'default',

@@ -39,8 +39,8 @@ export const selectTriggerVariants = cva<SelectTriggerSizes>(
       },
       size: {
         default:
-          'h-10 px-3 py-2 text-md gap-2 [&_svg:not([class*=\'size-\'])]:size-4.5',
-        sm: 'h-9 text-sm px-2 py-1 gap-1 [&_svg:not([class*=\'size-\'])]:size-4',
+          'h-9.5 px-3 py-2 text-md gap-2 [&_svg:not([class*=\'size-\'])]:size-4.5',
+        sm: 'h-8 text-sm px-2 py-1 gap-1 [&_svg:not([class*=\'size-\'])]:size-4',
       },
     },
     defaultVariants: {

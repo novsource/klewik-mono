@@ -59,7 +59,7 @@ function WheelControl() {
 
   return (
     <Flex className={tabsContentStyles.controlsWrapper}>
-      <SpinWheelButton className={tabsContentStyles.spinWheelButton} disabled={isSpinWheelButtonDisabled} />
+      <SpinWheelButton className={tabsContentStyles.spinWheelButton} size="lg" disabled={isSpinWheelButtonDisabled} />
       <SpinTimeInput disabled={isWheelSpinning} />
     </Flex>
   )

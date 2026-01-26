@@ -123,13 +123,13 @@ export const contentWrapperVariants = cva<ContentWrapperVariants>(
   {
     variants: {
       variant: {
-        default: 'border-1 border-dark-accent/70 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden data-[focus=true]:bg-dark-foreground-light data-[hover=true]:bg-dark/50 data-[hover=true]:ring-1 data-[hover=true]:ring-gray/20',
+        default: 'border-1 border-dark-accent/70 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden data-[focus=true]:bg-dark-foreground-light data-[hover=true]:bg-dark/50 data-[hover=true]:ring-1 data-[hover=true]:ring-gray/20 data-[focus=true]:data-[hover=true]:ring-gray/70 data-[focus=true]:data-[hover=true]:bg-dark-foreground-light',
         ghost: 'data-[focus=true]:bg-dark-foreground data-[hover=true]:bg-dark-foreground/40 data-[focus=true]:data-[hover=true]:bg-dark-foreground',
       },
       size: {
-        default: 'h-9.75',
-        sm: 'h-9.25',
-        lg: 'h-10.25',
+        default: 'h-9.5',
+        sm: 'h-8',
+        lg: 'h-10',
       },
       isError: {
         true: 'ring-1 ring-[#de6059] data-[focus=true]:ring-[#de6059] data-[hover=true]:ring-red data-[hover=true]:bg-[#190b0a] bg-[#0c0505] data-[focus=true]:bg-[#0c0505] data-[focus=true]:data-[hover=true]:bg-[#0c0505]',
@@ -162,9 +162,9 @@ export const inputVariants = cva<InputVariants>(
   {
     variants: {
       size: {
-        default: 'text-base px-3 py-1.5',
-        lg: 'text-lg placeholder:text-lg',
-        sm: 'text-md px-2.5 py-1.25',
+        default: 'text-base px-2 pt-0.5',
+        lg: 'text-base placeholder:text-lg',
+        sm: 'text-md px-2.5 placeholder:text-md',
       },
       isError: {
         true: 'focus-visible:ring-red focus:ring-red placeholder:text-[#de6059]',
@@ -185,7 +185,7 @@ export const inputVariants = cva<InputVariants>(
         startContent: true,
         endContent: false,
         size: 'default',
-        className: 'pl-10',
+        className: 'pl-9',
       },
       {
         startContent: false,
@@ -197,7 +197,7 @@ export const inputVariants = cva<InputVariants>(
         startContent: true,
         endContent: true,
         size: 'default',
-        className: 'px-10',
+        className: 'px-9',
       },
       {
         startContent: true,
