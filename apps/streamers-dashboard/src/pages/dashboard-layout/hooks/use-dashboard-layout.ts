@@ -33,13 +33,24 @@ function useConnectToDashboardSSEEvents(auctionUUID: string) {
   const { isTabLeader } = useTabLeader()
 
   const isTabInitAsLeaderRef = useRef(isTabLeader)
+  const isShouldConnectRef = useRef(true)
+
+  console.log(isTabInitAsLeaderRef.current)
 
   const connectToSSE = useCallback(async (auctionUUID: string) => {
-    await connectToSSEEvents(auctionUUID)
+    try {
+      await connectToSSEEvents(auctionUUID)
+
+      isShouldConnectRef.current = false
+    }
+    catch (error) {
+      console.log(error)
+    }
   }, [connectToSSEEvents])
 
   useEffect(() => {
     const isTabBecomeLeader = !isTabInitAsLeaderRef.current && isTabLeader
+    console.log(isTabBecomeLeader)
 
     if (isTabBecomeLeader && !isPending) {
       isTabInitAsLeaderRef.current = true
@@ -55,7 +66,7 @@ function useConnectToDashboardSSEEvents(auctionUUID: string) {
   ])
 
   useEffect(() => {
-    if (isAllEventsConnected || isPending || !isTabLeader)
+    if (isAllEventsConnected || isPending || !isTabLeader || !isShouldConnectRef.current)
       return
 
     connectToSSE(auctionUUID)

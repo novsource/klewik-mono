@@ -6,8 +6,6 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import type { SortingOptions } from '~shared/store/model'
 
-import { getRandomHEXColor } from '~shared/utils'
-
 import { getAuctionSlotsThunk } from '../api'
 import { AUCTION_SLOTS_SLICE_INITIAL_STATE as initialState } from '../constants'
 
@@ -48,7 +46,6 @@ const slice = createSlice({
         return
 
       updatedSlot.title = data.title ?? updatedSlot.title
-      updatedSlot.color = data.color ?? updatedSlot.color
       updatedSlot.points = data.points ?? updatedSlot.points
     },
     deleteSlot(state, action: PayloadAction<{ id: AuctionSlot['id'] }>) {
@@ -112,18 +109,13 @@ const slice = createSlice({
       if (!auctionSlots)
         return
 
-      let pointsSum = 0
+      const pointsSum = auctionSlots.reduce((acc, slot) => {
+        acc += slot.points
 
-      const slotsWithColors = auctionSlots.reduce<AuctionSlot[]>((acc, slot) => {
-        const slotWithColor: AuctionSlot = { ...slot, color: getRandomHEXColor() }
-
-        pointsSum += slot.points
-
-        acc.push(slotWithColor)
         return acc
-      }, [])
+      }, 0)
 
-      state.slots = slotsWithColors
+      state.slots = [...auctionSlots]
       state.slotsPointsSum = pointsSum
     })
   },

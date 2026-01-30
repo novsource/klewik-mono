@@ -103,6 +103,8 @@ function SomethingWrong(props: SomethingWrongProps) {
     formattedError = getErrorFromSearchParams(searchParams)
   }
 
+  console.log(error)
+
   return (
     <>
       <Flex className="bg-dark p-2 w-fit rounded-small">

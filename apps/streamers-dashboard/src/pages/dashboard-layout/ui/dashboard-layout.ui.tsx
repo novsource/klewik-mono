@@ -1,6 +1,6 @@
 import { useLayoutEffect } from 'react'
 
-import { Outlet, useLoaderData } from 'react-router-dom'
+import { Outlet, useParams } from 'react-router-dom'
 
 import { MobileDashboardFooter } from '~widgets/dashboard-footer/ui'
 import { DashboardHeader } from '~widgets/dashboard-header/ui'
@@ -20,7 +20,7 @@ import { Icons } from '~shared/ui/icons'
 import { useDashboardLayout } from '../hooks/use-dashboard-layout'
 
 export const DashboardLayout = () => {
-  const { auctionUUID } = useLoaderData() as Auction
+  const { auctionUUID } = useParams() as { auctionUUID: Auction['auctionUUID'] }
 
   const { isSSEConnected } = useDashboardLayout(auctionUUID)
 

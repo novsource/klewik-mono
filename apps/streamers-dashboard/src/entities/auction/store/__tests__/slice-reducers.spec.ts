@@ -21,7 +21,6 @@ describe('auction slice actions', () => {
       ownerId: 'fdas',
       processedDonationsIds: [1, 2, 4],
       slotsIds: [1, 2, 3],
-      url: 'https://auction.klewik.ru',
       wheelMode: 'dropout',
       winnerSlotId: 1,
     }
