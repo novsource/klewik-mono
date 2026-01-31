@@ -7,11 +7,14 @@ import { SkeletonAuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
+import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
+
 import { useDocumentTitle, useDumbedTransition, useMediaQuery } from '~shared/hooks'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
+import { MotionBox } from '~shared/ui/motion-box'
 import { Typography } from '~shared/ui/typograghy'
 
 import { cn, twSlotsStyles } from '~shared/utils'
@@ -23,8 +26,6 @@ import { AuctionSlotsVirtualList } from './virtual-lists/slots-virtual-list.ui'
 export const AuctionSlotsPage = () => {
   const pageStyles = useMemo(() => twSlotsStyles(auctionSlotsPageStyles), [])
 
-  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
-
   const isListShowed = useDumbedTransition()
 
   useDocumentTitle('Слоты | Поинтовый аукцион Klewik')
@@ -33,16 +34,19 @@ export const AuctionSlotsPage = () => {
     <div
       className={pageStyles.base}
     >
-      {isLargeThenTablet && (
-        <Flex
-          className={pageStyles.contentWrapper}
-          wrap="nowrap"
-          align="center"
-          justify="end"
-        >
-          <PageTitle />
-        </Flex>
-      )}
+      <MediaQueryViewToggler query={greaterThenDeviceWidthMediaQueries.tablet}>
+        <MediaQueryViewToggler.MatchedItem>
+          <Flex
+            className={pageStyles.contentWrapper}
+            wrap="nowrap"
+            align="center"
+            justify="end"
+          >
+            <PageTitle />
+          </Flex>
+        </MediaQueryViewToggler.MatchedItem>
+      </MediaQueryViewToggler>
+
       <ListActionsPanel disabled={!isListShowed} />
       <AuctionSlotsList isShowed={isListShowed} />
     </div>
@@ -125,6 +129,17 @@ function AuctionSlotsList(props: AuctionSlotsVirtualListProps) {
 }
 
 function SkeletonVirtualList() {
-  return Array.from({ length: 30 }).fill(null).map((_, index) =>
-    <SkeletonAuctionSlotCard key={index} style={{ marginTop: index !== 0 ? 4 : 0 }} />)
+  return (
+    <ul className="flex flex-col w-full gap-y-1.5">
+      {Array.from({ length: 30 }).fill(null).map((_, index) => (
+        <MotionBox
+          key={index}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <SkeletonAuctionSlotCard className="w-full" />
+        </MotionBox>
+      ))}
+    </ul>
+  )
 }

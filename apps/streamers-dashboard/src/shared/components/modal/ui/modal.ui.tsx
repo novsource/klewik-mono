@@ -61,8 +61,8 @@ export const ModalContent = (props: ModalContentProps) => {
   const { className, children, ...restProps } = props
 
   const classes = useMemo(() => cn([
-    'p-0 w-full max-w-[700px] h-3/5 min-h-[400px] max-h-[850px]',
-    'landtop:min-w-[700px] landtop:w-1/2 landtop:max-w-[900px] landtop:h-4/5',
+    'p-0 w-full h-full max-w-[700px] max-h-3/5 min-h-[300px]',
+    'landtop:min-w-[700px] landtop:w-1/2 landtop:max-w-[900px]',
     'desktop:min-w-[900px] desktop:w-1/2 desktop:max-w-[1100px]',
     'desktop-lg:min-w-[1100px] desktop-lg:w-1/2 desktop-lg:max-w-[1300px]',
     'flex flex-col gap-y-0 justify-between',

@@ -6,15 +6,25 @@ import { useDeleteAuctionMutation } from '~widgets/dashboard-settings-dialog/api
 
 import { auctionSelectors } from '~entities/auction/store'
 
-import { Text, Title } from '~shared/components/typography'
+import {
+  Modal,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalHeaderTitle,
+  ModalTrigger,
+} from '~shared/components/modal'
+import { Text } from '~shared/components/typography'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '~shared/ui/dialog'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
+
+import { cn } from '~shared/utils'
 
 export const DeleteAuctionDialog = () => {
   const navigate = useNavigate()
@@ -45,8 +55,8 @@ export const DeleteAuctionDialog = () => {
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen} disablePointerDismissal={isLoading}>
-      <DialogTrigger render={(
+    <Modal open={isOpen} onOpenChange={setIsOpen} disablePointerDismissal={isLoading}>
+      <ModalTrigger render={(
         <Button
           variant="error"
           startContent={<Icons.Bin />}
@@ -55,22 +65,29 @@ export const DeleteAuctionDialog = () => {
         </Button>
       )}
       />
-      <DialogContent className="w-full tablet:max-w-[400px] border-dark-light bg-dark-foreground" backdropProps={{ forceRender: true }}>
-        <Flex className="sticky top-0 bg-dark-foreground w-full h-fit py-2 z-20" direction="column">
-          <DialogHeader className="flex flex-row w-full justify-between h-fit items-center p-0">
-            <DialogTitle className="font-semibold leading-4">
-              <Title order={2}>
-                Удаление аукциона
-              </Title>
-            </DialogTitle>
-          </DialogHeader>
+
+      <ModalContent
+        className={cn([
+          'p-0 w-full h-full max-w-[300px] max-h-[200px] min-h-[150px]',
+          'landtop:min-w-[450px] landtop:w-full landtop:max-w-[300px]',
+          'desktop:min-w-[450px] desktop:w-full desktop:max-w-[300px]',
+          'desktop-lg:min-w-[450px] desktop-lg:w-full desktop-lg:max-w-[300px]',
+        ])}
+        backdropProps={{ forceRender: true }}
+      >
+        <ModalHeader>
+          <ModalHeaderTitle>Удаление аукциона</ModalHeaderTitle>
+          <ModalCloseButton />
+        </ModalHeader>
+
+        <Flex className="grow h-full px-5 pt-2">
+          <Text className="text-gray-accent">
+            Вы уверены что хотите удалить аукцион?
+            Если да, то нажмите кнопку "Подтвердить"
+          </Text>
         </Flex>
 
-        <Text className="text-gray-accent">
-          Вы уверены что хотите удалить аукцион?
-          Если да, то нажмите кнопку "Подтвердить"
-        </Text>
-        <DialogFooter className="w-full flex-row justify-end gap-x-2 mt-4">
+        <ModalFooter>
           <Button disabled={isLoading} onClick={closeDialog}>Отмена</Button>
           <Button
             className="text-red hover:text-red hover:border-red/60"
@@ -79,9 +96,8 @@ export const DeleteAuctionDialog = () => {
           >
             Подтвердить
           </Button>
-        </DialogFooter>
-
-      </DialogContent>
-    </Dialog>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   )
 }

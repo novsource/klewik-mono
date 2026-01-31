@@ -3,8 +3,9 @@ import type { SelectRootChangeEventDetails } from '@base-ui/react'
 import type { ProcessedDonationStatus } from '~entities/donation/model'
 
 import { DONATION_STATUS_NAME } from '~shared/constants/donations'
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useUrlSearchParam } from '~shared/hooks'
+import { useMediaQuery, useUrlSearchParam } from '~shared/hooks'
 
 import { Icons } from '~shared/ui/icons'
 import type {
@@ -74,12 +75,15 @@ export const DonationsStatusFilterSelect = (
     onValueChange?.(safeStatus, event)
   }
 
+  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+
   return (
     <Select
       items={selectItems}
       value={value}
       defaultValue={value ?? status ?? 'all'}
       onValueChange={handleOnValueChange}
+      size={isLargeThenTablet ? 'default' : 'sm'}
       {...selectProps}
     >
       <SelectTrigger className={cn('text-gray-light', className)} leftIcon={<Icons.Tag size="sm" />} size="sm" />

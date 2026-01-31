@@ -10,6 +10,14 @@ import { DonationAlertsIntegrationCard } from '~features/integrations/connect-in
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
+import {
+  Modal,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalHeaderTitle,
+} from '~shared/components/modal'
 import { Text, Title } from '~shared/components/typography'
 
 import { useMediaQuery } from '~shared/hooks'
@@ -17,7 +25,6 @@ import { useMediaQuery } from '~shared/hooks'
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~shared/ui/dialog'
 import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
@@ -58,41 +65,28 @@ function DesktopSettingsDialog(props: DesktopSettingsDialogProps) {
   const closeDialog = () => setDialogOpenStatus({ dialog: 'settings', status: false })
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOnOpenChange}>
-      <DialogContent
-        className="flex flex-col w-4/5 landtop:w-3/5 landtop:h-4/5 desktop:w-1/2 desktop-lg:w-1/2 h-3/5 min-h-[400px] max-h-[850px] border-dark-light rounded-[16px] bg-dark-foreground overflow-scroll p-0 gap-y-0"
-        {...restProps}
-      >
-        <Flex className="sticky top-0 bg-dark-foreground w-full h-fit pl-6 pr-3 py-3.5 z-20" direction="column">
-          <DialogHeader className="flex flex-row w-full justify-between h-fit items-center p-0">
-            <DialogTitle className="font-semibold leading-4">
-              <Title order={2}>
-                Настройки
-              </Title>
-            </DialogTitle>
-            <Button
-              className="text-gray-light hover:text-white/80"
-              variant="ghost"
-              isIconOnly
-              icon={<Icons.LargeCross size="lg" />}
-              onClick={closeDialog}
-            />
-          </DialogHeader>
-        </Flex>
-        <Flex className="h-full">
+    <Modal open={isOpen} onOpenChange={handleOnOpenChange} {...restProps}>
+      <ModalContent>
+        <ModalHeader>
+          <ModalHeaderTitle>Настройки</ModalHeaderTitle>
+          <ModalCloseButton />
+        </ModalHeader>
+
+        <Flex className="grow h-full py-2">
           <SettingsTabs />
         </Flex>
-        <Divider />
-        <DialogFooter className="w-full h-fit justify-end flex-row gap-x-2 px-4 py-2">
+
+        <ModalFooter>
           <Button size="sm" onClick={closeDialog}>
             Отмена
           </Button>
           <Button variant="action" size="sm" disabled>
             Сохранить изменения
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </ModalFooter>
+
+      </ModalContent>
+    </Modal>
   )
 }
 

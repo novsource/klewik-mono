@@ -11,6 +11,7 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 
 import { DesktopAppDialog, MobileAppDialog } from '~shared/components/app-dialog'
 import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
+import { Modal, ModalContent, ModalTrigger } from '~shared/components/modal'
 
 import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
@@ -158,9 +159,37 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
 
           <MobileAppDialog.Content>
 
-            <EditSlotFormComposer form={form}>
+            <EditSlotFormComposer form={form} className="flex flex-col h-full justify-between">
 
-              <MobileAppDialog.Header>
+              <MobileAppDialog.Header className="flex-col gap-y-5 items-start px-0">
+                <Flex className="w-full gap-x-2" justify="between" align="center">
+                  <MobileAppDialog.ExtraActionsDialog>
+                    <Flex className="gap-y-2" direction="column">
+                      <Button startContent={<Icons.Reset />}>Сбросить изменения</Button>
+
+                      <Modal>
+                        <ModalTrigger render={<Button variant="error">Удалить</Button>} />
+                        <ModalContent backdropProps={{ forceRender: true }}>
+                          fdsf
+                        </ModalContent>
+                      </Modal>
+
+                    </Flex>
+
+                  </MobileAppDialog.ExtraActionsDialog>
+                  <SheetClose
+                    render={(
+                      <Button
+                        variant="ghost"
+                        isIconOnly
+                        icon={<Icons.LargeCross />}
+                        size="xs"
+                        onClick={closeDialog}
+                      />
+                    )}
+                  />
+                </Flex>
+
                 <MobileAppDialog.HeaderTitle
                   value="Обзор слота"
                   description="Измените параметры слота"
@@ -168,7 +197,7 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
                 />
               </MobileAppDialog.Header>
 
-              <Flex className="gap-y-2">
+              <Flex className="flex flex-col gap-y-2 grow">
                 <EditSlotDialogCard
                   className="pt-3 pb-1"
                   contentPosition="bottom"
@@ -188,19 +217,12 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
                 </EditSlotDialogCard>
               </Flex>
 
-              <MobileAppDialog.Footer className="gap-x-4" direction="row">
-                <EditSlotFormComposer.SubmitButton
-                  className="h-full"
-                  size="sm"
-                  startContent={<Icons.Save width={14} height={14} />}
-                  onClick={handleSubmit}
-                />
-
+              <MobileAppDialog.Footer className="gap-x-3" direction="row">
                 <SheetClose
                   className="relative top-0 right-0"
                   render={(
                     <Button
-                      className="w-full"
+                      className="w-fit"
                       icon={<Icons.LargeCross width={14} height={14} />}
                       onClick={closeDialog}
                       {...closeButtonProps}
@@ -208,6 +230,11 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
                       Отмена
                     </Button>
                   )}
+                />
+                <EditSlotFormComposer.SubmitButton
+                  className="w-full h-full"
+                  startContent={<Icons.Save width={14} height={14} />}
+                  onClick={handleSubmit}
                 />
               </MobileAppDialog.Footer>
 
@@ -225,7 +252,7 @@ function EditSlotDialogsIcon() {
   return (
     <div className="bg-[#FFC837]/50 h-fit w-fit rounded-small p-0.25 outline-4 outline-[#FFC837]/15">
       <Flex
-        className="relative size-7 tablet:size-8 rounded-small p-1.25"
+        className="relative size-8 tablet:size-9 rounded-small p-1.25"
         align="center"
         justify="center"
       >

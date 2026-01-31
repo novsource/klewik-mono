@@ -331,7 +331,7 @@ export const SkeletonAuctionSlotCard = (props: SkeletonAuctionSlotCardProps) => 
     <BaseAuctionSlotCard {...restProps}>
       <BaseAuctionSlotCardHeader {...headerProps}>
         <Flex className="w-full gap-x-2" align="center">
-          <Skeleton className="w-72 h-6 tablet:h-6.5 tablet:w-96" />
+          <Skeleton className="w-52 h-6 tablet:h-6.5 tablet:w-96" />
         </Flex>
       </BaseAuctionSlotCardHeader>
 

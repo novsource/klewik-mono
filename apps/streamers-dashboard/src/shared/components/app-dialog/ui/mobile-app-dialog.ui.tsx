@@ -79,7 +79,7 @@ function MobileAppDialogHeaderTitle(props: MobileAppDialogHeaderTitleProps) {
   const { value, description, icon } = props
 
   return (
-    <>
+    <Flex className="flex gap-x-4 items-center">
       {icon}
       <div className="w-full">
         <SheetTitle>{value}</SheetTitle>
@@ -94,7 +94,7 @@ function MobileAppDialogHeaderTitle(props: MobileAppDialogHeaderTitleProps) {
           </SheetDescription>
         )}
       </div>
-    </>
+    </Flex>
   )
 }
 
@@ -107,13 +107,20 @@ function MobileAppDialogExtraActions(props: MobileAppDialogExtraActionsProps) {
 
   return (
     <Sheet {...restProps}>
-      <SheetTrigger className="text-gray-light" render={<Button size="xs" isIconOnly icon={<Icons.Dots size="xs" />} />} />
+      <SheetTrigger
+        className="text-gray-light"
+        render={<Button size="xs" startContent={<Icons.Actions />}>Действия</Button>}
+      />
       <SheetContent
-        className="w-full h-fit min-h-60 top-auto rounded-t-large border-t-1 border-t-dark-light gap-y-1.5"
+        className="w-full h-fit max-h-44 top-auto rounded-t-large border-t-1 border-t-dark-light gap-y-1.5"
         side="bottom"
         isFullPageSize
+        backdropProps={{ forceRender: true }}
       >
-        <Flex className="gap-y-2 mt-4" direction="column">
+        <SheetHeader className="h-fit">
+          <SheetTitle>Действия</SheetTitle>
+        </SheetHeader>
+        <Flex className="gap-y-2 grow h-fit" direction="column">
           {children}
         </Flex>
       </SheetContent>

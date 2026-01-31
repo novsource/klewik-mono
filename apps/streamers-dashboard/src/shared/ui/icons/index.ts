@@ -1,3 +1,4 @@
+import { default as Actions } from './Actions';
 import { default as ArrowRight } from './ArrowRight';
 import { default as Bill } from './Bill';
 import { default as Bin } from './Bin';
@@ -93,7 +94,8 @@ import { default as Wheel } from './Wheel';
 import { default as YoutubeLogo } from './YoutubeLogo';
 
     export const Icons = {
-      ArrowRight,
+      Actions,
+  ArrowRight,
   Bill,
   Bin,
   Bold,
