@@ -7,8 +7,6 @@ import { useSortingSlots } from '~pages/auction-slots/lib'
 import type { SlotsWheelTabSlots } from '~pages/auction-wheel/styles'
 import { slotsWheelTabStyles } from '~pages/auction-wheel/styles'
 
-import { VirtualizedSlotsList } from '~features/auction-slot/watch-slots/ui'
-
 import { wheelSelectors } from '~entities/wheel/store'
 
 import { useDebounceCallback } from '~shared/hooks'
@@ -22,7 +20,8 @@ import { TabsContent } from '~shared/ui/tabs'
 
 import { cn, twSlotsStyles } from '~shared/utils'
 
-import { TABS_CONTENT_NAMES } from '../../constants'
+import { TABS_CONTENT_NAMES } from '../../../constants'
+import { WheelSlotsList } from '../../lists/wheel-slots-list.ui'
 
 type SlotsWheelTabContentProps = Omit<TabsContentProps, 'value'> & {
   slotsClassnames?: Partial<Record<SlotsWheelTabSlots, string>>
@@ -79,7 +78,7 @@ export const SlotsWheelTabContent = (props: SlotsWheelTabContentProps) => {
         placeholder="Искать по названию..."
         onChange={handleSearchInputOnChange}
       />
-      <VirtualizedSlotsList data={searchedSlots} gap={8} />
+      <WheelSlotsList data={searchedSlots} gap={8} />
     </TabsContent>
   )
 }

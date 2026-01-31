@@ -5,7 +5,7 @@ import { Flex } from '~shared/ui/flex'
 import { cn } from '~shared/utils'
 
 import { auctionWheelPageStyles } from '../styles'
-import { WheelTabs } from './wheel-tabs'
+import { WheelTabs } from './tabs/wheel-tabs'
 import { Wheel } from './wheel.ui'
 
 const AuctionWheelPage = () => {

@@ -234,13 +234,11 @@ export const AuctionSlotCardIdInfo = (props: AuctionSlotCardIdInfoProps) => {
 }
 
 export type SolidAuctionSlotHeaderProps = BaseAuctionSlotCardHeaderProps & {
-  slotId: AuctionSlot['id']
   slotTitle: AuctionSlot['title']
-  slotColor: AuctionSlot['color']
 }
 
 export const SolidAuctionSlotHeader = (props: SolidAuctionSlotHeaderProps) => {
-  const { slotId, slotTitle, slotColor, ...restProps } = props
+  const { slotTitle, ...restProps } = props
 
   return (
     <BaseAuctionSlotCardHeader {...restProps}>
@@ -307,7 +305,6 @@ export const SolidAuctionSlotCard = (props: SolidAuctionSlotCardProps) => {
       <SolidAuctionSlotHeader
         slotId={auctionSlot.id}
         slotTitle={auctionSlot.title}
-        slotColor={auctionSlot.color}
       />
       <SolidAuctionSlotContent
         auctionSlot={auctionSlot}
