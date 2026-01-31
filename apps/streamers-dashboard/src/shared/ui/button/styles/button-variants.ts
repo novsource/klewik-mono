@@ -77,7 +77,7 @@ export const buttonVariants = cva<ButtonVariants>(
     },
     compoundVariants: [
       { isIconOnly: true, size: 'default', className: 'size-9 [&_svg]:size-4.5' },
-      { isIconOnly: true, size: 'sm', className: 'size-7.5 [&_svg]:size-3.75' },
+      { isIconOnly: true, size: 'sm', className: 'size-8 [&_svg]:size-3.75' },
       { isIconOnly: true, size: 'xs', className: 'size-7 [&_svg]:size-4' },
     ],
   },

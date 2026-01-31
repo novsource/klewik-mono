@@ -32,7 +32,6 @@ import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
-import { DashboardHeaderMenu } from '../../dashboard-header-menu/ui/dashboard-header-menu.ui'
 import { AuctionTimer } from './auction-timer'
 import { DonationsStats } from './donations-stats'
 
@@ -89,12 +88,16 @@ function DesktopDashboardHeader() {
     setIsTimerVisible(curr => !curr)
   }
 
+  const openSettingsDialog = () => {
+    setDialogOpenStatus({ dialog: 'settings', status: true })
+  }
+
   const openSearchDialog = () => {
     setDialogOpenStatus({ dialog: 'search', status: true })
   }
 
   return (
-    <Flex className="w-full h-9.5" align="center" justify="end">
+    <Flex className="w-full h-8" align="center" justify="end">
       <Flex align="center" justify="center">
         <SlotsStatisticCard />
         <SlotsPointsSumStatisticCard className="ml-1.5" />
@@ -104,15 +107,17 @@ function DesktopDashboardHeader() {
           {isTimerVisible && <AuctionTimer className="ml-1.5" />}
         </AnimatePresence>
       </Flex>
+
       <Divider className="mx-4" orientation="vertical" />
 
       <Flex className="w-full h-full tablet:w-fit gap-x-1.5" align="center" justify="end">
+
         <SearchDialog trigger={(
           <Button
-            variant="ghost"
-            className="bg-dark font-medium text-gray pr-4 pl-2.5 hover:text-gray-light/80 hover:bg-dark-light/80"
+            variant="borderless"
+            className="w-52 bg-dark font-medium text-gray pr-4 pl-2.5 hover:text-gray-light/80 hover:bg-dark-light/80 justify-start h-full"
             startContent={<Icons.Magnifier size="xs" />}
-            size="xs"
+            size="sm"
             onClick={openSearchDialog}
           >
             Поиск по аукциону...
@@ -120,10 +125,15 @@ function DesktopDashboardHeader() {
         )}
         />
 
-        <DashboardHeaderMenu
+        <Button isIconOnly icon={<Icons.Timer />} size="sm" />
+
+        {/* <DashboardHeaderMenu
           isTimerVisible={isTimerVisible}
           onTimerVisibilityChanges={toggleTimerVision}
-        />
+        /> */}
+
+        <Button isIconOnly icon={<Icons.Share />} size="sm" />
+        <Button isIconOnly icon={<Icons.Settings />} size="sm" onClick={openSettingsDialog} />
       </Flex>
     </Flex>
   )
@@ -196,7 +206,7 @@ function StatisticCard(props: BaseStatisticCardProps) {
   return (
     <Flex
       className={cn(
-        'h-9 gap-x-1.5 rounded-md bg-dark px-2.5 py-1.5 text-md leading-5 font-semibold text-gray-accent text-nowrap',
+        'h-8 gap-x-1.5 rounded-md bg-dark px-2.5 py-1.5 text-md leading-5 font-semibold text-gray-accent text-nowrap',
         className,
       )}
       align="center"
@@ -215,23 +225,14 @@ function SlotsStatisticCard(props: SlotsStatisticCardProps) {
   const slots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
   return (
-    <Tooltip delayDuration={500}>
-      <TooltipTrigger>
-        <StatisticCard {...props}>
-          <Icons.Slots size="sm" />
-          <NumberFlow
-            className="font-azeret-mono font-medium tracking-tight"
-            willChange
-            value={slots.length}
-          />
-        </StatisticCard>
-      </TooltipTrigger>
-      <TooltipContent>
-        <Typography tag="span" className="text-gray-accent">
-          Количество слотов, участвующих в аукционе
-        </Typography>
-      </TooltipContent>
-    </Tooltip>
+    <StatisticCard {...props}>
+      <Icons.Slots size="xs" />
+      <NumberFlow
+        className="font-azeret-mono font-medium tracking-tight text-md"
+        willChange
+        value={slots.length}
+      />
+    </StatisticCard>
   )
 }
 
@@ -243,24 +244,15 @@ function SlotsPointsSumStatisticCard(props: SlotsPointsSumStatisticCardProps) {
   const sum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
 
   return (
-    <Tooltip delayDuration={500}>
-      <TooltipTrigger>
-        <StatisticCard {...props}>
-          <Icons.PointsSum size="default" />
-          <NumberFlow
-            className="font-azeret-mono font-medium tracking-tight"
-            willChange
-            value={sum}
-            locales="ru-RU"
-          />
-        </StatisticCard>
-      </TooltipTrigger>
-      <TooltipContent>
-        <Typography tag="span" className="text-gray-accent">
-          Общее количество очков всех слотов
-        </Typography>
-      </TooltipContent>
-    </Tooltip>
+    <StatisticCard {...props}>
+      <Icons.PointsSum size="sm" />
+      <NumberFlow
+        className="font-azeret-mono font-medium tracking-tight text-md"
+        willChange
+        value={sum}
+        locales="ru-RU"
+      />
+    </StatisticCard>
   )
 }
 
@@ -288,7 +280,7 @@ function IntegrationsStatisticCard(props: IntegrationsStatisticCardProps) {
   return (
     <Tooltip delayDuration={500}>
       <TooltipTrigger>
-        <StatisticCard className={cn(!connectedIntegrationsCount && 'gap-x-3', props.className)}>
+        <StatisticCard className={cn(!connectedIntegrationsCount && 'gap-x-2', props.className)}>
           <Icons.Integrations width={18} height={18} />
           {connectedIntegrationsCount === 0 ? 'Нет интеграций' : `${connectedIntegrationsCount} подключено`}
         </StatisticCard>

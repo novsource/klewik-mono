@@ -67,6 +67,7 @@ import { default as Reset } from './Reset';
 import { default as ReturnArrow } from './ReturnArrow';
 import { default as Save } from './Save';
 import { default as Settings } from './Settings';
+import { default as Share } from './Share';
 import { default as Signpost } from './Signpost';
 import { default as Size } from './Size';
 import { default as Slots } from './Slots';
@@ -161,6 +162,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   ReturnArrow,
   Save,
   Settings,
+  Share,
   Signpost,
   Size,
   Slots,
