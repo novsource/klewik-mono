@@ -42,7 +42,7 @@ import { cn } from '~shared/utils'
 // </Card>
 
 const integrationsIcons: Record<IntegrationsPlatforms, NullablePossible<ReactNode>> = {
-  donationAlerts: <Icons.DonationAlerts width={24} height={28} />,
+  donationAlerts: <Icons.DonationAlerts width={16} height={20} />,
   donatePay: <Icons.DonatePay width={32} height={32} />,
   twitch: <Icons.TwitchLogo />,
   custom: null,

@@ -59,6 +59,7 @@ export const DeleteAuctionDialog = () => {
       <ModalTrigger render={(
         <Button
           variant="error"
+          size="sm"
           startContent={<Icons.Bin />}
         >
           Удалить аукцион

@@ -65,7 +65,9 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
               />
             </Flex>
           </Flex>
+
           <Divider className="border-gray h-4 mx-2" orientation="vertical" />
+
           <Dialog>
             <DialogTrigger>
               <Button

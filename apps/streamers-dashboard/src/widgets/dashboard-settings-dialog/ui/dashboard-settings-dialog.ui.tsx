@@ -14,7 +14,6 @@ import {
   Modal,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalHeaderTitle,
 } from '~shared/components/modal'
@@ -76,15 +75,6 @@ function DesktopSettingsDialog(props: DesktopSettingsDialogProps) {
           <SettingsTabs />
         </Flex>
 
-        <ModalFooter>
-          <Button size="sm" onClick={closeDialog}>
-            Отмена
-          </Button>
-          <Button variant="action" size="sm" disabled>
-            Сохранить изменения
-          </Button>
-        </ModalFooter>
-
       </ModalContent>
     </Modal>
   )
@@ -122,9 +112,8 @@ function MobileSettingsDialog(props: MobileSettingsDialogProps) {
               onClick={closeDialog}
             />
           </SheetHeader>
-          <Flex className="h-full">
-            <SettingsTabs />
-          </Flex>
+
+          <SettingsTabs />
         </Flex>
 
       </SheetContent>
@@ -229,7 +218,7 @@ function IntegrationsSettingsTabContent() {
     <TabsContent className="w-full h-full m-0" value="integrations">
       <Flex className="h-full w-full gap-y-3 px-2 pt-2 tablet:px-6 tablet:py-6" direction="column">
         <Title order={3}>Платформы для пожертвований</Title>
-        <div className="w-full flex gap-2 flex-col mobile:flex-row">
+        <div className="w-full flex gap-2 flex-col">
           <DonationAlertsIntegrationCard />
           <DonatePayIntegrationCard />
         </div>
