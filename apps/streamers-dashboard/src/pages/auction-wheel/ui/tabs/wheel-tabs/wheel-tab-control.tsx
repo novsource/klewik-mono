@@ -1,6 +1,9 @@
 import type { TabsContentProps } from '@radix-ui/react-tabs'
+import type { AuctionGames } from '~entities/games/model'
 
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
+
+import { auctionGamesActions, auctionGamesSelectors } from '~entities/games/store'
 
 import { TABS_CONTENT_NAMES } from '~pages/auction-wheel/constants'
 import type { ControlWheelTabSlots } from '~pages/auction-wheel/styles'
@@ -17,6 +20,8 @@ import { Title } from '~shared/components/typography'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
+import { Badge } from '~shared/ui/badge'
+import { Button } from '~shared/ui/button'
 import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
@@ -32,6 +37,8 @@ type ControlWheelTabContentProps = Omit<TabsContentProps, 'value'> & {
 export const ControlWheelTabContent = (props: ControlWheelTabContentProps) => {
   const { slotsClassnames, ...tabsContentProps } = props
 
+  const game = useStoreSelector(auctionGamesSelectors.getGame)
+
   const tabsContentStyles = useMemo(() => twSlotsStyles(controlWheelTabStyles, slotsClassnames), [slotsClassnames])
 
   return (
@@ -40,7 +47,19 @@ export const ControlWheelTabContent = (props: ControlWheelTabContentProps) => {
       value={TABS_CONTENT_NAMES.CONTROL}
       {...tabsContentProps}
     >
-      <WheelControl />
+      {game === 'wheel' && <WheelControl />}
+      {game === 'cards' && (
+        <Flex className="w-full">
+          <Button
+            className="w-full"
+            variant="action"
+            size="lg"
+            startContent={<Icons.Refresh />}
+          >
+            Перетасовать
+          </Button>
+        </Flex>
+      )}
       <Divider className="mt-2.5 mb-3 border-gray/20" />
       <GamesChooseRadioGroup />
       <Divider className="mt-2.5 mb-3 border-gray/20" />
@@ -102,19 +121,18 @@ function GameModeChooseRadioGroup() {
           icon={<Icons.Ranking className="text-gray-accent" size="lg" />}
         >
           <RadioCardTitle>На выбывание</RadioCardTitle>
-          <RadioCardDescription>Побеждает оставшийся слот</RadioCardDescription>
+          <RadioCardDescription className="text-nowrap">Побеждает оставшийся слот</RadioCardDescription>
         </RadioCard>
       </RadioGroup>
     </Flex>
   )
 }
 
-type AuctionGames = 'wheel' | 'cards'
-
 function GamesChooseRadioGroup() {
   const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
 
-  const [choosenGame, setChoosenGame] = useState<AuctionGames>('wheel')
+  const game = useStoreSelector(auctionGamesSelectors.getGame)
+  const { setGame } = useActionCreators(auctionGamesActions)
 
   return (
     <Flex direction="column">
@@ -126,25 +144,30 @@ function GamesChooseRadioGroup() {
       </Title>
       <RadioGroup
         className="w-full flex flex-col gap-y-2 px-0.5 desktop:gap-x-3 desktop:justify-between desktop:flex-row"
-        value={choosenGame}
+        value={game}
+        defaultValue="wheel"
         disabled={isWheelSpinning}
+        onValueChange={value => setGame(value as AuctionGames)}
       >
         <RadioCard
           slotsClassnames={{ label: 'w-full grow p-0' }}
           value="wheel"
           icon={<Icons.Wheel className="text-gray-accent" />}
-          onClick={() => setChoosenGame('wheel')}
         >
           <RadioCardTitle>Колесо</RadioCardTitle>
-          <RadioCardDescription>Стандартное колесо фортуны</RadioCardDescription>
+          <RadioCardDescription className="text-nowrap">Стандартное колесо фортуны</RadioCardDescription>
         </RadioCard>
         <RadioCard
           slotsClassnames={{ label: 'w-full grow p-0' }}
           value="cards"
-          onClick={() => setChoosenGame('cards')}
+          // disabled={true}
+          icon={<Icons.Cards className="text-gray-accent" />}
         >
-          <RadioCardTitle>Карты</RadioCardTitle>
-          <RadioCardDescription>Слоты спрятаны под картами</RadioCardDescription>
+          <RadioCardTitle>
+            Карты
+            <Badge variant="success" className="ml-2 h-4.5">Beta</Badge>
+          </RadioCardTitle>
+          <RadioCardDescription className="text-nowrap">Слоты спрятаны под картами</RadioCardDescription>
         </RadioCard>
       </RadioGroup>
     </Flex>

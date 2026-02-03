@@ -5,6 +5,7 @@ import { default as Bin } from './Bin';
 import { default as Bold } from './Bold';
 import { default as BulletList } from './BulletList';
 import { default as CardSend } from './CardSend';
+import { default as Cards } from './Cards';
 import { default as Check } from './Check';
 import { default as Close } from './Close';
 import { default as CloseSquare } from './CloseSquare';
@@ -101,6 +102,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Bold,
   BulletList,
   CardSend,
+  Cards,
   Check,
   Close,
   CloseSquare,

@@ -1,4 +1,5 @@
 import { combineReducers, configureStore, isAction } from '@reduxjs/toolkit'
+import { auctionGamesReducer } from '~entities/games/store'
 import { createStateSyncMiddleware, initStateWithPrevTab, withReduxStateSync } from 'redux-state-sync'
 
 import { globalDialogsActions, globalDialogsReducer } from '~app/components/global-dialogs/store/global-dialogs.slice'
@@ -30,6 +31,7 @@ const rootReducer = combineReducers({
   app: appReducer,
   auction: auctionReducer,
   auctionSlots: auctionSlotsReducer,
+  auctionGames: auctionGamesReducer,
   donations: donationsReducer,
   globalDialogs: globalDialogsReducer,
   integrations: integrationsReducer,
