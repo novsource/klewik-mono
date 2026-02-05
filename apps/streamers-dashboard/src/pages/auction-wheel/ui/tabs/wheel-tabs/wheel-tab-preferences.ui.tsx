@@ -26,7 +26,7 @@ type SlotsWheelTabProps = Omit<TabsContentProps, 'value'> & {
   slotsClassnames?: Partial<Record<PreferencesWheelTabSlots, string>>
 }
 
-export const PreferencesWheelTabContent = (props: SlotsWheelTabProps) => {
+export const GamePreferencesTabContent = (props: SlotsWheelTabProps) => {
   const { slotsClassnames, ...tabsContentProps } = props
 
   const tabsContentStyles = useMemo(() =>

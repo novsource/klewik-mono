@@ -1,43 +1,46 @@
+import type { UseCardsAuctionGameReturnValue } from '~entities/games/hooks/cards-game'
 import type { CardsGameUnit } from '~entities/games/model/cards-game'
 
 import type { ComponentPropsWithoutRef, MouseEvent, ReactNode } from 'react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { CardsGameContextProvider, useCardsGameContext } from '~entities/games/context/cards-game/cards-game.context'
 import { transform } from 'motion'
-
-import type { AuctionSlot } from '~entities/auction-slot/model'
-
-import { Text, Title } from '~shared/components/typography'
 
 import { MotionBox } from '~shared/ui/motion-box'
 
 import { cn, isFunction, mergeProps } from '~shared/utils'
 
 export type CardsGameProps = {
-  auctionSlots: AuctionSlot[]
-  onCardSelect?: (card: CardsGameUnit) => void
+  game: UseCardsAuctionGameReturnValue
   children: ReactNode
 }
 
 export const CardsGame = (props: CardsGameProps) => {
+  const { game, ...restProps } = props
+
   return (
-    <CardsGameContextProvider {...props} />
+    <CardsGameContextProvider cardGame={game} {...restProps} />
   )
 }
 
 CardsGame.Field = CardsGameField
 CardsGame.Card = GameCard
+CardsGame.Backdrop = GameBackdrop
+CardsGame.Portal = GameBackdropPortal
 
 export type CardsGameFieldProps = Omit<ComponentPropsWithoutRef<'div'>, 'children'> & {
+  selectedCard?: CardsGameUnit
   children?: (card: CardsGameUnit, index: number) => ReactNode
 }
 
 function CardsGameField(props: CardsGameFieldProps) {
-  const { className, children, ...restProps } = props
+  const { className, selectedCard, children, ...restProps } = props
 
   const { state, actions } = useCardsGameContext()
+
+  const usedSelectedCard = selectedCard ?? state.choosedCardUnit
 
   const [potentialCardToChoose, setPotentialCardToChoose] = useState<NullablePossible<CardsGameUnit>>(null)
   const [isCardAnimationEnded, setIsCardAnimationEnded] = useState(false)
@@ -49,7 +52,7 @@ function CardsGameField(props: CardsGameFieldProps) {
       return children(card, index)
     }
 
-    const isCurrentCardChoosed = state.choosedCardUnit?.id === card.id
+    const isCurrentCardChoosed = usedSelectedCard?.id === card.id
     const isCurrentCardCandidate = potentialCardToChoose?.id === card.id
 
     const fieldColumnsCount = 6
@@ -86,7 +89,10 @@ function CardsGameField(props: CardsGameFieldProps) {
             height: cardHeight,
           }}
         >
-          <GameCard className="w-full h-full" cardUnit={card} isChoosed={true} isCandidate={isCurrentCardCandidate} />
+          <GameCard
+            className="w-full h-full"
+            cardUnit={card}
+          />
         </MotionBox>
       )
     }
@@ -95,8 +101,6 @@ function CardsGameField(props: CardsGameFieldProps) {
       <div key={card.id} className="relative">
         <GameCard
           cardUnit={card}
-          isChoosed={false}
-          isCandidate={isCurrentCardCandidate}
           onClick={() => {
             if (isCurrentCardCandidate) {
               actions.chooseCard(card)
@@ -118,21 +122,6 @@ function CardsGameField(props: CardsGameFieldProps) {
       {...restProps}
     >
       {state.cardsUnits.map(renderCard)}
-
-      <GameBackdropPortal>
-        <GameBackdrop onClick={() => {
-          actions.clearChoosenCard()
-          setIsCardAnimationEnded(false)
-        }}
-        >
-          {isCardAnimationEnded
-            && (
-              <MotionBox className="fixed z-[101] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[100px]" initial={{ opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1 }}>
-                <Title>{state.choosedCardUnit?.title}</Title>
-              </MotionBox>
-            )}
-        </GameBackdrop>
-      </GameBackdropPortal>
     </div>
   )
 }
@@ -142,9 +131,7 @@ type GameBackdropPortalProps = {
 }
 
 function GameBackdropPortal(props: GameBackdropPortalProps) {
-  const { state } = useCardsGameContext()
-
-  if (!state.choosedCardUnit)
+  if (!props.children)
     return null
 
   return createPortal(props.children, document.body)
@@ -166,17 +153,14 @@ function GameBackdrop(props: GameBackdropProps) {
 type GameCardProps = ComponentPropsWithoutRef<'div'> & {
   cardUnit: CardsGameUnit
   disableAnimation?: boolean
-  isChoosed?: boolean
-  isCandidate?: boolean
 }
 
 function GameCard(props: GameCardProps) {
   const {
-    isChoosed = false,
-    isCandidate = false,
-    disableAnimation = false,
     className,
     cardUnit,
+    disableAnimation = false,
+    children,
     ...restProps
   } = props
 
@@ -186,10 +170,14 @@ function GameCard(props: GameCardProps) {
 
   const cardElementRef = useRef<HTMLDivElement>(null)
 
+  const { state } = useCardsGameContext()
+
+  const isCurrentCardChoosed = state.choosedCardUnit?.id === cardUnit.id
+
   const handleOnMouseMove = useCallback((event: MouseEvent<HTMLDivElement>) => {
     const element = cardElementRef.current
 
-    if (!element || isChoosed)
+    if (!element)
       return
 
     const { left, top, width, height } = cardElementRef.current.getBoundingClientRect()
@@ -210,39 +198,32 @@ function GameCard(props: GameCardProps) {
     if (!isHovered) {
       setRotateCoords({ x: 0, y: 0, z: 0 })
     }
-  }, [isHovered, rotateCoords, isChoosed])
-
-  useEffect(() => {
-    if (!isHovered || isChoosed) {
-      setRotateCoords({ x: 0, y: 0, z: 0 })
-    }
-  }, [isHovered, isChoosed])
+  }, [isHovered, rotateCoords, isCurrentCardChoosed])
 
   const mergedProps = useMemo(() => mergeProps<ComponentPropsWithoutRef<'div'>[]>({
     onMouseMove: handleOnMouseMove,
     onMouseEnter: () => setIsHovered(true),
     onMouseLeave: () => setIsHovered(false),
-  }, restProps), [restProps, handleOnMouseMove])
+  }, restProps), [restProps, handleOnMouseMove, cardUnit])
 
   return (
     <div
       ref={cardElementRef}
-      className={cn('relative w-full h-full cursor-pointer p-1.5 perspective-normal', className)}
+      className="relative w-full h-full cursor-pointer p-1.5 perspective-normal"
       {...mergedProps}
     >
       <div
         className={cn([
           'flex w-full h-full justify-center items-center bg-dark rounded-medium border-1 transition-colors',
           'data-[candidate=true]:border-green-accent data-[candidate=true]:bg-green-dark data-[candidate=true]:animate-pulse',
-        ], !isHovered && 'border-dark-light transition-all', isHovered && !isCandidate && 'data-[hovered=true]:border-gray', isChoosed && 'cursor-default')}
+        ], !isHovered && 'border-dark-light transition-all', isHovered && 'data-[hovered=true]:border-gray', className)}
         data-hovered={isHovered}
-        data-choosed={isChoosed}
-        data-candidate={isCandidate}
+        data-choosed={isCurrentCardChoosed}
         style={{
           transform: isHovered && !disableAnimation ? `rotateX(${rotateCoords.x}deg) rotateY(${rotateCoords.y}deg) rotateZ(${rotateCoords.z})` : 'none',
         }}
       >
-        <Text>{ cardUnit.title }</Text>
+        {children}
       </div>
     </div>
   )

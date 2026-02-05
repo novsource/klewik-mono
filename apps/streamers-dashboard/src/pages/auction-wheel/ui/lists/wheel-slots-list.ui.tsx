@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
+import { auctionGamesSelectors } from '~entities/games/store'
+
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import type { WheelSlot } from '~entities/wheel/model'
@@ -18,9 +20,10 @@ import type { VirtualListRenderFunction } from '~shared/ui/virtual-list'
 
 import { cn } from '~shared/utils'
 
+import { CardsGameListCard } from '../cards/cards-game-list-card.ui'
 import { WheelSlotCard } from '../cards/wheel-slot-card.ui'
 
-export type WheelSlotsListProps = {
+export type AuctionGameSlotsListProps = {
   data?: WheelSlot[]
   className?: string
   renderCard?: (
@@ -29,9 +32,10 @@ export type WheelSlotsListProps = {
   ) => ReactNode
 } & Omit<ShadowVirtualListProps<WheelSlot>, 'children'>
 
-export const WheelSlotsList = (props: WheelSlotsListProps) => {
+export const AuctionGameSlotsList = (props: AuctionGameSlotsListProps) => {
   const { data, renderCard, className, ...virtualListProps } = props
 
+  const game = useStoreSelector(auctionGamesSelectors.getGame)
   const storedSlots = useStoreSelector(wheelSelectors.getSlots)
   const storedPointsSum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
 
@@ -78,30 +82,43 @@ export const WheelSlotsList = (props: WheelSlotsListProps) => {
     )
   }
 
-  const renderWheelSlotCard: VirtualListRenderFunction<WheelSlot> = (slots, virtualizedItem) => {
+  const renderGameSlotCard: VirtualListRenderFunction<WheelSlot> = (slots, virtualizedItem) => {
     const slot = slots[virtualizedItem.index]
-
     const slotWinPercents = ((slot.points / storedPointsSum) * 100)
 
-    return (
-      <WheelSlotCard
-        key={slot.id}
-        wheelSlot={slot}
-        winPercents={slotWinPercents}
-        winPercentsBounds={winPercentsBounds}
-      />
-    )
+    switch (game) {
+      case 'wheel': {
+        return (
+          <WheelSlotCard
+            key={slot.id}
+            wheelSlot={slot}
+            winPercents={slotWinPercents}
+            winPercentsBounds={winPercentsBounds}
+          />
+        )
+      }
+      case 'cards': {
+        return (
+          <CardsGameListCard
+            key={slot.id}
+            auctionSlot={slot}
+            winPercents={slotWinPercents}
+            winPercentsBounds={winPercentsBounds}
+          />
+        )
+      }
+    }
   }
 
   return (
-    <Flex className={cn('h-full w-full', className)}>
+    <Flex className={cn('h-full w-full', className)} direction="column">
       <ShadowVirtualList
         data={slots}
         slotsClassNames={{ container: 'pb-4' }}
         estimateSize={() => 125}
         {...virtualListProps}
       >
-        {renderWheelSlotCard}
+        {renderGameSlotCard}
       </ShadowVirtualList>
     </Flex>
   )

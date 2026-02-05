@@ -10,8 +10,8 @@ import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
 
 import { twSlotsStyles } from '~shared/utils'
 
-import { ControlWheelTabContent } from './wheel-tab-control'
-import { PreferencesWheelTabContent } from './wheel-tab-preferences.ui'
+import { ControlGameTabContent } from './wheel-tab-control'
+import { GamePreferencesTabContent } from './wheel-tab-preferences.ui'
 import { SlotsWheelTabContent } from './wheel-tab-slots'
 
 const triggersNames = {
@@ -66,9 +66,9 @@ const WheelTabs = (props: WheelTabsProps) => {
       <TabsList className={tabsStyles.tabList}>
         {tabsTriggers}
       </TabsList>
-      <ControlWheelTabContent />
+      <ControlGameTabContent />
       {isSlotsTabTransitionEnded && <SlotsWheelTabContent />}
-      <PreferencesWheelTabContent />
+      <GamePreferencesTabContent />
     </Tabs>
   )
 }

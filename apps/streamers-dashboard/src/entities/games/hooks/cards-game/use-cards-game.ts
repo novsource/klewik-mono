@@ -1,26 +1,27 @@
+import type { CardsGameContextState } from '~entities/games/context/cards-game/cards-game.context'
 import type { CardsGameUnit } from '~entities/games/model/cards-game'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { generateWinner } from '~entities/games/utils/generate-winner'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
-import { getHEXColor } from '~shared/utils'
+import { getHEXColor, shuffleArray } from '~shared/utils'
 
 type UseCardsAuctionGameOptions = {
   amount?: number
   onCardSelect?: (card: CardsGameUnit) => void
 }
 
-export const useCardsAuctionGame = (auctionSlots: AuctionSlot[], options?: UseCardsAuctionGameOptions) => {
-  const optionsRef = useRef(options)
+export type UseCardsAuctionGameReturnValue = CardsGameContextState
 
+export const useCardsAuctionGame = (auctionSlots: AuctionSlot[], options?: UseCardsAuctionGameOptions) => {
   const [cardsUnits, setCardsUnits] = useState<CardsGameUnit[]>(() => {
     if (auctionSlots.length === 0)
       return []
 
-    const cardAmount = optionsRef.current?.amount ?? 30
+    const cardAmount = options?.amount ?? 30
     const winners = Array.from({ length: cardAmount }).fill(null).map(_ => generateWinner(auctionSlots))
 
     return transformAuctionSlotsToCardUnits(winners)
@@ -33,7 +34,7 @@ export const useCardsAuctionGame = (auctionSlots: AuctionSlot[], options?: UseCa
       setCardsUnits([])
     }
     else {
-      const cardAmount = optionsRef.current?.amount ?? 30
+      const cardAmount = options?.amount ?? 30
       const winners = Array.from({ length: cardAmount }).fill(null).map(_ => generateWinner(auctionSlots))
 
       setCardsUnits(transformAuctionSlotsToCardUnits(winners))
@@ -50,19 +51,9 @@ export const useCardsAuctionGame = (auctionSlots: AuctionSlot[], options?: UseCa
   }
 
   const shuffleCards = () => {
-    const result: CardsGameUnit[] = [...cardsUnits]
+    const shuffledCards = shuffleArray(cardsUnits, false)
 
-    function swap(indexOne: number, indexTwo: number) {
-      [result[indexOne], result[indexTwo]] = [result[indexTwo], result[indexOne]]
-    }
-
-    result.forEach((_, index) => {
-      const randomIndex = Math.floor(Math.random() * (result.length - 1))
-
-      swap(index, randomIndex)
-    })
-
-    setCardsUnits(transformAuctionSlotsToCardUnits(result))
+    setCardsUnits(shuffledCards)
   }
 
   return {

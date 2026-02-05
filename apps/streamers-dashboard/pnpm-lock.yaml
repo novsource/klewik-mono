@@ -89,6 +89,9 @@ importers:
       broadcast-channel:
         specifier: ^7.0.0
         version: 7.0.0
+      canvas-confetti:
+        specifier: ^1.9.4
+        version: 1.9.4
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -210,6 +213,9 @@ importers:
       '@trivago/prettier-plugin-sort-imports':
         specifier: ^5.2.0
         version: 5.2.0(@vue/compiler-sfc@3.5.17)(prettier@3.3.3)
+      '@types/canvas-confetti':
+        specifier: ^1.9.0
+        version: 1.9.0
       '@types/node':
         specifier: ^22.7.7
         version: 22.7.7
@@ -2455,6 +2461,9 @@ packages:
   '@types/babel__traverse@7.28.0':
     resolution: {integrity: sha512-8PvcXf70gTDZBgt9ptxJ8elBeBjcLOAcOtoO/mPJjtji1+CdGbHgm77om1GrsPxsiE+uXIpNSK64UYaIwQXd4Q==}
 
+  '@types/canvas-confetti@1.9.0':
+    resolution: {integrity: sha512-aBGj/dULrimR1XDZLtG9JwxX1b4HPRF6CX9Yfwh3NvstZEm1ZL7RBnel4keCPSqs1ANRu1u2Aoz9R+VmtjYuTg==}
+
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
 
@@ -2975,6 +2984,9 @@ packages:
 
   caniuse-lite@1.0.30001724:
     resolution: {integrity: sha512-WqJo7p0TbHDOythNTqYujmaJTvtYRZrjpP8TCvH6Vb9CYJerJNKamKzIWOM4BkQatWj9H2lYulpdAQNBe7QhNA==}
+
+  canvas-confetti@1.9.4:
+    resolution: {integrity: sha512-yxQbJkAVrFXWNbTUjPqjF7G+g6pDotOUHGbkZq2NELZUMDpiJ85rIEazVb8GTaAptNW2miJAXbs1BtioA251Pw==}
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -8087,6 +8099,8 @@ snapshots:
     dependencies:
       '@babel/types': 7.28.5
 
+  '@types/canvas-confetti@1.9.0': {}
+
   '@types/chai@5.2.3':
     dependencies:
       '@types/deep-eql': 4.0.2
@@ -8768,6 +8782,8 @@ snapshots:
   caniuse-lite@1.0.30001668: {}
 
   caniuse-lite@1.0.30001724: {}
+
+  canvas-confetti@1.9.4: {}
 
   ccount@2.0.1: {}
 

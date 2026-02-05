@@ -20,9 +20,8 @@ import { integrationsSelectors } from '~entities/integrations/store'
 import { ROUTES_TITLES } from '~shared/constants/router'
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
+import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
 import { Text } from '~shared/components/typography'
-
-import { useMediaQuery } from '~shared/hooks'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -45,8 +44,6 @@ export type DashboardHeaderProps = ComponentPropsWithoutRef<typeof BaseHeader>
 export const DashboardHeader = memo((props: DashboardHeaderProps) => {
   const { children, className, ...restProps } = props
 
-  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
-
   return (
     <BaseHeader
       className={cn([
@@ -57,9 +54,15 @@ export const DashboardHeader = memo((props: DashboardHeaderProps) => {
       {...restProps}
     >
       <Flex className="w-full h-full gap-x-4 px-4" align="center">
-        {isLargeThenTablet
-          ? <DesktopDashboardHeader />
-          : <MobileDashboardHeader />}
+        <MediaQueryViewToggler query={greaterThenDeviceWidthMediaQueries.tablet}>
+          <MediaQueryViewToggler.MatchedItem>
+            <DesktopDashboardHeader />
+          </MediaQueryViewToggler.MatchedItem>
+        </MediaQueryViewToggler>
+
+        <MediaQueryViewToggler.NotMatchedItem>
+          <MobileDashboardHeader />
+        </MediaQueryViewToggler.NotMatchedItem>
       </Flex>
       {children}
     </BaseHeader>
@@ -128,6 +131,10 @@ function DesktopDashboardHeader() {
           </Button>
         )}
         />
+
+        <Button size="sm" startContent={<Icons.List />}>
+          Правила
+        </Button>
 
         <Popover>
           <PopoverTrigger render={<Button isIconOnly icon={<Icons.Share />} size="sm" />} />

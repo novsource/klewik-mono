@@ -21,7 +21,7 @@ import { TabsContent } from '~shared/ui/tabs'
 import { cn, twSlotsStyles } from '~shared/utils'
 
 import { TABS_CONTENT_NAMES } from '../../../constants'
-import { WheelSlotsList } from '../../lists/wheel-slots-list.ui'
+import { AuctionGameSlotsList } from '../../lists/wheel-slots-list.ui'
 
 type SlotsWheelTabContentProps = Omit<TabsContentProps, 'value'> & {
   slotsClassnames?: Partial<Record<SlotsWheelTabSlots, string>>
@@ -78,7 +78,7 @@ export const SlotsWheelTabContent = (props: SlotsWheelTabContentProps) => {
         placeholder="Искать по названию..."
         onChange={handleSearchInputOnChange}
       />
-      <WheelSlotsList data={searchedSlots} gap={8} />
+      <AuctionGameSlotsList data={searchedSlots} gap={8} />
     </TabsContent>
   )
 }

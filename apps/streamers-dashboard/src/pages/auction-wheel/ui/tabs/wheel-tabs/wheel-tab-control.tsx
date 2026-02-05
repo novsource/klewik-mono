@@ -34,7 +34,7 @@ type ControlWheelTabContentProps = Omit<TabsContentProps, 'value'> & {
   slotsClassnames?: Partial<Record<ControlWheelTabSlots, string>>
 }
 
-export const ControlWheelTabContent = (props: ControlWheelTabContentProps) => {
+export const ControlGameTabContent = (props: ControlWheelTabContentProps) => {
   const { slotsClassnames, ...tabsContentProps } = props
 
   const game = useStoreSelector(auctionGamesSelectors.getGame)
@@ -47,28 +47,17 @@ export const ControlWheelTabContent = (props: ControlWheelTabContentProps) => {
       value={TABS_CONTENT_NAMES.CONTROL}
       {...tabsContentProps}
     >
-      {game === 'wheel' && <WheelControl />}
-      {game === 'cards' && (
-        <Flex className="w-full">
-          <Button
-            className="w-full"
-            variant="action"
-            size="lg"
-            startContent={<Icons.Refresh />}
-          >
-            Перетасовать
-          </Button>
-        </Flex>
-      )}
+      {game === 'wheel' && <WheelGameControllers />}
+      {game === 'cards' && <CardsGameControllers />}
       <Divider className="mt-2.5 mb-3 border-gray/20" />
-      <GamesChooseRadioGroup />
+      <GameTypeRadioGroup />
       <Divider className="mt-2.5 mb-3 border-gray/20" />
-      <GameModeChooseRadioGroup />
+      <GameModeRadioGroup />
     </TabsContent>
   )
 }
 
-function WheelControl() {
+function WheelGameControllers() {
   const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
   const wheelSlots = useStoreSelector(wheelSelectors.getSlots)
 
@@ -84,7 +73,24 @@ function WheelControl() {
   )
 }
 
-function GameModeChooseRadioGroup() {
+function CardsGameControllers() {
+  const tabsContentStyles = useMemo(() => twSlotsStyles(controlWheelTabStyles), [])
+
+  return (
+    <Flex className={tabsContentStyles.controlsWrapper}>
+      <Button
+        className="w-full"
+        variant="action"
+        size="lg"
+        startContent={<Icons.Refresh />}
+      >
+        Перетасовать
+      </Button>
+    </Flex>
+  )
+}
+
+function GameModeRadioGroup() {
   const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
 
   const { wheelMode } = useStoreSelector(auctionSelectors.getAuctionInfo)
@@ -128,7 +134,7 @@ function GameModeChooseRadioGroup() {
   )
 }
 
-function GamesChooseRadioGroup() {
+function GameTypeRadioGroup() {
   const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
 
   const game = useStoreSelector(auctionGamesSelectors.getGame)

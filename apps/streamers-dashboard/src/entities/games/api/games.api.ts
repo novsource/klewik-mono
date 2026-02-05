@@ -18,7 +18,8 @@ export const splittedAuctionGamesApi = createApi({
   endpoints: builder => ({
     dropoutSlot: builder.mutation<void, DropSlotMutationArgs>({
       query: ({ auctionUUID, slotId }) => ({
-        url: `${auctionUUID}/slots/dropout`,
+        url: `/${auctionUUID}/slots/dropout`,
+        method: 'POST',
         data: {
           slotId,
         },
@@ -26,7 +27,8 @@ export const splittedAuctionGamesApi = createApi({
     }),
     setAuctionWinner: builder.mutation<void, SetAuctionWinnerMutationArgs>({
       query: ({ auctionUUID, slotId }) => ({
-        url: `${auctionUUID}/slots/winner`,
+        url: `/${auctionUUID}/slots/winner`,
+        method: 'POST',
         data: {
           slotId,
         },

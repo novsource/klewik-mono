@@ -1,3 +1,4 @@
+export * from './array-helpers'
 export * from './canvas'
 export * from './chain'
 export * from './cn'

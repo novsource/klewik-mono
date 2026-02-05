@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef } from 'react'
 
 import bgSelectorUrl from '~shared/assets/img/bgSelector.webp'
+import * as m from 'motion/react-m'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
@@ -58,20 +59,26 @@ function WheelFortune(props: WheelFortuneProps) {
     const isSlotOnSelector = slot.title.toLowerCase() === selectorCurrentSlot?.toLowerCase()
 
     return (
-      <WheelItem
-        className={cn(
-          'transition-opacity',
-          isSpinning && !isSlotOnSelector && 'opacity-20',
-          isSpinning && isSlotOnSelector && 'opacity-80',
-        )}
-        key={slot.title}
-        slot={slot}
-        radius={wheelSize / 2.15}
-        center={{
-          x: wheelSize / 2,
-          y: wheelSize / 2,
-        }}
-      />
+      <m.g
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1, type: 'spring' }}
+      >
+        <WheelItem
+          className={cn(
+            'transition-opacity',
+            isSpinning && !isSlotOnSelector && 'opacity-20',
+            isSpinning && isSlotOnSelector && 'opacity-80',
+          )}
+          key={slot.title}
+          slot={slot}
+          radius={wheelSize / 2.15}
+          center={{
+            x: wheelSize / 2,
+            y: wheelSize / 2,
+          }}
+        />
+      </m.g>
     )
   }, [isSpinning, selectorCurrentSlot, wheelSize])
 

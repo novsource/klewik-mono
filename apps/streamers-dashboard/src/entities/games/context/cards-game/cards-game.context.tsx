@@ -1,13 +1,10 @@
+import type { UseCardsAuctionGameReturnValue } from '~entities/games/hooks/cards-game'
 import type { CardsGameUnit } from '~entities/games/model/cards-game'
 
 import type { ReactNode } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
-import { useCardsAuctionGame } from '~entities/games/hooks/cards-game'
-
-import type { AuctionSlot } from '~entities/auction-slot/model'
-
-type CardsGameContextState = {
+export type CardsGameContextState = {
   state: {
     cardsUnits: CardsGameUnit[]
     preparedCardUnit: NullablePossible<CardsGameUnit>
@@ -46,17 +43,14 @@ export const useCardsGameContext = () => {
 }
 
 export type CardsGameContextProviderProps = {
-  auctionSlots: AuctionSlot[]
+  cardGame: UseCardsAuctionGameReturnValue
   children: ReactNode
-  onCardSelect?: (card: CardsGameUnit) => void
 }
 
 export const CardsGameContextProvider = (props: CardsGameContextProviderProps) => {
-  const { auctionSlots, children, onCardSelect } = props
+  const { children, cardGame } = props
 
-  const { state: gameState, actions } = useCardsAuctionGame(auctionSlots, { onCardSelect })
-
-  const contextValue = useMemo(() => ({ state: gameState, actions }), [gameState, actions])
+  const contextValue = useMemo(() => cardGame, [cardGame])
 
   return <CardsGameContext.Provider value={contextValue}>{ children }</CardsGameContext.Provider>
 }
