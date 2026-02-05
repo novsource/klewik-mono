@@ -8,24 +8,14 @@ import { useSortingSlots } from '~pages/auction-slots/lib'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
-import {
-  BaseAuctionSlotCard,
-  SolidAuctionSlotContent,
-  SolidAuctionSlotHeader,
-} from '~entities/auction-slot/ui/card'
-
-import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
-
-import { useMediaQuery } from '~shared/hooks'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
 import type { WindowVirtualListProps } from '~shared/ui/virtual-list'
 import { WindowVirtualList } from '~shared/ui/virtual-list'
 import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
+
+import { AuctionSlotsListCard } from '../cards/slots-list-card.ui'
 
 export type AuctionSlotsListProps = {
   data?: AuctionSlot[]
@@ -40,6 +30,7 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
   } = props
 
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+  const storedDroppedSlots = useStoreSelector(auctionSlotsSelectors.getDropoutSlots)
   const storedSlotsPointsSum = useStoreSelector(
     auctionSlotsSelectors.getSlotsPointsSum,
   )
@@ -61,40 +52,25 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
 
   const sortedSlots = useSortingSlots(showedSlots, sortingOptions)
 
-  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
-
   const renderAuctionSlotCard = useCallback(
     (auctionSlot: AuctionSlot) => {
-      const percents = ((auctionSlot.points / storedSlotsPointsSum) * 100)
+      const isDropped = storedDroppedSlots.some(slot => slot.id === auctionSlot.id)
+      const winPercents = ((auctionSlot.points / storedSlotsPointsSum) * 100)
 
       return (
-        <BaseAuctionSlotCard
-          className="flex-row items-end pr-2"
-          key={auctionSlot.title}
-        >
-          <Flex className="gap-y-2 pr-3.5" direction="column">
-            <SolidAuctionSlotHeader
-              slotId={auctionSlot.auctionSlotOrder}
-              slotTitle={auctionSlot.title}
-            />
-            <SolidAuctionSlotContent
-              auctionSlot={auctionSlot}
-              winPercents={percents}
-            />
-          </Flex>
-          <Button
-            className="bg-dark-light text-gray-light transition-colors hover:text-white"
-            isIconOnly
-            icon={<Icons.ArrowRight size={isLargeThenTablet ? 'default' : 'sm'} />}
-            onClick={() => {
+        <AuctionSlotsListCard
+          auctionSlot={auctionSlot}
+          winPercents={winPercents}
+          isDroped={isDropped}
+          actionButtonProps={{
+            onClick: () => {
               setDialogState({ dialog: 'editSlot', data: { initialData: auctionSlot, isOpen: true } })
-            }}
-            size={isLargeThenTablet ? 'sm' : 'xs'}
-          />
-        </BaseAuctionSlotCard>
+            },
+          }}
+        />
       )
     },
-    [storedSlotsPointsSum, isLargeThenTablet],
+    [storedSlotsPointsSum, setDialogState, storedDroppedSlots],
   )
 
   const renderVirtualListItem = useCallback(

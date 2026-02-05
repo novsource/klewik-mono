@@ -3,6 +3,7 @@ import { default as ArrowRight } from './ArrowRight';
 import { default as Bill } from './Bill';
 import { default as Bin } from './Bin';
 import { default as Bold } from './Bold';
+import { default as BrokenHeart } from './BrokenHeart';
 import { default as BulletList } from './BulletList';
 import { default as CardSend } from './CardSend';
 import { default as Cards } from './Cards';
@@ -30,6 +31,7 @@ import { default as Hamburger } from './Hamburger';
 import { default as Heading1 } from './Heading1';
 import { default as Heading2 } from './Heading2';
 import { default as HeadingSymbol } from './HeadingSymbol';
+import { default as Heart } from './Heart';
 import { default as Home } from './Home';
 import { default as Hourglass } from './Hourglass';
 import { default as Id } from './Id';
@@ -100,6 +102,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Bill,
   Bin,
   Bold,
+  BrokenHeart,
   BulletList,
   CardSend,
   Cards,
@@ -127,6 +130,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   Heading1,
   Heading2,
   HeadingSymbol,
+  Heart,
   Home,
   Hourglass,
   Id,

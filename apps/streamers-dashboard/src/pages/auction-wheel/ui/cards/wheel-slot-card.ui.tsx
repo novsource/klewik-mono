@@ -1,18 +1,28 @@
-import { AuctionSlotCardContentInfoDivider, AuctionSlotCardIdInfo, AuctionSlotCardPointsInfo, AuctionSlotCardWinPercents, BaseAuctionSlotCard, BaseAuctionSlotCardContent, SolidAuctionSlotHeader } from '~entities/auction-slot/ui/card'
+import {
+  AuctionSlotCardContentInfoDivider,
+  AuctionSlotCardIdInfo,
+  AuctionSlotCardPointsInfo,
+  AuctionSlotCardWinPercents,
+  BaseAuctionSlotCard,
+  BaseAuctionSlotCardContent,
+  SolidAuctionSlotHeader,
+} from '~entities/auction-slot/ui/card'
 
 import type { WheelSlot } from '~entities/wheel/model'
 
 import type { CardProps } from '~shared/ui/card'
 import { Flex } from '~shared/ui/flex'
+import { Icons } from '~shared/ui/icons'
 
 export type WheelSlotCardProps = CardProps & {
   wheelSlot: WheelSlot
   winPercents: number
   winPercentsBounds: { min: number, max: number }
+  isDropped?: boolean
 }
 
 export const WheelSlotCard = (props: WheelSlotCardProps) => {
-  const { wheelSlot, winPercents, winPercentsBounds, ...restProps } = props
+  const { wheelSlot, winPercents, winPercentsBounds, isDropped = false, ...restProps } = props
 
   return (
     <BaseAuctionSlotCard {...restProps}>
@@ -30,6 +40,10 @@ export const WheelSlotCard = (props: WheelSlotCardProps) => {
           <AuctionSlotCardPointsInfo slotPoints={wheelSlot.points} />
           <AuctionSlotCardContentInfoDivider />
           <AuctionSlotCardWinPercents winPercents={winPercents} bounds={winPercentsBounds} />
+          <AuctionSlotCardContentInfoDivider />
+          {isDropped
+            ? <Icons.BrokenHeart className="text-gray-light" size="sm" />
+            : <Icons.Heart className="text-red animate-heartbeating" size="xs" />}
         </Flex>
       </BaseAuctionSlotCardContent>
     </BaseAuctionSlotCard>

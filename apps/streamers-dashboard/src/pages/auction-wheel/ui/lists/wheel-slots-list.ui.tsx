@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 
 import { auctionGamesSelectors } from '~entities/games/store'
 
+import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import type { WheelSlot } from '~entities/wheel/model'
@@ -24,7 +25,7 @@ import { CardsGameListCard } from '../cards/cards-game-list-card.ui'
 import { WheelSlotCard } from '../cards/wheel-slot-card.ui'
 
 export type AuctionGameSlotsListProps = {
-  data?: WheelSlot[]
+  data?: AuctionSlot[]
   className?: string
   renderCard?: (
     item: WheelSlot,

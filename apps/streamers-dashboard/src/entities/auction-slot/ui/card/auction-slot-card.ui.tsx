@@ -10,6 +10,8 @@ import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import { greaterThenDeviceWidthMediaQueries, tailwindScreens } from '~shared/constants/tailwindcss'
 
+import { Text } from '~shared/components/typography'
+
 import { useMediaQuery } from '~shared/hooks'
 
 import type {
@@ -25,7 +27,6 @@ import type { FlexProps } from '~shared/ui/flex'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Skeleton } from '~shared/ui/skeleton'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
@@ -75,12 +76,12 @@ export const AuctionSlotCardTitleInfo = (props: AuctionSlotCardTitleInfoProps) =
   const { slotTitle, className } = props
 
   return (
-    <Typography
+    <Text
       className={cn('text-md font-bold tablet:text-title text-white/85', className)}
-      tag="span"
+      asSpan
     >
       {slotTitle}
-    </Typography>
+    </Text>
   )
 }
 
@@ -226,9 +227,9 @@ export const AuctionSlotCardIdInfo = (props: AuctionSlotCardIdInfoProps) => {
       icon={<Icons.Id size={isLargeThenTablet ? 'default' : 'sm'} />}
       {...restProps}
     >
-      <Typography className="font-golos-f font-semibold text-gray-accent text-sm tablet:text-md tablet:leading-4" tag="span">
+      <Text className="font-golos-f font-semibold text-gray-accent text-sm tablet:text-md tablet:leading-4" asSpan>
         {slotId}
-      </Typography>
+      </Text>
     </AuctionSlotCardContentInfoWrapper>
   )
 }
@@ -303,7 +304,6 @@ export const SolidAuctionSlotCard = (props: SolidAuctionSlotCardProps) => {
   return (
     <BaseAuctionSlotCard {...restProps}>
       <SolidAuctionSlotHeader
-        slotId={auctionSlot.id}
         slotTitle={auctionSlot.title}
       />
       <SolidAuctionSlotContent

@@ -225,6 +225,20 @@
     }
 }
 
+@keyframes heartbeating {
+    0% {
+        scale: 1;
+    }
+
+    50% {
+        scale: 1.15;
+    }
+
+    100% {
+        scale: 1;
+    }
+}
+
 @utility slide-out-to-top {
     --sheet-exit-translate-y: -0.25rem;
 }
@@ -275,6 +289,12 @@
     --sheet-enter-rotate: initial;
     --sheet-enter-translate-x: initial;
     --sheet-enter-translate-y: initial;
+}
+
+@utility animate-heartbeating {
+    animation-name: heartbeating;
+    animation-duration: 1.25s;
+    animation-iteration-count: infinite;
 }
 
 @layer base {
