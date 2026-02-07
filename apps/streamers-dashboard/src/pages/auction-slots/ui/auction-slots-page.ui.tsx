@@ -8,6 +8,7 @@ import { SkeletonAuctionSlotCard } from '~entities/auction-slot/ui/card'
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
+import { StartTransitionContainer } from '~shared/components/start-transition-container'
 
 import { useDocumentTitle, useDumbedTransition, useMediaQuery } from '~shared/hooks'
 
@@ -24,11 +25,11 @@ import { SortingSlotsCombobox } from './combobox/sorting-slots-combobox.ui'
 import { AuctionSlotsVirtualList } from './virtual-lists/slots-virtual-list.ui'
 
 export const AuctionSlotsPage = () => {
-  const pageStyles = useMemo(() => twSlotsStyles(auctionSlotsPageStyles), [])
+  useDocumentTitle('Слоты | Поинтовый аукцион Klewik')
 
   const isListShowed = useDumbedTransition()
 
-  useDocumentTitle('Слоты | Поинтовый аукцион Klewik')
+  const pageStyles = useMemo(() => twSlotsStyles(auctionSlotsPageStyles), [])
 
   return (
     <div
@@ -48,7 +49,7 @@ export const AuctionSlotsPage = () => {
       </MediaQueryViewToggler>
 
       <ListActionsPanel disabled={!isListShowed} />
-      <AuctionSlotsList isShowed={isListShowed} />
+      <AuctionSlotsList showed={isListShowed} />
     </div>
   )
 }
@@ -116,16 +117,17 @@ function ListActionsPanel(props: ListActionsPanelProps) {
 }
 
 type AuctionSlotsVirtualListProps = {
-  isShowed: boolean
+  showed: boolean
 }
 
 function AuctionSlotsList(props: AuctionSlotsVirtualListProps) {
-  const { isShowed } = props
+  const { showed } = props
 
-  if (!isShowed)
-    return <SkeletonVirtualList />
-
-  return <AuctionSlotsVirtualList />
+  return (
+    <StartTransitionContainer showed={showed} fallback={<SkeletonVirtualList />}>
+      <AuctionSlotsVirtualList />
+    </StartTransitionContainer>
+  )
 }
 
 function SkeletonVirtualList() {
