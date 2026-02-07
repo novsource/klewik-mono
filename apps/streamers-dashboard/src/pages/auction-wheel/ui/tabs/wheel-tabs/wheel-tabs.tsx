@@ -1,6 +1,6 @@
 import type { TabsProps } from '@radix-ui/react-tabs'
 
-import { startTransition, useEffect, useMemo, useState } from 'react'
+import { memo, startTransition, useEffect, useMemo, useState } from 'react'
 
 import { TABS_CONTENT_NAMES } from '~pages/auction-wheel/constants'
 import type { WheelTabsStylesSlots } from '~pages/auction-wheel/styles'
@@ -20,11 +20,11 @@ const triggersNames = {
   preferences: 'Внешний вид',
 } as const
 
-type WheelTabsProps = Omit<TabsProps, 'className'> & {
+type GameTabsProps = Omit<TabsProps, 'className'> & {
   slotsClassnames?: Partial<Record<WheelTabsStylesSlots, string>>
 }
 
-const WheelTabs = (props: WheelTabsProps) => {
+export const GameTabs = memo((props: GameTabsProps) => {
   const { slotsClassnames, ...tabsProps } = props
 
   const [currentTab, setCurrentTab] = useState(TABS_CONTENT_NAMES.CONTROL)
@@ -71,6 +71,4 @@ const WheelTabs = (props: WheelTabsProps) => {
       <GamePreferencesTabContent />
     </Tabs>
   )
-}
-
-export default WheelTabs
+})

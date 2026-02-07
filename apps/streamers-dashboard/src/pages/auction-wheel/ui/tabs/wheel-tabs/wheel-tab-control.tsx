@@ -3,6 +3,7 @@ import type { AuctionGames } from '~entities/games/model'
 
 import { useMemo } from 'react'
 
+import { useCardsGameContext } from '~entities/games/context/cards-game/cards-game.context'
 import { auctionGamesActions, auctionGamesSelectors } from '~entities/games/store'
 
 import { TABS_CONTENT_NAMES } from '~pages/auction-wheel/constants'
@@ -76,6 +77,8 @@ function WheelGameControllers() {
 function CardsGameControllers() {
   const tabsContentStyles = useMemo(() => twSlotsStyles(controlWheelTabStyles), [])
 
+  const { actions } = useCardsGameContext()
+
   return (
     <Flex className={tabsContentStyles.controlsWrapper}>
       <Button
@@ -83,6 +86,7 @@ function CardsGameControllers() {
         variant="action"
         size="lg"
         startContent={<Icons.Refresh />}
+        onClick={() => actions.shuffleCards()}
       >
         Перетасовать
       </Button>
@@ -92,7 +96,6 @@ function CardsGameControllers() {
 
 function GameModeRadioGroup() {
   const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
-
   const { wheelMode } = useStoreSelector(auctionSelectors.getAuctionInfo)
 
   const { updateWheelMode } = useActionCreators(auctionActions)

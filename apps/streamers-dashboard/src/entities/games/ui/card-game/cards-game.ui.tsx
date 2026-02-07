@@ -1,12 +1,14 @@
 import type { UseCardsAuctionGameReturnValue } from '~entities/games/hooks/cards-game'
 import type { CardsGameUnit } from '~entities/games/model/cards-game'
 
-import type { ComponentPropsWithoutRef, MouseEvent, ReactNode } from 'react'
+import type { ComponentProps, ComponentPropsWithoutRef, MouseEvent, ReactNode } from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { CardsGameContextProvider, useCardsGameContext } from '~entities/games/context/cards-game/cards-game.context'
 import { transform } from 'motion'
+
+import { useMergedRefs } from '~shared/hooks'
 
 import { MotionBox } from '~shared/ui/motion-box'
 
@@ -30,7 +32,7 @@ CardsGame.Card = GameCard
 CardsGame.Backdrop = GameBackdrop
 CardsGame.Portal = GameBackdropPortal
 
-export type CardsGameFieldProps = Omit<ComponentPropsWithoutRef<'div'>, 'children'> & {
+export type CardsGameFieldProps = Omit<ComponentProps<'div'>, 'children'> & {
   selectedCard?: CardsGameUnit
   children?: (card: CardsGameUnit, index: number) => ReactNode
 }
@@ -46,6 +48,7 @@ function CardsGameField(props: CardsGameFieldProps) {
   const [isCardAnimationEnded, setIsCardAnimationEnded] = useState(false)
 
   const gameFieldElementRef = useRef<HTMLDivElement>(null)
+  const mergedFieldRef = useMergedRefs(gameFieldElementRef)
 
   const renderCard = (card: CardsGameUnit, index: number) => {
     if (isFunction(children)) {
@@ -117,7 +120,7 @@ function CardsGameField(props: CardsGameFieldProps) {
 
   return (
     <div
-      ref={gameFieldElementRef}
+      ref={mergedFieldRef}
       className={cn('grid grid-cols-6 grid-rows-5 gap-1.5 w-full h-full flex-wrap', className)}
       {...restProps}
     >
@@ -214,7 +217,7 @@ function GameCard(props: GameCardProps) {
     >
       <div
         className={cn([
-          'flex w-full h-full justify-center items-center bg-dark rounded-medium border-1 transition-colors',
+          'flex w-full h-full justify-center items-center bg-dark rounded-large border-1 transition-colors',
           'data-[candidate=true]:border-green-accent data-[candidate=true]:bg-green-dark data-[candidate=true]:animate-pulse',
         ], !isHovered && 'border-dark-light transition-all', isHovered && 'data-[hovered=true]:border-gray', className)}
         data-hovered={isHovered}
