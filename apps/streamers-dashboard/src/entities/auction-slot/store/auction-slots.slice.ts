@@ -4,6 +4,8 @@ import type { AuctionSlot } from '../model'
 
 import { createSlice } from '@reduxjs/toolkit'
 
+import type { AuctionSlotsDTO } from '~shared/api/http/auction-slots'
+
 import type { SortingOptions } from '~shared/store/model'
 
 import { getAuctionSlotsThunk } from '../api'
@@ -11,6 +13,7 @@ import { AUCTION_SLOTS_SLICE_INITIAL_STATE as initialState } from '../constants'
 
 export type AuctionSlotsSliceState = {
   slots: AuctionSlot[]
+  alivedSlots: AuctionSlot[]
   dropoutSlots: AuctionSlot[]
   sortedSlots: AuctionSlot[]
   slotsPointsSum: number
@@ -21,14 +24,20 @@ const slice = createSlice({
   name: 'auctionSlots',
   initialState,
   reducers: {
-    addSlots(state, action: PayloadAction<AuctionSlot[]>) {
+    addSlots(state, action: PayloadAction<AuctionSlotsDTO[]>) {
       const payload = action.payload
 
       const filtredSlots = state.slots.filter(
         slot => !payload.find(item => slot.id === item.id),
       )
 
-      state.slots = [...filtredSlots, ...payload]
+      const addedPoints = payload.reduce((sum, slot) => sum + slot.points, 0)
+
+      const slotsWithWinPercents = payload.map((slot) => {
+        return { ...slot, winPercents: (slot.points / (state.slotsPointsSum + addedPoints)) * 100 }
+      })
+
+      state.slots = [...filtredSlots, ...slotsWithWinPercents]
     },
     updateSlot(
       state,
@@ -40,13 +49,30 @@ const slice = createSlice({
       const id = action.payload.id
       const data = action.payload.data
 
-      const updatedSlot = state.slots.find(slot => id === slot.id)
+      state.slots = state.slots.reduce((acc, slot) => {
+        if (slot.id === id) {
+          acc.push({ ...slot, ...data })
+        }
+        else {
+          acc.push(slot)
+        }
 
-      if (!updatedSlot)
-        return
+        return acc
+      }, [] as AuctionSlot[])
+    },
+    updateSlots(state, action: PayloadAction<AuctionSlot[]>) {
+      state.slots = state.slots.reduce((acc, slot) => {
+        const updatedSlotData = action.payload.find(item => item.id === slot.id)
 
-      updatedSlot.title = data.title ?? updatedSlot.title
-      updatedSlot.points = data.points ?? updatedSlot.points
+        if (!updatedSlotData) {
+          acc.push(slot)
+        }
+        else {
+          acc.push({ ...slot, ...updatedSlotData })
+        }
+
+        return acc
+      }, [] as typeof state.slots)
     },
     deleteSlot(state, action: PayloadAction<{ id: AuctionSlot['id'] }>) {
       const payload = action.payload
@@ -92,6 +118,9 @@ const slice = createSlice({
     getSlots(state) {
       return state.slots
     },
+    getAlivedSlots(state) {
+      return state.alivedSlots
+    },
     getDropoutSlots(state) {
       return state.dropoutSlots
     },
@@ -104,19 +133,26 @@ const slice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(getAuctionSlotsThunk.fulfilled, (state, action) => {
-      const { payload: auctionSlots } = action
+      const { payload: fetchedSlots } = action
 
-      if (!auctionSlots)
+      if (!fetchedSlots)
         return
 
-      const pointsSum = auctionSlots.reduce((acc, slot) => {
-        acc += slot.points
+      const fetchedSlotsPointsSum = fetchedSlots.reduce((sum, slot) => {
+        sum += slot.points
 
-        return acc
+        return sum
       }, 0)
 
-      state.slots = [...auctionSlots]
-      state.slotsPointsSum = pointsSum
+      const updatedPointsSum = state.slotsPointsSum + fetchedSlotsPointsSum
+      const updatedAuctionSlots = [...fetchedSlots, ...state.slots].map<AuctionSlot>((slot) => {
+        const winPercents = (slot.points / updatedPointsSum) * 100
+
+        return { ...slot, winPercents }
+      })
+
+      state.slots = updatedAuctionSlots
+      state.slotsPointsSum = updatedPointsSum
     })
   },
 })

@@ -38,11 +38,13 @@ describe('auction slots slice reducers', () => {
       id: 1000,
       auctionSlotOrder: 1000,
       title: 'Test',
+      winPercents: 50,
     }, {
       points,
       id: 1001,
       auctionSlotOrder: 1001,
       title: 'Test 2',
+      winPercents: 50,
     }]
 
     dispatch(auctionSlotsActions.addSlots(addedSlotArr))
@@ -57,11 +59,13 @@ describe('auction slots slice reducers', () => {
       id: 1000,
       auctionSlotOrder: 1000,
       title: 'Test',
+      winPercents: 50,
     }, {
       points: 1000,
       id: 1001,
       auctionSlotOrder: 1001,
       title: 'Test 2',
+      winPercents: 50,
     }]
 
     dispatch(auctionSlotsActions.addSlots(addedSlotArr))
@@ -69,8 +73,8 @@ describe('auction slots slice reducers', () => {
     const randomSlotIndex = Math.floor(Math.random() * state.slots.length)
     const targetSlot = state.slots[randomSlotIndex]
 
-    dispatch(auctionSlotsActions.updateSlot({ id: targetSlot.id, data: { ...targetSlot, title: 'Updated slot' } }))
-    expect(state.slots[randomSlotIndex]).toEqual({ ...targetSlot, title: 'Updated slot' })
+    dispatch(auctionSlotsActions.updateSlot({ id: targetSlot.id, data: { ...targetSlot, title: 'Updated slot', points: 2000 } }))
+    expect(state.slots[randomSlotIndex]).toEqual({ ...targetSlot, title: 'Updated slot', points: 2000 })
   })
 
   it('should delete slot', () => {
@@ -79,11 +83,13 @@ describe('auction slots slice reducers', () => {
       id: 1000,
       auctionSlotOrder: 1000,
       title: 'Test',
+      winPercents: 50,
     }, {
       points: 1000,
       id: 1001,
       auctionSlotOrder: 1001,
       title: 'Test 2',
+      winPercents: 50,
     }]
 
     dispatch(auctionSlotsActions.addSlots(addedSlotArr))
@@ -103,11 +109,13 @@ describe('auction slots slice reducers', () => {
       id: 1000,
       auctionSlotOrder: 1000,
       title: 'Test',
+      winPercents: 50,
     }, {
       points,
       id: 1001,
       auctionSlotOrder: 1001,
       title: 'Test 2',
+      winPercents: 50,
     }]
 
     expect(state.sortedSlots).toEqual(initialState.sortedSlots)

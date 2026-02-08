@@ -88,6 +88,7 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
         return null
       }
       catch (error) {
+        console.log(error)
         if (isAxiosError(error)) {
           const isRejectHaveReason = error.status !== undefined && Reflect.has(errorStatusReasons, error.status.toString())
           const reason = isRejectHaveReason

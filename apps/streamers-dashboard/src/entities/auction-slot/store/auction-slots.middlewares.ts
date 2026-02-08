@@ -3,18 +3,18 @@ import { createListenerMiddleware } from '@reduxjs/toolkit'
 import { auctionSlotsActions } from './auction-slots.slice'
 
 const listeningMiddleware = createListenerMiddleware()
-const startSlotsListening = listeningMiddleware.startListening.withTypes<RootState, StoreDispatch>()
+const startSlotsActionsListening = listeningMiddleware.startListening.withTypes<RootState, StoreDispatch>()
 
 export const auctionSlotsListenerMiddlewares = [listeningMiddleware.middleware]
 
-startSlotsListening({
+startSlotsActionsListening({
   actionCreator: auctionSlotsActions.addSlots,
   effect: (action, api) => {
     api.dispatch(auctionSlotsActions.updateSlotsPointsSum(action.payload))
   },
 })
 
-startSlotsListening({
+startSlotsActionsListening({
   actionCreator: auctionSlotsActions.updateSlot,
   effect: (action, api) => {
     const {
@@ -22,14 +22,34 @@ startSlotsListening({
       data: { points },
     } = action.payload
 
-    if (!points)
+    const pointsSum = api.getState().auctionSlots.slots.reduce((acc, slot) => acc + slot.points, 0)
+    const isShouldDispatchUpdatePoints = pointsSum !== api.getState().auctionSlots.slotsPointsSum
+
+    if (!isShouldDispatchUpdatePoints)
       return
 
     api.dispatch(auctionSlotsActions.updateSlotsPointsSum([{ id, points }]))
   },
 })
 
-startSlotsListening({
+startSlotsActionsListening({
+  actionCreator: auctionSlotsActions.updateSlotsPointsSum,
+  effect: (_, api) => {
+    const { slots, slotsPointsSum } = api.getState().auctionSlots
+
+    const updatedSlots = slots.reduce((acc, slot) => {
+      const winPercents = (slot.points / slotsPointsSum) * 100
+
+      acc.push({ ...slot, winPercents })
+
+      return acc
+    }, [] as typeof slots)
+
+    api.dispatch(auctionSlotsActions.updateSlots(updatedSlots))
+  },
+})
+
+startSlotsActionsListening({
   actionCreator: auctionSlotsActions.deleteSlot,
   effect: (action, api) => {
     const { id } = action.payload
