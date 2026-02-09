@@ -77,7 +77,16 @@ function WheelGameControllers() {
 function CardsGameControllers() {
   const tabsContentStyles = useMemo(() => twSlotsStyles(controlWheelTabStyles), [])
 
-  const { actions } = useCardsGameContext()
+  const { state, actions } = useCardsGameContext()
+
+  const isDisabled = state.cardsUnits.length === 0
+
+  const handleOnClick = () => {
+    if (isDisabled)
+      return
+
+    actions.shuffleCards()
+  }
 
   return (
     <Flex className={tabsContentStyles.controlsWrapper}>
@@ -86,7 +95,8 @@ function CardsGameControllers() {
         variant="action"
         size="lg"
         startContent={<Icons.Refresh />}
-        onClick={() => actions.shuffleCards()}
+        disabled={isDisabled}
+        onClick={handleOnClick}
       >
         Перетасовать
       </Button>

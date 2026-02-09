@@ -15,13 +15,12 @@ import { Icons } from '~shared/ui/icons'
 
 export type CardsGameListCardProps = CardProps & {
   auctionSlot: AuctionSlot
-  winPercents: number
   winPercentsBounds: { min: number, max: number }
   isDropped?: boolean
 }
 
 export const CardsGameListCard = (props: CardsGameListCardProps) => {
-  const { auctionSlot, winPercents, winPercentsBounds, isDropped = false, ...restProps } = props
+  const { auctionSlot, winPercentsBounds, isDropped = false, ...restProps } = props
 
   return (
     <BaseAuctionSlotCard {...restProps}>
@@ -36,7 +35,7 @@ export const CardsGameListCard = (props: CardsGameListCardProps) => {
           <AuctionSlotCardContentInfoDivider />
           <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
           <AuctionSlotCardContentInfoDivider />
-          <AuctionSlotCardWinPercents winPercents={winPercents} bounds={winPercentsBounds} />
+          <AuctionSlotCardWinPercents winPercents={auctionSlot.winPercents} bounds={winPercentsBounds} />
           <AuctionSlotCardContentInfoDivider />
           {isDropped
             ? <Icons.BrokenHeart className="text-gray-light" size="sm" />

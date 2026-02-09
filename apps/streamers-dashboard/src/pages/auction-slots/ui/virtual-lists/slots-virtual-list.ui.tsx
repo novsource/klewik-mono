@@ -31,9 +31,6 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
 
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const storedDroppedSlots = useStoreSelector(auctionSlotsSelectors.getDropoutSlots)
-  const storedSlotsPointsSum = useStoreSelector(
-    auctionSlotsSelectors.getSlotsPointsSum,
-  )
   const sortingOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
 
   const [showedSlots, setShowedSlots] = useState(data ?? storedAuctionSlots)
@@ -55,12 +52,10 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
   const renderAuctionSlotCard = useCallback(
     (auctionSlot: AuctionSlot) => {
       const isDropped = storedDroppedSlots.some(slot => slot.id === auctionSlot.id)
-      const winPercents = ((auctionSlot.points / storedSlotsPointsSum) * 100)
 
       return (
         <AuctionSlotsListCard
           auctionSlot={auctionSlot}
-          winPercents={winPercents}
           isDroped={isDropped}
           actionButtonProps={{
             onClick: () => {
@@ -70,7 +65,7 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
         />
       )
     },
-    [storedSlotsPointsSum, setDialogState, storedDroppedSlots],
+    [setDialogState, storedDroppedSlots],
   )
 
   const renderVirtualListItem = useCallback(

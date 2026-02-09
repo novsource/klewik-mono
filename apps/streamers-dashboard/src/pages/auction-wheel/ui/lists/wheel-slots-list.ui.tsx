@@ -85,7 +85,6 @@ export const AuctionGameSlotsList = (props: AuctionGameSlotsListProps) => {
 
   const renderGameSlotCard: VirtualListRenderFunction<WheelSlot> = (slots, virtualizedItem) => {
     const slot = slots[virtualizedItem.index]
-    const slotWinPercents = ((slot.points / storedPointsSum) * 100)
 
     switch (game) {
       case 'wheel': {
@@ -93,7 +92,6 @@ export const AuctionGameSlotsList = (props: AuctionGameSlotsListProps) => {
           <WheelSlotCard
             key={slot.id}
             wheelSlot={slot}
-            winPercents={slotWinPercents}
             winPercentsBounds={winPercentsBounds}
           />
         )
@@ -103,7 +101,6 @@ export const AuctionGameSlotsList = (props: AuctionGameSlotsListProps) => {
           <CardsGameListCard
             key={slot.id}
             auctionSlot={slot}
-            winPercents={slotWinPercents}
             winPercentsBounds={winPercentsBounds}
           />
         )

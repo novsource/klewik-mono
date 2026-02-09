@@ -2,10 +2,15 @@ import type { TabsProps } from '@radix-ui/react-tabs'
 
 import { memo, startTransition, useEffect, useMemo, useState } from 'react'
 
+import { auctionGamesSelectors } from '~entities/games/store'
+
 import { TABS_CONTENT_NAMES } from '~pages/auction-wheel/constants'
 import type { WheelTabsStylesSlots } from '~pages/auction-wheel/styles'
 import { wheelTabsStyles } from '~pages/auction-wheel/styles'
 
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import { Icons } from '~shared/ui/icons'
 import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
 
 import { twSlotsStyles } from '~shared/utils'
@@ -27,6 +32,8 @@ type GameTabsProps = Omit<TabsProps, 'className'> & {
 export const GameTabs = memo((props: GameTabsProps) => {
   const { slotsClassnames, ...tabsProps } = props
 
+  const currentAuctionGame = useStoreSelector(auctionGamesSelectors.getGame)
+
   const [currentTab, setCurrentTab] = useState(TABS_CONTENT_NAMES.CONTROL)
   const [isSlotsTabTransitionEnded, setIsSlotsTabTransitionEnded] = useState(false)
 
@@ -45,16 +52,22 @@ export const GameTabs = memo((props: GameTabsProps) => {
   const tabsTriggers = useMemo(() => {
     return (
       Object.keys(triggersNames) as Array<keyof typeof triggersNames>
-    ).map(item => (
-      <TabsTrigger
-        key={triggersNames[item]}
-        className={tabsStyles.tabTrigger}
-        value={item.toLowerCase()}
-      >
-        {triggersNames[item]}
-      </TabsTrigger>
-    ))
-  }, [tabsStyles])
+    ).map((item) => {
+      const isCardsGamePreferencesTabTrigger = currentAuctionGame === 'cards' && item === 'preferences'
+
+      return (
+        <TabsTrigger
+          key={triggersNames[item]}
+          className={tabsStyles.tabTrigger}
+          value={item.toLowerCase()}
+          startContent={isCardsGamePreferencesTabTrigger && <Icons.Lock size="xs" />}
+          disabled={isCardsGamePreferencesTabTrigger}
+        >
+          {triggersNames[item]}
+        </TabsTrigger>
+      )
+    })
+  }, [tabsStyles, currentAuctionGame])
 
   return (
     <Tabs

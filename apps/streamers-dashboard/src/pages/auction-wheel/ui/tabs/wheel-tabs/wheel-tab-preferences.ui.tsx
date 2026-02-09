@@ -1,5 +1,7 @@
 import { useMemo } from 'react'
 
+import { auctionGamesSelectors } from '~entities/games/store'
+
 import { TABS_CONTENT_NAMES } from '~pages/auction-wheel/constants'
 import { preferencesWheelTabStyles } from '~pages/auction-wheel/styles'
 import type { PreferencesWheelTabSlots } from '~pages/auction-wheel/styles'
@@ -29,6 +31,8 @@ type SlotsWheelTabProps = Omit<TabsContentProps, 'value'> & {
 export const GamePreferencesTabContent = (props: SlotsWheelTabProps) => {
   const { slotsClassnames, ...tabsContentProps } = props
 
+  const currentAuctionGame = useStoreSelector(auctionGamesSelectors.getGame)
+
   const tabsContentStyles = useMemo(() =>
     twSlotsStyles(preferencesWheelTabStyles, slotsClassnames), [slotsClassnames])
 
@@ -38,9 +42,9 @@ export const GamePreferencesTabContent = (props: SlotsWheelTabProps) => {
       value={TABS_CONTENT_NAMES.PREFERENCES}
       {...tabsContentProps}
     >
-      <SlicesResizerSection />
+      {currentAuctionGame === 'wheel' && <SlicesResizerSection />}
       <Divider className="mt-2.5 mb-3 border-gray/20" />
-      <RecolorWheelSlotsSection />
+      {currentAuctionGame === 'wheel' && <RecolorWheelSlotsSection />}
     </TabsContent>
   )
 }

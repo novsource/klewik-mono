@@ -23,7 +23,6 @@ import { cn } from '~shared/utils'
 
 export type AuctionSlotsListCardProps = CardProps & {
   auctionSlot: AuctionSlot
-  winPercents: number
   actionButtonProps?: ButtonProps
   isDroped?: boolean
 }
@@ -31,7 +30,6 @@ export type AuctionSlotsListCardProps = CardProps & {
 export const AuctionSlotsListCard = (props: AuctionSlotsListCardProps) => {
   const {
     auctionSlot,
-    winPercents,
     className,
     actionButtonProps,
     isDroped = false,
@@ -58,7 +56,7 @@ export const AuctionSlotsListCard = (props: AuctionSlotsListCardProps) => {
             <AuctionSlotCardContentInfoDivider />
             <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
             <AuctionSlotCardContentInfoDivider />
-            <AuctionSlotCardWinPercents winPercents={winPercents} />
+            <AuctionSlotCardWinPercents winPercents={auctionSlot.winPercents} />
             <AuctionSlotCardContentInfoDivider />
             {isDroped
               ? <Icons.BrokenHeart className="text-gray-light" size="sm" />

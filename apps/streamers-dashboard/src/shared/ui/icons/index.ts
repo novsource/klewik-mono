@@ -44,6 +44,7 @@ import { default as Like } from './Like';
 import { default as LinkArrow } from './LinkArrow';
 import { default as List } from './List';
 import { default as Loading } from './Loading';
+import { default as Lock } from './Lock';
 import { default as Login } from './Login';
 import { default as Logo } from './Logo';
 import { default as MagicStick } from './MagicStick';
@@ -143,6 +144,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   LinkArrow,
   List,
   Loading,
+  Lock,
   Login,
   Logo,
   MagicStick,

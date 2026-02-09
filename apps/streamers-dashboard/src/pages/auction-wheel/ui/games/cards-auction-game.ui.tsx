@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useCardsGameContext } from '~entities/games/context/cards-game/cards-game.context'
 import { CardsGame } from '~entities/games/ui/card-game/cards-game.ui'
+import { getCardFieldPositionByIndex } from '~entities/games/utils/cards'
 import { AnimatePresence } from 'motion/react'
 
 import { useAuctionCardsGame } from '~pages/auction-wheel/hooks/use-auction-cards-game'
@@ -44,7 +45,7 @@ const cardsAnimationVariants: Variants = {
     x: args.coords.x,
     y: args.coords.y,
     clipPath: `rect(100% 100% 100% 0%)`,
-    transition: { duration: 6 },
+    transition: { duration: 4.5 },
   }),
 }
 
@@ -73,7 +74,7 @@ export const AuctionCardsGame = () => {
       return
     }
 
-    if (isFireCardAnimationEnded) {
+    if (isFireCardAnimationEnded && isChoosedCardConfirmed) {
       fireworksIntervalRef.current = startWinnerConfetti()
     }
 
@@ -93,14 +94,13 @@ export const AuctionCardsGame = () => {
     const fieldWidth = gameFieldContainerRef.current?.clientWidth || 0
     const fieldHeight = gameFieldContainerRef.current?.clientHeight || 0
 
-    const posInColumn = index - (Math.floor(index / fieldColumnsCount) * fieldColumnsCount)
-    const posInRow = Math.floor(index / fieldColumnsCount)
-
     const cardWidth = fieldWidth / fieldColumnsCount
     const cardHeight = fieldHeight / fieldRowsCount
 
-    const initialX = posInColumn * cardWidth + (gameFieldContainerRef.current?.offsetLeft ?? 0)
-    const initialY = posInRow * cardHeight + (gameFieldContainerRef.current?.offsetTop ?? 0)
+    const cardPosition = getCardFieldPositionByIndex(index, fieldColumnsCount)
+
+    const initialX = cardPosition.column * cardWidth + (gameFieldContainerRef.current?.offsetLeft ?? 0)
+    const initialY = cardPosition.row * cardHeight + (gameFieldContainerRef.current?.offsetTop ?? 0)
 
     const targetX = (document.body.clientWidth / 2) - initialX - cardWidth
     const targetY = (document.body.clientHeight / 2) - initialY - cardHeight
@@ -126,7 +126,10 @@ export const AuctionCardsGame = () => {
         initial="initial"
         animate={animationVariant}
         onAnimationComplete={(definition) => {
-          if (definition === 'fired') {
+          if (definition !== 'fired') {
+            setIsFireCardAnimationEnded(false)
+          }
+          else {
             setIsFireCardAnimationEnded(true)
           }
         }}
@@ -145,7 +148,6 @@ export const AuctionCardsGame = () => {
   }
 
   const isBackdropShowed = !!game.state.choosedCardUnit
-  const isLoading = queryState.isLoading
 
   return (
     <div ref={gameFieldContainerRef} className="w-full h-full">
@@ -157,7 +159,8 @@ export const AuctionCardsGame = () => {
         {isBackdropShowed && (
           <>
             <CardsGame.Backdrop />
-            {isFireCardAnimationEnded && <GameCardSlotInfo card={game.state.choosedCardUnit!} />}
+
+            {isFireCardAnimationEnded && isChoosedCardConfirmed && <GameChoosedCardInfo card={game.state.choosedCardUnit!} />}
 
             <Button
               className="absolute right-4 top-4 text-gray-accent hover:text-white transition-colors z-[100]"
@@ -210,12 +213,16 @@ function GameCard(props: GameCardProps) {
               className="absolute -top-2.5 h-0.5 bg-red z-[106]"
               initial={{ y: 6 }}
               animate={{ y: height }}
-              transition={{ duration: 6 }}
-              style={{
-                width,
-              }}
+              transition={{ duration: 4.5 }}
+              style={{ width }}
             />
-            <MotionBox className="absolute -top-2.75 h-1.5 bg-red/60 animate-pulse blur-sm z-[105]" initial={{ y: 0 }} animate={{ y: height }} transition={{ duration: 6 }} style={{ width }} />
+            <MotionBox
+              className="absolute -top-2.75 h-1.5 bg-red/60 animate-pulse blur-sm z-[105]"
+              initial={{ y: 0 }}
+              animate={{ y: height }}
+              transition={{ duration: 4.5 }}
+              style={{ width }}
+            />
           </>
         )}
 
@@ -244,7 +251,7 @@ type GameCardSlotInfoProps = {
   card: CardsGameUnit
 }
 
-function GameCardSlotInfo(props: GameCardSlotInfoProps) {
+function GameChoosedCardInfo(props: GameCardSlotInfoProps) {
   const { card } = props
 
   return (
