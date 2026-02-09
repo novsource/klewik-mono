@@ -1,9 +1,9 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 
-import { auctionDonationsPageRoute } from '~pages/auction-donations/routing'
 import { auctionSettingsPageRoute } from '~pages/auction-settings/routing'
-import { auctionSlotsPageRoute } from '~pages/auction-slots/routing'
-import { auctionWheelPageRoute } from '~pages/auction-wheel/routing'
+import { auctionDonationsPageRoute } from '~pages/dashboard/donations/routing'
+import { auctionWheelPageRoute } from '~pages/dashboard/games/routing'
+import { auctionSlotsPageRoute } from '~pages/dashboard/slots/routing'
 import { redirectPageRoute } from '~pages/redirect/routing'
 import { welcomePageRoute } from '~pages/welcome/routing'
 
@@ -14,7 +14,7 @@ import { prepareDashboardRoute } from './prepate-dashboard.route'
 
 const WelcomePageRouteObject = welcomePageRoute()
 const AuctionSlotsRouteObject = auctionSlotsPageRoute({ disableTransition: true })
-const AuctionWheelRouteObject = auctionWheelPageRoute({ disableTransition: true })
+const AuctionGamesRouteObject = auctionWheelPageRoute({ disableTransition: true })
 const AuctionSettingsRouteObject = auctionSettingsPageRoute({ disableTransition: true })
 const AuctionDonationsRouteObject = auctionDonationsPageRoute({ disableTransition: true })
 const RedirectRouteObject = redirectPageRoute()
@@ -40,7 +40,7 @@ const browserRouter = createBrowserRouter([
               prepareDashboardRoute([
                 { index: true, element: <Navigate to="slots" /> },
                 AuctionSlotsRouteObject,
-                AuctionWheelRouteObject,
+                AuctionGamesRouteObject,
                 AuctionSettingsRouteObject,
                 AuctionDonationsRouteObject,
                 { path: '*', element: <Navigate to="slots" /> },

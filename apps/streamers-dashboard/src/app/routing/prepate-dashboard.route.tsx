@@ -9,7 +9,7 @@ import { z } from 'zod'
 import { GlobalDialogs } from '~app/components/global-dialogs/ui/global-dialogs.ui'
 import { rootStore } from '~app/store/store'
 
-import { DashboardLayout } from '~pages/dashboard-layout'
+import { DashboardLayout } from '~pages/dashboard/_layout'
 import { ErrorPage } from '~pages/error/ui'
 
 import { splittedAuctionApi } from '~entities/auction/api'

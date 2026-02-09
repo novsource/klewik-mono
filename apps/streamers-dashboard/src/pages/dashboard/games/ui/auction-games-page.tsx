@@ -24,7 +24,7 @@ import { AuctionCardsGame } from './games/cards-auction-game.ui'
 import { WheelGame } from './games/wheel-of-fortune.ui'
 import { GameTabs } from './tabs/game-tabs.ui'
 
-const AuctionWheelPage = () => {
+const AuctionGamesPage = () => {
   const auctionGame = useStoreSelector(auctionGamesSelectors.getGame)
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
@@ -86,4 +86,4 @@ function AuctionGame(props: AuctionGameProps) {
   )
 }
 
-export default AuctionWheelPage
+export default AuctionGamesPage

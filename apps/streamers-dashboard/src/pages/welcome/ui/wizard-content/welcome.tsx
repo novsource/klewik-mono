@@ -51,7 +51,6 @@ export const WizardWelcomeItem = (
           <Button
             className="w-full"
             variant={node === 'createAuction' ? 'action' : 'default'}
-            size={isMediaLargeThenTablet ? 'default' : 'sm'}
             startContent={WELCOME_PAGE_WIZARD_IDS_ICONS[node]}
           >
             {triggerTitle}
@@ -59,7 +58,7 @@ export const WizardWelcomeItem = (
         </WizardTrigger>
       )
     })
-  }, [nodes, isMediaLargeThenTablet])
+  }, [nodes])
 
   return (
     <WizardItem
