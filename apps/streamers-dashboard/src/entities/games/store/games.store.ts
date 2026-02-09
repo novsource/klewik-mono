@@ -4,14 +4,40 @@ import type { AuctionGameMode, AuctionGames } from '../model'
 
 import { createSlice } from '@reduxjs/toolkit'
 
+export type WheelSlicesSizeMode = 'auto' | 'points' | 'equals'
+
+type WheelGameSettings = {
+  spinTime: number
+  slicesDisplayMode: WheelSlicesSizeMode
+}
+
+type CardsGameSettings = {
+  cardRevealTime: number
+}
+
+type GamesSettings = {
+  wheel: WheelGameSettings
+  cards: CardsGameSettings
+}
+
 export type AuctionGamesSliceState = {
   game: AuctionGames
   mode: AuctionGameMode
+  gamesSettings: GamesSettings
 }
 
 const initialState: AuctionGamesSliceState = {
   game: 'wheel',
   mode: 'classic',
+  gamesSettings: {
+    wheel: {
+      spinTime: 2,
+      slicesDisplayMode: 'auto',
+    },
+    cards: {
+      cardRevealTime: 4,
+    },
+  },
 }
 
 const auctionGamesSlice = createSlice({
@@ -24,10 +50,17 @@ const auctionGamesSlice = createSlice({
     setGameMode: (state, action: PayloadAction<AuctionGameMode>) => {
       state.mode = action.payload
     },
+    setWheelGameSettings: (state, action: PayloadAction<WheelGameSettings>) => {
+      state.gamesSettings.wheel = { ...state.gamesSettings.wheel, ...action.payload }
+    },
+    setCardsGameSettings: (state, action: PayloadAction<CardsGameSettings>) => {
+      state.gamesSettings.cards = { ...state.gamesSettings.cards, ...action.payload }
+    },
   },
   selectors: {
     getGame: state => state.game,
     getGameMode: state => state.mode,
+    getGameSettings: (state, game: AuctionGames) => state.gamesSettings[game],
   },
 })
 

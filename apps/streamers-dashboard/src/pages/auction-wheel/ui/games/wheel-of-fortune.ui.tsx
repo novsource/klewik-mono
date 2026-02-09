@@ -3,9 +3,8 @@ import { useCallback, useMemo, useRef } from 'react'
 import bgSelectorUrl from '~shared/assets/img/bgSelector.webp'
 import * as m from 'motion/react-m'
 
-import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+import { useAuctionWheelGame } from '~pages/auction-wheel/hooks/use-auction-wheel-game'
 
-import { useWheel } from '~entities/wheel/hooks'
 import type { WheelSlot } from '~entities/wheel/model'
 import { wheelSelectors } from '~entities/wheel/store'
 import { BaseWheel, WheelItem, WheelSelector } from '~entities/wheel/ui'
@@ -21,7 +20,7 @@ import { cn } from '~shared/utils'
 
 export type WheelProps = FlexProps
 
-export const Wheel = (props: WheelProps) => {
+export const WheelGame = (props: WheelProps) => {
   const selectorTargetTitle = useStoreSelector(
     wheelSelectors.getSelectorTargetTitle,
   )
@@ -44,12 +43,12 @@ export const Wheel = (props: WheelProps) => {
 type WheelFortuneProps = FlexProps<'div'>
 
 function WheelFortune(props: WheelFortuneProps) {
-  const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+  const wheelGame = useAuctionWheelGame()
 
   const {
     state: { isSpinning, wheelSlots, selectorCurrentSlot, rotateValue },
-    refs: { wheelRef },
-  } = useWheel(storedAuctionSlots)
+    meta: { wheelRef },
+  } = wheelGame
 
   const { ref: containerRef, value: containerSize } = useElementSize<HTMLDivElement>()
 
@@ -145,6 +144,7 @@ function WheelFortune(props: WheelFortuneProps) {
           <div className="relative w-full flex justify-center z-40" style={{ width: wheelSize, height: wheelSize }}>
             <BaseWheel
               ref={wheelRef}
+              wheelGame={wheelGame}
               width={containerSize.width}
               height={containerSize.height}
               style={{ rotate: `${rotateValue}deg`, willChange: 'rotate' }}

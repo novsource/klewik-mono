@@ -4,7 +4,7 @@ import bgSelectorUrl from '~shared/assets/img/bgSelector.webp'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
-import { useWheel } from '~entities/wheel/hooks'
+import { useWheelGame } from '~entities/wheel/hooks'
 import type { WheelSlot } from '~entities/wheel/model'
 import { wheelSelectors } from '~entities/wheel/store'
 import { BaseWheel, WheelItem, WheelSelector } from '~entities/wheel/ui'
@@ -47,8 +47,8 @@ function WheelFortune(props: WheelFortuneProps) {
 
   const {
     state: { isSpinning, wheelSlots, selectorCurrentSlot, rotateValue },
-    refs: { wheelRef },
-  } = useWheel(storedAuctionSlots)
+    meta: { wheelRef },
+  } = useWheelGame(storedAuctionSlots)
 
   const { ref: containerRef, value: containerSize } = useElementSize<HTMLDivElement>()
 

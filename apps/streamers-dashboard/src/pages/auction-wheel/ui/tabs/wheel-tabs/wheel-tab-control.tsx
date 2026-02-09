@@ -7,6 +7,7 @@ import { useCardsGameContext } from '~entities/games/context/cards-game/cards-ga
 import { auctionGamesActions, auctionGamesSelectors } from '~entities/games/store'
 
 import { TABS_CONTENT_NAMES } from '~pages/auction-wheel/constants'
+import { useAuctionWheelGame } from '~pages/auction-wheel/hooks/use-auction-wheel-game'
 import type { ControlWheelTabSlots } from '~pages/auction-wheel/styles'
 import { controlWheelTabStyles } from '~pages/auction-wheel/styles'
 
@@ -59,17 +60,16 @@ export const ControlGameTabContent = (props: ControlWheelTabContentProps) => {
 }
 
 function WheelGameControllers() {
-  const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
-  const wheelSlots = useStoreSelector(wheelSelectors.getSlots)
+  const { state: { isSpinning, wheelSlots } } = useAuctionWheelGame()
 
   const tabsContentStyles = useMemo(() => twSlotsStyles(controlWheelTabStyles), [])
 
-  const isSpinWheelButtonDisabled = isWheelSpinning || wheelSlots.length < 2
+  const isSpinWheelButtonDisabled = isSpinning || wheelSlots.length < 2
 
   return (
     <Flex className={tabsContentStyles.controlsWrapper}>
       <SpinWheelButton className={tabsContentStyles.spinWheelButton} size="lg" disabled={isSpinWheelButtonDisabled} />
-      <SpinTimeInput disabled={isWheelSpinning} />
+      <SpinTimeInput disabled={isSpinning} />
     </Flex>
   )
 }

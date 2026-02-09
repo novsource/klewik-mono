@@ -9,14 +9,14 @@ import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import { getHEXColor, shuffleArray } from '~shared/utils'
 
-type UseCardsAuctionGameOptions = {
+type UseCardsGameOptions = {
   amount?: number
   onCardSelect?: (card: CardsGameUnit) => void
 }
 
-export type UseCardsAuctionGameReturnValue = CardsGameContextState
+export type UseCardsGameReturnValue = CardsGameContextState
 
-export const useCardsAuctionGame = (auctionSlots: AuctionSlot[], options?: UseCardsAuctionGameOptions) => {
+export const useCardsGame = (auctionSlots: AuctionSlot[], options?: UseCardsGameOptions) => {
   const [cardsUnits, setCardsUnits] = useState<CardsGameUnit[]>(() => {
     if (auctionSlots.length === 0)
       return []

@@ -112,17 +112,17 @@ export const useWheelControl = (
 }
 
 export type UseWheelReturn = {
-  refs: {
-    wheelRef: RefObject<SVGSVGElement>
-  }
-  functions: {
-    startWheelSpinAnimation: (target: WheelSlot, spinTime: number) => void
-  }
   state: {
     selectorCurrentSlot: NullablePossible<string>
     isSpinning: boolean
     wheelSlots: WheelSlot[]
     rotateValue: number
+  }
+  meta: {
+    wheelRef: RefObject<SVGSVGElement>
+  }
+  actions: {
+    startWheelSpinAnimation: (target: WheelSlot, spinTime: number) => void
   }
 }
 
@@ -220,13 +220,13 @@ export const useWheel = (auctionSlots: AuctionSlot[]): UseWheelReturn => {
   }, [storedSpinTarget, storedWheelSettings.spinTime])
 
   return {
-    refs: { wheelRef },
+    meta: { wheelRef },
     state: {
       isSpinning: isWheelSpinning,
       wheelSlots,
       rotateValue: wheelRotateCSSValue.final,
       selectorCurrentSlot: selectorTargetTitle,
     },
-    functions: { startWheelSpinAnimation },
+    actions: { startWheelSpinAnimation },
   }
 }

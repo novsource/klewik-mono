@@ -1,21 +1,22 @@
-import { useCardsGameContext } from '~entities/games/context/cards-game/cards-game.context'
 import { useGameContext } from '~entities/games/context/game.context'
 import { auctionGamesSelectors } from '~entities/games/store'
 
 import { auctionSelectors } from '~entities/auction/store'
 
+import { useWheelGameContext } from '~entities/wheel/context'
+
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { toastErrorNotification } from '~shared/ui/toaster/lib'
 
-export const useAuctionCardsGame = () => {
+export const useAuctionWheelGame = () => {
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
   const gameMode = useStoreSelector(auctionGamesSelectors.getGameMode)
 
-  const cardsGame = useCardsGameContext()
   const auctionGame = useGameContext()
+  const wheel = useWheelGameContext()
 
-  const confirmCardChoice = async (slotId: number) => {
+  const confirmSpin = async (slotId: number) => {
     if (gameMode === 'dropout') {
       const response = await auctionGame.actions.dropSlot({ auctionUUID, slotId })
 
@@ -32,5 +33,5 @@ export const useAuctionCardsGame = () => {
     }
   }
 
-  return { state: cardsGame.state, actions: { ...cardsGame.actions, confirmCardChoice }, queryState: auctionGame.state }
+  return { state: wheel.state, actions: { ...wheel.actions, confirmSpin }, meta: wheel.meta }
 }

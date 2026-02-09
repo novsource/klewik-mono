@@ -1,4 +1,4 @@
-import type { UseCardsAuctionGameReturnValue } from '~entities/games/hooks/cards-game'
+import type { UseCardsGameReturnValue } from '~entities/games/hooks/cards-game'
 import type { CardsGameUnit } from '~entities/games/model/cards-game'
 
 import type { ComponentProps, ComponentPropsWithoutRef, MouseEvent, ReactNode } from 'react'
@@ -15,7 +15,7 @@ import { MotionBox } from '~shared/ui/motion-box'
 import { cn, isFunction, mergeProps } from '~shared/utils'
 
 export type CardsGameProps = {
-  game: UseCardsAuctionGameReturnValue
+  game: UseCardsGameReturnValue
   children: ReactNode
 }
 

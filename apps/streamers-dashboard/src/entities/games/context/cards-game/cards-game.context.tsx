@@ -1,4 +1,4 @@
-import type { UseCardsAuctionGameReturnValue } from '~entities/games/hooks/cards-game'
+import type { UseCardsGameReturnValue } from '~entities/games/hooks/cards-game'
 import type { CardsGameUnit } from '~entities/games/model/cards-game'
 
 import type { ReactNode } from 'react'
@@ -43,7 +43,7 @@ export const useCardsGameContext = () => {
 }
 
 export type CardsGameContextProviderProps = {
-  cardGame: UseCardsAuctionGameReturnValue
+  cardGame: UseCardsGameReturnValue
   children: ReactNode
 }
 
