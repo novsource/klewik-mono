@@ -22,7 +22,7 @@ import { cn } from '~shared/utils'
 import { auctionWheelPageStyles } from '../styles'
 import { AuctionCardsGame } from './games/cards-auction-game.ui'
 import { WheelGame } from './games/wheel-of-fortune.ui'
-import { GameTabs } from './tabs/wheel-tabs/wheel-tabs'
+import { GameTabs } from './tabs/game-tabs.ui'
 
 const AuctionWheelPage = () => {
   const auctionGame = useStoreSelector(auctionGamesSelectors.getGame)

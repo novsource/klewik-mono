@@ -1,55 +1,21 @@
-import { useMemo } from 'react'
-
-import { auctionGamesSelectors } from '~entities/games/store'
-
-import { TABS_CONTENT_NAMES } from '~pages/auction-wheel/constants'
-import { preferencesWheelTabStyles } from '~pages/auction-wheel/styles'
-import type { PreferencesWheelTabSlots } from '~pages/auction-wheel/styles'
+import type { WheelSlicesSizeMode } from '~entities/games/store'
 
 import { auctionSlotsActions, auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { wheelActions, wheelSelectors } from '~entities/wheel/store'
-import type { WheelSlicesSizeMode } from '~entities/wheel/store/wheel-slice'
+
+import { Title } from '~shared/components/typography'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
-import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { RadioCard, RadioCardDescription, RadioCardTitle, RadioGroup } from '~shared/ui/radio'
-import { TabsContent } from '~shared/ui/tabs'
-import type { TabsContentProps } from '~shared/ui/tabs'
-import { Typography } from '~shared/ui/typograghy'
 
-import { cn, getHEXColor, twSlotsStyles } from '~shared/utils'
+import { getHEXColor } from '~shared/utils'
 
-type SlotsWheelTabProps = Omit<TabsContentProps, 'value'> & {
-  slotsClassnames?: Partial<Record<PreferencesWheelTabSlots, string>>
-}
-
-export const GamePreferencesTabContent = (props: SlotsWheelTabProps) => {
-  const { slotsClassnames, ...tabsContentProps } = props
-
-  const currentAuctionGame = useStoreSelector(auctionGamesSelectors.getGame)
-
-  const tabsContentStyles = useMemo(() =>
-    twSlotsStyles(preferencesWheelTabStyles, slotsClassnames), [slotsClassnames])
-
-  return (
-    <TabsContent
-      className={cn(tabsContentStyles.content)}
-      value={TABS_CONTENT_NAMES.PREFERENCES}
-      {...tabsContentProps}
-    >
-      {currentAuctionGame === 'wheel' && <SlicesResizerSection />}
-      <Divider className="mt-2.5 mb-3 border-gray/20" />
-      {currentAuctionGame === 'wheel' && <RecolorWheelSlotsSection />}
-    </TabsContent>
-  )
-}
-
-function RecolorWheelSlotsSection() {
+export const RecolorWheelSlotsSection = () => {
   const storedSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
   const { updateSlot } = useActionCreators(auctionSlotsActions)
@@ -63,13 +29,13 @@ function RecolorWheelSlotsSection() {
 
   return (
     <Flex direction="column">
-      <Typography className="text-white/80 font-medium font-golos-f mb-2.5" tag="h3">Цветовая палитра</Typography>
+      <Title className="text-white/80 font-medium font-golos-f mb-2.5" order={3}>Цветовая палитра</Title>
       <Button onClick={changeSlotsColors}>Изменить цвета слотов</Button>
     </Flex>
   )
 }
 
-function SlicesResizerSection() {
+export const WheelSlicesResizerSection = () => {
   const { sizeMode } = useStoreSelector(wheelSelectors.getSettings)
   const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
 
@@ -77,7 +43,7 @@ function SlicesResizerSection() {
 
   return (
     <Flex direction="column">
-      <Typography className="text-white/80 font-medium font-golos-f mb-2.5" tag="h3">Размер слотов</Typography>
+      <Title className="text-white/80 font-medium font-golos-f mb-2.5" order={3}>Размер слотов</Title>
       <RadioGroup
         className="w-full flex flex-col gap-y-2"
         defaultValue={sizeMode}

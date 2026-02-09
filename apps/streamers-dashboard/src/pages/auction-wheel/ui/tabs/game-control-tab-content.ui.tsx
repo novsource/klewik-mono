@@ -3,16 +3,11 @@ import type { AuctionGames } from '~entities/games/model'
 
 import { useMemo } from 'react'
 
-import { useCardsGameContext } from '~entities/games/context/cards-game/cards-game.context'
 import { auctionGamesActions, auctionGamesSelectors } from '~entities/games/store'
 
 import { TABS_CONTENT_NAMES } from '~pages/auction-wheel/constants'
-import { useAuctionWheelGame } from '~pages/auction-wheel/hooks/use-auction-wheel-game'
 import type { ControlWheelTabSlots } from '~pages/auction-wheel/styles'
 import { controlWheelTabStyles } from '~pages/auction-wheel/styles'
-
-import { SpinTimeInput } from '~features/wheel/set-spin-time/ui'
-import { SpinWheelButton } from '~features/wheel/spin-wheel/ui'
 
 import { auctionActions, auctionSelectors } from '~entities/auction/store'
 
@@ -23,7 +18,6 @@ import { Title } from '~shared/components/typography'
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Badge } from '~shared/ui/badge'
-import { Button } from '~shared/ui/button'
 import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
@@ -32,11 +26,14 @@ import { TabsContent } from '~shared/ui/tabs'
 
 import { twSlotsStyles } from '~shared/utils'
 
+import { CardsGameControllers } from './cards/control-tab-content.ui'
+import { WheelGameControllers } from './wheel/control-tab-content.ui'
+
 type ControlWheelTabContentProps = Omit<TabsContentProps, 'value'> & {
   slotsClassnames?: Partial<Record<ControlWheelTabSlots, string>>
 }
 
-export const ControlGameTabContent = (props: ControlWheelTabContentProps) => {
+export const GameContorlTabContent = (props: ControlWheelTabContentProps) => {
   const { slotsClassnames, ...tabsContentProps } = props
 
   const game = useStoreSelector(auctionGamesSelectors.getGame)
@@ -56,51 +53,6 @@ export const ControlGameTabContent = (props: ControlWheelTabContentProps) => {
       <Divider className="mt-2.5 mb-3 border-gray/20" />
       <GameModeRadioGroup />
     </TabsContent>
-  )
-}
-
-function WheelGameControllers() {
-  const { state: { isSpinning, wheelSlots } } = useAuctionWheelGame()
-
-  const tabsContentStyles = useMemo(() => twSlotsStyles(controlWheelTabStyles), [])
-
-  const isSpinWheelButtonDisabled = isSpinning || wheelSlots.length < 2
-
-  return (
-    <Flex className={tabsContentStyles.controlsWrapper}>
-      <SpinWheelButton className={tabsContentStyles.spinWheelButton} size="lg" disabled={isSpinWheelButtonDisabled} />
-      <SpinTimeInput disabled={isSpinning} />
-    </Flex>
-  )
-}
-
-function CardsGameControllers() {
-  const tabsContentStyles = useMemo(() => twSlotsStyles(controlWheelTabStyles), [])
-
-  const { state, actions } = useCardsGameContext()
-
-  const isDisabled = state.cardsUnits.length === 0
-
-  const handleOnClick = () => {
-    if (isDisabled)
-      return
-
-    actions.shuffleCards()
-  }
-
-  return (
-    <Flex className={tabsContentStyles.controlsWrapper}>
-      <Button
-        className="w-full"
-        variant="action"
-        size="lg"
-        startContent={<Icons.Refresh />}
-        disabled={isDisabled}
-        onClick={handleOnClick}
-      >
-        Перетасовать
-      </Button>
-    </Flex>
   )
 }
 

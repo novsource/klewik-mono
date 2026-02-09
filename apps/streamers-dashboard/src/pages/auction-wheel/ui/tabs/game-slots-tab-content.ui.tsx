@@ -4,6 +4,7 @@ import type { ChangeEvent } from 'react'
 import { useMemo, useState } from 'react'
 
 import { useSortingSlots } from '~pages/auction-slots/lib'
+import { TABS_CONTENT_NAMES } from '~pages/auction-wheel/constants'
 import type { SlotsWheelTabSlots } from '~pages/auction-wheel/styles'
 import { slotsWheelTabStyles } from '~pages/auction-wheel/styles'
 
@@ -24,14 +25,13 @@ import { Toggle, ToggleGroup } from '~shared/ui/toggle'
 
 import { cn, twSlotsStyles } from '~shared/utils'
 
-import { TABS_CONTENT_NAMES } from '../../../constants'
-import { AuctionGameSlotsList } from '../../lists/wheel-slots-list.ui'
+import { AuctionGameSlotsList } from '../lists/wheel-slots-list.ui'
 
-type SlotsWheelTabContentProps = Omit<TabsContentProps, 'value'> & {
+type GameSlotsTabContentProps = Omit<TabsContentProps, 'value'> & {
   slotsClassnames?: Partial<Record<SlotsWheelTabSlots, string>>
 }
 
-export const SlotsWheelTabContent = (props: SlotsWheelTabContentProps) => {
+export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
   const { slotsClassnames, ...tabsContentProps } = props
 
   const slots = useStoreSelector(wheelSelectors.getSlots)

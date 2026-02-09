@@ -50,17 +50,18 @@ const auctionGamesSlice = createSlice({
     setGameMode: (state, action: PayloadAction<AuctionGameMode>) => {
       state.mode = action.payload
     },
-    setWheelGameSettings: (state, action: PayloadAction<WheelGameSettings>) => {
+    setWheelGameSettings: (state, action: PayloadAction<Partial<WheelGameSettings>>) => {
       state.gamesSettings.wheel = { ...state.gamesSettings.wheel, ...action.payload }
     },
-    setCardsGameSettings: (state, action: PayloadAction<CardsGameSettings>) => {
+    setCardsGameSettings: (state, action: PayloadAction<Partial<CardsGameSettings>>) => {
       state.gamesSettings.cards = { ...state.gamesSettings.cards, ...action.payload }
     },
   },
   selectors: {
     getGame: state => state.game,
     getGameMode: state => state.mode,
-    getGameSettings: (state, game: AuctionGames) => state.gamesSettings[game],
+    getWheelGameSettings: state => state.gamesSettings.wheel,
+    getCardsGameSettings: state => state.gamesSettings.cards,
   },
 })
 
