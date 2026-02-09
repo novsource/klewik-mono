@@ -4,8 +4,6 @@ import { useCallback, useRef, useState } from 'react'
 
 import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
-import { useSortingSlots } from '~pages/auction-slots/lib'
-
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
@@ -15,6 +13,7 @@ import type { WindowVirtualListProps } from '~shared/ui/virtual-list'
 import { WindowVirtualList } from '~shared/ui/virtual-list'
 import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
 
+import { useSortingSlots } from '../../lib'
 import { AuctionSlotsListCard } from '../cards/slots-list-card.ui'
 
 export type AuctionSlotsListProps = {

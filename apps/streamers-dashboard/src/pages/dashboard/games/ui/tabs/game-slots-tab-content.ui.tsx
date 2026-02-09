@@ -1,12 +1,9 @@
-import type { TabsContentProps } from '@radix-ui/react-tabs'
+import type { SlotsWheelTabSlots } from '../../styles'
 
 import type { ChangeEvent } from 'react'
 import { useMemo, useState } from 'react'
 
-import { useSortingSlots } from '~pages/auction-slots/lib'
-import { TABS_CONTENT_NAMES } from '~pages/auction-wheel/constants'
-import type { SlotsWheelTabSlots } from '~pages/auction-wheel/styles'
-import { slotsWheelTabStyles } from '~pages/auction-wheel/styles'
+import { useSortingSlots } from '~pages/dashboard/slots/lib'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
@@ -20,11 +17,14 @@ import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Input } from '~shared/ui/input'
+import type { TabsContentProps } from '~shared/ui/tabs'
 import { TabsContent } from '~shared/ui/tabs'
 import { Toggle, ToggleGroup } from '~shared/ui/toggle'
 
 import { cn, twSlotsStyles } from '~shared/utils'
 
+import { TABS_CONTENT_NAMES } from '../../constants'
+import { slotsWheelTabStyles } from '../../styles'
 import { AuctionGameSlotsList } from '../lists/wheel-slots-list.ui'
 
 type GameSlotsTabContentProps = Omit<TabsContentProps, 'value'> & {

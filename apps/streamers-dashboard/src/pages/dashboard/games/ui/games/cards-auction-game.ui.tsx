@@ -3,13 +3,9 @@ import type { Variants } from 'motion/react'
 
 import { useEffect, useRef, useState } from 'react'
 
-import { useCardsGameContext } from '~entities/games/context/cards-game/cards-game.context'
 import { CardsGame } from '~entities/games/ui/card-game/cards-game.ui'
 import { getCardFieldPositionByIndex } from '~entities/games/utils/cards'
 import { AnimatePresence } from 'motion/react'
-
-import { useAuctionCardsGame } from '~pages/auction-wheel/hooks/use-auction-cards-game'
-import { startWinnerConfetti } from '~pages/auction-wheel/utils/cards-game-confetti'
 
 import { Text, Title } from '~shared/components/typography'
 
@@ -21,6 +17,9 @@ import { Icons } from '~shared/ui/icons'
 import { MotionBox } from '~shared/ui/motion-box'
 
 import { cn } from '~shared/utils'
+
+import { useAuctionCardsGame } from '../../hooks/use-auction-cards-game'
+import { startWinnerConfetti } from '../../utils/cards-game-confetti'
 
 type ChoosedAnimationVariantsArgs = {
   coords: {
@@ -187,7 +186,7 @@ type GameCardProps = {
 function GameCard(props: GameCardProps) {
   const { card, confirmed = false, confirmButtonProps, width, height } = props
 
-  const game = useCardsGameContext()
+  const game = useAuctionCardsGame()
 
   const isCurrentCardChoosed = game.state.choosedCardUnit?.id === card.id
 

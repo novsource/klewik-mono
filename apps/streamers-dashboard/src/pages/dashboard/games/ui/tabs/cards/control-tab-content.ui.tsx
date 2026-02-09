@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
-import { useAuctionCardsGame } from '~pages/auction-wheel/hooks/use-auction-cards-game'
-import { controlWheelTabStyles } from '~pages/auction-wheel/styles'
+import { useAuctionCardsGame } from '~pages/dashboard/games/hooks/use-auction-cards-game'
+import { controlWheelTabStyles } from '~pages/dashboard/games/styles'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'

@@ -4,8 +4,6 @@ import { useEffect, useMemo, useState } from 'react'
 /* @TODO Refactor global dialogs */
 import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
-import { processDonationDialogStyles } from '~pages/auction-donations/styles/process-donation-dialog.styles'
-
 import { ProcessDonationContextProvider, useProcessDonationContext } from '~features/donations/process-donation/context'
 import { useProcessDonationForm } from '~features/donations/process-donation/hooks'
 import { ProcessDonationFormComposer } from '~features/donations/process-donation/ui'
@@ -34,6 +32,7 @@ import type {
 
 import { formatNumberToIntlString, mergeProps, twSlotsStyles } from '~shared/utils'
 
+import { processDonationDialogStyles } from '../../styles/process-donation-dialog.styles'
 import { ProcessDonationDialogTabs } from '../tabs/process-donation-dialog/process-donation-dialog-tabs.ui'
 
 export type ProcessDonationDialogProps = SheetProps & {

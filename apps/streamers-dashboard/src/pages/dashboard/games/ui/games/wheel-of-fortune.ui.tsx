@@ -3,8 +3,6 @@ import { useCallback, useMemo, useRef } from 'react'
 import bgSelectorUrl from '~shared/assets/img/bgSelector.webp'
 import * as m from 'motion/react-m'
 
-import { useAuctionWheelGame } from '~pages/auction-wheel/hooks/use-auction-wheel-game'
-
 import type { WheelSlot } from '~entities/wheel/model'
 import { wheelSelectors } from '~entities/wheel/store'
 import { BaseWheel, WheelItem, WheelSelector } from '~entities/wheel/ui'
@@ -17,6 +15,8 @@ import type { FlexProps } from '~shared/ui/flex'
 import { Flex } from '~shared/ui/flex'
 
 import { cn } from '~shared/utils'
+
+import { useAuctionWheelGame } from '../../hooks/use-auction-wheel-game'
 
 export type WheelProps = FlexProps
 

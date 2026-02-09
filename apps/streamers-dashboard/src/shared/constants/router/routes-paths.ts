@@ -1,5 +1,5 @@
 export enum DASHBOARD_ROUTES {
-  WHEEL = '/wheel',
+  GAMES = '/games',
   SLOTS = '/slots',
   DONATIONS = '/donations',
 }

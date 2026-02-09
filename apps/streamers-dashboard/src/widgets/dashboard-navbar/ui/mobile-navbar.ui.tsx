@@ -13,7 +13,7 @@ import { cn } from '~shared/utils'
 import { MobileMenu } from './mobile-menu.ui'
 
 const paths = [
-  { path: DASHBOARD_ROUTES.WHEEL },
+  { path: DASHBOARD_ROUTES.GAMES },
   { path: DASHBOARD_ROUTES.SLOTS },
   { path: DASHBOARD_ROUTES.DONATIONS },
 ]

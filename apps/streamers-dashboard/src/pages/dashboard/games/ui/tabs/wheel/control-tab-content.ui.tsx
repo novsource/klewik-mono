@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { controlWheelTabStyles } from '~pages/auction-wheel/styles'
+import { controlWheelTabStyles } from '~pages/dashboard/games/styles'
 
 import { Flex } from '~shared/ui/flex'
 

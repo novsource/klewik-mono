@@ -1,7 +1,7 @@
 import { auctionGamesSelectors } from '~entities/games/store'
 import { generateWinner } from '~entities/games/utils/generate-winner'
 
-import { useAuctionWheelGame } from '~pages/auction-wheel/hooks/use-auction-wheel-game'
+import { useAuctionWheelGame } from '~pages/dashboard/games/hooks/use-auction-wheel-game'
 
 import type { WheelSlot } from '~entities/wheel/model'
 

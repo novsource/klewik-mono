@@ -1,12 +1,11 @@
+import type { SortingDrawerStylesSlots } from '../../styles'
+
 import { memo, useEffect, useMemo, useState } from 'react'
 
 import { shallowEqual } from 'react-redux'
 
 import { LucideCheck } from 'lucide-react'
 import z from 'zod'
-
-import { sortingDrawerStyles } from '~pages/auction-slots/styles'
-import type { SortingDrawerStylesSlots } from '~pages/auction-slots/styles'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions, auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -41,6 +40,8 @@ import type { SheetProps } from '~shared/ui/sheet'
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~shared/ui/sheet'
 
 import { cn, twSlotsStyles } from '~shared/utils'
+
+import { sortingDrawerStyles } from '../../styles'
 
 const defaultOptions: SortingOptions<AuctionSlot> = {
   field: 'points',

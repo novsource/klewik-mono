@@ -1,12 +1,10 @@
 import type { TabsProps } from '@radix-ui/react-tabs'
 
+import type { WheelTabsStylesSlots } from '../../styles'
+
 import { memo, useMemo, useState } from 'react'
 
 import { auctionGamesSelectors } from '~entities/games/store'
-
-import { TABS_CONTENT_NAMES } from '~pages/auction-wheel/constants'
-import type { WheelTabsStylesSlots } from '~pages/auction-wheel/styles'
-import { wheelTabsStyles } from '~pages/auction-wheel/styles'
 
 import { StartTransitionContainer } from '~shared/components/start-transition-container'
 
@@ -17,6 +15,8 @@ import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
 
 import { twSlotsStyles } from '~shared/utils'
 
+import { TABS_CONTENT_NAMES } from '../../constants'
+import { wheelTabsStyles } from '../../styles'
 import { GameContorlTabContent } from './game-control-tab-content.ui'
 import { GamePreferencesTabContent } from './game-preferences-tab-content.ui'
 import { GameSlotsTabContent } from './game-slots-tab-content.ui'

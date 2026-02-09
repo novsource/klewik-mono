@@ -1,10 +1,8 @@
+import type { PreferencesWheelTabSlots } from '../../styles'
+
 import { useMemo } from 'react'
 
 import { auctionGamesSelectors } from '~entities/games/store'
-
-import { TABS_CONTENT_NAMES } from '~pages/auction-wheel/constants'
-import { preferencesWheelTabStyles } from '~pages/auction-wheel/styles'
-import type { PreferencesWheelTabSlots } from '~pages/auction-wheel/styles'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -14,6 +12,8 @@ import type { TabsContentProps } from '~shared/ui/tabs'
 
 import { cn, twSlotsStyles } from '~shared/utils'
 
+import { TABS_CONTENT_NAMES } from '../../constants'
+import { preferencesWheelTabStyles } from '../../styles'
 import { RecolorWheelSlotsSection, WheelSlicesResizerSection } from './wheel/preferences-tab-content.ui'
 
 type SlotsWheelTabProps = Omit<TabsContentProps, 'value'> & {
