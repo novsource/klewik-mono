@@ -1,13 +1,17 @@
 import type { CardsGameUnit } from '~entities/games/model/cards-game'
 import type { Variants } from 'motion/react'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { CardsGame } from '~entities/games/ui/card-game/cards-game.ui'
 import { getCardFieldPositionByIndex } from '~entities/games/utils/cards'
 import { AnimatePresence } from 'motion/react'
 
+import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+
 import { Text, Title } from '~shared/components/typography'
+
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
@@ -16,8 +20,9 @@ import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { MotionBox } from '~shared/ui/motion-box'
 
-import { cn } from '~shared/utils'
+import { cn, formatNumberToIntlString, getHEXColor, hexToRgba } from '~shared/utils'
 
+import { GAME_CARDS_BG_ICONS } from '../../constants/game-cards-icons'
 import { useAuctionCardsGame } from '../../hooks/use-auction-cards-game'
 import { startWinnerConfetti } from '../../utils/cards-game-confetti'
 
@@ -188,6 +193,13 @@ function GameCard(props: GameCardProps) {
 
   const game = useAuctionCardsGame()
 
+  const GameBgIcon = useMemo(() => {
+    const randomIndex = Math.floor(Math.random() * GAME_CARDS_BG_ICONS.length)
+
+    return GAME_CARDS_BG_ICONS[randomIndex]
+  }, [])
+  const color = useMemo(() => getHEXColor(), [])
+
   const isCurrentCardChoosed = game.state.choosedCardUnit?.id === card.id
 
   const isConfirmButtonShowed = isCurrentCardChoosed && !confirmed
@@ -225,6 +237,15 @@ function GameCard(props: GameCardProps) {
           </>
         )}
 
+        {!isCurrentCardChoosed
+          && (
+            <GameBgIcon
+              width={42}
+              height={42}
+              style={{ color: hexToRgba(color, 0.85), stroke: hexToRgba(color, 1), strokeWidth: 0.15 }}
+            />
+          )}
+
         {isConfirmButtonShowed && (
           <MotionBox
             initial={{ opacity: 0, scale: 0.8 }}
@@ -253,6 +274,18 @@ type GameCardSlotInfoProps = {
 function GameChoosedCardInfo(props: GameCardSlotInfoProps) {
   const { card } = props
 
+  const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+
+  const slotByCardId = useMemo(() => {
+    const slotIndex = storedAuctionSlots.findIndex(slot => slot.id === card.auctionSlotId)
+
+    if (slotIndex === -1) {
+      return null
+    }
+
+    return storedAuctionSlots[slotIndex]
+  }, [storedAuctionSlots, card])
+
   return (
     <div className="absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 z-[100] overflow-clip">
       <div className="flex flex-col gap-y-8 items-center">
@@ -274,8 +307,8 @@ function GameChoosedCardInfo(props: GameCardSlotInfoProps) {
           <Flex className="relative px-6 py-4 w-full h-full bg-dark-foreground-light rounded-medium" align="center" justify="between">
             <Flex className="gap-x-1.5" align="center">
               <Icons.Coin className="text-gray-light" size="lg" />
-              <Text className="font-medium text-title-xl text-gray-accent" asSpan>
-                {card.title}
+              <Text className="font-golos-f font-medium !text-title text-gray-accent" asSpan>
+                {formatNumberToIntlString(slotByCardId?.points ?? 0)}
               </Text>
             </Flex>
 
@@ -283,8 +316,8 @@ function GameChoosedCardInfo(props: GameCardSlotInfoProps) {
 
             <Flex className="gap-x-1.5" align="center">
               <Icons.Crown className="text-gray-light" size="lg" />
-              <Text className="font-medium text-title-xl text-gray-accent" asSpan>
-                30%
+              <Text className="font-golos-f font-medium !text-title text-green" asSpan>
+                {`${formatNumberToIntlString(slotByCardId?.winPercents ?? 0)}%`}
               </Text>
             </Flex>
           </Flex>
