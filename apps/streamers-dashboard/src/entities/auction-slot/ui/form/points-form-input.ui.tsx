@@ -1,9 +1,8 @@
-import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react'
+import type { ChangeEvent, KeyboardEvent } from 'react'
 import { useState } from 'react'
 
 import type { FieldPath, FieldValues, UseControllerProps } from 'react-hook-form'
 import { useController } from 'react-hook-form'
-import type { NumberFormatValues } from 'react-number-format'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
@@ -16,7 +15,7 @@ import { NumberInput } from '~shared/ui/number-input'
 import type { NumberInputProps } from '~shared/ui/number-input'
 import { Typography } from '~shared/ui/typograghy'
 
-import { deleteAllSpacesFromString, mergeProps } from '~shared/utils'
+import { deleteAllSpacesFromString, isStringEmpty, mergeProps } from '~shared/utils'
 
 const preventEnterFn = (event: KeyboardEvent<HTMLInputElement>) => {
   if (event.which === 13 /* Enter */) {
@@ -48,7 +47,6 @@ export const SlotPointsFormInput = <
     containerProps,
     pointsInputProps,
     showPercentInput = true,
-    minPercent = 0.1,
     ...pointsControllerProps
   } = props
 
@@ -79,6 +77,12 @@ export const SlotPointsFormInput = <
   }
 
   const handlePointsInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (isStringEmpty(event.target.value)) {
+      fieldOnChange(event.target.value)
+      setPercentInputValue('')
+      setPointsValue('')
+    }
+
     const points = Number(deleteAllSpacesFromString(event.target.value))
 
     const pointsToPercents = (100 * points) / (points + slotsPointsSum)
@@ -88,60 +92,40 @@ export const SlotPointsFormInput = <
     setPointsValue(points.toString())
   }
 
-  const handlePointsInputBlur = (event: ChangeEvent<HTMLInputElement>) => {
-    const clearCurrentValue = deleteAllSpacesFromString(event.target.value)
+  // const handlePointsInputBlur = (event: ChangeEvent<HTMLInputElement>) => {
+  //   const clearCurrentValue = deleteAllSpacesFromString(event.target.value)
 
-    if (clearCurrentValue.length === 0 || Number(clearCurrentValue) < minPercent) {
-      const defaultPointsValue = Number(pointsInputProps?.defaultValue ?? 1000)
-      const defaultPercents = (defaultPointsValue / (slotsPointsSum + defaultPointsValue)) * 100
+  //   if (clearCurrentValue.length === 0 || Number(clearCurrentValue) < minPercent) {
+  //     const defaultPointsValue = Number(pointsInputProps?.defaultValue ?? 1000)
+  //     const defaultPercents = (defaultPointsValue / (slotsPointsSum + defaultPointsValue)) * 100
 
-      fieldOnChange(Math.floor(defaultPointsValue).toString())
-      setPointsValue(Math.floor(defaultPointsValue).toString())
-      setPercentInputValue(defaultPercents.toString())
-    }
-  }
+  //     fieldOnChange(Math.floor(defaultPointsValue).toString())
+  //     setPointsValue(Math.floor(defaultPointsValue).toString())
+  //     setPercentInputValue(defaultPercents.toString())
+  //   }
+  // }
 
-  const handlePercentInputBlur = (event: FocusEvent<HTMLInputElement>) => {
-    const clearCurrentValue = deleteAllSpacesFromString(event.target.value)
+  // const handlePercentInputBlur = (event: FocusEvent<HTMLInputElement>) => {
+  //   const clearCurrentValue = deleteAllSpacesFromString(event.target.value)
 
-    if (clearCurrentValue.length === 0 || Number(clearCurrentValue) < minPercent) {
-      const defaultPointsValue = Number(pointsInputProps?.defaultValue ?? 1000)
-      const defaultPercents = (defaultPointsValue / (slotsPointsSum + defaultPointsValue)) * 100
+  //   if (clearCurrentValue.length === 0 || Number(clearCurrentValue) < minPercent) {
+  //     const defaultPointsValue = Number(pointsInputProps?.defaultValue ?? 1000)
+  //     const defaultPercents = (defaultPointsValue / (slotsPointsSum + defaultPointsValue)) * 100
 
-      fieldOnChange(Math.floor(defaultPointsValue).toString())
-      setPointsValue(Math.floor(defaultPointsValue).toString())
-      setPercentInputValue(defaultPercents.toString())
-    }
-  }
-
-  const checkPointsBoundaries = (values: NumberFormatValues) => {
-    const { floatValue } = values
-
-    const maxPointsValue = Math.floor(slotsPointsSum * 99)
-
-    if (!floatValue)
-      return true
-
-    return floatValue <= maxPointsValue
-  }
-
-  const checkPercentBoundaries = (values: NumberFormatValues) => {
-    const { floatValue } = values
-
-    if (!floatValue)
-      return true
-
-    return floatValue <= 99
-  }
+  //     fieldOnChange(Math.floor(defaultPointsValue).toString())
+  //     setPointsValue(Math.floor(defaultPointsValue).toString())
+  //     setPercentInputValue(defaultPercents.toString())
+  //   }
+  // }
 
   const pointsInputHandlers: NumberInputProps = {
     onChange: handlePointsInputChange,
-    onBlur: handlePointsInputBlur,
+    // onBlur: handlePointsInputBlur,
     onKeyDown: preventEnterFn,
   }
   const percentsInputHandlers: NumberInputProps = {
     onChange: handlePercentInputChange,
-    onBlur: handlePercentInputBlur,
+    // onBlur: handlePercentInputBlur,
     onKeyDown: preventEnterFn,
   }
 
@@ -163,7 +147,7 @@ export const SlotPointsFormInput = <
         thousandSeparator=" "
         decimalScale={0}
         allowNegative={false}
-        // isAllowed={checkPointsBoundaries}
+        valueBounds={{ max: Math.floor(slotsPointsSum * 99) }}
         {...field}
         {...mergedPointsInputProps}
       />
@@ -185,7 +169,7 @@ export const SlotPointsFormInput = <
         thousandSeparator=" "
         decimalScale={0}
         allowNegative={false}
-        // isAllowed={checkPointsBoundaries}
+        valueBounds={{ max: Math.floor(slotsPointsSum * 99) }}
         {...field}
         {...mergedPointsInputProps}
       />
@@ -195,14 +179,15 @@ export const SlotPointsFormInput = <
         label={{ id: `${name}.percent`, value: 'Шанс победы' }}
         placeholder="Шанс"
         allowNegative={false}
+        allowLeadingZeros={false}
         decimalScale={2}
+        valueBounds={{ max: 99 }}
         endContent={(
           <Typography tag="span" className="text-nowrap text-gray-light">
             {'<'}
             99%
           </Typography>
         )}
-        // isAllowed={checkPercentBoundaries}
         {...mergedPercentsInputProps}
       />
     </Flex>

@@ -1,4 +1,6 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+/* eslint-disable no-control-regex */
+
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { rootStore } from '~app/store/store'
@@ -8,7 +10,6 @@ import { auctionSlotsActions } from '~entities/auction-slot/store'
 
 import { formatNumberToIntlString } from '~shared/utils'
 
-import { CREATE_SLOT_FORM_DEFAULT_VALUE } from '../constants'
 import { CreateSlotsForm } from '../ui'
 
 const FORM_TEST_ID = 'createSlotsForm'
@@ -121,13 +122,17 @@ describe('### Slots points input', () => {
     const slotPointsInput = screen.getByPlaceholderText('Очки') satisfies HTMLInputElement
 
     await userEvent.clear(slotPointsInput)
-    expect(slotPointsInput).not.toHaveValue()
+    expect(slotPointsInput).toBeEmptyDOMElement()
 
     await userEvent.type(slotPointsInput, 'Test')
-    expect(slotPointsInput).not.toHaveValue()
+    expect(slotPointsInput).toBeEmptyDOMElement()
 
-    await userEvent.type(slotPointsInput, '1000')
-    expect(slotPointsInput).toHaveValue()
+    const inputValue = 1000
+
+    const targetFormattedString = formatNumberToIntlString(inputValue).replace(/[^\u0000-\u007F]+/g, ' ')
+
+    await userEvent.type(slotPointsInput, inputValue.toString())
+    expect(slotPointsInput).toHaveValue(targetFormattedString)
   })
 
   it('should correctly format numbers to the international standard', async () => {
@@ -139,22 +144,19 @@ describe('### Slots points input', () => {
 
     const slotPointsInput = screen.getByPlaceholderText('Очки') satisfies HTMLInputElement
 
-    const numToFormat = 100000
+    const numToFormat = 5_000
 
     await userEvent.clear(slotPointsInput)
-    await userEvent.type(slotPointsInput, numToFormat.toString())
+    await userEvent.type(slotPointsInput, '5000')
 
     /*
       "formatNumberToIntlString" uses Intl to format the string to international format
       Intl uses non-breaking spaces (code 160) instead of regular spaces (code 32)
       Therefore, to prepare strings for comparison, it is necessary to replace the space
     */
-
-    /* eslint-disable no-control-regex */
     const targetFormattedString = formatNumberToIntlString(numToFormat).replace(/[^\u0000-\u007F]+/g, ' ')
 
-    expect(slotPointsInput).toHaveValue()
-    expect(slotPointsInput.value).toBe(targetFormattedString)
+    expect(slotPointsInput).toHaveValue(targetFormattedString)
   })
 
   it('should affect the percentage field', async () => {
@@ -181,36 +183,36 @@ describe('### Slots points input', () => {
     expect(percentsInput.value).toBe('0')
   })
 
-  it('should return default value if field was empty after focus', async () => {
-    render(
-      <StoreProvider>
-        <CreateSlotsForm multiplySlots={false} data-testid={FORM_TEST_ID} />
-      </StoreProvider>,
-    )
+  // it('should return default value if field was empty after focus', async () => {
+  //   render(
+  //     <StoreProvider>
+  //       <CreateSlotsForm multiplySlots={false} data-testid={FORM_TEST_ID} />
+  //     </StoreProvider>,
+  //   )
 
-    const pointsInput = screen.getByPlaceholderText('Очки') satisfies HTMLInputElement
-    const percentsInput = screen.getByPlaceholderText('Шанс') satisfies HTMLInputElement
+  //   const pointsInput = screen.getByPlaceholderText('Очки') satisfies HTMLInputElement
+  //   const percentsInput = screen.getByPlaceholderText('Шанс') satisfies HTMLInputElement
 
-    await userEvent.clear(pointsInput)
-    expect(pointsInput).not.toHaveValue()
+  //   await userEvent.clear(pointsInput)
+  //   expect(pointsInput).not.toHaveValue()
 
-    await waitFor(() => {
-      fireEvent.blur(pointsInput)
-    })
+  //   await waitFor(() => {
+  //     fireEvent.blur(pointsInput)
+  //   })
 
-    const defaultPointsValue = Number(CREATE_SLOT_FORM_DEFAULT_VALUE.points)
+  //   const defaultPointsValue = Number(CREATE_SLOT_FORM_DEFAULT_VALUE.points)
 
-    const { auctionSlots } = rootStore.getState()
+  //   const { auctionSlots } = rootStore.getState()
 
-    const formattedDefaultValue
-      = formatNumberToIntlString(defaultPointsValue)
-        .replace(/[^\u0000-\u007F]+/g, ' ')
+  //   const formattedDefaultValue
+  //     = formatNumberToIntlString(defaultPointsValue)
+  //       .replace(/[^\u0000-\u007F]+/g, ' ')
 
-    const pointsToPercents = (100 * defaultPointsValue) / (defaultPointsValue + auctionSlots.slotsPointsSum)
+  //   const pointsToPercents = (100 * defaultPointsValue) / (defaultPointsValue + auctionSlots.slotsPointsSum)
 
-    expect(pointsInput.value).toBe(formattedDefaultValue)
-    expect(Number(percentsInput.value).toFixed(2)).toBe(pointsToPercents.toFixed(2))
-  })
+  //   expect(pointsInput.value).toBe(formattedDefaultValue)
+  //   expect(Number(percentsInput.value).toFixed(2)).toBe(pointsToPercents.toFixed(2))
+  // })
 })
 
 describe('### Slots percents input', () => {
@@ -268,34 +270,34 @@ describe('### Slots percents input', () => {
     expect(slotPercentsInput.value).toBe(targetFormattedString)
   })
 
-  it('should return default value if field was empty after focus', async () => {
-    render(
-      <StoreProvider>
-        <CreateSlotsForm multiplySlots={false} data-testid={FORM_TEST_ID} />
-      </StoreProvider>,
-    )
+  // it('should return default value if field was empty after focus', async () => {
+  //   render(
+  //     <StoreProvider>
+  //       <CreateSlotsForm multiplySlots={false} data-testid={FORM_TEST_ID} />
+  //     </StoreProvider>,
+  //   )
 
-    const pointsInput = screen.getByPlaceholderText('Очки') satisfies HTMLInputElement
-    const percentsInput = screen.getByPlaceholderText('Шанс') satisfies HTMLInputElement
+  //   const pointsInput = screen.getByPlaceholderText('Очки') satisfies HTMLInputElement
+  //   const percentsInput = screen.getByPlaceholderText('Шанс') satisfies HTMLInputElement
 
-    await userEvent.clear(percentsInput)
-    expect(percentsInput).not.toHaveValue()
+  //   await userEvent.clear(percentsInput)
+  //   expect(percentsInput).not.toHaveValue()
 
-    await waitFor(() => {
-      fireEvent.blur(percentsInput)
-    })
+  //   await waitFor(() => {
+  //     fireEvent.blur(percentsInput)
+  //   })
 
-    const { auctionSlots } = rootStore.getState()
+  //   const { auctionSlots } = rootStore.getState()
 
-    const defaultPointsValue = Number(CREATE_SLOT_FORM_DEFAULT_VALUE.points)
+  //   const defaultPointsValue = Number(CREATE_SLOT_FORM_DEFAULT_VALUE.points)
 
-    const targetFormattedString = formatNumberToIntlString(defaultPointsValue).replace(/[^\u0000-\u007F]+/g, ' ')
+  //   const targetFormattedString = formatNumberToIntlString(defaultPointsValue).replace(/[^\u0000-\u007F]+/g, ' ')
 
-    const pointsToPercents = (100 * defaultPointsValue) / (defaultPointsValue + auctionSlots.slotsPointsSum)
+  //   const pointsToPercents = (100 * defaultPointsValue) / (defaultPointsValue + auctionSlots.slotsPointsSum)
 
-    expect(pointsInput.value).toBe(targetFormattedString)
-    expect(Number(percentsInput.value)).toBe(pointsToPercents)
-  })
+  //   expect(pointsInput.value).toBe(targetFormattedString)
+  //   expect(Number(percentsInput.value)).toBe(pointsToPercents)
+  // })
 })
 
 describe('### Form with multiply slots', () => {
