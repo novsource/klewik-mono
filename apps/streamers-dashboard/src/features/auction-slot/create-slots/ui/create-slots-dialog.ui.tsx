@@ -133,7 +133,7 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
             </DesktopAppDialog.TopPanel>
 
             <DesktopAppDialog.Title
-              icon={<CreateSlotDialogIcon />}
+              // icon={<CreateSlotDialogIcon />}
               title="Добавление слотов"
               description="Увеличьте количество слотов в аукционе"
             />
@@ -158,16 +158,16 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
       <MobileAppDialog.Trigger className="w-full">{ trigger }</MobileAppDialog.Trigger>
 
       <MobileAppDialog.Content>
-        <MobileAppDialog.Header>
-          <MobileAppDialog.HeaderTitle
-            icon={<CreateSlotDialogIcon />}
-            value="Добавление слотов"
-            description="Увеличьте количество слотов в аукционе"
-          />
-
+        <MobileAppDialog.Header className="flex-col gap-y-5 items-start px-0">
           <MobileAppDialog.ExtraActionsDialog>
             <Button>Here</Button>
           </MobileAppDialog.ExtraActionsDialog>
+
+          <MobileAppDialog.HeaderTitle
+            // icon={<CreateSlotDialogIcon />}
+            value="Добавление слотов"
+            description="Увеличьте количество слотов в аукционе"
+          />
         </MobileAppDialog.Header>
 
         <div className="w-full h-full overflow-scroll">

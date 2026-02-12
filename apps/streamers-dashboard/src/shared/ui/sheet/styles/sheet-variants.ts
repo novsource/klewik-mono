@@ -23,7 +23,7 @@ export const sheetVariants = cva(
       },
       isFullPageSize: {
         true: [
-          'w-full h-full max-w-screen max-h-screen border-0 rounded-none right-0 left-0 top-0 bottom-0 m-0',
+          'w-full h-full max-w-screen max-h-screen border-0 rounded-none m-0',
         ],
         false: 'h-full',
       },
@@ -38,7 +38,7 @@ export const sheetVariants = cva(
 export type SheetVariantsProps = VariantProps<typeof sheetVariants>
 
 export const sheetBackdropVariants = cva([
-  'fixed inset-0 z-50 bg-dark-foreground/40 opacity-70 transition-all data-[ending-style]:opacity-0 data-[starting-style]:opacity-0 duration-150',
+  'fixed inset-0 z-50 bg-black/50 transition-all data-[ending-style]:opacity-0 data-[starting-style]:opacity-0 duration-150',
   'group-data-[nested-dialog-open]:bg-red',
 ],
 )
@@ -50,7 +50,7 @@ export const sheetTitleVariants = cva('text-title-xl font-semibold text-white')
 export const sheetDescriptionVariants = cva('text-md text-muted-foreground')
 
 export const sheetCloseButtonVariants = cva(
-  'absolute right-5 top-6 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[open]:bg-secondary',
+  'absolute right-5 top-6 rounded-sm ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[open]:bg-secondary',
 )
 
 export const sheetFooterVariants = cva(

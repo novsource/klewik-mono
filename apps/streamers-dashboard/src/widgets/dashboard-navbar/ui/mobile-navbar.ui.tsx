@@ -22,7 +22,7 @@ export const MobileNavbar = () => {
   const navLinks = useMemo(() => {
     return paths.reduce<ReactNode[]>((acc, curr: (typeof paths)[number]) => {
       const navIcon = {
-        '/wheel': <Icons.Gamepad size="sm" />,
+        '/games': <Icons.Gamepad size="sm" />,
         '/donations': <Icons.MoneyHand size="default" />,
         '/slots': <Icons.Slots size="sm" />,
       }[curr.path]

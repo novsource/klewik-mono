@@ -9,7 +9,8 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 
 import { DesktopAppDialog, MobileAppDialog } from '~shared/components/app-dialog'
 import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
-import { Modal, ModalContent, ModalTrigger } from '~shared/components/modal'
+import { Modal, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalHeaderTitle, ModalTrigger } from '~shared/components/modal'
+import { Text } from '~shared/components/typography'
 
 import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
@@ -24,7 +25,7 @@ import {
   SheetClose,
 } from '~shared/ui/sheet'
 
-import { mergeProps } from '~shared/utils'
+import { cn, mergeProps } from '~shared/utils'
 
 import { useEditSlotDialog } from '../../hooks/use-edit-slot-dialog'
 import { EditSlotDialogCard } from '../cards/edit-slot-dialog-card.ui'
@@ -118,7 +119,6 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
                 </DesktopAppDialog.TopPanel>
 
                 <DesktopAppDialog.Title
-                  icon={<EditSlotDialogsIcon />}
                   title="Обзор слота"
                   description="Измените параметры слота"
                 />
@@ -162,24 +162,48 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
 
               <MobileAppDialog.Header className="flex-col gap-y-5 items-start px-0">
                 <Flex className="w-full gap-x-2" justify="between" align="center">
-                  <MobileAppDialog.ExtraActionsDialog>
-                    <Flex className="gap-y-2" direction="column">
-                      <Button startContent={<Icons.Reset />}>Сбросить изменения</Button>
 
-                      <Modal>
-                        <ModalTrigger render={<Button variant="error">Удалить</Button>} />
-                        <ModalContent backdropProps={{ forceRender: true }}>
-                          fdsf
-                        </ModalContent>
-                      </Modal>
+                  <Modal>
+                    <ModalTrigger render={(
+                      <Button variant="error" startContent={<Icons.Bin />} size="xs">Удалить слот</Button>
+                    )}
+                    />
+                    <ModalContent
+                      className={cn([
+                        'p-0 w-full h-full max-w-[300px] max-h-[200px] min-h-[150px]',
+                        'landtop:min-w-[450px] landtop:w-full landtop:max-w-[300px]',
+                        'desktop:min-w-[450px] desktop:w-full desktop:max-w-[300px]',
+                        'desktop-lg:min-w-[450px] desktop-lg:w-full desktop-lg:max-w-[300px]',
+                      ])}
+                      backdropProps={{ forceRender: true }}
+                    >
+                      <ModalHeader>
+                        <ModalHeaderTitle>Удаление cлота</ModalHeaderTitle>
+                        <ModalCloseButton />
+                      </ModalHeader>
 
-                    </Flex>
+                      <Flex className="grow h-full px-5 pt-2">
+                        <Text className="text-gray-accent">
+                          Вы уверены что хотите удалить слот?
+                          Если да, то нажмите кнопку "Подтвердить"
+                        </Text>
+                      </Flex>
 
-                  </MobileAppDialog.ExtraActionsDialog>
+                      <ModalFooter>
+                        <Button onClick={closeDialog}>Отмена</Button>
+                        <Button
+                          className="text-red hover:text-red hover:border-red/60"
+                        >
+                          Подтвердить
+                        </Button>
+                      </ModalFooter>
+                    </ModalContent>
+                  </Modal>
+
                   <SheetClose
+                    className="relative right-0 top-0 text-gray-accent opacity-100"
                     render={(
                       <Button
-                        variant="ghost"
                         isIconOnly
                         icon={<Icons.LargeCross />}
                         size="xs"
@@ -192,7 +216,7 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
                 <MobileAppDialog.HeaderTitle
                   value="Обзор слота"
                   description="Измените параметры слота"
-                  icon={<EditSlotDialogsIcon />}
+                  // icon={<EditSlotDialogsIcon />}
                 />
               </MobileAppDialog.Header>
 
@@ -247,16 +271,16 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
   )
 }
 
-function EditSlotDialogsIcon() {
-  return (
-    <div className="bg-[#FFC837]/50 h-fit w-fit rounded-small p-0.25 outline-4 outline-[#FFC837]/15">
-      <Flex
-        className="relative size-8 tablet:size-9 rounded-small p-1.25"
-        align="center"
-        justify="center"
-      >
-        <Icons.Pencil gradient />
-      </Flex>
-    </div>
-  )
-}
+// function EditSlotDialogsIcon() {
+//   return (
+//     <div className="bg-[#FFC837]/50 h-fit w-fit rounded-small p-0.25 outline-4 outline-[#FFC837]/15">
+//       <Flex
+//         className="relative size-8 tablet:size-9 rounded-small p-1.25"
+//         align="center"
+//         justify="center"
+//       >
+//         <Icons.Pencil gradient />
+//       </Flex>
+//     </div>
+//   )
+// }

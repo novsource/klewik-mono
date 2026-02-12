@@ -46,7 +46,7 @@ export const buttonVariants = cva<ButtonVariants>(
           'border-1 border-gray/20 bg-dark text-gray-accent hover:border-gray/40 hover:bg-dark-accent/40 hover:text-white active:bg-dark/80',
         action:
           'bg-green-dark text-green-accent/80 hover:bg-green/10 hover:text-green-accent',
-        error: 'border-1 border-red/20 bg-red/10 text-red hover:bg-red/15 hover:border-red/30',
+        error: 'border-1 border-red/20 bg-red/5 text-red hover:bg-red/15 hover:border-red/30',
         ghost: 'border-transparent bg-transparent',
         borderless: 'border-transparent bg-dark text-gray-accent hover:border-gray/40 hover:bg-dark-accent/40 hover:text-white active:bg-dark/80',
       },

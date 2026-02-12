@@ -3,7 +3,7 @@ import type { VariantProps } from 'class-variance-authority'
 import { cva } from 'class-variance-authority'
 
 const drawerOverlayVariants = cva([
-  'dark fixed z-50 inset-0 bg-black/50 backdrop-blur-xs',
+  'dark fixed z-50 inset-0 bg-black/60',
   'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
 ])
 
