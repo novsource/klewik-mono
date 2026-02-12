@@ -41,8 +41,8 @@ export const BaseAuctionSlotCard = forwardRef<HTMLDivElement, BaseAuctionSlotCar
         ref={forwardRef}
         data-slot="base"
         className={cn([
-          'flex flex-col justify-between gap-y-1 border-1 border-dark-light pt-1 pb-2',
-          'tablet:py-2 tablet:gap-y-2',
+          'flex flex-col justify-between gap-y-1 border-1 border-dark-light pt-1.5 pb-2',
+          'tablet:py-2.5 tablet:gap-y-2',
         ], className)}
         {...restProps}
       />

@@ -69,7 +69,7 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
 
   const mergedSheetProps = mergeProps<DialogProps[]>({
     open: dialogState.isOpen,
-    onOpenChange: dialogState.setIsOpen,
+    onOpenChange: closeDialog,
     disablePointerDismissal: !isDismissible,
   }, restProps)
 
@@ -114,7 +114,7 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
 
                     <Divider className="mx-1" />
 
-                    <DesktopAppDialog.CloseButton />
+                    <DesktopAppDialog.CloseButton type="button" />
                   </DesktopAppDialog.HeaderActionsPanel>
                 </DesktopAppDialog.TopPanel>
 

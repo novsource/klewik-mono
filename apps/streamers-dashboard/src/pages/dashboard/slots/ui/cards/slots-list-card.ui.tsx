@@ -1,7 +1,6 @@
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import {
   AuctionSlotCardContentInfoDivider,
-  AuctionSlotCardIdInfo,
   AuctionSlotCardPointsInfo,
   AuctionSlotCardWinPercents,
   BaseAuctionSlotCard,
@@ -48,19 +47,19 @@ export const AuctionSlotsListCard = (props: AuctionSlotsListCardProps) => {
 
         <BaseAuctionSlotCardContent {...restProps}>
           <Flex
-            className="bg-dark-light rounded-sm px-1.5 w-fit"
+            className="w-fit"
             direction="row"
             align="center"
           >
-            <AuctionSlotCardIdInfo slotId={auctionSlot.auctionSlotOrder} />
+            <div className="size-7 tablet:size-8 bg-red/10 flex items-center justify-center rounded-small">
+              {isDroped
+                ? <Icons.BrokenHeart className="text-gray-light" />
+                : <Icons.Heart className="text-red animate-heartbeating" size="xs" />}
+            </div>
             <AuctionSlotCardContentInfoDivider />
             <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
             <AuctionSlotCardContentInfoDivider />
             <AuctionSlotCardWinPercents winPercents={auctionSlot.winPercents} />
-            <AuctionSlotCardContentInfoDivider />
-            {isDroped
-              ? <Icons.BrokenHeart className="text-gray-light" size="sm" />
-              : <Icons.Heart className="text-red animate-heartbeating" size="xs" />}
           </Flex>
         </BaseAuctionSlotCardContent>
       </Flex>

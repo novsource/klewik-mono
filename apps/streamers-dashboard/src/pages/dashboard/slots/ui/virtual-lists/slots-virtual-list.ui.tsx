@@ -82,6 +82,7 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
   return (
     <WindowVirtualList
       data={sortedSlots}
+      gap={6}
       overscan={8}
       virtualListRef={virtualizerRef}
       {...virtualListProps}

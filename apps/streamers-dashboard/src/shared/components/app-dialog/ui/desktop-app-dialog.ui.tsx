@@ -70,7 +70,7 @@ function DesktopAppDialogClose(props: DesktopAppDialogCloseProps) {
   const { className, ...restProps } = props
 
   return (
-    <SheetClose className="relative right-0 top-0" nativeButton={false}>
+    <SheetClose className="relative right-0 top-0" nativeButton={false} type="button">
       <Button
         className={cn('size-8', className)}
         isIconOnly
