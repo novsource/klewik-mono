@@ -15,7 +15,7 @@ const WheelGameContext = createContext<WheelGameContextState>({
   state: {
     isSpinning: false,
     rotateValue: 0,
-    selectorCurrentSlot: null,
+    slotUnderSelectorTitle: null,
     wheelSlots: [],
   },
 })

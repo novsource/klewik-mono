@@ -1,7 +1,12 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { WinnerGameSlotInfo } from '~entities/games/ui'
 import bgSelectorUrl from '~shared/assets/img/bgSelector.webp'
+import { AnimatePresence } from 'motion/react'
 import * as m from 'motion/react-m'
+
+import type { AuctionSlot } from '~entities/auction-slot/model'
+import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import type { WheelSlot } from '~entities/wheel/model'
 import { BaseWheel, WheelItem, WheelSelector } from '~entities/wheel/ui'
@@ -10,8 +15,11 @@ import { Text } from '~shared/components/typography'
 
 import { useElementSize } from '~shared/hooks'
 
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import type { FlexProps } from '~shared/ui/flex'
 import { Flex } from '~shared/ui/flex'
+import { MotionBox } from '~shared/ui/motion-box'
 
 import { cn } from '~shared/utils'
 
@@ -20,14 +28,44 @@ import { useAuctionWheelGame } from '../../hooks/use-auction-wheel-game'
 export type WheelProps = FlexProps
 
 export const WheelGame = (props: WheelProps) => {
+  const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+
+  const [slotUnderSelector, setSlotUnderSelector] = useState<NullablePossible<AuctionSlot>>(null)
+
   const { state } = useAuctionWheelGame()
 
+  useEffect(() => {
+    if (state.isSpinning || !state.selectorCurrentSlot)
+      return
+
+    const slot = auctionSlots.filter(slot => slot.title === state.selectorCurrentSlot)[0]
+    setSlotUnderSelector(slot)
+  }, [state.isSpinning, state.selectorCurrentSlot, auctionSlots])
+
+  const isShouldShowSlotInfo = !state.isSpinning && !!slotUnderSelector
+
   return (
-    <Flex className="h-full w-full shrink-[2] gap-y-6" direction="column" {...props}>
+    <Flex className="relative h-full w-full shrink-[2] gap-y-6" direction="column" {...props}>
       <Text className="text-center text-title desktop:text-title-lg font-semibold">
-        {state.selectorCurrentSlot || 'Ожидание прокрута...'}
+        {state.selectorCurrentSlot || 'Ожидание начала прокручивания...'}
       </Text>
       <WheelFortune />
+      <AnimatePresence>
+        {
+          isShouldShowSlotInfo
+          && (
+            <MotionBox
+              className="absolute w-fit h-fit left-1/2 bottom-[calc(40%)] -translate-x-1/2"
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0, transition: { delay: 0.5 } }}
+              exit={{ opacity: 0, scale: 0 }}
+            >
+              <WinnerGameSlotInfo className="bg-dark" auctionSlot={slotUnderSelector} />
+            </MotionBox>
+          )
+        }
+      </AnimatePresence>
+
     </Flex>
   )
 }

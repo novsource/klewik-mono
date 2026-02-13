@@ -3,24 +3,23 @@ import type { Variants } from 'motion/react'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 
+import { WinnerGameSlotInfo } from '~entities/games/ui'
 import { CardsGame } from '~entities/games/ui/card-game/cards-game.ui'
 import { getCardFieldPositionByIndex } from '~entities/games/utils/cards'
 import { AnimatePresence } from 'motion/react'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
-import { Text, Title } from '~shared/components/typography'
+import { Title } from '~shared/components/typography'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
-import { Divider } from '~shared/ui/divider'
-import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { MotionBox } from '~shared/ui/motion-box'
 
-import { cn, formatNumberToIntlString, getHEXColor, hexToRgba } from '~shared/utils'
+import { cn, getHEXColor, hexToRgba } from '~shared/utils'
 
 import { GAME_CARDS_BG_ICONS } from '../../constants/game-cards-icons'
 import { useAuctionCardsGame } from '../../hooks/use-auction-cards-game'
@@ -279,11 +278,7 @@ function GameChoosedCardInfo(props: GameCardSlotInfoProps) {
   const slotByCardId = useMemo(() => {
     const slotIndex = storedAuctionSlots.findIndex(slot => slot.id === card.auctionSlotId)
 
-    if (slotIndex === -1) {
-      return null
-    }
-
-    return storedAuctionSlots[slotIndex]
+    return storedAuctionSlots[slotIndex]!
   }, [storedAuctionSlots, card])
 
   return (
@@ -304,23 +299,7 @@ function GameChoosedCardInfo(props: GameCardSlotInfoProps) {
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0, transition: { delay: 0.5 } }}
         >
-          <Flex className="relative px-6 py-4 w-full h-full bg-dark-foreground-light rounded-medium" align="center" justify="between">
-            <Flex className="gap-x-1.5" align="center">
-              <Icons.Coin className="text-gray-light" size="lg" />
-              <Text className="font-golos-f font-medium !text-title text-gray-accent" asSpan>
-                {formatNumberToIntlString(slotByCardId?.points ?? 0)}
-              </Text>
-            </Flex>
-
-            <Divider className="mx-4 h-full" orientation="vertical" />
-
-            <Flex className="gap-x-1.5" align="center">
-              <Icons.Crown className="text-gray-light" size="lg" />
-              <Text className="font-golos-f font-medium !text-title text-green" asSpan>
-                {`${formatNumberToIntlString(slotByCardId?.winPercents ?? 0)}%`}
-              </Text>
-            </Flex>
-          </Flex>
+          <WinnerGameSlotInfo auctionSlot={slotByCardId} />
         </MotionBox>
       </div>
     </div>
