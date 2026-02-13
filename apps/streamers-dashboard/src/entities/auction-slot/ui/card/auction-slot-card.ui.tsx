@@ -77,7 +77,7 @@ export const AuctionSlotCardTitleInfo = (props: AuctionSlotCardTitleInfoProps) =
 
   return (
     <Text
-      className={cn('text-md font-bold tablet:text-title text-white/85', className)}
+      className={cn('text-base font-semibold font-golos-f mobile:text-title tablet:text-title-lg text-white/85', className)}
       asSpan
     >
       {slotTitle}
@@ -191,7 +191,7 @@ export type AuctionSlotCardPointsInfoProps = Omit<ComponentProps<'div'>, 'childr
 }
 
 export const AuctionSlotCardPointsInfo = (props: AuctionSlotCardPointsInfoProps) => {
-  const { slotPoints, numberFlowProps, ...restProps } = props
+  const { slotPoints, className, numberFlowProps, ...restProps } = props
 
   const isLargeThenTablet = useMediaQuery(tailwindScreens.tablet)
 
@@ -201,7 +201,7 @@ export const AuctionSlotCardPointsInfo = (props: AuctionSlotCardPointsInfoProps)
       {...restProps}
     >
       <NumberFlow
-        className="font-golos-f font-semibold text-gray-accent text-sm tablet:text-md tablet:leading-4"
+        className={cn('font-golos-f font-semibold text-gray-accent text-sm tablet:text-md tablet:leading-4', className)}
         willChange
         trend={0}
         value={slotPoints}

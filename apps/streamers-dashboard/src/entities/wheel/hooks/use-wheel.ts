@@ -1,19 +1,18 @@
+import type { WheelSlicesSizeMode } from '~entities/games/store'
+
 import type { RefObject } from 'react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { animate, useMotionValue } from 'motion/react'
-
-import { auctionSelectors } from '~entities/auction/store'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import type { WheelSlot } from '~entities/wheel/model'
 
-import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 import type { HexColor, RGBAColor } from '~shared/lib/zod'
 
-import { wheelActions, wheelSelectors } from '../store'
-import { formatSlotsToDropoutMode } from '../utils'
+import { getHEXColor } from '~shared/utils'
+
 import {
   calculateRotateWheelCSSValue,
   getSlotNameOnSelector,
@@ -23,7 +22,7 @@ import {
 type WheelControlCallbacks = {
   rotateValue?: number
   onSpinStart?: (winner: WheelSlot) => void
-  onSpinComplete?: (winnerLot: WheelSlot) => void
+  onSpinComplete?: (winnerLot: WheelSlot, rotateValue: number) => void
 }
 
 type WheelControlOptions = Partial<WheelControlCallbacks> & {
@@ -31,22 +30,16 @@ type WheelControlOptions = Partial<WheelControlCallbacks> & {
   initialRotateValue?: number
 }
 
-export const useWheelControl = (
+const useWheelControl = (
   wheelSlots: WheelSlot[],
   options: WheelControlOptions,
 ) => {
-  const {
-    wheelRef,
-    rotateValue,
-    ...listeners
-  } = options
+  const { wheelRef, rotateValue, ...listeners } = options
 
-  const [selectorTargetTitle, setSelectorTargetTitle] = useState<string | null>(
-    null,
-  )
+  const [selectorTargetTitle, setSelectorTargetTitle] = useState<string | null>(null)
   const [isWheelSpinning, setIsWheelSpinning] = useState(false)
-  const framerMotionAnimationValue = useMotionValue(rotateValue ?? 0)
 
+  const framerMotionAnimationValue = useMotionValue(rotateValue ?? 0)
   const [wheelRotateCSSValue, setWheelRotateCSSValue] = useState(() =>
     ({
       current: framerMotionAnimationValue.get(),
@@ -88,7 +81,7 @@ export const useWheelControl = (
           setIsWheelSpinning(false)
           setWheelRotateCSSValue({ current: framerMotionAnimationValue.get(), final: framerMotionAnimationValue.get() })
 
-          listeners.onSpinComplete?.(target)
+          listeners.onSpinComplete?.(target, framerMotionAnimationValue.get())
         },
       })
     },
@@ -107,7 +100,7 @@ export const useWheelControl = (
 
   return {
     state: { wheelRotateCSSValue, isWheelSpinning, selectorTargetTitle },
-    functions: { startWheelSpinAnimation },
+    actions: { startWheelSpinAnimation },
   }
 }
 
@@ -123,110 +116,66 @@ export type UseWheelReturn = {
   }
   actions: {
     startWheelSpinAnimation: (target: WheelSlot, spinTime: number) => void
+    updateWheelSlotsColors: () => void
   }
 }
 
-export const useWheel = (auctionSlots: AuctionSlot[]): UseWheelReturn => {
-  const {
-    rotateValue: storedRotateWheelValue,
-    spinStatus: storedSpinStatus,
-    highlightedSlotId: storedHighlightedSlotId,
-    selectorTargetTitle: storeSelectorTitle,
-    spinTarget: storedSpinTarget,
-    settings: storedWheelSettings,
-  } = useStoreSelector(state => state.wheel)
+type UseWheelOptions = {
+  sizeMode?: WheelSlicesSizeMode
+}
+
+export const useWheel = (auctionSlots: AuctionSlot[], options: UseWheelOptions): UseWheelReturn => {
+  const initialSlotsColorsRef = useRef<NullablePossible<Record<number, HexColor | RGBAColor>>>(null)
+
+  const [wheelSlots, setWheelSlots] = useState(() => {
+    const slots = transformSlotsToWheelSlots(auctionSlots, options.sizeMode)
+
+    if (initialSlotsColorsRef.current) {
+      return slots.map(slot => ({ ...slot, color: initialSlotsColorsRef.current![slot.id] }))
+    }
+
+    initialSlotsColorsRef.current = slots.reduce<Record<number, HexColor | RGBAColor>>(
+      (acc, slot) => {
+        acc[slot.id] = slot.color
+
+        return acc
+      },
+      {},
+    )
+
+    return slots
+  })
 
   const wheelRef = useRef<SVGSVGElement>(null)
 
-  const storedWheelMode = useStoreSelector(auctionSelectors.getWheelMode)
-  const { sizeMode: storedSizeMode } = useStoreSelector(wheelSelectors.getSettings)
-
-  const { setSlots, setRotateValue, setWheelStatus, setSelectorTitleName } = useActionCreators(wheelActions)
-
-  const defaultSlotsColorsRef = useRef<NullablePossible<Record<number, HexColor | RGBAColor>>>(null)
-
-  const preparedSlots = useMemo(() => {
-    return storedWheelMode === 'classic' ? auctionSlots : formatSlotsToDropoutMode(auctionSlots)
-  }, [storedWheelMode, auctionSlots])
-
-  const wheelSlots = useMemo<WheelSlot[]>(() => {
-    let slots = transformSlotsToWheelSlots(preparedSlots, storedSizeMode)
-
-    // TODO: refactor color storage
-    if (defaultSlotsColorsRef.current) {
-      slots = slots.map(slot => ({ ...slot, color: defaultSlotsColorsRef.current![slot.id] }))
-    }
-    else {
-      defaultSlotsColorsRef.current = slots.reduce<Record<number, HexColor | RGBAColor>>(
-        (acc, slot) => {
-          acc[slot.id] = slot.color
-
-          return acc
-        },
-        {},
-      )
-    }
-
-    if (!storedHighlightedSlotId) {
-      return slots
-    }
-
-    return slots.map((slot) => {
-      const isSlotShouldBeHidden = slot.id !== storedHighlightedSlotId
-
-      if (isSlotShouldBeHidden) {
-        return { ...slot, color: '#333' as HexColor }
-      }
-
-      return slot
-    })
-  }, [preparedSlots, storedSizeMode, storedHighlightedSlotId])
-
   const {
     state: { wheelRotateCSSValue, selectorTargetTitle, isWheelSpinning },
-    functions: { startWheelSpinAnimation },
+    actions,
   } = useWheelControl(wheelSlots, {
-    rotateValue: storedSpinStatus === 'spinning'
-      ? storedRotateWheelValue.current
-      : storedRotateWheelValue.final,
+    rotateValue: 0,
     wheelRef,
   })
 
-  const storedIsWheelSpinning = storedSpinStatus === 'spinning'
-
-  if (storedIsWheelSpinning !== isWheelSpinning) {
-    const wheelStatus = isWheelSpinning ? 'spinning' : 'idle'
-
-    setWheelStatus(wheelStatus)
-  }
-
-  if (isWheelSpinning && storeSelectorTitle !== selectorTargetTitle && selectorTargetTitle) {
-    setSelectorTitleName(selectorTargetTitle)
-  }
-
-  if (storedRotateWheelValue.final !== wheelRotateCSSValue.final) {
-    setRotateValue(wheelRotateCSSValue)
-  }
-
   useEffect(() => {
-    setSlots(wheelSlots)
-  }, [wheelSlots])
+    setWheelSlots(curr => transformSlotsToWheelSlots(curr, options.sizeMode))
+  }, [options.sizeMode])
 
-  useEffect(() => {
-    if (!storedSpinTarget)
-      return
+  const updateWheelSlotsColors = () => {
+    setWheelSlots(curr => curr.map((slot) => {
+      const randomHexColor = getHEXColor()
 
-    startWheelSpinAnimation(storedSpinTarget, storedWheelSettings.spinTime)
-  }, [storedSpinTarget, storedWheelSettings.spinTime])
+      return { ...slot, color: randomHexColor }
+    }))
+  }
 
   return {
-    meta: { wheelRef },
     state: {
       isSpinning: isWheelSpinning,
       wheelSlots,
       rotateValue: wheelRotateCSSValue.final,
       selectorCurrentSlot: selectorTargetTitle,
     },
-    actions: { startWheelSpinAnimation },
+    actions: { ...actions, updateWheelSlotsColors },
+    meta: { wheelRef },
   }
 }

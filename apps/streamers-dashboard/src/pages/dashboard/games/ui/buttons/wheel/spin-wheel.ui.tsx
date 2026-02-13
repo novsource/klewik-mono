@@ -4,6 +4,7 @@ import { generateWinner } from '~entities/games/utils/generate-winner'
 import { useAuctionWheelGame } from '~pages/dashboard/games/hooks/use-auction-wheel-game'
 
 import type { WheelSlot } from '~entities/wheel/model'
+import { updateSlotsAnglesByRotateValue } from '~entities/wheel/utils'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -18,7 +19,7 @@ export const SpinWheelButton = (props: SpinWheelButtonProps) => {
   const { className, ...restProps } = props
 
   const { spinTime } = useStoreSelector(auctionGamesSelectors.getWheelGameSettings)
-  const { state: { wheelSlots, isSpinning }, actions } = useAuctionWheelGame()
+  const { state: { wheelSlots, isSpinning, rotateValue }, actions } = useAuctionWheelGame()
 
   const isButtonShouldBeDisabled = wheelSlots.length < 2 || isSpinning
 
@@ -35,7 +36,8 @@ export const SpinWheelButton = (props: SpinWheelButtonProps) => {
 
     await actions.confirmSpin(spinTargetSlot.id)
 
-    actions.startWheelSpinAnimation(spinTargetSlot, spinTime)
+    const target = updateSlotsAnglesByRotateValue(wheelSlots, rotateValue).filter(slot => slot.id === spinTargetSlot.id)[0]!
+    actions.startWheelSpinAnimation(target, spinTime)
   }
 
   return (

@@ -1,15 +1,14 @@
-import { useCallback, useMemo, useRef } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import bgSelectorUrl from '~shared/assets/img/bgSelector.webp'
 import * as m from 'motion/react-m'
 
 import type { WheelSlot } from '~entities/wheel/model'
-import { wheelSelectors } from '~entities/wheel/store'
 import { BaseWheel, WheelItem, WheelSelector } from '~entities/wheel/ui'
 
-import { useElementSize } from '~shared/hooks'
+import { Text } from '~shared/components/typography'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useElementSize } from '~shared/hooks'
 
 import type { FlexProps } from '~shared/ui/flex'
 import { Flex } from '~shared/ui/flex'
@@ -21,20 +20,13 @@ import { useAuctionWheelGame } from '../../hooks/use-auction-wheel-game'
 export type WheelProps = FlexProps
 
 export const WheelGame = (props: WheelProps) => {
-  const selectorTargetTitle = useStoreSelector(
-    wheelSelectors.getSelectorTargetTitle,
-  )
-
-  const slotTextRef = useRef<HTMLSpanElement>(null)
+  const { state } = useAuctionWheelGame()
 
   return (
     <Flex className="h-full w-full shrink-[2] gap-y-6" direction="column" {...props}>
-      <span
-        ref={slotTextRef}
-        className="text-center text-title desktop:text-title-lg font-semibold"
-      >
-        {selectorTargetTitle}
-      </span>
+      <Text className="text-center text-title desktop:text-title-lg font-semibold">
+        {state.selectorCurrentSlot || 'Ожидание прокрута...'}
+      </Text>
       <WheelFortune />
     </Flex>
   )

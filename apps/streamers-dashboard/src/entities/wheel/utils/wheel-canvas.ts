@@ -4,6 +4,7 @@ import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import type { WheelSlot } from '~entities/wheel/model'
 
+import { randomInRange } from '~shared/utils'
 import {
   clearCanvas,
   convertDegreesToRadians,
@@ -312,12 +313,12 @@ export const calculateRotateWheelCSSValue = (
   let randomValueFromRange = null
 
   if (endAngle >= startAngle) {
-    randomValueFromRange = Math.random() * (endAngle - startAngle) + startAngle
+    randomValueFromRange = randomInRange(startAngle, endAngle)
   }
   else {
     randomValueFromRange
       = Math.random() >= 0.5
-        ? Math.random() * (360 - startAngle) + startAngle
+        ? randomInRange(startAngle, 360)
         : Math.random() * endAngle
   }
 
@@ -374,7 +375,7 @@ export const updateSlotsAnglesByRotateValue = (
   slots: WheelSlot[],
   rotateValue: number,
 ): WheelSlot[] => {
-  const newSlots: WheelSlot[] = []
+  const result: WheelSlot[] = []
 
   for (const slot of slots) {
     let { startAngle, endAngle } = slot
@@ -398,8 +399,8 @@ export const updateSlotsAnglesByRotateValue = (
       endAngle += realRotate
     }
 
-    newSlots.push({ ...slot, startAngle, endAngle })
+    result.push({ ...slot, startAngle, endAngle })
   }
 
-  return newSlots
+  return result
 }

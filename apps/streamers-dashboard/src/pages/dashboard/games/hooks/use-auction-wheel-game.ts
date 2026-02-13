@@ -21,14 +21,14 @@ export const useAuctionWheelGame = () => {
       const response = await auctionGame.actions.dropSlot({ auctionUUID, slotId })
 
       if (response.error) {
-        toastErrorNotification('Не удалось подтвердить выбор. Попробуйте еще раз')
+        toastErrorNotification('Не удалось прокрутить колесо из-за ошибки на сервере. Попробуйте еще раз')
       }
     }
     else {
-      const response = await await auctionGame.actions.sendWinner({ auctionUUID, slotId })
+      const response = await auctionGame.actions.sendWinner({ auctionUUID, slotId })
 
       if (response.error) {
-        toastErrorNotification('Не удалось подтвердить выбор. Попробуйте еще раз')
+        toastErrorNotification('Не удалось прокрутить колесо из-за ошибки на сервере. Попробуйте еще раз')
       }
     }
   }

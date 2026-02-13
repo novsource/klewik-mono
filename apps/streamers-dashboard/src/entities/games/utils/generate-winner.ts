@@ -29,15 +29,16 @@ function getWeightedRandomSlot(slots: AuctionSlot[]) {
 
   const weightedSlots = getWeightedSlots(slots)
 
-  // Генерируем случайное число от 0 до totalPoints
+  // Генерируем случайный вес
   const rand = Math.random() * totalPoints
 
-  // Бинарный поиск для нахождения слота
+  // Бинарный поиск для нахождения индекса слота
   let low = 0
   let high = weightedSlots.length - 1
 
   while (low < high) {
     const mid = Math.floor((low + high) / 2)
+
     if (weightedSlots[mid] <= rand) {
       low = mid + 1
     }
@@ -45,5 +46,6 @@ function getWeightedRandomSlot(slots: AuctionSlot[]) {
       high = mid
     }
   }
+
   return slots[low]
 }

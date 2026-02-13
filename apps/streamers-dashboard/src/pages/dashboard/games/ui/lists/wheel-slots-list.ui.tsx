@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
 import { auctionGamesSelectors } from '~entities/games/store'
@@ -7,7 +7,6 @@ import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import type { WheelSlot } from '~entities/wheel/model'
-import { wheelSelectors } from '~entities/wheel/store'
 
 import { Text } from '~shared/components/typography'
 
@@ -21,50 +20,49 @@ import type { VirtualListRenderFunction } from '~shared/ui/virtual-list'
 
 import { cn } from '~shared/utils'
 
+import { useAuctionWheelGame } from '../../hooks/use-auction-wheel-game'
 import { CardsGameListCard } from '../cards/cards-game-list-card.ui'
 import { WheelSlotCard } from '../cards/wheel-slot-card.ui'
 
 export type AuctionGameSlotsListProps = {
-  data?: AuctionSlot[]
   className?: string
   renderCard?: (
-    item: WheelSlot,
+    item: WheelSlot | AuctionSlot,
     index: number,
   ) => ReactNode
-} & Omit<ShadowVirtualListProps<WheelSlot>, 'children'>
+} & Omit<ShadowVirtualListProps<WheelSlot | AuctionSlot>, 'children'>
 
 export const AuctionGameSlotsList = (props: AuctionGameSlotsListProps) => {
   const { data, renderCard, className, ...virtualListProps } = props
 
   const game = useStoreSelector(auctionGamesSelectors.getGame)
-  const storedSlots = useStoreSelector(wheelSelectors.getSlots)
+  const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const storedPointsSum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
 
-  const [slots, setSlots] = useState(data ?? storedSlots)
+  const { state: { wheelSlots } } = useAuctionWheelGame()
 
-  if (data === undefined && slots !== storedSlots) {
-    setSlots(storedSlots)
-  }
+  const [listItems, setListItems] = useState(data)
 
-  if (slots !== data && data !== undefined) {
-    setSlots(data)
-  }
+  useEffect(() => {
+    const newListItems = game === 'wheel' ? wheelSlots.filter(item => data.findIndex(slot => slot.id === item.id) !== -1) : data
+    newListItems.sort((a, b) => b.points - a.points)
 
-  const isEmptySlots = !slots.length && !storedSlots.length
+    setListItems(newListItems)
+  }, [game, data, storedAuctionSlots, wheelSlots])
 
   const winPercentsBounds = useMemo(() => {
-    if (isEmptySlots)
+    if (storedAuctionSlots.length === 0)
       return { min: 0, max: 0 }
 
-    const sortedSlots = [...storedSlots].sort((a, b) => a.points - b.points)
+    const sortedSlots = [...storedAuctionSlots].sort((a, b) => a.points - b.points)
 
     const minPercents = (sortedSlots[0].points / storedPointsSum) * 100
     const maxPercents = (sortedSlots[sortedSlots.length - 1].points / storedPointsSum) * 100
 
     return { min: minPercents, max: maxPercents }
-  }, [storedPointsSum, storedSlots, isEmptySlots])
+  }, [storedPointsSum, storedAuctionSlots])
 
-  if (slots.length === 0) {
+  if (listItems.length === 0) {
     return (
       <Flex
         className="h-full gap-y-2"
@@ -83,7 +81,7 @@ export const AuctionGameSlotsList = (props: AuctionGameSlotsListProps) => {
     )
   }
 
-  const renderGameSlotCard: VirtualListRenderFunction<WheelSlot> = (slots, virtualizedItem) => {
+  const renderGameSlotCard: VirtualListRenderFunction<WheelSlot | AuctionSlot> = (slots, virtualizedItem) => {
     const slot = slots[virtualizedItem.index]
 
     switch (game) {
@@ -91,7 +89,7 @@ export const AuctionGameSlotsList = (props: AuctionGameSlotsListProps) => {
         return (
           <WheelSlotCard
             key={slot.id}
-            wheelSlot={slot}
+            wheelSlot={slot as WheelSlot}
             winPercentsBounds={winPercentsBounds}
           />
         )
@@ -100,7 +98,7 @@ export const AuctionGameSlotsList = (props: AuctionGameSlotsListProps) => {
         return (
           <CardsGameListCard
             key={slot.id}
-            auctionSlot={slot}
+            auctionSlot={slot as AuctionSlot}
             winPercentsBounds={winPercentsBounds}
           />
         )
@@ -111,7 +109,7 @@ export const AuctionGameSlotsList = (props: AuctionGameSlotsListProps) => {
   return (
     <Flex className={cn('h-full w-full', className)} direction="column">
       <ShadowVirtualList
-        data={slots}
+        data={listItems}
         slotsClassNames={{ container: 'pb-4' }}
         estimateSize={() => 125}
         {...virtualListProps}

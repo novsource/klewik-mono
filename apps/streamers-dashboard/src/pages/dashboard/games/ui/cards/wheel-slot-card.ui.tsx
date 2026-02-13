@@ -1,6 +1,5 @@
 import {
   AuctionSlotCardContentInfoDivider,
-  AuctionSlotCardIdInfo,
   AuctionSlotCardPointsInfo,
   AuctionSlotCardWinPercents,
   BaseAuctionSlotCard,
@@ -24,7 +23,7 @@ export const WheelSlotCard = (props: WheelSlotCardProps) => {
   const { wheelSlot, winPercentsBounds, isDropped = false, ...restProps } = props
 
   return (
-    <BaseAuctionSlotCard {...restProps}>
+    <BaseAuctionSlotCard className="relative overflow-clip" {...restProps}>
       <SolidAuctionSlotHeader slotTitle={wheelSlot.title} />
       <BaseAuctionSlotCardContent>
         <Flex
@@ -33,8 +32,6 @@ export const WheelSlotCard = (props: WheelSlotCardProps) => {
           align="center"
         >
           <div className="size-3.5 rounded-pill" style={{ backgroundColor: wheelSlot.color }} />
-          <AuctionSlotCardContentInfoDivider />
-          <AuctionSlotCardIdInfo slotId={wheelSlot.auctionSlotOrder} />
           <AuctionSlotCardContentInfoDivider />
           <AuctionSlotCardPointsInfo slotPoints={wheelSlot.points} />
           <AuctionSlotCardContentInfoDivider />

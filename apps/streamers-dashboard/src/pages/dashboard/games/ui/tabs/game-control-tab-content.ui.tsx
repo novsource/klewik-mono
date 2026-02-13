@@ -7,10 +7,6 @@ import { useMemo } from 'react'
 
 import { auctionGamesActions, auctionGamesSelectors } from '~entities/games/store'
 
-import { auctionActions, auctionSelectors } from '~entities/auction/store'
-
-import { wheelSelectors } from '~entities/wheel/store'
-
 import { Title } from '~shared/components/typography'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -25,6 +21,7 @@ import { TabsContent } from '~shared/ui/tabs'
 import { twSlotsStyles } from '~shared/utils'
 
 import { TABS_CONTENT_NAMES } from '../../constants'
+import { useAuctionWheelGame } from '../../hooks/use-auction-wheel-game'
 import { controlWheelTabStyles } from '../../styles'
 import { CardsGameControllers } from './cards/control-tab-content.ui'
 import { WheelGameControllers } from './wheel/control-tab-content.ui'
@@ -57,10 +54,11 @@ export const GameContorlTabContent = (props: ControlWheelTabContentProps) => {
 }
 
 function GameModeRadioGroup() {
-  const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
-  const { wheelMode } = useStoreSelector(auctionSelectors.getAuctionInfo)
+  const { state: { isSpinning } } = useAuctionWheelGame()
 
-  const { updateWheelMode } = useActionCreators(auctionActions)
+  const gameMode = useStoreSelector(auctionGamesSelectors.getGameMode)
+
+  const { setGameMode } = useActionCreators(auctionGamesActions)
 
   return (
     <Flex direction="column">
@@ -73,10 +71,10 @@ function GameModeRadioGroup() {
 
       <RadioGroup
         className="w-full flex flex-col gap-y-2 px-0.5 desktop:gap-x-3 desktop:justify-between desktop:flex-row"
-        value={wheelMode}
-        disabled={isWheelSpinning}
+        value={gameMode}
+        disabled={isSpinning}
         // @ts-expect-error value can be only wheel mode
-        onValueChange={value => updateWheelMode(value)}
+        onValueChange={value => setGameMode(value)}
       >
         <RadioCard
           slotsClassnames={{ label: 'w-full grow p-0' }}
@@ -100,7 +98,7 @@ function GameModeRadioGroup() {
 }
 
 function GameTypeRadioGroup() {
-  const isWheelSpinning = useStoreSelector(wheelSelectors.getIsWheelSpinning)
+  const { state: { isSpinning } } = useAuctionWheelGame()
 
   const game = useStoreSelector(auctionGamesSelectors.getGame)
   const { setGame } = useActionCreators(auctionGamesActions)
@@ -117,7 +115,7 @@ function GameTypeRadioGroup() {
         className="w-full flex flex-col gap-y-2 px-0.5 desktop:gap-x-3 desktop:justify-between desktop:flex-row"
         value={game}
         defaultValue="wheel"
-        disabled={isWheelSpinning}
+        disabled={isSpinning}
         onValueChange={value => setGame(value as AuctionGames)}
       >
         <RadioCard
@@ -131,7 +129,6 @@ function GameTypeRadioGroup() {
         <RadioCard
           slotsClassnames={{ label: 'w-full grow p-0' }}
           value="cards"
-          // disabled={true}
           icon={<Icons.Cards className="text-gray-accent" />}
         >
           <RadioCardTitle>

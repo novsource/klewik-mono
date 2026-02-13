@@ -7,8 +7,6 @@ import { useSortingSlots } from '~pages/dashboard/slots/lib'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
-import { wheelSelectors } from '~entities/wheel/store'
-
 import { useDebounceCallback } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -34,7 +32,7 @@ type GameSlotsTabContentProps = Omit<TabsContentProps, 'value'> & {
 export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
   const { slotsClassnames, ...tabsContentProps } = props
 
-  const slots = useStoreSelector(wheelSelectors.getSlots)
+  const slots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const droppedSlots = useStoreSelector(auctionSlotsSelectors.getDropoutSlots)
 
   const [slotCategory, setSlotCategory] = useState<'all' | 'active' | 'dropped'>('all')
