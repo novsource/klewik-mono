@@ -1,3 +1,4 @@
+import { useGameContext } from '~entities/games/context/game.context'
 import { auctionGamesSelectors } from '~entities/games/store'
 import { generateWinner } from '~entities/games/utils/generate-winner'
 
@@ -20,8 +21,9 @@ export const SpinWheelButton = (props: SpinWheelButtonProps) => {
 
   const { spinTime } = useStoreSelector(auctionGamesSelectors.getWheelGameSettings)
   const { state: { wheelSlots, isSpinning, rotateValue }, actions } = useAuctionWheelGame()
+  const { state: { isLoading } } = useGameContext()
 
-  const isButtonShouldBeDisabled = wheelSlots.length < 2 || isSpinning
+  const isButtonShouldBeDisabled = wheelSlots.length < 2 || isSpinning || isLoading
 
   const handleOnClick = async () => {
     if (isButtonShouldBeDisabled)
@@ -34,7 +36,12 @@ export const SpinWheelButton = (props: SpinWheelButtonProps) => {
       return
     }
 
-    await actions.confirmSpin(spinTargetSlot.id)
+    const response = await actions.confirmSpin(spinTargetSlot.id)
+
+    if (response.error) {
+      toastErrorNotification('Не удалось выбрать слот для прокрута. Попробуйте еще раз')
+      return
+    }
 
     const target = updateSlotsAnglesByRotateValue(wheelSlots, rotateValue).filter(slot => slot.id === spinTargetSlot.id)[0]!
     actions.startWheelSpinAnimation(target, spinTime)

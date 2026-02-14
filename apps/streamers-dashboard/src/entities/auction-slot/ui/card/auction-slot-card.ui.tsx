@@ -28,7 +28,7 @@ import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Skeleton } from '~shared/ui/skeleton'
 
-import { cn } from '~shared/utils'
+import { cn, randomInRange } from '~shared/utils'
 
 export type BaseAuctionSlotCardProps = CardProps
 
@@ -328,26 +328,27 @@ export const SkeletonAuctionSlotCard = (props: SkeletonAuctionSlotCardProps) => 
     <BaseAuctionSlotCard {...restProps}>
       <BaseAuctionSlotCardHeader {...headerProps}>
         <Flex className="w-full gap-x-2" align="center">
-          <Skeleton className="w-52 h-6 tablet:h-6.5 tablet:w-96" />
+          <Skeleton className="h-5 tablet:h-6" style={{ width: `${randomInRange(60, 380)}px` }} />
         </Flex>
       </BaseAuctionSlotCardHeader>
 
       <BaseAuctionSlotCardContent {...contentProps}>
         <Flex
-          className="bg-dark-light rounded-sm px-1.5 w-fit"
+          className="w-fit"
           direction="row"
           align="center"
         >
-          <AuctionSlotCardContentInfoWrapper icon={<Icons.Id size={isDeviceGreaterThenTablet ? 'sm' : 'xs'} />}>
+          <Skeleton className="size-7.5 tablet:size-8 rounded-small" />
+          {/* <AuctionSlotCardContentInfoWrapper icon={<Icons.Id size={isDeviceGreaterThenTablet ? 'sm' : 'xs'} />}>
             <Skeleton className="w-5 h-4.5 tablet:h-5 tablet:w-8" />
-          </AuctionSlotCardContentInfoWrapper>
+          </AuctionSlotCardContentInfoWrapper> */}
           <AuctionSlotCardContentInfoDivider />
           <AuctionSlotCardContentInfoWrapper icon={<Icons.Coin size={isDeviceGreaterThenTablet ? 'sm' : 'xs'} />}>
-            <Skeleton className="w-14 h-4.5 tablet:h-5 tablet:w-18" />
+            <Skeleton className="h-4.5 tablet:h-5.25" style={{ width: `${randomInRange(40, 68)}px` }} />
           </AuctionSlotCardContentInfoWrapper>
           <AuctionSlotCardContentInfoDivider />
           <AuctionSlotCardContentInfoWrapper icon={<Icons.Crown size={isDeviceGreaterThenTablet ? 'sm' : 'xs'} />}>
-            <Skeleton className="w-6 h-4.5 tablet:h-5 tablet:w-8" />
+            <Skeleton className="h-4.5 tablet:h-5.25" style={{ width: `${randomInRange(30, 45)}px` }} />
           </AuctionSlotCardContentInfoWrapper>
         </Flex>
       </BaseAuctionSlotCardContent>

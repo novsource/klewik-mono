@@ -1,11 +1,14 @@
 import type { VirtualizerHandle } from 'virtua'
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 
 import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+import { SkeletonAuctionSlotCard } from '~entities/auction-slot/ui/card'
+
+import { StartTransitionContainer } from '~shared/components/start-transition-container'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -34,6 +37,14 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
 
   const [showedSlots, setShowedSlots] = useState(data ?? storedAuctionSlots)
 
+  const droppedSlotsByIds = useMemo<Record<number, boolean>>(() => {
+    return storedDroppedSlots.reduce((acc, curr) => {
+      acc[curr.id] = true
+
+      return acc
+    }, {} as Record<number, boolean>)
+  }, [storedDroppedSlots])
+
   const { setDialogState } = useActionCreators(globalDialogsActions)
 
   if (data !== undefined && showedSlots !== data) {
@@ -50,21 +61,26 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
 
   const renderAuctionSlotCard = useCallback(
     (auctionSlot: AuctionSlot) => {
-      const isDropped = storedDroppedSlots.some(slot => slot.id === auctionSlot.id)
+      const isDropped = droppedSlotsByIds[auctionSlot.id]
 
       return (
-        <AuctionSlotsListCard
-          auctionSlot={auctionSlot}
-          isDroped={isDropped}
-          actionButtonProps={{
-            onClick: () => {
-              setDialogState({ dialog: 'editSlot', data: { initialData: auctionSlot, isOpen: true } })
-            },
-          }}
-        />
+        <StartTransitionContainer fallback={(
+          <SkeletonAuctionSlotCard />
+        )}
+        >
+          <AuctionSlotsListCard
+            auctionSlot={auctionSlot}
+            isDroped={isDropped}
+            actionButtonProps={{
+              onClick: () => {
+                setDialogState({ dialog: 'editSlot', data: { initialData: auctionSlot, isOpen: true } })
+              },
+            }}
+          />
+        </StartTransitionContainer>
       )
     },
-    [setDialogState, storedDroppedSlots],
+    [setDialogState, droppedSlotsByIds],
   )
 
   const renderVirtualListItem = useCallback(

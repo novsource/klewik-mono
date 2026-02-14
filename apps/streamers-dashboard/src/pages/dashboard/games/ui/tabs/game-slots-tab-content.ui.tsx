@@ -5,6 +5,8 @@ import { useMemo, useState } from 'react'
 
 import { useSortingSlots } from '~pages/dashboard/slots/lib'
 
+import { auctionSelectors } from '~entities/auction/store'
+
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useDebounceCallback } from '~shared/hooks'
@@ -33,7 +35,17 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
   const { slotsClassnames, ...tabsContentProps } = props
 
   const slots = useStoreSelector(auctionSlotsSelectors.getSlots)
-  const droppedSlots = useStoreSelector(auctionSlotsSelectors.getDropoutSlots)
+  const { dropoutSlotsIds } = useStoreSelector(auctionSelectors.getAuctionInfo)
+
+  const droppedSlotIdsCollection = useMemo<Set<number>>(() => {
+    const result = new Set<number>()
+
+    dropoutSlotsIds.forEach((slotId) => {
+      result.add(slotId)
+    })
+
+    return result
+  }, [dropoutSlotsIds])
 
   const [slotCategory, setSlotCategory] = useState<'all' | 'active' | 'dropped'>('all')
   const [searchValue, setSearchValue] = useState('')
@@ -45,11 +57,11 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
     sortedSlots.filter((slot) => {
       const isTitleIncludesSearchQuery = slot.title.toLowerCase().includes(searchQuery.toLowerCase())
 
-      const isSlotDropped = droppedSlots.some(droppedSlot => slot.id === droppedSlot.id)
+      const isSlotDropped = droppedSlotIdsCollection.has(slot.id)
       const isSlotIncludeCategory = slotCategory === 'all' ? true : slotCategory === 'active' ? !isSlotDropped : isSlotDropped
 
       return isTitleIncludesSearchQuery && isSlotIncludeCategory
-    }), [searchQuery, sortedSlots, slotCategory, droppedSlots])
+    }), [searchQuery, sortedSlots, slotCategory, droppedSlotIdsCollection])
 
   const debouncedSearch = useDebounceCallback((value: string) => setSearchQuery(value), 250)
 

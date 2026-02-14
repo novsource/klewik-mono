@@ -3,19 +3,15 @@ import { useMemo } from 'react'
 import { CreateSlotsDialog } from '~features/auction-slot/create-slots/ui'
 import { SlotsCountStatisticCard, SlotsPointsSumStatisticCard } from '~features/auction-slot/watch-statistics/ui'
 
-import { SkeletonAuctionSlotCard } from '~entities/auction-slot/ui/card'
-
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
-import { StartTransitionContainer } from '~shared/components/start-transition-container'
 
-import { useDocumentTitle, useDumbedTransition, useMediaQuery } from '~shared/hooks'
+import { useDocumentTitle, useMediaQuery } from '~shared/hooks'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import { MotionBox } from '~shared/ui/motion-box'
 import { Typography } from '~shared/ui/typograghy'
 
 import { cn, twSlotsStyles } from '~shared/utils'
@@ -26,8 +22,6 @@ import { AuctionSlotsVirtualList } from './virtual-lists/slots-virtual-list.ui'
 
 export const AuctionSlotsPage = () => {
   useDocumentTitle('Слоты | Поинтовый аукцион Klewik')
-
-  const isListShowed = useDumbedTransition()
 
   const pageStyles = useMemo(() => twSlotsStyles(auctionSlotsPageStyles), [])
 
@@ -48,8 +42,8 @@ export const AuctionSlotsPage = () => {
         </MediaQueryViewToggler.MatchedItem>
       </MediaQueryViewToggler>
 
-      <ListActionsPanel disabled={!isListShowed} />
-      <AuctionSlotsList showed={isListShowed} />
+      <ListActionsPanel />
+      <AuctionSlotsVirtualList />
     </div>
   )
 }
@@ -118,30 +112,4 @@ function ListActionsPanel(props: ListActionsPanelProps) {
 
 type AuctionSlotsVirtualListProps = {
   showed: boolean
-}
-
-function AuctionSlotsList(props: AuctionSlotsVirtualListProps) {
-  const { showed } = props
-
-  return (
-    <StartTransitionContainer showed={showed} fallback={<SkeletonVirtualList />}>
-      <AuctionSlotsVirtualList />
-    </StartTransitionContainer>
-  )
-}
-
-function SkeletonVirtualList() {
-  return (
-    <ul className="flex flex-col w-full gap-y-1.5">
-      {Array.from({ length: 30 }).fill(null).map((_, index) => (
-        <MotionBox
-          key={index}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          <SkeletonAuctionSlotCard className="w-full" />
-        </MotionBox>
-      ))}
-    </ul>
-  )
 }

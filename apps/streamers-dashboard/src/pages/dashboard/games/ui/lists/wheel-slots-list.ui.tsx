@@ -3,11 +3,15 @@ import type { ReactNode } from 'react'
 
 import { auctionGamesSelectors } from '~entities/games/store'
 
+import { auctionSelectors } from '~entities/auction/store'
+
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+import { SkeletonAuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import type { WheelSlot } from '~entities/wheel/model'
 
+import { StartTransitionContainer } from '~shared/components/start-transition-container'
 import { Text } from '~shared/components/typography'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -38,10 +42,21 @@ export const AuctionGameSlotsList = (props: AuctionGameSlotsListProps) => {
   const game = useStoreSelector(auctionGamesSelectors.getGame)
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const storedPointsSum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
+  const { dropoutSlotsIds } = useStoreSelector(auctionSelectors.getAuctionInfo)
 
   const { state: { wheelSlots } } = useAuctionWheelGame()
 
   const [listItems, setListItems] = useState(data)
+
+  const droppedSlotIdsCollection = useMemo<Set<number>>(() => {
+    const result = new Set<number>()
+
+    dropoutSlotsIds.forEach((slotId) => {
+      result.add(slotId)
+    })
+
+    return result
+  }, [dropoutSlotsIds])
 
   useEffect(() => {
     const newListItems = game === 'wheel' ? wheelSlots.filter(item => data.findIndex(slot => slot.id === item.id) !== -1) : data
@@ -83,24 +98,31 @@ export const AuctionGameSlotsList = (props: AuctionGameSlotsListProps) => {
 
   const renderGameSlotCard: VirtualListRenderFunction<WheelSlot | AuctionSlot> = (slots, virtualizedItem) => {
     const slot = slots[virtualizedItem.index]
+    const isDropped = droppedSlotIdsCollection.has(slot.id)
 
     switch (game) {
       case 'wheel': {
         return (
-          <WheelSlotCard
-            key={slot.id}
-            wheelSlot={slot as WheelSlot}
-            winPercentsBounds={winPercentsBounds}
-          />
+          <StartTransitionContainer fallback={<SkeletonAuctionSlotCard />}>
+            <WheelSlotCard
+              key={slot.id}
+              wheelSlot={slot as WheelSlot}
+              winPercentsBounds={winPercentsBounds}
+              isDropped={isDropped}
+            />
+          </StartTransitionContainer>
         )
       }
       case 'cards': {
         return (
-          <CardsGameListCard
-            key={slot.id}
-            auctionSlot={slot as AuctionSlot}
-            winPercentsBounds={winPercentsBounds}
-          />
+          <StartTransitionContainer fallback={<SkeletonAuctionSlotCard />}>
+            <CardsGameListCard
+              key={slot.id}
+              auctionSlot={slot as AuctionSlot}
+              isDropped={isDropped}
+              winPercentsBounds={winPercentsBounds}
+            />
+          </StartTransitionContainer>
         )
       }
     }

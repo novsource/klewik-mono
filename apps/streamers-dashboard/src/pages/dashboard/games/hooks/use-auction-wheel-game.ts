@@ -7,8 +7,6 @@ import { useWheelGameContext } from '~entities/wheel/context'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { toastErrorNotification } from '~shared/ui/toaster/lib'
-
 export const useAuctionWheelGame = () => {
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
   const gameMode = useStoreSelector(auctionGamesSelectors.getGameMode)
@@ -19,18 +17,11 @@ export const useAuctionWheelGame = () => {
   const confirmSpin = async (slotId: number) => {
     if (gameMode === 'dropout') {
       const response = await auctionGame.actions.dropSlot({ auctionUUID, slotId })
-
-      if (response.error) {
-        toastErrorNotification('Не удалось прокрутить колесо из-за ошибки на сервере. Попробуйте еще раз')
-      }
+      return response
     }
-    else {
-      const response = await auctionGame.actions.sendWinner({ auctionUUID, slotId })
 
-      if (response.error) {
-        toastErrorNotification('Не удалось прокрутить колесо из-за ошибки на сервере. Попробуйте еще раз')
-      }
-    }
+    const response = await auctionGame.actions.sendWinner({ auctionUUID, slotId })
+    return response
   }
 
   return { state: wheel.state, actions: { ...wheel.actions, confirmSpin }, meta: wheel.meta }
