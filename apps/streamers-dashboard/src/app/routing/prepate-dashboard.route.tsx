@@ -35,15 +35,6 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
       </>
     ),
     loader: async ({ params }) => {
-      const storeState = rootStore.getState()
-      const dispatch = rootStore.dispatch
-
-      const storedAuctionInfo = storeState.auction.auctionInfo
-      const isAuctionInfoHasBeenLoaded = !!storedAuctionInfo.id
-
-      if (isAuctionInfoHasBeenLoaded)
-        return storedAuctionInfo
-
       const validatedParams = z
         .object({ auctionUUID: z.string().uuid() })
         .safeParse(params)
@@ -57,6 +48,8 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
           { status: 400 },
         )
       }
+
+      const dispatch = rootStore.dispatch
 
       try {
         const auctionUUID = validatedParams.data.auctionUUID

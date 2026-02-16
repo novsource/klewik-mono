@@ -144,8 +144,12 @@ const slice = createSlice({
         return sum
       }, 0)
 
+      const filtredSlots = state.slots.filter(
+        slot => !fetchedSlots.find(item => slot.id === item.id),
+      )
+
       const updatedPointsSum = state.slotsPointsSum + fetchedSlotsPointsSum
-      const updatedAuctionSlots = [...fetchedSlots, ...state.slots].map<AuctionSlot>((slot) => {
+      const updatedAuctionSlots = [...filtredSlots, ...fetchedSlots].map<AuctionSlot>((slot) => {
         const winPercents = (slot.points / updatedPointsSum) * 100
 
         return { ...slot, winPercents }
