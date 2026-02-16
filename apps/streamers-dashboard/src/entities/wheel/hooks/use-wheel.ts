@@ -1,3 +1,4 @@
+import type { AuctionGameMode } from '~entities/games/model'
 import type { WheelSlicesSizeMode } from '~entities/games/store'
 
 import type { RefObject } from 'react'
@@ -13,6 +14,7 @@ import type { HexColor, RGBAColor } from '~shared/lib/zod'
 
 import { getHEXColor } from '~shared/utils'
 
+import { formatSlotsToDropoutMode } from '../utils'
 import {
   calculateRotateWheelCSSValue,
   getSlotNameOnSelector,
@@ -121,7 +123,8 @@ export type UseWheelReturn = {
 }
 
 type UseWheelOptions = {
-  sizeMode?: WheelSlicesSizeMode
+  sizeMode: WheelSlicesSizeMode
+  mode: AuctionGameMode
 }
 
 export const useWheel = (auctionSlots: AuctionSlot[], options: UseWheelOptions): UseWheelReturn => {
@@ -157,8 +160,14 @@ export const useWheel = (auctionSlots: AuctionSlot[], options: UseWheelOptions):
   })
 
   useEffect(() => {
-    setWheelSlots(curr => transformSlotsToWheelSlots(curr, options.sizeMode))
-  }, [options.sizeMode])
+    if (options.mode === 'dropout') {
+      const dropoutSlots = formatSlotsToDropoutMode(auctionSlots)
+      setWheelSlots(transformSlotsToWheelSlots(dropoutSlots))
+    }
+    else {
+      setWheelSlots(transformSlotsToWheelSlots(auctionSlots, options.sizeMode))
+    }
+  }, [auctionSlots, options.sizeMode, options.mode])
 
   const updateWheelSlotsColors = () => {
     setWheelSlots(curr => curr.map((slot) => {

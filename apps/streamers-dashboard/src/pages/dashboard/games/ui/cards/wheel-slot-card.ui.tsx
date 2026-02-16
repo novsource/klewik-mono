@@ -29,7 +29,7 @@ export const WheelSlotCard = (props: WheelSlotCardProps) => {
       className={cn('flex-row items-end pr-2', className)}
       {...restProps}
     >
-      <Flex className="gap-y-2 pr-3.5" direction="column">
+      <Flex className="gap-y-2 w-full" direction="column">
         <SolidAuctionSlotHeader slotTitle={wheelSlot.title} />
 
         <BaseAuctionSlotCardContent {...restProps}>

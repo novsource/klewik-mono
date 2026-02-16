@@ -1,16 +1,22 @@
-import type { ReactNode } from 'react'
-import { createContext, useContext, useMemo } from 'react'
+import type { Dispatch, ReactNode, SetStateAction } from 'react'
+import { createContext, useContext, useMemo, useState } from 'react'
+
+import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import { useDropoutSlotMutation, useSetAuctionWinnerMutation } from '../api'
 
 type GameContextState = {
   state: {
+    activeSlots: AuctionSlot[]
     isLoading: boolean
     isError: boolean
   }
   actions: {
     dropSlot: ReturnType<typeof useDropoutSlotMutation>[0]
     sendWinner: ReturnType<typeof useSetAuctionWinnerMutation>[0]
+  }
+  dispatch: {
+    setActiveSlots: Dispatch<SetStateAction<AuctionSlot[]>>
   }
 }
 
@@ -22,6 +28,7 @@ const GameContext = createContext<GameContextState>({
     sendWinner: () => ({}),
   },
   state: {
+    activeSlots: [],
     isLoading: false,
     isError: false,
   },
@@ -44,11 +51,13 @@ type GameContextProviderProps = {
 export const GameContextProvider = (props: GameContextProviderProps) => {
   const { children } = props
 
+  const [activeSlots, setActiveSlots] = useState<AuctionSlot[]>([])
   const [dropSlotMutation, dropSlotMutationState] = useDropoutSlotMutation()
   const [sendAuctionWinnerMutation, sendWinnerMutationState] = useSetAuctionWinnerMutation()
 
   const contextValue = useMemo<GameContextState>(() => ({
     state: {
+      activeSlots,
       isLoading: dropSlotMutationState.isLoading || sendWinnerMutationState.isLoading,
       isError: dropSlotMutationState.isError || sendWinnerMutationState.isError,
     },
@@ -56,7 +65,16 @@ export const GameContextProvider = (props: GameContextProviderProps) => {
       dropSlot: dropSlotMutation,
       sendWinner: sendAuctionWinnerMutation,
     },
-  }), [dropSlotMutation, sendAuctionWinnerMutation, dropSlotMutationState, sendWinnerMutationState])
+    dispatch: {
+      setActiveSlots,
+    },
+  }), [
+    activeSlots,
+    dropSlotMutation,
+    sendAuctionWinnerMutation,
+    dropSlotMutationState,
+    sendWinnerMutationState,
+  ])
 
   return <GameContext.Provider value={contextValue}>{ children }</GameContext.Provider>
 }

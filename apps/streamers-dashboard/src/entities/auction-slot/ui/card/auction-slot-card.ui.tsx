@@ -77,7 +77,10 @@ export const AuctionSlotCardTitleInfo = (props: AuctionSlotCardTitleInfoProps) =
 
   return (
     <Text
-      className={cn('text-base font-semibold font-golos-f mobile:text-title tablet:text-title-lg text-white/85', className)}
+      className={cn([
+        'text-base font-semibold font-golos-f mobile:text-title tablet:text-title-lg text-white/85 break-words',
+        className,
+      ])}
       asSpan
     >
       {slotTitle}

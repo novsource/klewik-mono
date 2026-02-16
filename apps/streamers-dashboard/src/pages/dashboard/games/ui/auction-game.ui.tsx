@@ -27,10 +27,14 @@ export const AuctionGame = (props: AuctionGameProps) => {
   const { children, auctionSlots } = props
 
   const auctionGame = useStoreSelector(auctionGamesSelectors.getGame)
+  const gameMode = useStoreSelector(auctionGamesSelectors.getGameMode)
   const wheelGameSettings = useStoreSelector(auctionGamesSelectors.getWheelGameSettings)
 
   const cardsGame = useCardsGame(auctionSlots)
-  const wheelGame = useWheel(auctionSlots, { sizeMode: wheelGameSettings.slicesDisplayMode })
+  const wheelGame = useWheel(auctionSlots, {
+    sizeMode: wheelGameSettings.slicesDisplayMode,
+    mode: gameMode,
+  })
 
   const { set: setDocumentTitle } = useDocumentTitle(auctionGame === 'cards'
     ? 'Карты | Поинтовый аукцион Klewik'

@@ -1,6 +1,8 @@
 import type { VirtualizerHandle } from 'virtua'
 
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
+import { shallowEqual } from 'react-redux'
 
 import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
@@ -35,7 +37,7 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
   const storedDroppedSlots = useStoreSelector(auctionSlotsSelectors.getDropoutSlots)
   const sortingOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
 
-  const [showedSlots, setShowedSlots] = useState(data ?? storedAuctionSlots)
+  const [listItems, setListItems] = useState(data ?? storedAuctionSlots)
 
   const droppedSlotsByIds = useMemo<Record<number, boolean>>(() => {
     return storedDroppedSlots.reduce((acc, curr) => {
@@ -47,17 +49,19 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
 
   const { setDialogState } = useActionCreators(globalDialogsActions)
 
-  if (data !== undefined && showedSlots !== data) {
-    setShowedSlots(data)
-  }
+  useEffect(() => {
+    if (!data && listItems !== storedAuctionSlots) {
+      setListItems(storedAuctionSlots)
+    }
 
-  if (data === undefined && showedSlots !== storedAuctionSlots) {
-    setShowedSlots(storedAuctionSlots)
-  }
+    if (data !== undefined && !shallowEqual(data, listItems)) {
+      setListItems(data)
+    }
+  }, [data, storedAuctionSlots, listItems])
 
   const virtualizerRef = useRef<NullablePossible<VirtualizerHandle>>(null)
 
-  const sortedSlots = useSortingSlots(showedSlots, sortingOptions)
+  const sortedSlots = useSortingSlots(listItems, sortingOptions)
 
   const renderAuctionSlotCard = useCallback(
     (auctionSlot: AuctionSlot) => {

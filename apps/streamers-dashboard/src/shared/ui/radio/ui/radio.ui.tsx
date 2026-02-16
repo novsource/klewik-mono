@@ -12,7 +12,8 @@ import { radioIndicatorVariants, radioLabelVariants, radioVariants } from '../st
 export type RadioGroupProps = RadioGroupPrimitive.Props
 
 const RadioGroup = (props: RadioGroupProps) => {
-  return <RadioGroupPrimitive {...props} />
+  const { className, ...restProps } = props
+  return <RadioGroupPrimitive className={cn('group', className)} {...restProps} />
 }
 
 export type RadioProps = Omit<RadioPrimitive.Root.Props, 'className'> & RadioVariantsProps & {
