@@ -11,6 +11,6 @@ export const AuctionSchema = z.object({
   dropoutSlotsIds: z.number().array(),
   isBetsClosed: z.boolean(),
   isEnded: z.boolean(),
-  createAt: z.iso.datetime(),
+  createdAt: z.iso.datetime(),
   endedAt: z.iso.datetime().nullable(),
 })

@@ -15,7 +15,7 @@ const initialState = {
     winnerSlotId: null,
     processedDonationsIds: [],
     ownerId: '',
-    createAt: '',
+    createdAt: '',
     endedAt: null,
     isBetsClosed: false,
     isEnded: false,

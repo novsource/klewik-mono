@@ -13,16 +13,16 @@ export const getUserByTwitchNickname = (nickname: string, options?: HttpClientRe
 }
 
 type GetUserAuctionsRequestArgs = {
-  userId: number
+  userUUID: string
 }
 
 /*
   Here we can get user info by jwt token payload
 */
 export const getAuthUser = (options?: HttpClientRequestOptions) => {
-  return authHttpClient.post<UserDTO>('/api/v1/users', options)
+  return authHttpClient.get<UserDTO>('/api/v1/users/self', options)
 }
 
 export const getUserAuctions = (args: GetUserAuctionsRequestArgs, options?: HttpClientRequestOptions) => {
-  return authHttpClient.post<AuctionDTO[]>(`/api/v1/users/${args.userId}/auctions`, options)
+  return authHttpClient.get<AuctionDTO[]>(`/api/v1/users/${args.userUUID}/auctions`, options)
 }
