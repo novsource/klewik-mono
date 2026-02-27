@@ -2,8 +2,8 @@ import type { StateRef } from '../use-ref-state/use-ref-state'
 
 import { useState } from 'react'
 
-import { getElement } from '~shared/utils'
-import type { HookTarget } from '~shared/utils'
+import { getElement } from '~shared/utils/react'
+import type { HookTarget } from '~shared/utils/react'
 
 import { useIsomorphicLayoutEffect } from '../use-isomorphic-layout-effect/use-isomorphic-layout-effect'
 import { useRefState } from '../use-ref-state/use-ref-state'

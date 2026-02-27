@@ -47,23 +47,16 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={isButtonDisabled}
         {...restProps}
       >
-        {!isIconOnly && startContent}
-        {!isIconOnly && children}
-        {isIconOnly && icon}
-        {!isIconOnly && endContent}
-        {loading && <Icons.Loading className="data-[loading=true]:visible" />}
-
-        {/* {!loading
+        {!loading
           ? (
               <>
                 {!isIconOnly && startContent}
                 {!isIconOnly && children}
                 {isIconOnly && icon}
                 {!isIconOnly && endContent}
-                <Icons.Loading className="data-[loading=true]:visible" />
               </>
             )
-          : <Icons.Loading className="data-[loading=true]:visible" />} */}
+          : <Icons.Loading className="data-[loading=true]:visible" />}
       </button>
     )
   },

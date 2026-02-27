@@ -4,16 +4,16 @@ import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import type { WheelSlot } from '~entities/wheel/model'
 
-import { randomInRange } from '~shared/utils'
 import {
   clearCanvas,
   convertDegreesToRadians,
   drawSlice,
   getDegreeByArcLength,
+  getHEXColor,
   getMaxCircleLength,
   getPercentValue,
-} from '~shared/utils/canvas'
-import { getHEXColor } from '~shared/utils/colors'
+  getRandomNumberInRange,
+} from '~shared/utils/common'
 
 type DrawEmptyWheelOptions = {
   color: string
@@ -313,12 +313,12 @@ export const calculateRotateWheelCSSValue = (
   let randomValueFromRange = null
 
   if (endAngle >= startAngle) {
-    randomValueFromRange = randomInRange(startAngle, endAngle)
+    randomValueFromRange = getRandomNumberInRange(startAngle, endAngle)
   }
   else {
     randomValueFromRange
       = Math.random() >= 0.5
-        ? randomInRange(startAngle, 360)
+        ? getRandomNumberInRange(startAngle, 360)
         : Math.random() * endAngle
   }
 

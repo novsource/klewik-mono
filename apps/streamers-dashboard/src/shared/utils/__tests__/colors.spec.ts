@@ -2,7 +2,7 @@ import {
   getRandomHEXColor,
   getRandomHSLColor,
   getRandomRGBColor,
-} from '~shared/utils/colors'
+} from '~shared/utils/common'
 
 describe('#colors utils', () => {
   it('should return correct random RGB color', () => {

@@ -1,6 +1,8 @@
-import { VariantProps, cva } from 'class-variance-authority'
+import type { VariantProps } from 'class-variance-authority'
 
-import { CvaClassValue } from '~shared/utils/types'
+import { cva } from 'class-variance-authority'
+
+import type { CvaClassValue } from '~shared/lib/cva'
 
 type CardVariants = {
   variant: {
@@ -58,7 +60,7 @@ export const cardTitleVariants = cva<CardVariants>(
       size: 'default',
       variant: 'default',
     },
-  }
+  },
 )
 
 export const cardContentVariants = cva<CardVariants>(
@@ -68,7 +70,7 @@ export const cardContentVariants = cva<CardVariants>(
       variant: { default: '', slots: 'font-semibold text-base' },
       size: { default: 'py-2', sm: 'pt-1', lg: 'py-4' },
     },
-  }
+  },
 )
 
 export const cardDescriptionVariants = cva<CardVariants>(
@@ -82,7 +84,7 @@ export const cardDescriptionVariants = cva<CardVariants>(
       size: 'default',
       variant: 'default',
     },
-  }
+  },
 )
 
 export const cardFooterVariants = cva<CardVariants>('flex items-center pt-0', {

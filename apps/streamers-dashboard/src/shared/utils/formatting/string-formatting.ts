@@ -1,4 +1,4 @@
-import { formatNumberToIntlString } from '../number-format'
+import { formatNumberToIntlString } from './number-formatting'
 
 type StringNumberFormatOptions = {
   locales?: Intl.LocalesArgument

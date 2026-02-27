@@ -6,10 +6,11 @@ import type {
 import type { ComponentProps } from 'react'
 import { forwardRef, useMemo, useState } from 'react'
 
+import type { CvaClassValue } from '~shared/lib/cva'
+
 import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
-import type { CvaClassValue } from '~shared/utils/types'
 
 import {
   contentVariants,

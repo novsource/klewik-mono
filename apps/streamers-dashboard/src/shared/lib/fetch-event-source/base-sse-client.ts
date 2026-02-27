@@ -13,7 +13,7 @@ import { AxiosError } from 'axios'
 
 import { refreshTokens } from '~shared/api/http/auth/auth.api'
 
-import { wait } from '~shared/utils'
+import { wait } from '~shared/utils/common'
 
 import { EventSourceMessageSchema } from './models'
 

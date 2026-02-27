@@ -14,8 +14,7 @@ import { useResizeObserver } from '~shared/hooks/use-resize-observer'
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 import type { HexColor } from '~shared/lib/zod'
 
-import { clearCanvas, getMaxSizeCanvas, resizeCanvasWithRatio } from '~shared/utils/canvas'
-import { getHEXColor } from '~shared/utils/colors'
+import { clearCanvas, getHEXColor, getMaxSizeCanvas, resizeCanvasWithRatio } from '~shared/utils/common'
 
 import { wheelActions } from '../store'
 import { formatSlotsToDropoutMode } from '../utils'

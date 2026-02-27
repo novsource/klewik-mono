@@ -13,7 +13,7 @@ import { auctionSlotsSSEClient } from '~shared/api/sse/clients/auction-slots'
 
 import { useLazyConnectAuctionSlotsSSEQuery } from '~shared/store/api'
 
-import { wait } from '~shared/utils'
+import { wait } from '~shared/utils/common'
 
 import { createFakeAuctionSlotsArray, createSingleFakeAuctionSlot } from '../../model/__tests__/auction-slot.mocks'
 

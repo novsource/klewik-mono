@@ -12,7 +12,7 @@ import {
   useIsFirstRender,
 } from '~shared/hooks'
 
-import { objectToDeps } from '~shared/utils'
+import { objectToDeps } from '~shared/utils/react'
 
 export const useDonationsInfiniteList
   = (

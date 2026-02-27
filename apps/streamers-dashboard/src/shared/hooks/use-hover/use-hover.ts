@@ -2,8 +2,8 @@ import type { StateRef } from '../use-ref-state/use-ref-state'
 
 import { useEffect, useRef, useState } from 'react'
 
-import type { HookTarget } from '~shared/utils'
-import { getElement, isTarget } from '~shared/utils'
+import type { HookTarget } from '~shared/utils/react'
+import { getElement, isTarget } from '~shared/utils/react'
 
 import { useRefState } from '../use-ref-state/use-ref-state'
 

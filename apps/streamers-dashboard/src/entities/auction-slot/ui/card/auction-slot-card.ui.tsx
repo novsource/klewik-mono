@@ -28,7 +28,7 @@ import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Skeleton } from '~shared/ui/skeleton'
 
-import { cn, randomInRange } from '~shared/utils'
+import { getRandomNumberInRange } from '~shared/utils/common'
 
 export type BaseAuctionSlotCardProps = CardProps
 
@@ -331,7 +331,7 @@ export const SkeletonAuctionSlotCard = (props: SkeletonAuctionSlotCardProps) => 
     <BaseAuctionSlotCard {...restProps}>
       <BaseAuctionSlotCardHeader {...headerProps}>
         <Flex className="w-full gap-x-2" align="center">
-          <Skeleton className="h-5 tablet:h-6" style={{ width: `${randomInRange(60, 380)}px` }} />
+          <Skeleton className="h-5 tablet:h-6" style={{ width: `${getRandomNumberInRange(60, 380)}px` }} />
         </Flex>
       </BaseAuctionSlotCardHeader>
 
@@ -347,11 +347,11 @@ export const SkeletonAuctionSlotCard = (props: SkeletonAuctionSlotCardProps) => 
           </AuctionSlotCardContentInfoWrapper> */}
           <AuctionSlotCardContentInfoDivider />
           <AuctionSlotCardContentInfoWrapper icon={<Icons.Coin size={isDeviceGreaterThenTablet ? 'sm' : 'xs'} />}>
-            <Skeleton className="h-4.5 tablet:h-5.25" style={{ width: `${randomInRange(40, 68)}px` }} />
+            <Skeleton className="h-4.5 tablet:h-5.25" style={{ width: `${getRandomNumberInRange(40, 68)}px` }} />
           </AuctionSlotCardContentInfoWrapper>
           <AuctionSlotCardContentInfoDivider />
           <AuctionSlotCardContentInfoWrapper icon={<Icons.Crown size={isDeviceGreaterThenTablet ? 'sm' : 'xs'} />}>
-            <Skeleton className="h-4.5 tablet:h-5.25" style={{ width: `${randomInRange(30, 45)}px` }} />
+            <Skeleton className="h-4.5 tablet:h-5.25" style={{ width: `${getRandomNumberInRange(30, 45)}px` }} />
           </AuctionSlotCardContentInfoWrapper>
         </Flex>
       </BaseAuctionSlotCardContent>

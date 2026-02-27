@@ -15,7 +15,7 @@ import type { DonationsEventSourceMessage, DonationsSSEEventsMap } from '~shared
 
 import { useLazyConnectDonationsSSEQuery } from '~shared/store/api'
 
-import { wait } from '~shared/utils'
+import { wait } from '~shared/utils/common'
 
 const DONATIONS_SSE_URL = '/api/v1/auctions/:uuid/sse/donations-events'
 

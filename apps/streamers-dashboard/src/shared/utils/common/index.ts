@@ -1,4 +1,6 @@
+export * from './canvas'
 export * from './chain'
+export * from './colors'
 export * from './genuuid'
 export * from './get-random-number-in-range'
 export * from './shuffle-array'
