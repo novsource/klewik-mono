@@ -1,6 +1,6 @@
 import type { TransformedCreateSlotsFormData } from '../model'
 
-import { deleteAllSpacesFromString } from '~shared/utils/string-format'
+import { deleteAllSpacesFromString } from '~shared/utils/formatting'
 
 import { createSlotSchema } from '../model'
 

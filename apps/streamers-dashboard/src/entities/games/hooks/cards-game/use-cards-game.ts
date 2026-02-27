@@ -7,7 +7,7 @@ import { generateWinner } from '~entities/games/utils/generate-winner'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
-import { getHEXColor, shuffleArray } from '~shared/utils'
+import { getHEXColor, shuffleArray } from '~shared/utils/common'
 
 type UseCardsGameOptions = {
   amount?: number

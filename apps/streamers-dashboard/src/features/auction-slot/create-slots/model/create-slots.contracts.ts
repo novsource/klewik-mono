@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { deleteAllSpacesFromString } from '~shared/utils/string-format'
+import { deleteAllSpacesFromString } from '~shared/utils/formatting'
 
 export const createSlotSchema = z.object({
   slots: z

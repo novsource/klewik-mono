@@ -10,7 +10,7 @@ import type { AuctionSlot } from '~entities/auction-slot/model'
 import {
   deleteAllSpacesFromString,
   removeSpaceDuplicatingFromString,
-} from '~shared/utils/string-format'
+} from '~shared/utils/formatting'
 
 import { createSlotSchema } from '../model'
 

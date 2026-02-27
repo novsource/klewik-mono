@@ -2,7 +2,7 @@
   "ts": true,
   "aliases": {
     "hooks": "@/shared/hooks",
-    "utils": "@/shared/utils"
+    "utils": "@/shared/utils/react"
   },
   "case": "kebab"
 }

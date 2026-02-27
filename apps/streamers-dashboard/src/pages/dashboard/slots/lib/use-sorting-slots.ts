@@ -7,7 +7,7 @@ import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import type { SortingOptions } from '~shared/store/model'
 
-import { deleteAllSpacesFromString } from '~shared/utils/string-format'
+import { deleteAllSpacesFromString } from '~shared/utils/formatting'
 
 const compareSlotsFields = (
   slotOne: AuctionSlot,

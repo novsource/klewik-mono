@@ -3,8 +3,8 @@
   Source: https://github.com/adobe/react-spectrum/blob/main/packages/%40react-aria/utils/src/mergeProps.ts
 */
 
-import { chain } from './chain'
-import { cn } from './cn'
+import { chain } from '../chain'
+import { cn } from '../cn'
 
 type Props = {
   [key: string]: any

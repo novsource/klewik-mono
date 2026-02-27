@@ -1,1 +1,6 @@
+export * from './chain'
 export * from './genuuid'
+export * from './get-random-number-in-range'
+export * from './shuffle-array'
+export * from './swap-array-elements'
+export * from './wait'
