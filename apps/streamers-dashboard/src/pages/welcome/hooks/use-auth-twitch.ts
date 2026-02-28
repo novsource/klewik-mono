@@ -96,6 +96,8 @@ export const useAuthTwitch = (options?: UseAuthTwitchOptions): UseAuthTwitchRetu
     const castedLocalStorageValue = twitchAuthLocalStorageState.value as TwitchAuthLocalStorageState
     const isSuccessedAuth = castedLocalStorageValue?.status === 'success' && !isAuth
 
+    console.log(twitchAuthLocalStorageState)
+
     if (isSuccessedAuth && isLoading) {
       optionsRef.current?.onSuccess?.()
 

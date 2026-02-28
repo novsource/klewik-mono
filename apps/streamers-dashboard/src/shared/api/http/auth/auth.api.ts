@@ -7,12 +7,13 @@ import { baseHttpClient } from '../base-api'
 
 export const loginInAuction = async (
   uuid: string,
-  password: string,
   fetchOptions?: HttpClientRequestOptions,
 ) => {
   return authHttpClient.post<void>(AUTH_ENDPOINTS.LOGIN, {
     ...fetchOptions,
-    data: { auctionUUID: uuid, password },
+    params: {
+      auction: uuid,
+    },
   })
 }
 
