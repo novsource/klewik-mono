@@ -2,7 +2,7 @@ import type { WheelSlot } from '../model'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
-import { convertDegreesToRadians } from '~shared/utils'
+import { convertDegreesToRadians } from '~shared/utils/common'
 
 export const formatSlotsToDropoutMode = (slots: AuctionSlot[]) => {
   const clonedSlots = structuredClone(slots)

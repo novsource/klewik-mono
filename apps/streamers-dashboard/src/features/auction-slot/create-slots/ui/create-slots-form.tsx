@@ -14,7 +14,8 @@ import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~shared/ui/tabs'
 
-import { chain, cn, twSlotsStyles } from '~shared/utils'
+import { cn, twSlotsStyles } from '~shared/utils'
+import { chain } from '~shared/utils/common'
 
 import { CREATE_SLOT_FORM_DEFAULT_VALUE } from '../constants'
 import { useCreateSlotsForm } from '../hooks'

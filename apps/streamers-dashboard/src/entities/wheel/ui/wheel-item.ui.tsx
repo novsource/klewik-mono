@@ -3,7 +3,8 @@ import type { WheelSlot } from '../model'
 import { useMemo } from 'react'
 import type { ComponentPropsWithoutRef } from 'react'
 
-import { cn, convertDegreesToRadians, getCoordsOfDotByVectorAngle } from '~shared/utils'
+import { cn } from '~shared/utils'
+import { convertDegreesToRadians, getCoordsOfDotByVectorAngle } from '~shared/utils/common'
 
 export type WheelItemProps = ComponentPropsWithoutRef<'path'> & {
   slot: WheelSlot

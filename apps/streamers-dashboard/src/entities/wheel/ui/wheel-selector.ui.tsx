@@ -1,7 +1,8 @@
 import type { ComponentPropsWithoutRef } from 'react'
 import { useMemo } from 'react'
 
-import { cn, convertDegreesToRadians, getCoordsOfDotByVectorAngle } from '~shared/utils'
+import { cn } from '~shared/utils'
+import { convertDegreesToRadians, getCoordsOfDotByVectorAngle } from '~shared/utils/common'
 
 export type WheelSelectorProps = ComponentPropsWithoutRef<'svg'> & {
   size: number

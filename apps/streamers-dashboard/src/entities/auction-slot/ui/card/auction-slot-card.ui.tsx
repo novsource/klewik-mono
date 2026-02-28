@@ -29,6 +29,7 @@ import { Icons } from '~shared/ui/icons'
 import { Skeleton } from '~shared/ui/skeleton'
 
 import { getRandomNumberInRange } from '~shared/utils/common'
+import { cn } from '~shared/utils/react'
 
 export type BaseAuctionSlotCardProps = CardProps
 
