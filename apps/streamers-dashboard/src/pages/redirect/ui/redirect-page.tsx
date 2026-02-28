@@ -4,10 +4,8 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 
 import { RedirectDisplay } from '~features/integrations/connect-integration/ui'
 
-import { INTEGRATIONS_PLATFORM_NAMES, TWITCH_AUTH_LOCAL_STORAGE_STATE_NAME } from '~entities/integrations/constants'
+import { INTEGRATIONS_PLATFORM_NAMES } from '~entities/integrations/constants'
 import type { IntegrationsPlatforms } from '~entities/integrations/model'
-
-import { useLocalStorage } from '~shared/hooks/use-local-storage'
 
 import { Flex } from '~shared/ui/flex'
 
@@ -15,7 +13,7 @@ export const RedirectPage = () => {
   const params = useSearchParams()
   const navigate = useNavigate()
 
-  const twitchAuthLocalStorage = useLocalStorage(TWITCH_AUTH_LOCAL_STORAGE_STATE_NAME)
+  // const twitchAuthLocalStorage = useLocalStorage(TWITCH_AUTH_LOCAL_STORAGE_STATE_NAME)
 
   useLayoutEffect(() => {
     const rootElement = document.getElementById('root')
@@ -32,42 +30,42 @@ export const RedirectPage = () => {
     }
   }, [navigate])
 
-  const isTwitchProvider = params[0].get('provider') === 'twitch'
+  // const isTwitchProvider = params[0].get('provider') === 'twitch'
 
-  if (isTwitchProvider) {
-    const authState = params[0].get('state')
+  // if (isTwitchProvider) {
+  //   const authState = params[0].get('state')
 
-    const isInvalidComparingStateResult
-      = !twitchAuthLocalStorage.value
-        || !authState
-        || twitchAuthLocalStorage.value !== authState
+  //   const isInvalidComparingStateResult
+  //     = !twitchAuthLocalStorage.value
+  //       || !authState
+  //       || twitchAuthLocalStorage.value.state !== authState
 
-    if (isInvalidComparingStateResult) {
-      twitchAuthLocalStorage.set({
-        state: null,
-        status: 'error',
-        reason: 'Invalid state',
-      })
-    }
+  //   if (isInvalidComparingStateResult) {
+  //     twitchAuthLocalStorage.set({
+  //       state: null,
+  //       status: 'error',
+  //       reason: 'Invalid state',
+  //     })
+  //   }
 
-    const isSuccessAuth = Boolean(params[0].get('auth'))
+  //   const isSuccessAuth = Boolean(params[0].get('auth'))
 
-    if (isSuccessAuth) {
-      twitchAuthLocalStorage.set({
-        state: authState,
-        status: 'success',
-      })
-    }
-    else {
-      twitchAuthLocalStorage.set({
-        state: authState,
-        status: 'error',
-        reason: params[0].get('error_reason') || 'Unknown error',
-      })
-    }
+  //   if (isSuccessAuth) {
+  //     twitchAuthLocalStorage.set({
+  //       state: authState,
+  //       status: 'success',
+  //     })
+  //   }
+  //   else {
+  //     twitchAuthLocalStorage.set({
+  //       state: authState,
+  //       status: 'error',
+  //       reason: params[0].get('error_reason') || 'Unknown error',
+  //     })
+  //   }
 
-    window.close()
-  }
+  //   window.close()
+  // }
 
   const integrationProvider = params[0].get('provider') as NullablePossible<IntegrationsPlatforms>
   const isInvalidIntegrationProvider = !integrationProvider || !Reflect.has(INTEGRATIONS_PLATFORM_NAMES, integrationProvider)

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
-import z from 'zod'
+import { AuthTwitchParamsSchema } from '~features/integrations/connect-integration/model/connect-integration.models'
+import type { AuthTwitchRedirectParams } from '~features/integrations/connect-integration/model/connect-integration.types'
 
 import { useLocalStorage } from '~shared/hooks/use-local-storage'
 
@@ -16,14 +17,6 @@ type UseAuthTwitchReturnValue = {
   }
 }
 
-const TwitchAuthLocalStorageStateSchema = z.object({
-  state: z.uuid().nullable(),
-  status: z.enum(['success', 'error', 'idle']),
-  reason: z.string().optional(),
-})
-
-type TwitchAuthLocalStorageState = Maybe<z.infer<typeof TwitchAuthLocalStorageStateSchema>>
-
 type UseAuthTwitchOptions = {
   onSuccess?: () => void
   onError?: () => void
@@ -36,7 +29,7 @@ export const useAuthTwitch = (options?: UseAuthTwitchOptions): UseAuthTwitchRetu
   const optionsRef = useRef(options)
   optionsRef.current = options
 
-  const twitchAuthLocalStorageState = useLocalStorage<Maybe<TwitchAuthLocalStorageState>>('twitchAuthState', {
+  const twitchAuthLocalStorageState = useLocalStorage<Maybe<AuthTwitchRedirectParams>>('twitchAuthState', {
     deserializer: (value) => {
       let deserializedValue: any
 
@@ -45,19 +38,21 @@ export const useAuthTwitch = (options?: UseAuthTwitchOptions): UseAuthTwitchRetu
       }
       catch {
         return {
-          state: null,
-          status: 'error',
-          reason: 'Invalid local storage value',
+          auth: false,
+          state: '',
+          error: true,
+          errorReason: 'Invalid local storage value',
         }
       }
 
-      const validatedValueResult = TwitchAuthLocalStorageStateSchema.safeParse(deserializedValue)
+      const validatedValueResult = AuthTwitchParamsSchema.safeParse(deserializedValue)
 
       if (!validatedValueResult.success) {
         return {
-          state: null,
-          status: 'error',
-          reason: 'Invalid state value',
+          auth: false,
+          state: '',
+          error: true,
+          errorReason: 'Invalid state value',
         }
       }
 
@@ -81,8 +76,8 @@ export const useAuthTwitch = (options?: UseAuthTwitchOptions): UseAuthTwitchRetu
     twitchAuthURL.search = params.toString()
 
     twitchAuthLocalStorageState.set({
+      auth: false,
       state: generatedState,
-      status: 'idle',
     })
 
     window.open(twitchAuthURL, '_blank')
@@ -93,10 +88,8 @@ export const useAuthTwitch = (options?: UseAuthTwitchOptions): UseAuthTwitchRetu
       return
     }
 
-    const castedLocalStorageValue = twitchAuthLocalStorageState.value as TwitchAuthLocalStorageState
-    const isSuccessedAuth = castedLocalStorageValue?.status === 'success' && !isAuth
-
-    console.log(twitchAuthLocalStorageState)
+    const castedLocalStorageValue = twitchAuthLocalStorageState.value as AuthTwitchRedirectParams
+    const isSuccessedAuth = castedLocalStorageValue?.auth && !castedLocalStorageValue?.error
 
     if (isSuccessedAuth && isLoading) {
       optionsRef.current?.onSuccess?.()

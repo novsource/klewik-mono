@@ -17,6 +17,7 @@ import {
   DonationAlertsIntegrationButton,
   DonationAlertsRedirectDisplay,
 } from './donation-alerts'
+import { AuthTwitchRedirectDisplay } from './twitch/auth-twitch-redirect-display.ui'
 
 type IntegrationCardProps = {
   platform: IntegrationsPlatforms
@@ -25,7 +26,7 @@ type IntegrationCardProps = {
 }
 
 export const IntegrationCard = (props: IntegrationCardProps) => {
-  const { platform, description, isConnected = false } = props
+  const { platform } = props
 
   const integrationButtons: Record<IntegrationsPlatforms, NullablePossible<ReactNode>> = {
     donationAlerts: <DonationAlertsIntegrationButton />,
@@ -55,7 +56,7 @@ export const RedirectDisplay = memo((props: RedirectDisplayProps) => {
   const redirectDisplay = {
     donationAlerts: <DonationAlertsRedirectDisplay />,
     donatePay: <></>,
-    twitch: <></>,
+    twitch: <AuthTwitchRedirectDisplay />,
     custom: <></>,
   }[props.platform]
 
