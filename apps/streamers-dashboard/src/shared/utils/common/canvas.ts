@@ -319,3 +319,23 @@ export function getAngleByCoords(x: number, y: number) {
 
   return angleInDegrees
 }
+
+type ResizeCanvasWithSizeOptions = {
+  ratio?: 1 | 2 | 3
+  scale?: boolean
+}
+
+export const resizeCanvasWithSize = (canvas: HTMLCanvasElement, width: number, height: number, options?: ResizeCanvasWithSizeOptions) => {
+  const ratio = options?.ratio ?? (window.devicePixelRatio || 1)
+
+  canvas.width = width * ratio
+  canvas.height = height * ratio
+
+  canvas.style.width = `${width}px`
+  canvas.style.height = `${height}px`
+
+  if (options?.scale) {
+    const canvasContext = canvas.getContext('2d') as CanvasRenderingContext2D
+    canvasContext.scale(ratio, ratio)
+  }
+}
