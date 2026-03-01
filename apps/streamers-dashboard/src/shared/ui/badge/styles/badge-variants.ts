@@ -2,7 +2,7 @@ import type { VariantProps } from 'class-variance-authority'
 
 import { cva } from 'class-variance-authority'
 
-import type { CvaClassValue } from '~shared/utils/types'
+import type { CvaClassValue } from '~shared/lib/cva'
 
 type BadgeSizes = {
   size: Record<'sm' | 'default' | 'lg', CvaClassValue>
@@ -12,20 +12,22 @@ type BadgeVariants = {
   variant: {
     success: CvaClassValue
     error: CvaClassValue
+    info: CvaClassValue
     default: CvaClassValue
     warning: CvaClassValue
   }
 }
 
 export const badgeVariants = cva<BadgeVariants & BadgeSizes>(
-  'inline-flex items-center rounded-full border font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  'inline-flex items-center rounded-full border font-semibold transition-colors border-transparent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
   {
     variants: {
       variant: {
-        default: 'border-transparent bg-gray-accent/20 text-gray-accent',
-        error: 'border-transparent bg-red/20 text-red',
-        success: 'border-transparent bg-green/10 text-green-accent/60',
-        warning: 'border-transparent bg-yellow/20 text-yellow',
+        default: 'bg-gray-accent/20 text-gray-accent',
+        info: 'bg-blue/10 text-blue',
+        error: 'bg-red/20 text-red',
+        success: 'bg-green/10 text-green-accent/60',
+        warning: 'bg-yellow/20 text-yellow',
       },
       size: {
         sm: 'text-xs px-1.25 py-0.5',

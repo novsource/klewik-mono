@@ -40,7 +40,7 @@ export type DialogContentProps = DialogPrimitive.Popup.Props & DialogContentVari
   backdropProps?: DialogPrimitive.Backdrop.Props & DialogBackdropVariantsProps
 }
 
-export const DialogContent = (props: DialogContentProps) => {
+export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>((props, forwardRef) => {
   const { portalProps, backdropProps, className, disableAnimation, ...popupProps } = props
 
   const styles = useMemo(() => {
@@ -53,10 +53,10 @@ export const DialogContent = (props: DialogContentProps) => {
   return (
     <DialogPrimitive.Portal data-slot="dialog-portal" {...portalProps}>
       <DialogPrimitive.Backdrop className={styles.backdrop} data-slot="dialog-backdrop" {...backdropProps} />
-      <DialogPrimitive.Popup className={styles.content} data-slot="dialog-content" {...popupProps} />
+      <DialogPrimitive.Popup ref={forwardRef} className={styles.content} data-slot="dialog-content" {...popupProps} />
     </DialogPrimitive.Portal>
   )
-}
+})
 
 export type DialogTitleProps = DialogPrimitive.Title.Props & DialogTitleVariantsProps
 

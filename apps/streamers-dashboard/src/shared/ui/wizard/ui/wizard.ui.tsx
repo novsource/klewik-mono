@@ -1,15 +1,19 @@
-import { ComponentPropsWithRef, ReactNode } from 'react'
-
-import { chain, cn } from '~shared/utils'
-
-import {
-  WizardContextProvider,
+import type {
   WizardContextProviderProps,
-  useWizardContext,
 } from '../context'
 
-export type WizardProps = ComponentPropsWithRef<'div'> &
-  Omit<WizardContextProviderProps, 'children'>
+import type { ComponentPropsWithRef, ReactNode } from 'react'
+
+import { cn } from '~shared/utils'
+import { chain } from '~shared/utils/common'
+
+import {
+  useWizardContext,
+  WizardContextProvider,
+} from '../context'
+
+export type WizardProps = ComponentPropsWithRef<'div'>
+  & Omit<WizardContextProviderProps, 'children'>
 
 const Wizard = (props: WizardProps) => {
   const { wizardMap, initialStepId, className, ...restProps } = props
@@ -62,7 +66,8 @@ const WizardTrigger = (props: WizardTriggerProps) => {
   const handleOnClick = () => {
     switch (type) {
       case 'next': {
-        if (nextStepId) next(nextStepId)
+        if (nextStepId)
+          next(nextStepId)
         break
       }
       case 'back': {

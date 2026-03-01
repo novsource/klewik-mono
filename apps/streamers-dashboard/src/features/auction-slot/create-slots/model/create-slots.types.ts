@@ -2,7 +2,9 @@ import type z from 'zod'
 
 import type { createSlotSchema } from './create-slots.contracts'
 
-import type { AuctionSlot } from '~entities/auction-slot/model/@x/auction-slot'
+import type { AuctionSlotDTO } from '~shared/api/sse/clients/auction-slots'
 
 export type CreateSlotForm = z.infer<typeof createSlotSchema>
-export type FormArrayData = Omit<AuctionSlot, 'id' | 'color'>
+export type FormArrayData = Omit<AuctionSlotDTO, 'id' | 'auctionSlotOrder'>
+
+export type TransformedCreateSlotsFormData = { slots: Array<FormArrayData> }

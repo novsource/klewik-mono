@@ -6,14 +6,14 @@ import { act, renderHook, waitFor } from '@testing-library/react'
 import { sse } from 'msw'
 import { setupServer } from 'msw/node'
 
-import { store as appStore, createStore } from '~app/store/store'
+import { rootStore as appStore, createStore } from '~app/store/store'
 
 import type { AuctionSlotsEventsMap, AuctionSlotsEventSourceMessage } from '~shared/api/sse/clients/auction-slots'
 import { auctionSlotsSSEClient } from '~shared/api/sse/clients/auction-slots'
 
 import { useLazyConnectAuctionSlotsSSEQuery } from '~shared/store/api'
 
-import { wait } from '~shared/utils'
+import { wait } from '~shared/utils/common'
 
 import { createFakeAuctionSlotsArray, createSingleFakeAuctionSlot } from '../../model/__tests__/auction-slot.mocks'
 

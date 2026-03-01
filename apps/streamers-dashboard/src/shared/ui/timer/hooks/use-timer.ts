@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { UseTimerOptions, UseTimerReturn } from '~shared/hooks'
 import { useTimer as useReactUseTimer } from '~shared/hooks'
 
-import { chain } from '~shared/utils'
+import { chain } from '~shared/utils/common'
 
 export type UseAuctionTimerOptions = UseTimerOptions & {
   initTime?: number

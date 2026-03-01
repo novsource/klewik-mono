@@ -23,7 +23,7 @@ import { TabsContent } from '~shared/ui/tabs'
 import { toastPromiseNotification } from '~shared/ui/toaster/lib'
 import { Typography } from '~shared/ui/typograghy'
 
-import { deleteAllSpacesFromString } from '~shared/utils/string-format'
+import { deleteAllSpacesFromString } from '~shared/utils/formatting'
 
 import { SettingsArea, SettingsAreasDivider } from '../auction-settings-area'
 

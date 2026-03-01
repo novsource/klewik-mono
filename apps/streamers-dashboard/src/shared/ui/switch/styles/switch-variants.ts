@@ -2,7 +2,7 @@ import type { VariantProps } from 'class-variance-authority'
 
 import { cva } from 'class-variance-authority'
 
-import type { CvaClassValue } from '~shared/utils/types'
+import type { CvaClassValue } from '~shared/lib/cva'
 
 type SwitchSize = 'sm' | 'default' | 'lg'
 

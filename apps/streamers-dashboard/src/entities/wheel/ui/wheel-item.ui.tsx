@@ -3,7 +3,8 @@ import type { WheelSlot } from '../model'
 import { useMemo } from 'react'
 import type { ComponentPropsWithoutRef } from 'react'
 
-import { cn, convertDegreesToRadians, getCoordsOfDotByVectorAngle } from '~shared/utils'
+import { cn } from '~shared/utils'
+import { convertDegreesToRadians, getCoordsOfDotByVectorAngle } from '~shared/utils/common'
 
 export type WheelItemProps = ComponentPropsWithoutRef<'path'> & {
   slot: WheelSlot
@@ -81,7 +82,10 @@ export const WheelItem = (props: WheelItemProps) => {
   const path = useMemo(() => {
     const bottomRadius = radius * 0.9
 
-    const isLargeArc = Math.abs(slot.endAngle - slot.startAngle) >= 180
+    const isLargeArc
+      = slot.startAngle > slot.endAngle
+        ? Math.abs((360 - slot.startAngle) + slot.endAngle) >= 180
+        : Math.abs(slot.endAngle - slot.startAngle) >= 180
 
     const startPointQuery = `M${coords[1].x},${coords[1].y}`
     const topLeftRoundQuery = `Q${coords[2].x},${coords[2].y} ${coords[3].x},${coords[3].y}`

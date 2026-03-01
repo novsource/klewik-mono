@@ -13,7 +13,7 @@ type EditSlotFormResolverReturnValue = ResolverSuccess<TransformedEditSlotFormDa
 
 export const editSlotFormResolver = (values: EditSlotFormData, _: ResolverOptions<EditSlotFormData>): EditSlotFormResolverReturnValue => {
   const baseValidationResults = EditSlotFormSchema.transform<TransformedEditSlotFormData>((value) => {
-    return { title: deleteAllSpacesFromString(value.title), points: Number(deleteAllSpacesFromString(value.points)) }
+    return { title: value.title.trim(), points: Number(deleteAllSpacesFromString(value.points)) }
   }).safeParse(values)
 
   if (!baseValidationResults.success && baseValidationResults.error) {

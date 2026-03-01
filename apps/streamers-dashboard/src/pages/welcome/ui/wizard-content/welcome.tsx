@@ -1,26 +1,27 @@
 import { useMemo } from 'react'
 
 import {
-  WELCOME_PAGE_WIZARD_IDS_ICONS,
-  WELCOME_PAGE_WIZARD_ITEMS_IDS,
+  WELCOME_PAGE_WIZARD_IDS_ICONS as WIZARD_ICONS,
+  WELCOME_PAGE_WIZARD_ITEMS_IDS as WIZARD_ITEMS_IDS,
 } from '~pages/welcome/constants'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { Text, Title } from '~shared/components/typography'
 
 import { useMediaQuery } from '~shared/hooks'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import { Typography } from '~shared/ui/typograghy'
 import type { WizardItemProps } from '~shared/ui/wizard'
 import { WizardItem, WizardTrigger } from '~shared/ui/wizard'
 import { useWizardContext } from '~shared/ui/wizard/context'
 
 import { cn } from '~shared/utils'
 
-const nodesTitles: Partial<Record<typeof WELCOME_PAGE_WIZARD_ITEMS_IDS[keyof typeof WELCOME_PAGE_WIZARD_ITEMS_IDS], string>> = {
-  createAuction: 'Создать аукцион',
+const nodesTitles: Partial<Record<typeof WIZARD_ITEMS_IDS[keyof typeof WIZARD_ITEMS_IDS], string>> = {
+  login: 'Создать аукцион',
   loginAdmin: 'Войти в аукцион',
 }
 
@@ -31,16 +32,11 @@ export const WizardWelcomeItem = (
 
   const { getNodesById } = useWizardContext()
 
-  const nodes = getNodesById(WELCOME_PAGE_WIZARD_ITEMS_IDS.WELCOME)
-
   const isMediaLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   const wizardNextTriggers = useMemo(() => {
-    if (!nodes)
-      return
-
-    const welcomeNodes = nodes as Array<
-      (typeof WELCOME_PAGE_WIZARD_ITEMS_IDS)[keyof typeof WELCOME_PAGE_WIZARD_ITEMS_IDS]
+    const welcomeNodes = getNodesById(WIZARD_ITEMS_IDS.WELCOME) as Array<
+      (typeof WIZARD_ITEMS_IDS)[keyof typeof WIZARD_ITEMS_IDS]
     >
 
     return welcomeNodes.map((node) => {
@@ -50,20 +46,19 @@ export const WizardWelcomeItem = (
         <WizardTrigger key={node} type="next" nextStepId={node}>
           <Button
             className="w-full"
-            variant={node === 'createAuction' ? 'action' : 'default'}
-            size={isMediaLargeThenTablet ? 'default' : 'sm'}
-            startContent={WELCOME_PAGE_WIZARD_IDS_ICONS[node]}
+            variant={node === 'login' ? 'action' : 'default'}
+            startContent={WIZARD_ICONS[node]}
           >
             {triggerTitle}
           </Button>
         </WizardTrigger>
       )
     })
-  }, [nodes, isMediaLargeThenTablet])
+  }, [getNodesById])
 
   return (
     <WizardItem
-      value={WELCOME_PAGE_WIZARD_ITEMS_IDS.WELCOME}
+      value={WIZARD_ITEMS_IDS.WELCOME}
       className={cn('w-full space-y-4', className)}
       {...restProps}
     >
@@ -73,12 +68,12 @@ export const WizardWelcomeItem = (
           width={isMediaLargeThenTablet ? 42 : 36}
           height={isMediaLargeThenTablet ? 42 : 36}
         />
-        <Typography tag="h1">
+        <Title order={1}>
           Добро пожаловать в поинтовый аукцион!
-        </Typography>
-        <Typography tag="p" className="text-gray">
+        </Title>
+        <Text className="text-gray">
           Для продолжения выберите действие
-        </Typography>
+        </Text>
       </Flex>
       <Flex className="w-full gap-y-3" direction="column">
         {wizardNextTriggers}

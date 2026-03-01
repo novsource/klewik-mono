@@ -17,7 +17,7 @@ import {
 } from '~shared/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '~shared/ui/popover'
 
-import { chain, cn } from '~shared/utils'
+import { chain, cn } from '~shared/utils/common'
 
 export type ComboboxData = Array<
   {

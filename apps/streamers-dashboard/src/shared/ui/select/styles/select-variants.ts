@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority'
 
-import type { CvaClassValue } from '~shared/utils/types'
+import type { CvaClassValue } from '~shared/lib/cva'
 
 export type SelectSizes = {
   variant: {

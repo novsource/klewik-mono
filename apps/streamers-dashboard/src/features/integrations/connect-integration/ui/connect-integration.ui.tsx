@@ -6,20 +6,18 @@ import type { IntegrationsPlatforms } from '~entities/integrations/model'
 import {
   BaseIntegrationCard,
   BaseIntegrationCardContent,
-  BaseIntegrationCardDescription,
-  BaseIntegrationCardFooter,
-  BaseIntegrationCardHeader,
   BaseIntegrationCardPlatformIcon,
   BaseIntegrationCardTitle,
 } from '~entities/integrations/ui/card'
 
-import { Icons } from '~shared/ui/icons'
+import { Flex } from '~shared/ui/flex'
 
 import { DonatePayIntegrationButton } from './donate-pay'
 import {
   DonationAlertsIntegrationButton,
   DonationAlertsRedirectDisplay,
 } from './donation-alerts'
+import { AuthTwitchRedirectDisplay } from './twitch/auth-twitch-redirect-display.ui'
 
 type IntegrationCardProps = {
   platform: IntegrationsPlatforms
@@ -28,7 +26,7 @@ type IntegrationCardProps = {
 }
 
 export const IntegrationCard = (props: IntegrationCardProps) => {
-  const { platform, description, isConnected = false } = props
+  const { platform } = props
 
   const integrationButtons: Record<IntegrationsPlatforms, NullablePossible<ReactNode>> = {
     donationAlerts: <DonationAlertsIntegrationButton />,
@@ -38,23 +36,14 @@ export const IntegrationCard = (props: IntegrationCardProps) => {
   }
 
   return (
-    <BaseIntegrationCard>
-      <BaseIntegrationCardHeader className="h-12 flex flex-row justify-between">
-        <BaseIntegrationCardPlatformIcon platform={platform} />
-        {isConnected
-          && (
-            <div className="rounded-small bg-green-dark p-1">
-              <Icons.Success className="text-green-accent" size="sm" />
-            </div>
-          )}
-      </BaseIntegrationCardHeader>
-      <BaseIntegrationCardContent>
-        <BaseIntegrationCardTitle>{ INTEGRATIONS_PLATFORM_NAMES[platform] }</BaseIntegrationCardTitle>
-        <BaseIntegrationCardDescription>{ description }</BaseIntegrationCardDescription>
-      </BaseIntegrationCardContent>
-      <BaseIntegrationCardFooter className="justify-end pt-2.5 pb-2">
+    <BaseIntegrationCard className="w-full max-w-full bg-dark">
+      <BaseIntegrationCardContent className="flex-row justify-between">
+        <Flex className="gap-x-2" align="center">
+          <BaseIntegrationCardPlatformIcon platform={platform} />
+          <BaseIntegrationCardTitle className="text-[14px]">{ INTEGRATIONS_PLATFORM_NAMES[platform] }</BaseIntegrationCardTitle>
+        </Flex>
         {integrationButtons[platform]}
-      </BaseIntegrationCardFooter>
+      </BaseIntegrationCardContent>
     </BaseIntegrationCard>
   )
 }
@@ -67,7 +56,7 @@ export const RedirectDisplay = memo((props: RedirectDisplayProps) => {
   const redirectDisplay = {
     donationAlerts: <DonationAlertsRedirectDisplay />,
     donatePay: <></>,
-    twitch: <></>,
+    twitch: <AuthTwitchRedirectDisplay />,
     custom: <></>,
   }[props.platform]
 

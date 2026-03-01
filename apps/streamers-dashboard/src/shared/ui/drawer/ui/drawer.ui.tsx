@@ -18,31 +18,33 @@ import {
   drawerTitleVariants,
 } from '../styles/drawer-variants'
 
-function Drawer({
-  ...props
-}: ComponentProps<typeof DrawerPrimitive.Root>) {
+export type DrawerProps = ComponentProps<typeof DrawerPrimitive.Root>
+
+export function Drawer(props: DrawerProps) {
   return <DrawerPrimitive.Root data-slot="drawer" {...props} />
 }
 
-function DrawerTrigger({
-  ...props
-}: ComponentProps<typeof DrawerPrimitive.Trigger>) {
+export type DrawerTriggerProps = ComponentProps<typeof DrawerPrimitive.Trigger>
+
+export function DrawerTrigger(props: DrawerTriggerProps) {
   return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />
 }
 
-function DrawerPortal({
-  ...props
-}: ComponentProps<typeof DrawerPrimitive.Portal>) {
+export type DrawerPortalProps = ComponentProps<typeof DrawerPrimitive.Portal>
+
+function DrawerPortal(props: DrawerPortalProps) {
   return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />
 }
 
-function DrawerClose({
-  ...props
-}: ComponentProps<typeof DrawerPrimitive.Close>) {
+export type DrawerCloseProps = ComponentProps<typeof DrawerPrimitive.Close>
+
+export function DrawerClose(props: DrawerCloseProps) {
   return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />
 }
 
-function DrawerOverlay(props: ComponentProps<typeof DrawerPrimitive.Overlay>) {
+export type DrawerOverlayProps = ComponentProps<typeof DrawerPrimitive.Overlay>
+
+function DrawerOverlay(props: DrawerOverlayProps) {
   const { className, ...restProps } = props
 
   return (
@@ -54,8 +56,10 @@ function DrawerOverlay(props: ComponentProps<typeof DrawerPrimitive.Overlay>) {
   )
 }
 
-function DrawerContent(props: ComponentProps<typeof DrawerPrimitive.Content>
-  & DrawerContentVariantsProps & { hidePill?: boolean }) {
+export type DrawerContentProps = ComponentProps<typeof DrawerPrimitive.Content>
+  & DrawerContentVariantsProps & { hidePill?: boolean }
+
+export function DrawerContent(props: DrawerContentProps) {
   const { className, children, isFullPageHeight, hidePill = false, ...restProps } = props
 
   return (
@@ -73,61 +77,57 @@ function DrawerContent(props: ComponentProps<typeof DrawerPrimitive.Content>
   )
 }
 
-function DrawerHeader({ className, ...props }: ComponentProps<'div'>) {
+export type DrawerHeaderProps = ComponentProps<'div'>
+
+export function DrawerHeader(props: DrawerHeaderProps) {
+  const { className, ...restProps } = props
+
   return (
     <div
       data-slot="drawer-header"
       className={cn(drawerHeaderVariants(), className)}
-      {...props}
+      {...restProps}
     />
   )
 }
 
-function DrawerFooter({ className, ...props }: ComponentProps<'div'>) {
+export type DrawerFooterProps = ComponentProps<'div'>
+
+export function DrawerFooter(props: DrawerFooterProps) {
+  const { className, ...restProps } = props
+
   return (
     <div
       data-slot="drawer-footer"
       className={cn(drawerFooterVariants(), className)}
-      {...props}
+      {...restProps}
     />
   )
 }
 
-function DrawerTitle({
-  className,
-  ...props
-}: ComponentProps<typeof DrawerPrimitive.Title>) {
+export type DrawerTitleProps = ComponentProps<typeof DrawerPrimitive.Title>
+
+export function DrawerTitle(props: DrawerTitleProps) {
+  const { className, ...restProps } = props
+
   return (
     <DrawerPrimitive.Title
       data-slot="drawer-title"
       className={cn(drawerTitleVariants(), className)}
-      {...props}
+      {...restProps}
     />
   )
 }
 
-function DrawerDescription({
-  className,
-  ...props
-}: ComponentProps<typeof DrawerPrimitive.Description>) {
+export type DrawerDescriptionProps = ComponentProps<typeof DrawerPrimitive.Description>
+
+export function DrawerDescription(props: DrawerDescriptionProps) {
+  const { className, ...restProps } = props
   return (
     <DrawerPrimitive.Description
       data-slot="drawer-description"
       className={cn(drawerDescriptionVariants(), className)}
-      {...props}
+      {...restProps}
     />
   )
-}
-
-export {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerPortal,
-  DrawerTitle,
-  DrawerTrigger,
 }

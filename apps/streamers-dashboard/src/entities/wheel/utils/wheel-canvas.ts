@@ -9,10 +9,11 @@ import {
   convertDegreesToRadians,
   drawSlice,
   getDegreeByArcLength,
+  getHEXColor,
   getMaxCircleLength,
   getPercentValue,
-} from '~shared/utils/canvas'
-import { getHEXColor } from '~shared/utils/colors'
+  getRandomNumberInRange,
+} from '~shared/utils/common'
 
 type DrawEmptyWheelOptions = {
   color: string
@@ -312,12 +313,12 @@ export const calculateRotateWheelCSSValue = (
   let randomValueFromRange = null
 
   if (endAngle >= startAngle) {
-    randomValueFromRange = Math.random() * (endAngle - startAngle) + startAngle
+    randomValueFromRange = getRandomNumberInRange(startAngle, endAngle)
   }
   else {
     randomValueFromRange
       = Math.random() >= 0.5
-        ? Math.random() * (360 - startAngle) + startAngle
+        ? getRandomNumberInRange(startAngle, 360)
         : Math.random() * endAngle
   }
 
@@ -374,7 +375,7 @@ export const updateSlotsAnglesByRotateValue = (
   slots: WheelSlot[],
   rotateValue: number,
 ): WheelSlot[] => {
-  const newSlots: WheelSlot[] = []
+  const result: WheelSlot[] = []
 
   for (const slot of slots) {
     let { startAngle, endAngle } = slot
@@ -398,8 +399,8 @@ export const updateSlotsAnglesByRotateValue = (
       endAngle += realRotate
     }
 
-    newSlots.push({ ...slot, startAngle, endAngle })
+    result.push({ ...slot, startAngle, endAngle })
   }
 
-  return newSlots
+  return result
 }

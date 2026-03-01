@@ -1,0 +1,28 @@
+import { useGameContext } from '~entities/games/context/game.context'
+import { auctionGamesSelectors } from '~entities/games/store'
+
+import { auctionSelectors } from '~entities/auction/store'
+
+import { useWheelGameContext } from '~entities/wheel/context'
+
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
+export const useAuctionWheelGame = () => {
+  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
+  const gameMode = useStoreSelector(auctionGamesSelectors.getGameMode)
+
+  const auctionGame = useGameContext()
+  const wheel = useWheelGameContext()
+
+  const confirmSpin = async (slotId: number) => {
+    if (gameMode === 'dropout') {
+      const response = await auctionGame.actions.dropSlot({ auctionUUID, slotId })
+      return response
+    }
+
+    const response = await auctionGame.actions.sendWinner({ auctionUUID, slotId })
+    return response
+  }
+
+  return { state: wheel.state, actions: { ...wheel.actions, confirmSpin }, meta: wheel.meta }
+}

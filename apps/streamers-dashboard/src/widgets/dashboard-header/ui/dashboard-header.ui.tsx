@@ -4,11 +4,13 @@ import { memo, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import NumberFlow from '@number-flow/react'
-import { AnimatePresence } from 'motion/react'
+import { CopyToClipboardButton } from '~features/_common/copy-to-clipboard'
 
 import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
 import { SearchDialog } from '~widgets/search-dialog/ui'
+
+import { auctionSelectors } from '~entities/auction/store'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
@@ -18,7 +20,8 @@ import { integrationsSelectors } from '~entities/integrations/store'
 import { ROUTES_TITLES } from '~shared/constants/router'
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useMediaQuery } from '~shared/hooks'
+import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
+import { Text } from '~shared/components/typography'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -27,21 +30,19 @@ import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { MotionBox } from '~shared/ui/motion-box'
+import { Popover, PopoverContent, PopoverTrigger } from '~shared/ui/popover'
+import { toastSuccessNotification } from '~shared/ui/toaster/lib'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~shared/ui/tooltip'
 import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
-import { DashboardHeaderMenu } from '../../dashboard-header-menu/ui/dashboard-header-menu.ui'
-import { AuctionTimer } from './auction-timer'
 import { DonationsStats } from './donations-stats'
 
 export type DashboardHeaderProps = ComponentPropsWithoutRef<typeof BaseHeader>
 
 export const DashboardHeader = memo((props: DashboardHeaderProps) => {
   const { children, className, ...restProps } = props
-
-  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   return (
     <BaseHeader
@@ -53,9 +54,15 @@ export const DashboardHeader = memo((props: DashboardHeaderProps) => {
       {...restProps}
     >
       <Flex className="w-full h-full gap-x-4 px-4" align="center">
-        {isLargeThenTablet
-          ? <DesktopDashboardHeader />
-          : <MobileDashboardHeader />}
+        <MediaQueryViewToggler query={greaterThenDeviceWidthMediaQueries.tablet}>
+          <MediaQueryViewToggler.MatchedItem>
+            <DesktopDashboardHeader />
+          </MediaQueryViewToggler.MatchedItem>
+        </MediaQueryViewToggler>
+
+        <MediaQueryViewToggler.NotMatchedItem>
+          <MobileDashboardHeader />
+        </MediaQueryViewToggler.NotMatchedItem>
       </Flex>
       {children}
     </BaseHeader>
@@ -83,10 +90,16 @@ function BaseHeader(props: BaseHeaderProps) {
 function DesktopDashboardHeader() {
   const [isTimerVisible, setIsTimerVisible] = useState(false)
 
+  const uuid = useStoreSelector(auctionSelectors.getAuctionUUID)
+
   const { setDialogOpenStatus } = useActionCreators(globalDialogsActions)
 
-  const toggleTimerVision = () => {
+  const toggleTimerVisibility = () => {
     setIsTimerVisible(curr => !curr)
+  }
+
+  const openSettingsDialog = () => {
+    setDialogOpenStatus({ dialog: 'settings', status: true })
   }
 
   const openSearchDialog = () => {
@@ -94,25 +107,24 @@ function DesktopDashboardHeader() {
   }
 
   return (
-    <Flex className="w-full h-9.5" align="center" justify="end">
+    <Flex className="w-full h-8" align="center" justify="end">
       <Flex align="center" justify="center">
         <SlotsStatisticCard />
         <SlotsPointsSumStatisticCard className="ml-1.5" />
         <DonationsStats className="ml-1.5" />
         <IntegrationsStatisticCard className="ml-1.5" />
-        <AnimatePresence>
-          {isTimerVisible && <AuctionTimer className="ml-1.5" />}
-        </AnimatePresence>
       </Flex>
+
       <Divider className="mx-4" orientation="vertical" />
 
       <Flex className="w-full h-full tablet:w-fit gap-x-1.5" align="center" justify="end">
+
         <SearchDialog trigger={(
           <Button
-            variant="ghost"
-            className="bg-dark font-medium text-gray pr-4 pl-2.5 hover:text-gray-light/80 hover:bg-dark-light/80"
+            variant="borderless"
+            className="w-52 bg-dark font-medium text-gray pr-4 pl-2.5 hover:text-gray-light/80 hover:bg-dark-light/80 justify-start h-full"
             startContent={<Icons.Magnifier size="xs" />}
-            size="xs"
+            size="sm"
             onClick={openSearchDialog}
           >
             Поиск по аукциону...
@@ -120,10 +132,29 @@ function DesktopDashboardHeader() {
         )}
         />
 
-        <DashboardHeaderMenu
-          isTimerVisible={isTimerVisible}
-          onTimerVisibilityChanges={toggleTimerVision}
-        />
+        <Button size="sm" startContent={<Icons.List />}>
+          Правила
+        </Button>
+
+        <Popover>
+          <PopoverTrigger render={<Button isIconOnly icon={<Icons.Share />} size="sm" />} />
+          <PopoverContent className="w-fit px-5 py-2" positionerProps={{ align: 'end', sideOffset: 8 }}>
+            <Text className="text-gray-accent mb-2">
+              Ссылка на аукцион для зрителей
+            </Text>
+            <div className="flex w-full text-white/80 text-md pl-2 py-0.25 bg-dark-accent rounded-small font-semibold items-center justify-between">
+              {`https://auction.klewik.ru/${uuid}`}
+              <CopyToClipboardButton
+                className="pointer-events-auto"
+                value={`https://auction.klewik.ru/${uuid}`}
+                onClick={() => {
+                  toastSuccessNotification('Ссылка успешно скопирована!')
+                }}
+              />
+            </div>
+          </PopoverContent>
+        </Popover>
+        <Button isIconOnly icon={<Icons.Settings />} size="sm" onClick={openSettingsDialog} />
       </Flex>
     </Flex>
   )
@@ -196,7 +227,7 @@ function StatisticCard(props: BaseStatisticCardProps) {
   return (
     <Flex
       className={cn(
-        'h-9 gap-x-1.5 rounded-md bg-dark px-2.5 py-1.5 text-md leading-5 font-semibold text-gray-accent text-nowrap',
+        'h-8 gap-x-1.5 rounded-md bg-dark px-2.5 py-1.5 text-md leading-5 font-semibold text-gray-accent text-nowrap',
         className,
       )}
       align="center"
@@ -215,23 +246,14 @@ function SlotsStatisticCard(props: SlotsStatisticCardProps) {
   const slots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
   return (
-    <Tooltip delayDuration={500}>
-      <TooltipTrigger>
-        <StatisticCard {...props}>
-          <Icons.Slots size="sm" />
-          <NumberFlow
-            className="font-azeret-mono font-medium tracking-tight"
-            willChange
-            value={slots.length}
-          />
-        </StatisticCard>
-      </TooltipTrigger>
-      <TooltipContent>
-        <Typography tag="span" className="text-gray-accent">
-          Количество слотов, участвующих в аукционе
-        </Typography>
-      </TooltipContent>
-    </Tooltip>
+    <StatisticCard {...props}>
+      <Icons.Slots size="xs" />
+      <NumberFlow
+        className="font-azeret-mono font-medium tracking-tight text-md"
+        willChange
+        value={slots.length}
+      />
+    </StatisticCard>
   )
 }
 
@@ -243,24 +265,15 @@ function SlotsPointsSumStatisticCard(props: SlotsPointsSumStatisticCardProps) {
   const sum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
 
   return (
-    <Tooltip delayDuration={500}>
-      <TooltipTrigger>
-        <StatisticCard {...props}>
-          <Icons.PointsSum size="default" />
-          <NumberFlow
-            className="font-azeret-mono font-medium tracking-tight"
-            willChange
-            value={sum}
-            locales="ru-RU"
-          />
-        </StatisticCard>
-      </TooltipTrigger>
-      <TooltipContent>
-        <Typography tag="span" className="text-gray-accent">
-          Общее количество очков всех слотов
-        </Typography>
-      </TooltipContent>
-    </Tooltip>
+    <StatisticCard {...props}>
+      <Icons.PointsSum size="sm" />
+      <NumberFlow
+        className="font-azeret-mono font-medium tracking-tight text-md"
+        willChange
+        value={sum}
+        locales="ru-RU"
+      />
+    </StatisticCard>
   )
 }
 
@@ -288,7 +301,7 @@ function IntegrationsStatisticCard(props: IntegrationsStatisticCardProps) {
   return (
     <Tooltip delayDuration={500}>
       <TooltipTrigger>
-        <StatisticCard className={cn(!connectedIntegrationsCount && 'gap-x-3', props.className)}>
+        <StatisticCard className={cn(!connectedIntegrationsCount && 'gap-x-2', props.className)}>
           <Icons.Integrations width={18} height={18} />
           {connectedIntegrationsCount === 0 ? 'Нет интеграций' : `${connectedIntegrationsCount} подключено`}
         </StatisticCard>

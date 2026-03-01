@@ -12,12 +12,10 @@ export type CreateAuctionResponse = {
 }
 
 export const createAuction = async (
-  key: string,
   fetchOptions?: HttpClientRequestOptions,
 ) => {
   return baseHttpClient.post<CreateAuctionResponse>(AUCTION_ENDPOINTS.CREATE, {
     ...fetchOptions,
-    data: { key },
     headers: {
       'Content-Type': 'multipart/form-data',
     },

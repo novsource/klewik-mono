@@ -2,6 +2,7 @@ import type { WizardItem } from '~shared/hooks/use-wizard'
 
 export const WELCOME_PAGE_WIZARD_ITEMS_IDS = {
   WELCOME: 'welcome',
+  LOGIN: 'login',
   LOGIN_ADMIN: 'loginAdmin',
   CREATE_AUCTION: 'createAuction',
   SUCCESS_CREATE: 'successCreate',
@@ -14,9 +15,13 @@ export const welcomePageWizardMap: WizardMap = [
   {
     id: WELCOME_PAGE_WIZARD_ITEMS_IDS.WELCOME,
     nodes: [
-      WELCOME_PAGE_WIZARD_ITEMS_IDS.CREATE_AUCTION,
+      WELCOME_PAGE_WIZARD_ITEMS_IDS.LOGIN,
       WELCOME_PAGE_WIZARD_ITEMS_IDS.LOGIN_ADMIN,
     ],
+  },
+  {
+    id: WELCOME_PAGE_WIZARD_ITEMS_IDS.LOGIN,
+    nodes: [WELCOME_PAGE_WIZARD_ITEMS_IDS.CREATE_AUCTION],
   },
   {
     id: WELCOME_PAGE_WIZARD_ITEMS_IDS.CREATE_AUCTION,

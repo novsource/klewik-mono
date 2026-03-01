@@ -60,12 +60,13 @@
 
     --color-red: #f76b63;
 
-    --color-gray: #5d5d5d;
-    --color-gray-light: #818181;
-    --color-gray-accent: #a5a5a5;
+    --color-gray: #555451;
+    --color-gray-light: #7a7874;
+    --color-gray-accent: #9E9C96;
 
     --color-purple: #505285;
 
+    --color-blue: #3481ED;
     --color-orange: #f58c08;
 
     --color-transparent: rgba(255, 255, 255, 0);
@@ -224,6 +225,20 @@
     }
 }
 
+@keyframes heartbeating {
+    0% {
+        scale: 1;
+    }
+
+    50% {
+        scale: 1.15;
+    }
+
+    100% {
+        scale: 1;
+    }
+}
+
 @utility slide-out-to-top {
     --sheet-exit-translate-y: -0.25rem;
 }
@@ -274,6 +289,12 @@
     --sheet-enter-rotate: initial;
     --sheet-enter-translate-x: initial;
     --sheet-enter-translate-y: initial;
+}
+
+@utility animate-heartbeating {
+    animation-name: heartbeating;
+    animation-duration: 1.25s;
+    animation-iteration-count: infinite;
 }
 
 @layer base {

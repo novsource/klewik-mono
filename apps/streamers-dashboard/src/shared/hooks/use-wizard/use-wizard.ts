@@ -5,6 +5,10 @@ export type WizardItem<StepId> = {
   nodes?: Array<StepId>
 }
 
+type NextFunctionOptions = {
+  force?: boolean
+}
+
 const useWizard = <WizardId extends string>(
   initialWizardMap: WizardItem<WizardId>[],
   initialStepId?: WizardId,
@@ -22,14 +26,16 @@ const useWizard = <WizardId extends string>(
     [initialWizardMap],
   )
 
-  const next = (id: WizardId) => {
-    const isPossibleToTravel = !!wizardMap
-      .get(currentStepId)
-      ?.nodes
-      ?.find(wizardId => id === wizardId)
+  const next = (id: WizardId, options?: NextFunctionOptions) => {
+    if (!options?.force) {
+      const isPossibleToTravel = !!wizardMap
+        .get(currentStepId)
+        ?.nodes
+        ?.find(wizardId => id === wizardId)
 
-    if (!isPossibleToTravel) {
-      throw new Error('You can\'t go this id from current id')
+      if (!isPossibleToTravel) {
+        throw new Error('You can\'t go this id from current id')
+      }
     }
 
     setCurrentStepId(id)

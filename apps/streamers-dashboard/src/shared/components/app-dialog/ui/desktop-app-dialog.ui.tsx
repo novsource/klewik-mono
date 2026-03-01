@@ -2,6 +2,8 @@ import type { ReactNode } from 'react'
 
 import { mergeProps } from '@base-ui/react'
 
+import { Text } from '~shared/components/typography'
+
 import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
 import type { FlexProps } from '~shared/ui/flex'
@@ -9,7 +11,6 @@ import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import type { SheetContentProps, SheetHeaderProps, SheetProps, SheetTriggerProps } from '~shared/ui/sheet'
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '~shared/ui/sheet'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
@@ -69,7 +70,7 @@ function DesktopAppDialogClose(props: DesktopAppDialogCloseProps) {
   const { className, ...restProps } = props
 
   return (
-    <SheetClose className="relative right-0 top-0" nativeButton={false}>
+    <SheetClose className="relative right-0 top-0" nativeButton={false} type="button">
       <Button
         className={cn('size-8', className)}
         isIconOnly
@@ -114,15 +115,12 @@ function DesktopAppDialogTitle(props: DesktopAppDialogTitleProps) {
         align="start"
         justify="start"
       >
-        <SheetTitle>{title}</SheetTitle>
+        <SheetTitle className="text-title">{title}</SheetTitle>
         {description && (
           <SheetDescription>
-            <Typography
-              className="leading-4 font-normal text-gray-accent"
-              tag="p"
-            >
+            <Text className="leading-4 font-normal text-gray-accent">
               {description}
-            </Typography>
+            </Text>
           </SheetDescription>
         )}
       </Flex>

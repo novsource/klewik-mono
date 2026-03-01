@@ -14,12 +14,13 @@ import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~shared/ui/tabs'
 
-import { chain, cn, twSlotsStyles } from '~shared/utils'
+import { cn, twSlotsStyles } from '~shared/utils'
+import { chain } from '~shared/utils/common'
 
 import { CREATE_SLOT_FORM_DEFAULT_VALUE } from '../constants'
 import { useCreateSlotsForm } from '../hooks'
 import { createSlotsFormStyles } from '../styles'
-import { SlotNameFormInput, SlotPointsFormInput } from './form-fields.ui'
+import { CreateSlotsFormComposer } from './create-slots-form-composer.ui'
 
 function getErrorMessageForField(
   errors: FieldErrors<CreateSlotForm>,
@@ -55,16 +56,19 @@ const CreateSlotsForm = (props: CreateSlotsFormProps) => {
   } = props
 
   const {
-    form: { control, trigger, handleSubmit },
+    form,
     state,
     submitForm,
     isLoading,
   } = useCreateSlotsForm({ onError, onSuccess })
 
+  const { control, trigger, handleSubmit } = form
+
   const styles = useMemo(() => twSlotsStyles(createSlotsFormStyles), [])
 
   return (
-    <form
+    <CreateSlotsFormComposer
+      form={form}
       className={styles.form}
       onSubmit={handleSubmit(submitForm)}
       {...formProps}
@@ -80,16 +84,14 @@ const CreateSlotsForm = (props: CreateSlotsFormProps) => {
       {!multiplySlots
         && (
           <div className={styles.formInputsWrapper}>
-            <SlotNameFormInput
-              control={control}
+            <CreateSlotsFormComposer.SlotTitleInput
               name="slots.0.title"
               errorMessage={getErrorMessageForField(state.errors, 'title', 0)}
               onChange={() => {
                 trigger()
               }}
             />
-            <SlotPointsFormInput
-              control={control}
+            <CreateSlotsFormComposer.SlotPointsInput
               name="slots.0.points"
               pointsInputProps={{
                 errorMessage: getErrorMessageForField(
@@ -117,7 +119,7 @@ const CreateSlotsForm = (props: CreateSlotsFormProps) => {
       >
         Добавить в аукцион
       </Button>
-    </form>
+    </CreateSlotsFormComposer>
   )
 }
 
@@ -143,7 +145,8 @@ const ControlledCreateSlotForm = (props: ControlledCreateSlotsFormProps) => {
   const styles = useMemo(() => twSlotsStyles(createSlotsFormStyles), [])
 
   return (
-    <form
+    <CreateSlotsFormComposer
+      form={form}
       className={styles.form}
       onSubmit={onSubmit ? chain(event => event.preventDefault(), onSubmit) : event => event.preventDefault()}
       {...formProps}
@@ -159,15 +162,14 @@ const ControlledCreateSlotForm = (props: ControlledCreateSlotsFormProps) => {
       {!multiplySlots
         && (
           <div className={styles.formInputsWrapper}>
-            <SlotNameFormInput
-              control={control}
+            <CreateSlotsFormComposer.SlotTitleInput
               name="slots.0.title"
               errorMessage={getErrorMessageForField(state.errors, 'title', 0)}
               onChange={() => {
                 trigger()
               }}
             />
-            <SlotPointsFormInput
+            <CreateSlotsFormComposer.SlotPointsInput
               control={control}
               name="slots.0.points"
               pointsInputProps={{
@@ -188,7 +190,7 @@ const ControlledCreateSlotForm = (props: ControlledCreateSlotsFormProps) => {
             />
           </div>
         )}
-    </form>
+    </CreateSlotsFormComposer>
   )
 }
 
@@ -231,16 +233,14 @@ function SlotsTabs(props: SlotsTabsProps) {
     (field: (typeof fields)[number], index: number) => {
       return (
         <m.li key={field.id} className={styles.formInputsWrapper}>
-          <SlotNameFormInput
-            control={control}
+          <CreateSlotsFormComposer.SlotTitleInput
             name={`slots.${index}.title` as const}
             errorMessage={getErrorMessageForField(state.errors, 'title', index)}
             onChange={() => {
               trigger('slots')
             }}
           />
-          <SlotPointsFormInput
-            control={control}
+          <CreateSlotsFormComposer.SlotPointsInput
             name={`slots.${index}.points` as const}
             pointsInputProps={{
               errorMessage: getErrorMessageForField(
@@ -301,9 +301,7 @@ function SlotsTabs(props: SlotsTabsProps) {
               value={`slot-${index}`}
               tabIndex={-1}
             >
-              Слот
-              {' '}
-              {index + 1}
+              {`Слот ${index + 1}`}
             </TabsTrigger>
           ))}
           {fields.length < maxCreatingSlotsCount && (

@@ -13,6 +13,8 @@ import { AxiosError } from 'axios'
 
 import { refreshTokens } from '~shared/api/http/auth/auth.api'
 
+import { wait } from '~shared/utils/common'
+
 import { EventSourceMessageSchema } from './models'
 
 type RetrySSEConnectOptions = Omit<SSEClientConnectOptions, 'retry'> & {
@@ -29,10 +31,10 @@ export class BaseSSEClient {
     const baseUrl = import.meta.env.VITE_SERVER_URL
 
     const onOpen = async (response: Response) => {
-      if (
-        response.ok
-        && response.headers.get('content-type') === EventStreamContentType
-      ) {
+      const isSuccessResponse = response.ok
+      const isSSE = response.headers.get('content-type') === EventStreamContentType
+
+      if (isSuccessResponse && isSSE) {
         inputListeners.onopen(response)
       }
       else if (
@@ -148,10 +150,7 @@ export class BaseSSEClient {
         throw err
       }
 
-      const wait = () =>
-        new Promise(res => setTimeout(res, options.retry.delay))
-
-      return wait().then(() => this._retryConnect(url, listeners, options))
+      return wait(options.retry.delay).then(() => this._retryConnect(url, listeners, options))
     }
 
     return this._internalRequest(url, listeners, options).catch(reconnect)

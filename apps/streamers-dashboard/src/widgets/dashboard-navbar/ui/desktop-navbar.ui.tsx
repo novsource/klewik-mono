@@ -15,7 +15,7 @@ import { MotionBox } from '~shared/ui/motion-box'
 import { cn } from '~shared/utils'
 
 const paths = [
-  { path: DASHBOARD_ROUTES.WHEEL },
+  { path: DASHBOARD_ROUTES.GAMES },
   { path: DASHBOARD_ROUTES.SLOTS },
   { path: DASHBOARD_ROUTES.DONATIONS },
 ]
@@ -26,7 +26,7 @@ export const DesktopNavbar = memo(() => {
   const menuItems = useMemo(() => {
     return paths.reduce<ReactNode[]>((acc, curr: (typeof paths)[number]) => {
       const menuIcon = {
-        '/wheel': <Icons.Gamepad size={isLargeThenTablet ? 'sm' : 'default'} />,
+        '/games': <Icons.Gamepad size={isLargeThenTablet ? 'sm' : 'default'} />,
         '/donations': (
           <Icons.MoneyHand size={isLargeThenTablet ? 'default' : 'default'} />
         ),

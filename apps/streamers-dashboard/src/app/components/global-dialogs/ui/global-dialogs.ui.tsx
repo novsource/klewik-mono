@@ -1,5 +1,5 @@
-import { ProcessDonationDialog } from '~pages/auction-donations/ui/dialogs/process-donation-dialog.ui'
-import { EditSlotDialog } from '~pages/auction-slots/ui/dialogs/edit-slot-dialog.ui'
+import { ProcessDonationDialog } from '~pages/dashboard/donations/ui/dialogs/process-donation-dialog.ui'
+import { EditSlotDialog } from '~pages/dashboard/slots/ui/dialogs/edit-slot-dialog.ui'
 
 import { AuctionSettingsDialog } from '~widgets/dashboard-settings-dialog'
 

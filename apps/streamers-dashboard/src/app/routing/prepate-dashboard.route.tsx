@@ -3,17 +3,19 @@ import type {
 } from 'react-router-dom'
 import { json } from 'react-router-dom'
 
-import { GlobalDialogs } from '~features/_common/display-dialogs'
 import { isAxiosError } from 'axios'
 import { z } from 'zod'
 
+import { GlobalDialogs } from '~app/components/global-dialogs/ui/global-dialogs.ui'
 import { rootStore } from '~app/store/store'
 
-import { DashboardLayout } from '~pages/dashboard-layout'
+import { DashboardLayout } from '~pages/dashboard/_layout'
 import { ErrorPage } from '~pages/error/ui'
 
 import { splittedAuctionApi } from '~entities/auction/api'
 import { auctionActions } from '~entities/auction/store'
+
+import { getAuctionSlotsThunk } from '~entities/auction-slot/api'
 
 import { splittedDonationApi } from '~entities/donation/api'
 
@@ -33,18 +35,8 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
       </>
     ),
     loader: async ({ params }) => {
-      const storeState = rootStore.getState()
-      const dispatch = rootStore.dispatch
-
-      const storedAuctionInfo = storeState.auction.auctionInfo
-
-      const isAuctionInfoHasBeenLoaded = !!storedAuctionInfo.id
-
-      if (isAuctionInfoHasBeenLoaded)
-        return storedAuctionInfo
-
       const validatedParams = z
-        .object({ auctionId: z.string().uuid() })
+        .object({ auctionUUID: z.string().uuid() })
         .safeParse(params)
 
       if (!validatedParams.success) {
@@ -57,13 +49,16 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
         )
       }
 
+      const dispatch = rootStore.dispatch
+
       try {
-        const auctionUUID = validatedParams.data.auctionId
+        const auctionUUID = validatedParams.data.auctionUUID
 
         const requestsArr = [
           dispatch(splittedAuctionApi.endpoints.getAuctionInfo.initiate({ auctionUUID })),
           dispatch(splittedDonationApi.endpoints.getDonationsStats.initiate({ auctionUUID })),
           dispatch(splittedIntegrationsApi.endpoints.getConnectedIntegrations.initiate({ auctionUUID })),
+          dispatch(getAuctionSlotsThunk(auctionUUID)),
         ] as const
         const responses = await Promise.all(requestsArr)
 
@@ -75,7 +70,7 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
 
         const auctionInfo = responses[0].data
 
-        if (!auctionInfo) {
+        if (!auctionInfo || Object.keys(auctionInfo).length === 0) {
           throw json({
             reason: 'Аукцион не найден',
           }, { status: 404 })
@@ -83,9 +78,10 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
 
         rootStore.dispatch(auctionActions.setAuction(auctionInfo))
 
-        return auctionInfo
+        return null
       }
       catch (error) {
+        console.log(error)
         if (isAxiosError(error)) {
           const isRejectHaveReason = error.status !== undefined && Reflect.has(errorStatusReasons, error.status.toString())
           const reason = isRejectHaveReason

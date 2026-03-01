@@ -24,7 +24,7 @@ import { NumberInput } from '~shared/ui/number-input'
 import { Typography } from '~shared/ui/typograghy'
 
 import { cn, mergeProps, twSlotsStyles } from '~shared/utils'
-import { deleteAllSpacesFromString } from '~shared/utils/string-format'
+import { deleteAllSpacesFromString } from '~shared/utils/formatting'
 
 import { CREATE_SLOT_FORM_DEFAULT_VALUE } from '../constants'
 import { createSlotsFormFieldsStyles } from '../styles'

@@ -18,7 +18,6 @@ import { Icons } from '~shared/ui/icons'
 import { closeAllToasts, toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
 
 import { twSlotsStyles } from '~shared/utils'
-import { getRandomHEXColor } from '~shared/utils/colors'
 
 import { useCreateSlotsForm } from '../hooks'
 import { createSlotsSheetStyles } from '../styles'
@@ -44,23 +43,21 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
     greaterThenDeviceWidthMediaQueries.tablet,
   )
 
-  const { form, state: formState, submitForm, isLoading } = useCreateSlotsForm({ onSuccess: (slots) => {
-    auctionSlotsActions.addSlots(
-      slots.map(slot => ({
-        ...slot,
-        color: getRandomHEXColor(),
-      })),
-    )
+  const { form, state: formState, submitForm, isLoading } = useCreateSlotsForm({
+    onSuccess: (slots) => {
+      auctionSlotsActions.addSlots(slots)
 
-    setIsSuccessCreated(true)
-    setIsDialogOpen(false)
-  }, onError: (error) => {
-    toastErrorNotification(
-      'Не удалось добавить слот(-ы)',
-      error?.reason || error?.message,
-      { className: 'right-[calc(var(--dialog-width-desktop)+12px)]' },
-    )
-  } })
+      setIsSuccessCreated(true)
+      setIsDialogOpen(false)
+    },
+    onError: (error) => {
+      toastErrorNotification(
+        'Не удалось добавить слот(-ы)',
+        error?.reason || error?.message,
+        { className: 'right-[calc(var(--dialog-width-desktop)+12px)]' },
+      )
+    },
+  })
 
   if (!isDialogOpen && formState.isDirty) {
     form.reset()
@@ -136,7 +133,7 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
             </DesktopAppDialog.TopPanel>
 
             <DesktopAppDialog.Title
-              icon={<CreateSlotDialogIcon />}
+              // icon={<CreateSlotDialogIcon />}
               title="Добавление слотов"
               description="Увеличьте количество слотов в аукционе"
             />
@@ -161,16 +158,16 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
       <MobileAppDialog.Trigger className="w-full">{ trigger }</MobileAppDialog.Trigger>
 
       <MobileAppDialog.Content>
-        <MobileAppDialog.Header>
-          <MobileAppDialog.HeaderTitle
-            icon={<CreateSlotDialogIcon />}
-            value="Добавление слотов"
-            description="Увеличьте количество слотов в аукционе"
-          />
-
+        <MobileAppDialog.Header className="flex-col gap-y-5 items-start px-0">
           <MobileAppDialog.ExtraActionsDialog>
             <Button>Here</Button>
           </MobileAppDialog.ExtraActionsDialog>
+
+          <MobileAppDialog.HeaderTitle
+            // icon={<CreateSlotDialogIcon />}
+            value="Добавление слотов"
+            description="Увеличьте количество слотов в аукционе"
+          />
         </MobileAppDialog.Header>
 
         <div className="w-full h-full overflow-scroll">

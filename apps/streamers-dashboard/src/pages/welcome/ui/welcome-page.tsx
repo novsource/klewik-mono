@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-import { HeroCloverAnimation } from '~widgets/hero-clover-animation/ui'
+import { HeroCloverAnimation } from '~widgets/hero-clover-animation/ui/hero-clover.ui'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
@@ -16,8 +16,9 @@ import {
 } from '../constants'
 import {
   WizardAuctionParametersItem,
-  WizardCreateAuctionItem,
+  WizardCreateNewAuctionItem,
   WizardLoginAdminItem,
+  WizardLoginItem,
   WizardSuccessCreatedItem,
   WizardWelcomeItem,
 } from './wizard-content'
@@ -59,10 +60,11 @@ const WelcomePage = () => {
                 <div className="welcome-wizard__spacer" />
                 <div className="my-8 w-full px-0.25">
                   <WizardWelcomeItem />
-                  <WizardCreateAuctionItem />
+                  <WizardCreateNewAuctionItem />
                   <WizardLoginAdminItem />
                   <WizardAuctionParametersItem />
                   <WizardSuccessCreatedItem />
+                  <WizardLoginItem />
                 </div>
                 <div className="welcome-wizard__spacer" />
               </Wizard>
@@ -89,6 +91,7 @@ const WelcomePage = () => {
         {IS_HERO_CLOVER_ANIMATION_CAN_BE_SAFEFULLY_RENDERED && (
           <Flex className="hidden h-full w-full shrink-[2] grow basis-2/3 landtop:block">
             <div className="w-full h-full p-5 overflow-clip">
+              {/* <HeroCloverAnimation /> */}
               <HeroCloverAnimation />
             </div>
           </Flex>

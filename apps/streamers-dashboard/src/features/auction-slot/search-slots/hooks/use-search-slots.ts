@@ -5,7 +5,7 @@ import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { removeSpaceDuplicatingFromString } from '~shared/utils/string-format'
+import { removeSpaceDuplicatingFromString } from '~shared/utils/formatting'
 
 const useSearchAuctionSlots = (
   searchValue: string,

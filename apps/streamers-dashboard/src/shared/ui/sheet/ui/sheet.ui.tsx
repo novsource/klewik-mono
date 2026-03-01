@@ -1,6 +1,6 @@
 import type { SheetVariantsProps } from '../styles'
 
-import { useMemo } from 'react'
+import { forwardRef, useMemo } from 'react'
 
 import type {
   DialogCloseProps,
@@ -41,7 +41,7 @@ export const SheetHeader = (props: SheetHeaderProps) => {
 
 export type SheetContentProps = DialogContentProps & SheetVariantsProps
 
-export const SheetContent = (props: SheetContentProps) => {
+export const SheetContent = forwardRef<HTMLDivElement, SheetContentProps>((props, forwardRef) => {
   const { side, isFullPageSize, backdropProps, className, ...restProps } = props
 
   const styles = useMemo(() => {
@@ -53,13 +53,14 @@ export const SheetContent = (props: SheetContentProps) => {
 
   return (
     <DialogContent
+      ref={forwardRef}
       className={styles.content}
       backdropProps={{ ...backdropProps, className: styles.backdrop }}
       disableAnimation
       {...restProps}
     />
   )
-}
+})
 
 export type SheetTitleProps = DialogTitleProps
 

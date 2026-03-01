@@ -5,6 +5,7 @@ const AuctionSlotSchema = z.object({
   auctionSlotOrder: z.number().nonnegative(),
   title: z.string().min(3).max(35),
   points: z.number().nonnegative().min(1),
+  winPercents: z.number().nonnegative(),
 })
 
 export default AuctionSlotSchema

@@ -13,7 +13,7 @@ import {
   getMaxCircleLength,
   getMaxSizeCanvas,
   resizeCanvasWithRatio,
-} from '~shared/utils/canvas'
+} from '~shared/utils/common'
 
 describe('#canvas utils', () => {
   beforeEach(() => {

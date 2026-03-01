@@ -33,18 +33,20 @@ export const DashboardHeaderMenu = (props: DashboardHeaderMenuProps) => {
 
   return (
     <Popover onOpenChange={setIsMenuOpened} {...restProps}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger render={(
         <Button
-          className="size-8.5"
           isIconOnly
-          icon={isMenuOpened ? <Icons.Close /> : <Icons.Hamburger size="sm" />}
-          size="xs"
+          icon={isMenuOpened ? <Icons.LargeCross /> : <Icons.Hamburger />}
+          size="sm"
         />
-      </PopoverTrigger>
+      )}
+      />
       <PopoverContent
-        className="w-48 p-2 border-dark-light rounded-medium"
-        sideOffset={12}
-        align="end"
+        className="w-48 p-2 border-dark-light rounded-medium z-[101]"
+        positionerProps={{
+          sideOffset: 8,
+          align: 'end',
+        }}
       >
         <Command>
           <CommandList>
