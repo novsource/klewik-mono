@@ -30,7 +30,7 @@ export const useCreateAuctionForm = (listeners?: UseCreateAuctionFormListeners) 
   const [createAuctionQuery, queryState] = useCreateAuctionMutation()
 
   const submitForm: SubmitHandler<CreateAuctionFormData> = async (formData) => {
-    const createAuctionResponse = await createAuctionQuery(formData)
+    const createAuctionResponse = await createAuctionQuery()
 
     if (createAuctionResponse.error) {
       const error = createAuctionResponse.error as AxiosBaseQueryError

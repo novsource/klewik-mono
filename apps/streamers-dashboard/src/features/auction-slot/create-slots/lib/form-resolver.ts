@@ -1,5 +1,4 @@
-import type { CreateSlotForm } from '../model'
-import type { TransformedCreateSlotsFormData } from './transform-form-data'
+import type { CreateSlotForm, TransformedCreateSlotsFormData } from '../model'
 
 import type { FieldError, FieldErrors, ResolverError, ResolverSuccess } from 'react-hook-form'
 
@@ -163,7 +162,7 @@ const checkSlotsDublicated: CheckSlotsOnDublicates = (
     return { values: {}, errors }
   }
 
-  return { values: { slots: slotsFromForm }, errors: {} }
+  return validatedFormData
 }
 
 export const createSlotsFormResolver = (slots: AuctionSlot[]) => (values: unknown) => {

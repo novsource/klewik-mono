@@ -1,15 +1,18 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
-import type { AuctionSlot } from '~entities/auction-slot/model'
-import { auctionSlotsActions } from '~entities/auction-slot/store'
 import { auctionSelectors } from '~entities/auction/store'
 
+import type { AuctionSlot } from '~entities/auction-slot/model'
+import { auctionSlotsActions } from '~entities/auction-slot/store'
+
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+
 import { Button } from '~shared/ui/button'
-import type { ButtonProps } from '~shared/ui/button/ui/Button'
+import type { ButtonProps } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { toastPromiseNotification } from '~shared/ui/toaster/lib'
-import { chain } from '~shared/utils'
+
+import { chain } from '~shared/utils/common'
 
 import { useDeleteSlotMutation } from '../api'
 

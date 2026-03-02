@@ -122,7 +122,7 @@ export const WindowInfiniteList = <DataItem = unknown>(props: WindowInfiniteList
   )
 }
 
-type InfiniteListEmptyContentProps = Omit<FlexProps, 'children'> & {
+type InfiniteListEmptyContentProps = Omit<FlexProps<'div'>, 'children'> & {
   placeholder?: string
 }
 

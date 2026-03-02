@@ -1,29 +1,26 @@
-import { ZodSchema } from 'zod'
+import type { ZodType } from 'zod'
 
-import { EventSourceMessage } from '~shared/lib/fetch-event-source/models'
+import type { BroadcastLeaderChannelOptions } from '../broadcast-leader-channel'
 
-import { BroadcastLeaderChannelOptions } from '../broadcast-leader-channel'
+import type { EventSourceMessage } from '~shared/lib/fetch-event-source/models'
 
-type CommunicableSSEChannelOptions<
-  T extends Record<string, (...args: unknown[]) => void>,
+export type CommunicableSSEChannelOptions<
+  SourceMessage extends EventSourceMessage,
+  EventsMap extends Record<string, any>,
 > = BroadcastLeaderChannelOptions & {
-  messageSchema: ZodSchema
+  messageSchema: ZodType<SourceMessage>
   validationEventMessage: {
-    [P in keyof T]: ZodSchema
+    [Event in keyof EventsMap]: ZodType<EventsMap[Event]>
   }
 }
 
-type CommunicableSSEChannelEventsMap = {
-  'employee/new': () => void
+export type CommunicableSSEChannelDefaultEventsMap = {
+  'employee/new': null
 }
 
-type CommunicableSSEChannelMessage<SourceMessage extends EventSourceMessage> =
-  EventSourceMessage & {
-    event: keyof CommunicableSSEChannelEventsMap | SourceMessage['event']
+export type CommunicableSSEChannelMessage<SourceMessage extends EventSourceMessage>
+  = {
+    id: string
+    data: string
+    event: SourceMessage['event'] | keyof CommunicableSSEChannelDefaultEventsMap
   }
-
-export type {
-  CommunicableSSEChannelEventsMap,
-  CommunicableSSEChannelMessage,
-  CommunicableSSEChannelOptions,
-}

@@ -1,9 +1,10 @@
 import { splittedAuctionSlotsApi } from '~entities/auction-slot/api'
-import type { AuctionSlot } from '~entities/auction-slot/model'
+
+import type { AuctionSlotDTO } from '~shared/api/sse/clients/auction-slots'
 
 type EditSlotApiArgs = {
   auctionUUID: string
-  slot: Omit<AuctionSlot, 'color' | 'auctionSlotOrder'>
+  slot: Omit<AuctionSlotDTO, 'auctionSlotOrder'>
 }
 
 const editSlotApi = splittedAuctionSlotsApi.injectEndpoints({

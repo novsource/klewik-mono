@@ -68,13 +68,14 @@ const syncReducer = withReduxStateSync(rootReducer)
 
 export const createStore = () => configureStore({
   reducer: syncReducer,
+  // @ts-expect-error redux-state-sync middleware next function have incorrect type
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
       .prepend(
+        syncMiddleware,
         ...auctionSlotsListenerMiddlewares,
         ...donationsListenerMiddlewares,
         ...sseConnectionsListenerMiddlewares,
-        syncMiddleware,
       )
       .concat(
         auctionApi.middleware,

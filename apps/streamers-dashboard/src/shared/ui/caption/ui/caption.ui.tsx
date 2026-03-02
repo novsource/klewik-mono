@@ -1,20 +1,20 @@
 import type { CaptionStylesProps } from '../styles/caption-variants'
 
-import type { ComponentProps } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 import { useMemo } from 'react'
 
 import { mergeProps } from '@base-ui-components/react'
 
-import { Typography } from '~shared/ui/typograghy'
-import type { TypographyProps } from '~shared/ui/typograghy'
+import type { TextProps } from '~shared/components/typography'
+import { Text } from '~shared/components/typography'
 
-import { cn } from '~shared/utils'
+import { cn } from '~shared/utils/react'
 
 import { captionTitleVariants, captionVariants } from '../styles/caption-variants'
 
-export type CaptionProps = ComponentProps<'div'> & CaptionStylesProps & {
+export type CaptionProps = ComponentPropsWithoutRef<'div'> & CaptionStylesProps & {
   title?: string
-  titleProps?: Omit<TypographyProps<'span'>, 'children' | 'span'>
+  titleProps?: Omit<TextProps, 'children' | 'span' | 'asSpan'>
 }
 
 export const Caption = (props: CaptionProps) => {
@@ -33,11 +33,10 @@ export const Caption = (props: CaptionProps) => {
   const titleStyles = useMemo(() =>
     cn(captionTitleVariants({ variant })), [variant])
 
-  const mergedTitleProps = mergeProps<typeof Typography>(
+  const mergedTitleProps = mergeProps(
     titleProps,
     {
       className: titleStyles,
-      tag: 'span',
     },
   )
 
@@ -47,7 +46,7 @@ export const Caption = (props: CaptionProps) => {
       data-slot="base"
       {...restProps}
     >
-      {title && <Typography {...mergedTitleProps}>{title}</Typography>}
+      {title && <Text {...mergedTitleProps} asSpan>{title}</Text>}
       {children}
     </div>
   )

@@ -2,10 +2,11 @@ import { Link } from 'react-router-dom'
 
 import { HeroCloverAnimation } from '~widgets/hero-clover-animation/ui/hero-clover.ui'
 
+import { Text } from '~shared/components/typography'
+
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import { Typography } from '~shared/ui/typograghy'
 import { Wizard } from '~shared/ui/wizard'
 
 import { cn } from '~shared/utils'
@@ -24,9 +25,9 @@ import {
 } from './wizard-content'
 
 // Firefox don't support animation
-const IS_HERO_CLOVER_ANIMATION_CAN_BE_SAFEFULLY_RENDERED
-  = !!HTMLCanvasElement.prototype.transferControlToOffscreen
-    && !navigator.userAgent.includes('Firefox')
+// const IS_HERO_CLOVER_ANIMATION_CAN_BE_SAFEFULLY_RENDERED
+//   = !!HTMLCanvasElement.prototype.transferControlToOffscreen
+//     && !navigator.userAgent.includes('Firefox')
 
 const WelcomePage = () => {
   return (
@@ -35,25 +36,24 @@ const WelcomePage = () => {
         <div
           className={cn(
             'container mx-auto h-full grow landtop:min-w-[450px]',
-            IS_HERO_CLOVER_ANIMATION_CAN_BE_SAFEFULLY_RENDERED
-            && 'max-w-[650px] basis-1/4 landtop:basis-1/5',
-            !IS_HERO_CLOVER_ANIMATION_CAN_BE_SAFEFULLY_RENDERED && 'max-w-[1200px]',
+            'max-w-[650px] basis-1/4 landtop:basis-1/5',
           )}
         >
           <div className="h-full w-full px-4 desktop:px-8 desktop-lg:px-10">
-            <div className="relative grid h-full w-full grid-cols-1 grid-rows-slider justify-between overflow-scroll">
-              <div className="pt-5">
+            <div className="relative h-full w-full flex flex-col justify-between overflow-scroll">
+
+              <a className="pt-5" href="#" target="_blank">
                 <Button
-                  className="w-full bg-yellow/40 text-yellow hover:bg-yellow/30 tablet:text-nowrap"
+                  className="w-full text-yellow hover:text-yellow hover:border-yellow/20 tablet:text-nowrap"
                   startContent={<Icons.Warning size="sm" />}
                   size="sm"
                 >
-                  Прочитать перед использованием!
+                  Прочитайте перед использованием!
                 </Button>
-              </div>
+              </a>
 
               <Wizard
-                className="relative flex flex-col items-center w-full h-full"
+                className="relative flex flex-col items-center w-full h-full grow"
                 wizardMap={welcomePageWizardMap}
                 initialStepId={WELCOME_PAGE_WIZARD_ITEMS_IDS.WELCOME}
               >
@@ -69,33 +69,41 @@ const WelcomePage = () => {
                 <div className="welcome-wizard__spacer" />
               </Wizard>
 
-              <div className="py-4">
+              <div className="flex justify-between py-4">
+                <Link
+                  className="flex w-fit items-center gap-x-2 text-gray transition-all hover:text-gray-accent"
+                  to="https://www.github.com"
+                  target="_blank"
+                >
+                  <Icons.LinkArrow size="xs" />
+                  <Text className="text-sm" asSpan>
+                    Документация
+                  </Text>
+                </Link>
+
                 <Link
                   className="flex w-fit items-center gap-x-2 text-gray transition-all hover:text-gray-accent"
                   to="https://www.github.com"
                   target="_blank"
                 >
                   <Icons.Github size="sm" />
-                  <Typography
-                    tag="span"
+                  <Text
                     className="hidden font-golos-f desktop-lg:inline-block desktop-lg:text-md desktop-lg:font-medium"
+                    asSpan
                   >
                     Github
-                  </Typography>
-                  <Icons.LinkArrow size="xs" />
+                  </Text>
                 </Link>
               </div>
             </div>
           </div>
         </div>
-        {IS_HERO_CLOVER_ANIMATION_CAN_BE_SAFEFULLY_RENDERED && (
-          <Flex className="hidden h-full w-full shrink-[2] grow basis-2/3 landtop:block">
-            <div className="w-full h-full p-5 overflow-clip">
-              {/* <HeroCloverAnimation /> */}
-              <HeroCloverAnimation />
-            </div>
-          </Flex>
-        )}
+
+        <Flex className="hidden h-full w-full shrink-[2] grow basis-2/3 landtop:block">
+          <div className="w-full h-full p-5 overflow-clip">
+            <HeroCloverAnimation />
+          </div>
+        </Flex>
       </Flex>
     </main>
   )

@@ -45,7 +45,7 @@ const integrationsIcons: Record<IntegrationsPlatforms, NullablePossible<ReactNod
   donationAlerts: <Icons.DonationAlerts width={16} height={20} />,
   donatePay: <Icons.DonatePay width={32} height={32} />,
   twitch: <Icons.TwitchLogo />,
-  custom: null,
+  userInput: <Icons.User />,
 } as const
 
 export type BaseIntegrationCardProps = CardProps

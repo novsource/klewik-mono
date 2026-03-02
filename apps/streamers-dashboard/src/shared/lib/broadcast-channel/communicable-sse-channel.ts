@@ -1,36 +1,31 @@
 import type { EventSourceMessage } from '../fetch-event-source/models'
-import type {
-  CommunicableSSEChannelEventsMap,
-  CommunicableSSEChannelMessage,
-  CommunicableSSEChannelOptions,
-} from './model'
+import type { CommunicableSSEChannelDefaultEventsMap, CommunicableSSEChannelMessage, CommunicableSSEChannelOptions } from './model'
+
+import { isError } from '~shared/utils'
 
 import { BroadcastLeaderChannel } from './broadcast-leader-channel'
 import { ChannelMessagesValidator } from './channel-messages-validator'
+import {
+  CommunicableSourceMessageSchema,
+} from './model'
+
+type CommunicableSSEChannelEvents<Events extends Record<string, any>> = CommunicableSSEChannelDefaultEventsMap & Events
 
 /**
  * A channel with the ability to validate incoming messages and also notifies all existing channels about its initialization
  */
 class CommunicableSSEChannel<
   SourceMessage extends EventSourceMessage = EventSourceMessage,
-  ChannelEventsMap extends Record<string, any> = Record<string, any>,
+  ChannelEventsMap extends Record<SourceMessage['event'], any> = Record<SourceMessage['event'], any>,
 > extends BroadcastLeaderChannel<
   CommunicableSSEChannelMessage<SourceMessage>,
-  ChannelEventsMap & CommunicableSSEChannelEventsMap
+  CommunicableSSEChannelEvents<ChannelEventsMap>
 > {
-  private readonly _messagesValidator: ChannelMessagesValidator<
-    CommunicableSSEChannelMessage<SourceMessage>,
-    ChannelEventsMap & CommunicableSSEChannelEventsMap
-  >
+  private readonly _messagesValidator: ChannelMessagesValidator<SourceMessage, ChannelEventsMap>
 
-  constructor(
-    channelName: string,
-    {
-      messageSchema,
-      validationEventMessage,
-      ...channelOptions
-    }: CommunicableSSEChannelOptions<ChannelEventsMap>,
-  ) {
+  constructor(channelName: string, options: CommunicableSSEChannelOptions<SourceMessage, ChannelEventsMap>) {
+    const { messageSchema, validationEventMessage, ...channelOptions } = options
+
     super(channelName, channelOptions)
 
     this._messagesValidator = new ChannelMessagesValidator({
@@ -38,23 +33,39 @@ class CommunicableSSEChannel<
       validateEventDataMessages: validationEventMessage,
     })
 
-    this.onMessage(message => this.messageProcessing(message))
+    this.onMessage(incomingMessage => this.processMessage(incomingMessage))
     this.postMessage({ id: '0', data: '', event: 'employee/new' })
   }
 
-  messageProcessing(message: CommunicableSSEChannelMessage<SourceMessage>) {
-    const validatedMessage = this._messagesValidator.validate(message)
+  processMessage(incomingMessage: CommunicableSSEChannelMessage<SourceMessage>) {
+    // console.log('message: ', incomingMessage)
+    const validateCommunicaveMessageResult = CommunicableSourceMessageSchema.safeParse(incomingMessage)
 
-    if (validatedMessage instanceof Error || validatedMessage === undefined) {
-      throw new Error(
-        validatedMessage?.message ?? 'Error on message validation: ',
-      )
+    if (validateCommunicaveMessageResult.success) {
+      const message = validateCommunicaveMessageResult.data
+
+      /*
+        TODO: Fix type
+      */
+      // @ts-expect-error misunderstending types
+      this.emit('message', message)
+      this.emit(validateCommunicaveMessageResult.data.event, null!)
+
+      return
     }
 
-    /** @todo Refactor */
-    // @ts-expect-error Emitter eventArgs issue
-    this.emit('message', validatedMessage)
-    this.emit(validatedMessage.event, validatedMessage.data)
+    const messageValidationResult = this._messagesValidator.validate(incomingMessage as SourceMessage)
+
+    if (isError(messageValidationResult)) {
+      throw messageValidationResult.message
+    }
+
+    /*
+      TODO: Fix type
+    */
+    // @ts-expect-error misunderstending types
+    this.emit('message', messageValidationResult)
+    this.emit(messageValidationResult.event, messageValidationResult.data!)
   }
 }
 

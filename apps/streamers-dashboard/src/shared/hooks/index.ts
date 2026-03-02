@@ -1,4 +1,5 @@
 export * from './use-app-sse/use-app-sse'
+export * from './use-async/use-async'
 export * from './use-click-outside/use-click-outside'
 export * from './use-debounced-callback/use-debounced-callback'
 export * from './use-detect-device-by-media/use-detect-device-by-media'
@@ -22,5 +23,3 @@ export * from './use-timer/use-timer'
 export * from './use-unmount/use-unmount'
 export * from './use-url-search-param/use-url-search-param'
 export * from './use-url-search-params/use-url-search-params'
-export * from './use-vibrate/use-vibrate';
-export * from './use-async/use-async';

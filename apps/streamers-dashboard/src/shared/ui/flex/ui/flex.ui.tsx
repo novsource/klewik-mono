@@ -1,45 +1,47 @@
 import type { FlexVariantsProps } from '../styles/flex-variants'
 
-import type { ComponentPropsWithoutRef, ForwardedRef, ReactNode } from 'react'
+import type { ComponentPropsWithoutRef, ElementType, ForwardedRef } from 'react'
 import { forwardRef, useMemo } from 'react'
 
-import { cn } from '~shared/utils'
+import { cn, isFunction } from '~shared/utils'
 
 import { flexVariants } from '../styles/flex-variants'
 
-export type FlexProps<T extends keyof JSX.IntrinsicElements = 'div'>
-  = ComponentPropsWithoutRef<T> & FlexVariantsProps & {
+export type FlexProps<T extends ElementType = 'div'>
+  = FlexVariantsProps & {
     as?: T
-    children?: ReactNode
-  }
+  } & ComponentPropsWithoutRef<T>
 
-export const Flex = forwardRef(
-  <T extends keyof JSX.IntrinsicElements = 'div'>
-  (props: FlexProps<T>,
-    forwardRef: ForwardedRef<T>,
-  ) => {
-    const {
-      as,
-      className,
-      justify,
-      wrap,
-      direction,
-      align,
-      children,
-      ...restProps
-    } = props
+export const Flex = forwardRef(<T extends ElementType>(props: FlexProps<T>, forwardRef: ForwardedRef<T>) => {
+  const {
+    as,
+    className,
+    justify,
+    wrap,
+    direction,
+    align,
+    ...restProps
+  } = props
 
-    const Comp = (as || 'div') as keyof JSX.IntrinsicElements
+  const RenderComponent = (as === 'svg' ? 'div' : as || 'div')
 
-    const styles = useMemo(
-      () => cn(flexVariants({ justify, wrap, direction, align }), className),
-      [className, justify, wrap, direction, align],
-    )
+  const styles = useMemo(
+    () => cn(flexVariants({ justify, wrap, direction, align }), className),
+    [className, justify, wrap, direction, align],
+  )
 
-    return (
-      <Comp ref={forwardRef} className={styles} {...restProps}>
-        {children}
-      </Comp>
-    )
-  },
-)
+  return (
+    <RenderComponent
+      ref={(instance) => {
+        if (isFunction(forwardRef)) {
+          forwardRef(instance as NullablePossible<T>)
+        }
+        else if (forwardRef !== null) {
+          forwardRef.current = instance as NullablePossible<T>
+        }
+      }}
+      className={styles}
+      {...restProps}
+    />
+  )
+})

@@ -1,6 +1,10 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
 
-import { IntegrationsPlatforms, integrationsPlatforms } from '../model'
+import type { IntegrationsPlatforms } from '../model'
+
+import { createSlice } from '@reduxjs/toolkit'
+
+import { integrationsPlatforms } from '../model'
 
 type IntegrationsSliceState = {
   [key in IntegrationsPlatforms]: {
@@ -9,8 +13,8 @@ type IntegrationsSliceState = {
   }
 }
 
-const initialState: IntegrationsSliceState =
-  integrationsPlatforms.reduce<IntegrationsSliceState>((acc, curr) => {
+const initialState: IntegrationsSliceState
+  = integrationsPlatforms.reduce<IntegrationsSliceState>((acc, curr) => {
     acc[curr] = {
       isConnected: false,
       isValid: false,
@@ -27,7 +31,7 @@ const integrationsSlice = createSlice({
       action: PayloadAction<{
         platform: IntegrationsPlatforms
         data: IntegrationsSliceState[IntegrationsPlatforms]
-      }>
+      }>,
     ) {
       const payload = action.payload
 
@@ -36,10 +40,10 @@ const integrationsSlice = createSlice({
   },
   selectors: {
     getDonationAlertsStatus(state) {
-      return state['donationAlerts']
+      return state.donationAlerts
     },
     getDonatePayStatus(state) {
-      return state['donatePay']
+      return state.donatePay
     },
     getAllIntegrationsStatuses(state) {
       return state

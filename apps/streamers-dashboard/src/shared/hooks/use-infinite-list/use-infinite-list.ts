@@ -1,9 +1,8 @@
-import type { StateRef } from '../use-ref-state/use-ref-state'
-
 /**
   The concept of how this hook works was taken from the "ahooks" library.
   Resource: https://ahooks.js.org/hooks/use-infinite-scroll/
  */
+import type { RefObject } from 'react'
 import { useCallback, useRef, useState } from 'react'
 
 import { useInfiniteScroll } from '../use-infinite-scroll/use-infinite-scroll'
@@ -23,8 +22,8 @@ export type ClearListOptions = {
   resetPages?: boolean
 }
 
-export type UseInfiniteListReturn<ListDataItem> = {
-  ref: StateRef<Window | HTMLElement>
+export type UseInfiniteListReturn<ListDataItem, ListElement extends HTMLElement | Window = HTMLDivElement> = {
+  ref: RefObject<ListElement>
   state: UseInfiniteListState & {
     value: ListDataItem[]
     isPending: boolean
@@ -45,10 +44,10 @@ export type UseInfiniteListOptions<T> = {
   distance?: number
 }
 
-export const useInfiniteList = <ListDataItem>(
+export const useInfiniteList = <ListDataItem, ListElement extends HTMLElement | Window = HTMLDivElement>(
   serviceFn: UseInfiniteListServiceFunction<ListDataItem>,
   options?: UseInfiniteListOptions<ListDataItem>,
-): UseInfiniteListReturn<ListDataItem> => {
+): UseInfiniteListReturn<ListDataItem, ListElement> => {
   const [value, setValue] = useState<ListDataItem[]>(options?.initial ?? [])
   const [isPending, setIsPending] = useState(false)
   const [listState, setListState] = useState<UseInfiniteListState>({
@@ -91,7 +90,7 @@ export const useInfiniteList = <ListDataItem>(
     [serviceFn, listState],
   )
 
-  const infiniteScroll = useInfiniteScroll<Window | HTMLElement>(_ => loadMore(), { distance: options?.distance ?? 20 })
+  const infiniteScroll = useInfiniteScroll<ListElement>(_ => loadMore(), { distance: options?.distance ?? 20 })
 
   const isLoading = infiniteScroll.loading || isPending
 

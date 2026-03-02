@@ -17,7 +17,7 @@ import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 import { useLazyConnectAuctionSlotsSSEQuery, useLazyConnectDonationsSSEQuery, useLazyConnectIntegrationsSSEQuery } from '~shared/store/api'
 import { sseActions, sseSelectors } from '~shared/store/slices'
 
-import { chain } from '~shared/utils'
+import { chain } from '~shared/utils/common'
 
 import { useTabLeader } from '../use-tab-leader/use-tab-leader'
 
@@ -81,7 +81,7 @@ export const useAppSSE = (options?: UseAppSSEOptions) => {
   useEffect(() => {
     const onNewLeaderHandler
       = options?.onNewTabLeader
-        ? chain(options.onNewTabLeader, resetState)
+        ? chain<void>(options.onNewTabLeader, resetState)
         : resetState
 
     tabLeaderChannel.onNewLeader(onNewLeaderHandler)
@@ -100,7 +100,7 @@ type UseBaseChannelSSEOptions<EventsCallbacksMap extends Record<string, (data: a
 }
 
 const useBaseSSEClient
-  = <EventsMap extends Record<string, (data: any) => void>>(client: SSEClient<EventsMap>, options: UseBaseChannelSSEOptions<EventsMap>) => {
+  = <EventsMap extends Record<string, any>>(client: SSEClient<EventsMap>, options: UseBaseChannelSSEOptions<EventsMap>) => {
     const nameRef = useRef(options.name)
     const eventListenersRef = useRef(options.eventListeners)
 

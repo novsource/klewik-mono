@@ -42,6 +42,7 @@ export const useAuthTwitch = (options?: UseAuthTwitchOptions): UseAuthTwitchRetu
           state: '',
           error: true,
           errorReason: 'Invalid local storage value',
+          provider: 'twitch',
         }
       }
 
@@ -53,6 +54,7 @@ export const useAuthTwitch = (options?: UseAuthTwitchOptions): UseAuthTwitchRetu
           state: '',
           error: true,
           errorReason: 'Invalid state value',
+          provider: 'twitch',
         }
       }
 
@@ -78,6 +80,7 @@ export const useAuthTwitch = (options?: UseAuthTwitchOptions): UseAuthTwitchRetu
     twitchAuthLocalStorageState.set({
       auth: false,
       state: generatedState,
+      provider: 'twitch',
     })
 
     window.open(twitchAuthURL, '_blank')

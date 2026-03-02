@@ -2,7 +2,7 @@ import type { NumberFlowProps } from '@number-flow/react'
 
 import type { UseActionTimerReturn } from '../hooks'
 
-import type { ComponentProps, ReactNode } from 'react'
+import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 
 import NumberFlow, { NumberFlowGroup } from '@number-flow/react'
 
@@ -15,7 +15,7 @@ import { cn, mergeProps } from '~shared/utils'
 
 import { TimerProvider, useTimerContext } from '../context'
 
-export type TimerValueProps = ComponentProps<'div'> & {
+export type TimerValueProps = ComponentPropsWithoutRef<'div'> & {
   hoursProps?: NumberFlowProps
   minutesProps?: NumberFlowProps
   secondsProps?: NumberFlowProps

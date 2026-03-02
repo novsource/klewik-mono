@@ -81,7 +81,7 @@ function ListActionsPanel(props: ListActionsPanelProps) {
   if (isLargeThenTablet) {
     return (
       <Flex className="w-full gap-x-2 mb-4" justify="end">
-        <SortingSlotsCombobox disabled={disabled} />
+        <SortingSlotsCombobox />
         <CreateSlotsDialog
           multiplySlots
           trigger={(
@@ -105,11 +105,7 @@ function ListActionsPanel(props: ListActionsPanelProps) {
         <SlotsCountStatisticCard />
         <SlotsPointsSumStatisticCard />
       </Flex>
-      <SortingSlotsCombobox disabled={disabled} />
+      <SortingSlotsCombobox />
     </Flex>
   )
-}
-
-type AuctionSlotsVirtualListProps = {
-  showed: boolean
 }

@@ -6,7 +6,7 @@ import type { AuctionSlotDTO } from '~shared/api/sse/clients/auction-slots'
 
 type CreateSlotsQueryArgs = {
   auctionUUID: Auction['auctionUUID']
-  slots: Array<Omit<AuctionSlotDTO, 'id'>>
+  slots: Array<Omit<AuctionSlotDTO, 'id' | 'auctionSlotOrder'>>
 }
 
 const createSlotsApi = splittedAuctionSlotsApi.injectEndpoints({

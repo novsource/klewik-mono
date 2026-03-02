@@ -18,8 +18,9 @@ import {
   AuctionSlotDTOSchema,
 } from '../clients/auction-slots'
 import {
-  DonationDTOSchema,
+
   DonationsEventSourceMessageSchema,
+  ProcessedDonationDTOSchema,
 } from '../clients/donations'
 import {
   SSEClientsManagerBroadcastChannel,
@@ -43,7 +44,7 @@ class SSEClientsManager {
     DonationsEventsCallbacks
   >(BROADCAST_CHANNEL_NAMES.DONATIONS, {
     messageSchema: DonationsEventSourceMessageSchema,
-    validationEventMessage: { 'donations/add': DonationDTOSchema },
+    validationEventMessage: { 'donations/add': ProcessedDonationDTOSchema },
   })
 
   public auctionSlots = new SpecializedSSEClient<

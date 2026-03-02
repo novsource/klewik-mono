@@ -13,7 +13,6 @@ import { useActionCreators } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
 import { Divider } from '~shared/ui/divider'
-import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { closeAllToasts, toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
 
@@ -204,21 +203,21 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
 /**
   @todo Refactor create-slots dialog icon
  */
-function CreateSlotDialogIcon() {
-  return (
-    <div className="h-fit w-fit rounded-small bg-green-accent/50 p-0.5 outline-4 outline-green-accent/15">
-      <Flex
-        className="relative size-8 tablet:size-9 rounded-small p-1.25"
-        align="center"
-        justify="center"
-      >
-        <Icons.Slots
-          className="text-white-accent"
-          width="26"
-          height="26"
-          gradient
-        />
-      </Flex>
-    </div>
-  )
-}
+// function CreateSlotDialogIcon() {
+//   return (
+//     <div className="h-fit w-fit rounded-small bg-green-accent/50 p-0.5 outline-4 outline-green-accent/15">
+//       <Flex
+//         className="relative size-8 tablet:size-9 rounded-small p-1.25"
+//         align="center"
+//         justify="center"
+//       >
+//         <Icons.Slots
+//           className="text-white-accent"
+//           width="26"
+//           height="26"
+//           gradient
+//         />
+//       </Flex>
+//     </div>
+//   )
+// }

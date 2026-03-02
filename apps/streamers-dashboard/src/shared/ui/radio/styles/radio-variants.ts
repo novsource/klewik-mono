@@ -29,6 +29,7 @@ const radioIndicatorVariants = cva('flex before:rounded-full', {
     variant: {
       default: 'before:bg-green-accent/60 data-[unchecked]:hidden',
       ghost: 'before:bg-green-accent/60 data-[unchecked]:hidden',
+      tab: '',
     },
     size: {
       lg: 'before:size-2.5',

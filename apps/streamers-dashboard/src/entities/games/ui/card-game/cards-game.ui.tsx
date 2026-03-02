@@ -45,7 +45,6 @@ function CardsGameField(props: CardsGameFieldProps) {
   const usedSelectedCard = selectedCard ?? state.choosedCardUnit
 
   const [potentialCardToChoose, setPotentialCardToChoose] = useState<NullablePossible<CardsGameUnit>>(null)
-  const [isCardAnimationEnded, setIsCardAnimationEnded] = useState(false)
 
   const gameFieldElementRef = useRef<HTMLDivElement>(null)
   const mergedFieldRef = useMergedRefs(gameFieldElementRef)
@@ -86,7 +85,6 @@ function CardsGameField(props: CardsGameFieldProps) {
           initial={{ x: initialX, y: initialY, opacity: 1 }}
           animate={{ x: targetX, y: targetY, opacity: 0 }}
           transition={{ duration: 1.5 }}
-          onTransitionEnd={() => setIsCardAnimationEnded(true)}
           style={{
             width: cardWidth,
             height: cardHeight,
@@ -201,13 +199,13 @@ function GameCard(props: GameCardProps) {
     if (!isHovered) {
       setRotateCoords({ x: 0, y: 0, z: 0 })
     }
-  }, [isHovered, rotateCoords, isCurrentCardChoosed])
+  }, [isHovered, rotateCoords])
 
   const mergedProps = useMemo(() => mergeProps<ComponentPropsWithoutRef<'div'>[]>({
     onMouseMove: handleOnMouseMove,
     onMouseEnter: () => setIsHovered(true),
     onMouseLeave: () => setIsHovered(false),
-  }, restProps), [restProps, handleOnMouseMove, cardUnit])
+  }, restProps), [restProps, handleOnMouseMove])
 
   return (
     <div

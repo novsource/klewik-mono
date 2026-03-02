@@ -112,7 +112,7 @@ function WheelFortune(props: WheelFortuneProps) {
   }, [isSpinning, selectorCurrentSlot, wheelSize])
 
   return (
-    <Flex ref={containerRef} className="relative shrink h-full w-full justify-start items-start" {...props}>
+    <div ref={containerRef} className="relative flex shrink h-full w-full justify-start items-start" {...props}>
       <div
         className="flex w-full h-1/2 justify-center items-center"
         style={{ maskImage: `linear-gradient(
@@ -184,6 +184,6 @@ function WheelFortune(props: WheelFortuneProps) {
           </div>
         </div>
       </div>
-    </Flex>
+    </div>
   )
 }

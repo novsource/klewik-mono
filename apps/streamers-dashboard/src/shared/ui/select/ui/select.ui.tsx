@@ -1,6 +1,7 @@
 import type { SelectContextState } from '../context'
 
-import * as React from 'react'
+import type { ReactNode } from 'react'
+import { useMemo } from 'react'
 
 import { Select as SelectPrimitive } from '@base-ui/react/select'
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
@@ -49,7 +50,7 @@ export const SelectValue = (props: SelectValueProps) => {
 
 export type SelectTriggerProps = SelectPrimitive.Trigger.Props & {
   size?: 'sm' | 'default'
-  leftIcon?: React.ReactNode
+  leftIcon?: ReactNode
   hideChevron?: boolean
   hideSelectedValue?: boolean
   label?: string
@@ -68,7 +69,7 @@ export const SelectTrigger = (props: SelectTriggerProps) => {
 
   const { size } = useSelectContext()
 
-  const style = React.useMemo(() => {
+  const style = useMemo(() => {
     return cn(selectTriggerVariants({ size }), className)
   }, [size, className])
 

@@ -1,5 +1,5 @@
 import type { ComponentProps, ComponentPropsWithoutRef, ReactNode } from 'react'
-import { memo, useMemo, useState } from 'react'
+import { memo, useMemo } from 'react'
 
 import { useLocation } from 'react-router-dom'
 
@@ -88,15 +88,9 @@ function BaseHeader(props: BaseHeaderProps) {
 }
 
 function DesktopDashboardHeader() {
-  const [isTimerVisible, setIsTimerVisible] = useState(false)
-
   const uuid = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const { setDialogOpenStatus } = useActionCreators(globalDialogsActions)
-
-  const toggleTimerVisibility = () => {
-    setIsTimerVisible(curr => !curr)
-  }
 
   const openSettingsDialog = () => {
     setDialogOpenStatus({ dialog: 'settings', status: true })
@@ -206,7 +200,7 @@ function MobilePageTitle() {
   const pageTitle = useMemo(() => {
     const route = pathname.split('/').at(3) || 'slots'
 
-    return route in ROUTES_TITLES ? ROUTES_TITLES[route]! : ''
+    return route in ROUTES_TITLES ? ROUTES_TITLES[route as keyof typeof ROUTES_TITLES] : ''
   }, [pathname])
 
   return (

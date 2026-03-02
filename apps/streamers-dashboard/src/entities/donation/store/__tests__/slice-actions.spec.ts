@@ -28,6 +28,7 @@ const createFakeDonation: () => DonationAlertsDonation = () => ({
   sourceDonationId: 12,
   processData: {
     action: getFromFakerArray<DonationAlertsDonation['processData']['action']>('createSlot', 'noAction', 'updateSlot'),
+    donationCode: null,
     slotsIds: [faker.number.int(), faker.number.int()],
     status: getFromFakerArray<DonationAlertsDonation['processData']['status']>('added', 'checkRequested', 'empty', 'error', 'inProgress', 'rejected'),
     addedPoints: null,

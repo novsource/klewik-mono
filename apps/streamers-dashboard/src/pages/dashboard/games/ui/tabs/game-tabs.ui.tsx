@@ -2,7 +2,7 @@ import type { TabsProps } from '@radix-ui/react-tabs'
 
 import type { WheelTabsStylesSlots } from '../../styles'
 
-import { memo, useMemo, useState } from 'react'
+import { memo, useMemo } from 'react'
 
 import { auctionGamesSelectors } from '~entities/games/store'
 
@@ -36,19 +36,6 @@ export const GameTabs = memo((props: GameTabsProps) => {
 
   const currentAuctionGame = useStoreSelector(auctionGamesSelectors.getGame)
 
-  const [currentTab, setCurrentTab] = useState(TABS_CONTENT_NAMES.CONTROL)
-  // const [isSlotsTabTransitionEnded, setIsSlotsTabTransitionEnded] = useState(false)
-
-  // if (currentTab !== TABS_CONTENT_NAMES.SLOTS && isSlotsTabTransitionEnded) {
-  //   setIsSlotsTabTransitionEnded(false)
-  // }
-
-  // useEffect(() => {
-  //   if (currentTab === TABS_CONTENT_NAMES.SLOTS && !isSlotsTabTransitionEnded) {
-  //     startTransition(() => setIsSlotsTabTransitionEnded(true))
-  //   }
-  // }, [isSlotsTabTransitionEnded, currentTab])
-
   const tabsStyles = useMemo(() => twSlotsStyles(wheelTabsStyles, slotsClassnames), [slotsClassnames])
 
   const tabsTriggers = useMemo(() => {
@@ -75,7 +62,6 @@ export const GameTabs = memo((props: GameTabsProps) => {
     <Tabs
       className={tabsStyles.base}
       defaultValue={TABS_CONTENT_NAMES.CONTROL}
-      onValueChange={setCurrentTab}
       {...tabsProps}
     >
       <TabsList className={tabsStyles.tabList}>

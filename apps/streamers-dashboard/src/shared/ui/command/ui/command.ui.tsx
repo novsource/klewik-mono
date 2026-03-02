@@ -1,4 +1,4 @@
-import type { ComponentProps } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 
 import { Command as CommandPrimitive } from 'cmdk'
 
@@ -39,6 +39,7 @@ export const Command = (props: CommandProps) => {
 export type CommandDialogProps = ComponentProps<typeof Dialog> & {
   title?: string
   description?: string
+  children: ReactNode
 }
 
 export const CommandDialog = (props: CommandDialogProps) => {

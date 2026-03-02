@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import type { ReactNode, SVGProps } from 'react'
+import type { ReactNode, RefObject, SVGProps } from 'react'
 
-import type { StateRef, UseInfiniteListReturn } from '~shared/hooks'
+import type { UseInfiniteListReturn } from '~shared/hooks'
 
 import type { FlexProps } from '~shared/ui/flex'
 import { Flex } from '~shared/ui/flex'
@@ -29,7 +29,7 @@ export type InfiniteListProps<DataItem> = Omit<
   'data' | 'count' | 'scrollElementRef' | 'children'
 > & {
   children: InfiniteListRenderFunction<DataItem>
-  listRef: StateRef<HTMLElement | Window>
+  listRef: RefObject<HTMLDivElement>
   state: UseInfiniteListReturn<DataItem>['state']
   data?: DataItem[]
   limit?: number
@@ -133,7 +133,7 @@ export const InfiniteList = <DataItem = unknown>(props: InfiniteListProps<DataIt
   )
 }
 
-type InfiniteListEmptyContentProps = Omit<FlexProps, 'children'> & {
+type InfiniteListEmptyContentProps = Omit<FlexProps<'div'>, 'children'> & {
   placeholder?: string
 }
 

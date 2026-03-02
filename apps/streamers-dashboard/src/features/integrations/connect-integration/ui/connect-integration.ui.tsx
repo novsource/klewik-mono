@@ -32,7 +32,7 @@ export const IntegrationCard = (props: IntegrationCardProps) => {
     donationAlerts: <DonationAlertsIntegrationButton />,
     donatePay: <DonatePayIntegrationButton />,
     twitch: null,
-    custom: null,
+    userInput: null,
   }
 
   return (
@@ -57,7 +57,7 @@ export const RedirectDisplay = memo((props: RedirectDisplayProps) => {
     donationAlerts: <DonationAlertsRedirectDisplay />,
     donatePay: <></>,
     twitch: <AuthTwitchRedirectDisplay />,
-    custom: <></>,
+    userInput: <></>,
   }[props.platform]
 
   return redirectDisplay
