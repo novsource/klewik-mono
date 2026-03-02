@@ -8,6 +8,109 @@ import path from 'node:path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), visualizer()],
+  build: {
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          core: [
+            'react',
+            'react-dom',
+            'react-router-dom',
+          ],
+          network: [
+            'axios',
+            'axios-rate-limit',
+            'broadcast-channel',
+          ],
+          ui: [
+            '@base-ui/react',
+            '@number-flow/react',
+            'vaul',
+            'next-themes',
+            'sonner',
+            'canvas-confetti',
+            'cmdk',
+            'motion',
+          ],
+          icons: ['lucide-react'],
+          utils: ['class-variance-authority', 'dompurify'],
+        },
+      },
+      // manualChunks(id) {
+      //     // React core
+      //     if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+      //       return 'react-vendor'
+      //     }
+
+      //     // Router
+      //     if (id.includes('react-router-dom')) {
+      //       return 'router'
+      //     }
+
+      //     // Redux
+      //     if (
+      //       id.includes('@reduxjs/toolkit')
+      //       || id.includes('react-redux')
+      //     ) {
+      //       return 'redux'
+      //     }
+
+      //     // Forms & validation
+      //     if (
+      //       id.includes('react-hook-form')
+      //       || id.includes('@hookform/resolvers')
+      //       || id.includes('zod')
+      //     ) {
+      //       return 'forms'
+      //     }
+
+      //     // TipTap (heavy editor)
+      //     if (id.includes('@tiptap')) {
+      //       return 'tiptap'
+      //     }
+
+      //     // UI / animations / icons
+      //     if (
+      //       id.includes('lucide-react')
+      //       || id.includes('motion')
+      //       || id.includes('vaul')
+      //       || id.includes('cmdk')
+      //       || id.includes('canvas-confetti')
+      //       || id.includes('sonner')
+      //       || id.includes('virtua')
+      //       || id.includes('react-number-format')
+      //     ) {
+      //       return 'ui'
+      //     }
+
+      //     // Network / async
+      //     if (
+      //       id.includes('axios')
+      //       || id.includes('@microsoft/fetch-event-source')
+      //       || id.includes('broadcast-channel')
+      //       || id.includes('async-mutex')
+      //     ) {
+      //       return 'network'
+      //     }
+
+      //     // Utils
+      //     if (
+      //       id.includes('uuid')
+      //       || id.includes('js-sha256')
+      //       || id.includes('dompurify')
+      //       || id.includes('class-variance-authority')
+      //     ) {
+      //       return 'utils'
+      //     }
+
+      //     // Everything else from node_modules
+      //     if (id.includes('node_modules')) {
+      //       return 'vendor'
+      //     }
+      //   },
+    },
+  },
   resolve: {
     alias: {
       '~app': path.resolve(__dirname, './src/app'),
