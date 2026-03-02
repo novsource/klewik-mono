@@ -21,7 +21,7 @@ import { ROUTES_TITLES } from '~shared/constants/router'
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
-import { Text } from '~shared/components/typography'
+import { Text, Title } from '~shared/components/typography'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -205,7 +205,7 @@ function MobilePageTitle() {
 
   return (
     <MotionBox initial={{ height: 0 }} animate={{ height: 'auto' }}>
-      <Typography tag="h2">{pageTitle }</Typography>
+      <Title order={2}>{pageTitle }</Title>
     </MotionBox>
   )
 }
@@ -293,7 +293,7 @@ function IntegrationsStatisticCard(props: IntegrationsStatisticCardProps) {
   }, [integrations])
 
   return (
-    <Tooltip delayDuration={500}>
+    <Tooltip delay={500}>
       <TooltipTrigger>
         <StatisticCard className={cn(!connectedIntegrationsCount && 'gap-x-2', props.className)}>
           <Icons.Integrations width={18} height={18} />

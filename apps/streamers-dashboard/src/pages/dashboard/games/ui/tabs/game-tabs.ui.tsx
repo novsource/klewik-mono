@@ -1,5 +1,3 @@
-import type { TabsProps } from '@radix-ui/react-tabs'
-
 import type { WheelTabsStylesSlots } from '../../styles'
 
 import { memo, useMemo } from 'react'
@@ -11,6 +9,7 @@ import { StartTransitionContainer } from '~shared/components/start-transition-co
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Icons } from '~shared/ui/icons'
+import type { TabsProps } from '~shared/ui/tabs'
 import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
 
 import { twSlotsStyles } from '~shared/utils'

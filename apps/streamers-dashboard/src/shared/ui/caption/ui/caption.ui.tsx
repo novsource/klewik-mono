@@ -3,7 +3,7 @@ import type { CaptionStylesProps } from '../styles/caption-variants'
 import type { ComponentPropsWithoutRef } from 'react'
 import { useMemo } from 'react'
 
-import { mergeProps } from '@base-ui-components/react'
+import { mergeProps } from '@base-ui/react'
 
 import type { TextProps } from '~shared/components/typography'
 import { Text } from '~shared/components/typography'

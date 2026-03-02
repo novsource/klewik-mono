@@ -3,7 +3,7 @@ import type { RadioProps } from './radio.ui'
 import type { ReactNode } from 'react'
 import { useMemo } from 'react'
 
-import { Radio as RadioPrimitive } from '@base-ui-components/react'
+import { Radio as RadioPrimitive } from '@base-ui/react'
 
 import type { TextProps } from '~shared/components/typography'
 import { Text } from '~shared/components/typography'

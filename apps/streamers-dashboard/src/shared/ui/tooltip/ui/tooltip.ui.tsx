@@ -1,28 +1,32 @@
-import * as TooltipPrimitive from '@radix-ui/react-tooltip'
+import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip'
 
 import { cn } from '~shared/utils'
 
 import { tooltipContentVariants } from '../styles/tooltip-variants'
 
 function TooltipProvider({
-  delayDuration = 0,
+  delay = 0,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
   return (
     <TooltipPrimitive.Provider
       data-slot="tooltip-provider"
-      delayDuration={delayDuration}
+      delay={delay}
       {...props}
     />
   )
 }
 
-function Tooltip({
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Root>) {
+type TooltipProps = TooltipPrimitive.Provider.Props & {
+  rootProps?: TooltipPrimitive.Root.Props
+}
+
+function Tooltip(props: TooltipProps) {
+  const { rootProps, ...providerProps } = props
+
   return (
-    <TooltipProvider>
-      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
+    <TooltipProvider {...providerProps}>
+      <TooltipPrimitive.Root data-slot="tooltip" {...rootProps} />
     </TooltipProvider>
   )
 }
@@ -33,28 +37,35 @@ function TooltipTrigger({
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
 }
 
+export type TooltipContentProps = TooltipPrimitive.Popup.Props & {
+  disableArrow?: boolean
+  positionerProps?: TooltipPrimitive.Positioner.Props
+  portalProps?: TooltipPrimitive.Portal.Props
+}
+
 function TooltipContent({
   className,
-  sideOffset = 0,
+  portalProps,
+  positionerProps,
   disableArrow = false,
   children,
   ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Content> & {
-  disableArrow?: boolean
-}) {
+}: TooltipContentProps) {
   return (
     <TooltipPrimitive.Portal>
-      <TooltipPrimitive.Content
-        data-slot="tooltip-content"
-        sideOffset={sideOffset}
-        className={cn(tooltipContentVariants(), className)}
-        {...props}
-      >
-        {children}
-        {!disableArrow && (
-          <TooltipPrimitive.Arrow className="bg-primary fill-primary z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]" />
-        )}
-      </TooltipPrimitive.Content>
+      <TooltipPrimitive.Positioner {...positionerProps}>
+        <TooltipPrimitive.Popup
+          data-slot="tooltip-content"
+          className={cn(tooltipContentVariants(), className)}
+          {...props}
+        >
+          {children}
+          {!disableArrow && (
+            <TooltipPrimitive.Arrow className="bg-primary fill-primary z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]" />
+          )}
+        </TooltipPrimitive.Popup>
+      </TooltipPrimitive.Positioner>
+
     </TooltipPrimitive.Portal>
   )
 }

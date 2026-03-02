@@ -1,4 +1,3 @@
-import type { TabsContentProps } from '@radix-ui/react-tabs'
 import type { AuctionGames } from '~entities/games/model'
 
 import type { ControlWheelTabSlots } from '../../styles'
@@ -16,6 +15,7 @@ import { Divider } from '~shared/ui/divider'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { RadioCard, RadioCardDescription, RadioCardTitle, RadioGroup } from '~shared/ui/radio'
+import type { TabsContentProps } from '~shared/ui/tabs'
 import { TabsContent } from '~shared/ui/tabs'
 
 import { twSlotsStyles } from '~shared/utils'

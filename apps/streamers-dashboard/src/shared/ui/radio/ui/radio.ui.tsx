@@ -3,7 +3,7 @@ import type { RadioVariantsProps } from '../styles'
 import { useMemo } from 'react'
 import type { ComponentProps } from 'react'
 
-import { RadioGroup as RadioGroupPrimitive, Radio as RadioPrimitive } from '@base-ui-components/react'
+import { RadioGroup as RadioGroupPrimitive, Radio as RadioPrimitive } from '@base-ui/react'
 
 import { cn } from '~shared/utils'
 
