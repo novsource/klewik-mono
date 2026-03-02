@@ -1,4 +1,4 @@
-import * as React from "react";
+
 import type { SVGProps } from "react";
 type Sizes = 'xs' | 'sm' | 'default' | 'lg';
 type IconsProps = SVGProps<SVGSVGElement> & {

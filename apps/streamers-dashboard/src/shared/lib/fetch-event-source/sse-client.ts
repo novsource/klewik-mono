@@ -13,11 +13,13 @@ import { SSEEmiter } from './sse-emitter'
 
 export type SSEClientOptions<SourceMessage extends EventSourceMessage = EventSourceMessage, EventMap extends Record<string, any> = Record<string, any>> = {
   baseMessageSchema: ZodType<SourceMessage>
-  eventsDataSchemas?: Record<keyof EventMap, ZodType>
+  eventsDataSchemas: {
+    [Event in keyof EventsMap]: ZodType<Parameters<EventsMap[Event]>>
+  }
 }
 
 export class SSEClient<
-  EventsMap extends Record<string, any> = Record<string, any>,
+  EventsMap extends Record<string, EventHandler> = Record<string, EventHandler>,
   SourceMessage extends EventSourceMessage = EventSourceMessage,
 > extends BaseSSEClient {
   private readonly _sseEventsEmitter = new SSEEmiter()

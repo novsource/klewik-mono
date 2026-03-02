@@ -1,4 +1,3 @@
-import * as React from 'react'
 import type { SVGProps } from 'react'
 
 type Sizes = 'xs' | 'sm' | 'default' | 'lg'
@@ -14,8 +13,8 @@ const sizes: Record<Sizes, number> = {
 const SvgLogin = (props: IconsProps) => {
   props = {
     ...props,
-    width: props.size ? sizes[props.size] : (props.width ?? sizes['default']),
-    height: props.size ? sizes[props.size] : (props.height ?? sizes['default']),
+    width: props.size ? sizes[props.size] : (props.width ?? sizes.default),
+    height: props.size ? sizes[props.size] : (props.height ?? sizes.default),
   }
   return (
     <svg
