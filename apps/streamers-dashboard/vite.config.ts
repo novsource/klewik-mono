@@ -26,7 +26,6 @@ export default defineConfig({
           ui: [
             '@base-ui/react',
             '@number-flow/react',
-            'vaul',
             'next-themes',
             'sonner',
             'canvas-confetti',
