@@ -2,7 +2,7 @@ import type { StateRef } from '../use-ref-state/use-ref-state'
 
 import { useState } from 'react'
 
-import { getElement } from '~shared/utils/react'
+import { isTarget } from '~shared/utils/react'
 import type { HookTarget } from '~shared/utils/react'
 
 import { useIsomorphicLayoutEffect } from '../use-isomorphic-layout-effect/use-isomorphic-layout-effect'
@@ -56,7 +56,7 @@ export const useElementSize = ((...params: any[]) => {
   const internalRef = useRefState<Element>()
 
   useIsomorphicLayoutEffect(() => {
-    const element = (target ? getElement(target) : internalRef.current) as Element
+    const element = (target ? isTarget.getElement(target) : internalRef.current) as Element
 
     if (!element)
       return

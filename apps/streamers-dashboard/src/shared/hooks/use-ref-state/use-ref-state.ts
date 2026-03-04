@@ -1,39 +1,37 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
-export type StateRef<Value> = {
-  (node: Value): void
-  current: Value
-  state?: Value
+export interface StateRef<Value> {
+  (node: Value): void;
+  current: Value;
+  state?: Value;
 }
 
-const createRefState = <Value>(
+export const createRefState = <Value>(
   initialValue: Value | undefined,
-  setState: (value: Value) => void,
+  setState: (value: Value) => void
 ) => {
-  let temp = initialValue
+  let temp = initialValue;
   function ref(value: Value) {
-    if (temp === value)
-      return
-    temp = value
-    setState(temp)
+    if (temp === value) return;
+    temp = value;
+    setState(temp);
   }
 
   Object.defineProperty(ref, 'current', {
     get() {
-      return temp
+      return temp;
     },
     set(value: Value) {
-      if (temp === value)
-        return
-      temp = value
-      setState(temp)
+      if (temp === value) return;
+      temp = value;
+      setState(temp);
     },
     configurable: true,
-    enumerable: true,
-  })
+    enumerable: true
+  });
 
-  return ref as StateRef<Value>
-}
+  return ref as StateRef<Value>;
+};
 
 /**
  * @name useRefState
@@ -49,8 +47,8 @@ const createRefState = <Value>(
  * const internalRefState = useRefState();
  */
 export const useRefState = <Value>(initialValue?: Value) => {
-  const [state, setState] = useState<Value | undefined>(initialValue)
-  const [ref] = useState(() => createRefState<Value>(initialValue, setState))
-  ref.state = state
-  return ref
-}
+  const [state, setState] = useState<Value | undefined>(initialValue);
+  const [ref] = useState(() => createRefState<Value>(initialValue, setState));
+  ref.state = state;
+  return ref;
+};

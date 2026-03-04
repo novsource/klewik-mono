@@ -2,7 +2,7 @@ import type { StateRef } from '../use-ref-state/use-ref-state'
 
 import { useEffect, useRef } from 'react'
 
-import { getElement, isTarget } from '~shared/utils/react'
+import { isTarget } from '~shared/utils/react'
 import type { HookTarget } from '~shared/utils/react'
 
 import { useRefState } from '../use-ref-state/use-ref-state'
@@ -94,7 +94,7 @@ export const useKeyboard = ((...params: any[]) => {
     if (!target && !internalRef.state)
       return
 
-    const element = (target ? getElement(target) : internalRef.current) as HTMLElement
+    const element = (target ? isTarget.getElement(target) : internalRef.current) as HTMLElement
     if (!element)
       return
 

@@ -2,7 +2,7 @@ import type { StateRef } from '../use-ref-state/use-ref-state'
 
 import { useEffect, useRef, useState } from 'react'
 
-import { getElement, isTarget } from '~shared/utils/react'
+import { isTarget } from '~shared/utils/react'
 import type { HookTarget } from '~shared/utils/react'
 
 import { useRefState } from '../use-ref-state/use-ref-state'
@@ -74,7 +74,7 @@ export const useResizeObserver = ((...params: any[]) => {
     if (!enabled || (!target && !internalRef.state))
       return
 
-    const element = target ? getElement(target) : internalRef.current
+    const element = target ? isTarget.getElement(target) : internalRef.current
     if (!element)
       return
 
