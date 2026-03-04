@@ -6,12 +6,12 @@ import { Text } from '~shared/components/typography'
 
 import { Button } from '~shared/ui/button'
 import type { DrawerProps } from '~shared/ui/drawer'
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '~shared/ui/drawer'
+import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from '~shared/ui/drawer'
 import type { FlexProps } from '~shared/ui/flex'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import type { SheetContentProps, SheetHeaderProps, SheetProps, SheetTriggerProps } from '~shared/ui/sheet'
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '~shared/ui/sheet'
+import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from '~shared/ui/sheet'
 
 import { cn } from '~shared/utils'
 
@@ -65,7 +65,7 @@ function MobileAppDialogHeader(props: MobileAppDialogHeaderProps) {
   const { className, ...restProps } = props
 
   return (
-    <SheetHeader
+    <div
       className={cn('flex flex-row items-center w-full gap-x-4 px-2 py-1 mb-4 space-y-0', className)}
       {...restProps}
     />
@@ -107,41 +107,17 @@ function MobileAppDialogExtraActions(props: MobileAppDialogExtraActionsProps) {
 
   return (
     <Drawer {...restProps}>
-      <DrawerTrigger asChild>
-        <Button size="xs" startContent={<Icons.Actions />}>Действия</Button>
-      </DrawerTrigger>
+      <DrawerTrigger render={<Button size="xs" startContent={<Icons.Actions />}>Действия</Button>} />
       <DrawerContent>
-        <DrawerHeader className="py-3 px-4">
+        <div className="py-3 px-4">
           <DrawerTitle>Действия</DrawerTitle>
-        </DrawerHeader>
+        </div>
         <Flex className="gap-y-2 grow h-fit px-4 pb-4" direction="column">
           {children}
         </Flex>
       </DrawerContent>
     </Drawer>
   )
-
-  // return (
-  //   <Sheet {...restProps}>
-  //     <SheetTrigger
-  //       className="text-gray-light"
-  //       render={<Button size="xs" startContent={<Icons.Actions />}>Действия</Button>}
-  //     />
-  //     <SheetContent
-  //       className="w-full h-fit max-h-44 top-auto rounded-t-large border-t-1 border-t-dark-light gap-y-1.5"
-  //       side="bottom"
-  //       isFullPageSize
-  //       backdropProps={{ forceRender: true }}
-  //     >
-  //       <SheetHeader className="h-fit">
-  //         <SheetTitle>Действия</SheetTitle>
-  //       </SheetHeader>
-  //       <Flex className="gap-y-2 grow h-fit" direction="column">
-  //         {children}
-  //       </Flex>
-  //     </SheetContent>
-  //   </Sheet>
-  // )
 }
 
 export type MobileAppDialogHeaderActionsPanelProps = FlexProps<'div'>

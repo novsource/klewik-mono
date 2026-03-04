@@ -1,6 +1,6 @@
 import type { DialogBackdropVariantsProps, DialogContentVariantsProps, DialogTitleVariantsProps } from '../styles'
 
-import type { ComponentPropsWithoutRef, ElementRef } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 import { forwardRef, useMemo } from 'react'
 
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog'
@@ -27,7 +27,7 @@ export const DialogHeader = (props: DialogHeaderProps) => {
 
 export type DialogTriggerProps = DialogPrimitive.Trigger.Props
 
-export const DialogTrigger = forwardRef<ElementRef<typeof DialogPrimitive.Trigger>, DialogTriggerProps>(
+export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
   (props, ref) => {
     const { className, ...restProps } = props
 

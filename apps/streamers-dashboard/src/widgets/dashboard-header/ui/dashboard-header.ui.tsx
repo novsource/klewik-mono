@@ -32,8 +32,6 @@ import { Icons } from '~shared/ui/icons'
 import { MotionBox } from '~shared/ui/motion-box'
 import { Popover, PopoverContent, PopoverTrigger } from '~shared/ui/popover'
 import { toastSuccessNotification } from '~shared/ui/toaster/lib'
-import { Tooltip, TooltipContent, TooltipTrigger } from '~shared/ui/tooltip'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
@@ -293,18 +291,25 @@ function IntegrationsStatisticCard(props: IntegrationsStatisticCardProps) {
   }, [integrations])
 
   return (
-    <Tooltip delay={500}>
-      <TooltipTrigger>
-        <StatisticCard className={cn(!connectedIntegrationsCount && 'gap-x-2', props.className)}>
-          <Icons.Integrations width={18} height={18} />
-          {connectedIntegrationsCount === 0 ? 'Нет интеграций' : `${connectedIntegrationsCount} подключено`}
-        </StatisticCard>
-      </TooltipTrigger>
-      <TooltipContent>
-        <Typography tag="span" className="text-gray-accent">
-          Подключенные к аукциону интеграции
-        </Typography>
-      </TooltipContent>
-    </Tooltip>
+    <StatisticCard className={cn(!connectedIntegrationsCount && 'gap-x-2', props.className)}>
+      <Icons.Integrations width={18} height={18} />
+      {connectedIntegrationsCount === 0 ? 'Нет интеграций' : `${connectedIntegrationsCount} подключено`}
+    </StatisticCard>
   )
+
+  // return (
+  //   <Tooltip delay={500}>
+  //     <TooltipTrigger>
+  //       <StatisticCard className={cn(!connectedIntegrationsCount && 'gap-x-2', props.className)}>
+  //         <Icons.Integrations width={18} height={18} />
+  //         {connectedIntegrationsCount === 0 ? 'Нет интеграций' : `${connectedIntegrationsCount} подключено`}
+  //       </StatisticCard>
+  //     </TooltipTrigger>
+  //     <TooltipContent>
+  //       <Typography tag="span" className="text-gray-accent">
+  //         Подключенные к аукциону интеграции
+  //       </Typography>
+  //     </TooltipContent>
+  //   </Tooltip>
+  // )
 }

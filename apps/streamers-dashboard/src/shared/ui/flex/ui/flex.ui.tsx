@@ -12,7 +12,7 @@ export type FlexProps<T extends ElementType = 'div'>
     as?: T
   } & ComponentPropsWithoutRef<T>
 
-export const Flex = forwardRef(<T extends ElementType>(props: FlexProps<T>, forwardRef: ForwardedRef<T>) => {
+export const Flex = forwardRef(<T extends ElementType = 'div'>(props: FlexProps<T>, forwardRef: ForwardedRef<T>) => {
   const {
     as,
     className,

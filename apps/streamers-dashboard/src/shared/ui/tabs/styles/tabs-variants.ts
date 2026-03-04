@@ -47,13 +47,13 @@ export const tabsTriggerVariants = cva<TabsVariantCva>([
   'disabled:pointer-events-none disabled:opacity-50',
   'px-3 py-1.5 max-tablet:px-2.5 max-tablet:py-1',
   'text-gray-light font-medium text-md max-tablet:text-sm',
-  'transition-all data-[state=active]:cursor-default',
+  'transition-all data-[active]:cursor-default',
 ], {
   variants: {
     variant: {
-      default: 'data-[state=active]:text-white data-[state=active]:shadow-sm hover:text-gray-accent rounded-sm',
-      bottomLine: 'data-[state=active]:text-green-accent hover:text-gray-accent',
-      underline: 'data-[state=active]:text-green-accent hover:text-gray-accent',
+      default: 'data-[active]:text-white data-[active]:shadow-sm hover:text-gray-accent rounded-sm',
+      bottomLine: 'data-[active]:text-green-accent hover:text-gray-accent',
+      underline: 'data-[active]:text-green-accent hover:text-gray-accent',
     },
   },
   defaultVariants: {

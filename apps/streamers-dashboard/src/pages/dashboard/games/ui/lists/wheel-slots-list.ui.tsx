@@ -129,15 +129,14 @@ export const AuctionGameSlotsList = (props: AuctionGameSlotsListProps) => {
   }
 
   return (
-    <Flex className={cn('h-full w-full', className)} direction="column">
+    <div className={cn('h-full w-full', className)} style={{ flex: '1 1 auto' }}>
       <ShadowVirtualList
         data={listItems}
-        slotsClassNames={{ container: 'pb-4' }}
         estimateSize={() => 125}
         {...virtualListProps}
       >
         {renderGameSlotCard}
       </ShadowVirtualList>
-    </Flex>
+    </div>
   )
 }

@@ -72,15 +72,17 @@ export const VirtualList = <T = unknown>(props: VirtualListProps<T>) => {
     ...virtualizerOptions
   } = props
 
+  const internalContentWrapperRef = useRef<HTMLDivElement>(null)
   const internalScrollRef = useRef<HTMLDivElement>(null)
 
   const virtualizedItems = useVirtualizedItems(data)
 
   const scrollMergedRef = useMergedRefs(scrollElementRef, internalScrollRef)
+  const contentWrapperMergedRef = useMergedRefs(contentWrapperRef, internalContentWrapperRef)
 
   return (
     <div
-      ref={contentWrapperRef}
+      ref={contentWrapperMergedRef}
       data-slot="virtual-list-container"
       style={{ position: 'relative' }}
     >

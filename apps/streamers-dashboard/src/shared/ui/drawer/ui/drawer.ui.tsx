@@ -4,8 +4,6 @@ import { useMemo } from 'react'
 
 import { DrawerPreview as DrawerPrimitive } from '@base-ui/react/drawer'
 
-import type { ExtractComponentClassnameToSlot } from '~app/types/utils'
-
 import { cn } from '~shared/utils/react'
 
 import { DrawerContextProvider, useDrawerContext } from '../context/drawer.context'
