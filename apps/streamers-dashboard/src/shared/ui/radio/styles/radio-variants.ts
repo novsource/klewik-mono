@@ -29,6 +29,7 @@ const radioIndicatorVariants = cva('flex before:rounded-full', {
     variant: {
       default: 'before:bg-green-accent/60 data-[unchecked]:hidden',
       ghost: 'before:bg-green-accent/60 data-[unchecked]:hidden',
+      tab: '',
     },
     size: {
       lg: 'before:size-2.5',
@@ -47,7 +48,7 @@ const radioIndicatorVariants = cva('flex before:rounded-full', {
   ],
 })
 
-const radioLabelVariants = cva('flex items-center font-breeze text-sm cursor-pointer transition-all', {
+const radioLabelVariants = cva('flex items-center text-sm cursor-pointer transition-all', {
   variants: {
     variant: {
       default: 'text-gray-light has-[:checked]:text-gray-accent',

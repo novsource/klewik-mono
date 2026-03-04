@@ -1,7 +1,7 @@
 import type { ChangeEvent, ComponentProps, ReactNode } from 'react'
 import { useMemo } from 'react'
 
-import { mergeProps } from '@base-ui-components/react'
+import { mergeProps } from '@base-ui/react'
 import { Autocomplete as PrimitiveAutocomplete } from '@base-ui/react/autocomplete'
 
 import type { InputProps } from '~shared/ui/input'

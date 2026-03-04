@@ -1,5 +1,6 @@
 import type { SortingDrawerStylesSlots } from '../../styles'
 
+import type { ReactNode } from 'react'
 import { memo, useEffect, useMemo, useState } from 'react'
 
 import { shallowEqual } from 'react-redux'
@@ -21,7 +22,6 @@ import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 import type { SortingOptions } from '~shared/store/model'
 
 import { Button } from '~shared/ui/button'
-import type { ComboboxData } from '~shared/ui/combobox'
 import type { CommandProps } from '~shared/ui/command'
 import { Command, CommandItem, CommandList } from '~shared/ui/command'
 import { Flex } from '~shared/ui/flex'
@@ -49,7 +49,12 @@ const defaultOptions: SortingOptions<AuctionSlot> = {
 }
 
 const sortingSlotsVariants: Array<
-  ComboboxData[number] & { sortingOptions: SortingOptions<AuctionSlot> }
+  {
+    value: string
+    label: string
+    icon?: ReactNode
+    sortingOptions: SortingOptions<AuctionSlot>
+  }
 > = [
   {
     value: 'nameAscending',

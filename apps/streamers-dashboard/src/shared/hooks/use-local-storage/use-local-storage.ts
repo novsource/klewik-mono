@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useSyncExternalStore } from 'react'
 
-type LocalStorageOptions<T extends unknown = unknown> = {
+type LocalStorageOptions<T = unknown> = {
   value?: T
   serializer?: (value: T) => string
   deserializer?: (value: string) => T
@@ -13,7 +13,7 @@ const dispatchStorageEvent = (params: Partial<StorageEvent>) => {
 const setItemToLocalStorage = (
   storage: Storage,
   key: string,
-  value: string
+  value: string,
 ) => {
   const oldValue = localStorage.getItem(key)
   localStorage.setItem(key, value)
@@ -53,22 +53,26 @@ const useLocalStorage = <T>(key: string, options?: LocalStorageOptions<T>) => {
   const serializer = useCallback(
     (value: T) => {
       try {
-        if (!options?.serializer) return JSON.stringify(value)
+        if (!options?.serializer)
+          return JSON.stringify(value)
 
         return options.serializer(value)
-      } catch (err) {
+      }
+      catch {
         return ''
       }
     },
-    [options?.serializer]
+    [options],
   )
 
   const deserializer = (raw: string) => {
     try {
-      if (!options?.deserializer) return JSON.parse(raw)
+      if (!options?.deserializer)
+        return JSON.parse(raw)
 
       return options.deserializer(raw)
-    } catch (err) {
+    }
+    catch {
       return undefined
     }
   }
@@ -87,7 +91,7 @@ const useLocalStorage = <T>(key: string, options?: LocalStorageOptions<T>) => {
     if (initialValue !== undefined && value === undefined) {
       setItemToLocalStorage(localStorage, key, serializer(initialValue))
     }
-  }, [key])
+  }, [key, initialValue, localStorage, serializer])
 
   return {
     value: store ? deserializer(store) : undefined,

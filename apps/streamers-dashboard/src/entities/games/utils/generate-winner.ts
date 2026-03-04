@@ -7,9 +7,13 @@ export function generateWinner(slots: AuctionSlot[]) {
 }
 
 function getWeightedSlots(slots: AuctionSlot[]) {
+  if (slots.length === 0) {
+    return null
+  }
+
   const totalPoints = slots.reduce((sum, slot) => sum + slot.points, 0)
   if (totalPoints === 0)
-    return []
+    return null
 
   let cumulativeSum = 0
   const cumulative = slots.reduce<number[]>((acc, slot) => {
@@ -23,11 +27,17 @@ function getWeightedSlots(slots: AuctionSlot[]) {
 }
 
 function getWeightedRandomSlot(slots: AuctionSlot[]) {
+  if (slots.length === 0) {
+    return null
+  }
+
   const totalPoints = slots.reduce((sum, slot) => sum + slot.points, 0)
   if (totalPoints === 0)
     return null
 
   const weightedSlots = getWeightedSlots(slots)
+  if (!weightedSlots)
+    return null
 
   // Генерируем случайный вес
   const rand = Math.random() * totalPoints

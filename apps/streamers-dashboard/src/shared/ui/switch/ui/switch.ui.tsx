@@ -3,7 +3,7 @@ import type { SwitchVariantsProps } from '../styles/switch-variants'
 import type { ComponentPropsWithRef } from 'react'
 import { forwardRef } from 'react'
 
-import * as SwitchPrimitive from '@base-ui-components/react/switch'
+import * as SwitchPrimitive from '@base-ui/react/switch'
 
 import { cn } from '~shared/utils'
 

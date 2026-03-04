@@ -1,3 +1,5 @@
+import type { ModalStyleVariants } from '../styles/modal.styles'
+
 import { useMemo } from 'react'
 
 import type { TitleProps } from '~shared/components/typography'
@@ -8,6 +10,8 @@ import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogT
 import { Icons } from '~shared/ui/icons'
 
 import { cn } from '~shared/utils'
+
+import { modalStyles } from '../styles/modal.styles'
 
 export type ModalProps = Omit<DialogProps, 'modal'>
 
@@ -55,19 +59,12 @@ export const ModalHeaderTitle = (props: ModalHeaderTitleProps) => {
   return <Title order={2} {...props} />
 }
 
-export type ModalContentProps = DialogContentProps
+export type ModalContentProps = DialogContentProps & ModalStyleVariants
 
 export const ModalContent = (props: ModalContentProps) => {
-  const { className, children, ...restProps } = props
+  const { className, children, variant, ...restProps } = props
 
-  const classes = useMemo(() => cn([
-    'p-0 w-full h-full max-w-[700px] max-h-3/5 min-h-[300px]',
-    'landtop:min-w-[700px] landtop:w-1/2 landtop:max-w-[900px]',
-    'desktop:min-w-[900px] desktop:w-1/2 desktop:max-w-[1100px]',
-    'desktop-lg:min-w-[1100px] desktop-lg:w-1/2 desktop-lg:max-w-[1300px]',
-    'flex flex-col gap-y-0 justify-between',
-    'border-dark-light rounded-[16px] bg-dark-foreground overflow-scroll',
-  ], className), [className])
+  const classes = useMemo(() => cn(modalStyles({ variant, className })), [variant, className])
 
   return (
     <DialogContent className={classes} {...restProps}>

@@ -109,7 +109,6 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
   }
 
   const {
-    ref,
     infiniteListState,
     listItems,
     reset,
@@ -160,10 +159,9 @@ export const AuctionDonationsInfiniteList = (props: AuctionDonationsInfiniteList
 
   return (
     <DonationsInfiniteList
-      slotsClassNames={{ container: 'pb-4' }}
+      // slotsClassNames={{ container: 'pb-4' }}
       data={listItems}
       state={infiniteListState}
-      listRef={ref}
       gap={8}
       placeholder={<InfiniteDonationsListSkeletonCard />}
       showPlaceholders={isShowingSkeletons}

@@ -1,8 +1,6 @@
-import type { TabsProps } from '@radix-ui/react-tabs'
-
 import type { WheelTabsStylesSlots } from '../../styles'
 
-import { memo, useMemo, useState } from 'react'
+import { memo, useMemo } from 'react'
 
 import { auctionGamesSelectors } from '~entities/games/store'
 
@@ -11,6 +9,7 @@ import { StartTransitionContainer } from '~shared/components/start-transition-co
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Icons } from '~shared/ui/icons'
+import type { TabsProps } from '~shared/ui/tabs'
 import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
 
 import { twSlotsStyles } from '~shared/utils'
@@ -35,19 +34,6 @@ export const GameTabs = memo((props: GameTabsProps) => {
   const { slotsClassnames, ...tabsProps } = props
 
   const currentAuctionGame = useStoreSelector(auctionGamesSelectors.getGame)
-
-  const [currentTab, setCurrentTab] = useState(TABS_CONTENT_NAMES.CONTROL)
-  // const [isSlotsTabTransitionEnded, setIsSlotsTabTransitionEnded] = useState(false)
-
-  // if (currentTab !== TABS_CONTENT_NAMES.SLOTS && isSlotsTabTransitionEnded) {
-  //   setIsSlotsTabTransitionEnded(false)
-  // }
-
-  // useEffect(() => {
-  //   if (currentTab === TABS_CONTENT_NAMES.SLOTS && !isSlotsTabTransitionEnded) {
-  //     startTransition(() => setIsSlotsTabTransitionEnded(true))
-  //   }
-  // }, [isSlotsTabTransitionEnded, currentTab])
 
   const tabsStyles = useMemo(() => twSlotsStyles(wheelTabsStyles, slotsClassnames), [slotsClassnames])
 
@@ -75,7 +61,6 @@ export const GameTabs = memo((props: GameTabsProps) => {
     <Tabs
       className={tabsStyles.base}
       defaultValue={TABS_CONTENT_NAMES.CONTROL}
-      onValueChange={setCurrentTab}
       {...tabsProps}
     >
       <TabsList className={tabsStyles.tabList}>

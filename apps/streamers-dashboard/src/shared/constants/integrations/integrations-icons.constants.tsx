@@ -1,8 +1,8 @@
-import { ReactNode, SVGProps } from 'react'
+import type { FORMATTED_INTEGRATIONS_PLATFORMS_NAMES } from './integrations-names.constants'
+
+import type { ReactNode, SVGProps } from 'react'
 
 import { Icons } from '~shared/ui/icons'
-
-import { FORMATTED_INTEGRATIONS_PLATFORMS_NAMES } from './integrations-names.constants'
 
 type IconProps = SVGProps<SVGSVGElement> & {
   size?: 'xs' | 'sm' | 'default' | 'lg'
@@ -10,15 +10,16 @@ type IconProps = SVGProps<SVGSVGElement> & {
 
 const getIntegrationIcon = (
   integrationName: FORMATTED_INTEGRATIONS_PLATFORMS_NAMES,
-  iconProps?: IconProps
+  iconProps?: IconProps,
 ) => {
   const integrationsIcons: Record<
     FORMATTED_INTEGRATIONS_PLATFORMS_NAMES,
     ReactNode
   > = {
-    DonationAlerts: <Icons.DonationAlerts {...iconProps} />,
+    'DonationAlerts': <Icons.DonationAlerts {...iconProps} />,
     'Donate Pay': <Icons.DonatePay {...iconProps} />,
-    'Unknown/Other': undefined,
+    'Custom': <></>,
+    'Twitch': <Icons.TwitchLogo {...iconProps} />,
   }
 
   return integrationsIcons[integrationName]

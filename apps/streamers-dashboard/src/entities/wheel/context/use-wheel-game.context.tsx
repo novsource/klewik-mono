@@ -1,36 +1,19 @@
 import type { UseWheelReturn } from '../hooks'
 
 import type { ReactNode } from 'react'
-import { createContext, useContext, useMemo } from 'react'
+import { useMemo } from 'react'
 
-export type WheelGameContextState = UseWheelReturn
+import { createReactContext } from '~shared/utils/react'
 
-const WheelGameContext = createContext<WheelGameContextState>({
-  meta: {
-    wheelRef: () => null,
-  },
-  actions: {
-    startWheelSpinAnimation: () => ({}),
-  },
-  state: {
-    isSpinning: false,
-    rotateValue: 0,
-    slotUnderSelectorTitle: null,
-    wheelSlots: [],
-  },
+export type WheelGameContextValue = UseWheelReturn
+
+const [_, useWheelGameContext, Context] = createReactContext<WheelGameContextValue>({
+  contextName: 'WheelGameContext',
+  hookName: 'useWheelGameContext',
+  providerName: 'WheelGameContextProvider',
 })
 
-export const useWheelGameContext = () => {
-  const context = useContext(WheelGameContext)
-
-  if (!context) {
-    throw new Error('You should use context inside provider')
-  }
-
-  return context
-}
-
-type WheelGameContextProviderProps = WheelGameContextState & {
+type WheelGameContextProviderProps = WheelGameContextValue & {
   children: ReactNode
 }
 
@@ -39,5 +22,7 @@ export const WheelGameContextProvider = (props: WheelGameContextProviderProps) =
 
   const contextValue = useMemo(() => wheelGame, [wheelGame])
 
-  return <WheelGameContext.Provider value={contextValue}>{ children }</WheelGameContext.Provider>
+  return <Context.Provider value={contextValue}>{ children }</Context.Provider>
 }
+
+export { useWheelGameContext }

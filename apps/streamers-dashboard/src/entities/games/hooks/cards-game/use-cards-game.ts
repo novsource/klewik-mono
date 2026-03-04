@@ -22,7 +22,7 @@ export const useCardsGame = (auctionSlots: AuctionSlot[], options?: UseCardsGame
       return []
 
     const cardAmount = options?.amount ?? 30
-    const winners = Array.from({ length: cardAmount }).fill(null).map(_ => generateWinner(auctionSlots))
+    const winners = Array.from({ length: cardAmount }).fill(null).map(_ => generateWinner(auctionSlots)!)
 
     return transformAuctionSlotsToCardUnits(winners)
   })
@@ -35,11 +35,11 @@ export const useCardsGame = (auctionSlots: AuctionSlot[], options?: UseCardsGame
     }
     else {
       const cardAmount = options?.amount ?? 30
-      const winners = Array.from({ length: cardAmount }).fill(null).map(_ => generateWinner(auctionSlots))
+      const winners = Array.from({ length: cardAmount }).fill(null).map(_ => generateWinner(auctionSlots)!)
 
       setCardsUnits(transformAuctionSlotsToCardUnits(winners))
     }
-  }, [auctionSlots])
+  }, [auctionSlots, options?.amount])
 
   const chooseCard = (card: CardsGameUnit) => {
     setChoosedCardUnit(card)

@@ -1,17 +1,16 @@
-import type { DependencyList } from 'react';
-
-import { useEffect, useState } from 'react';
+import type { DependencyList } from 'react'
+import { useEffect, useState } from 'react'
 
 /* The use query return type */
-export interface UseAsyncReturn<Data> {
+export type UseAsyncReturn<Data> = {
   /* The state of the query */
-  data?: Data;
+  data?: Data
   /* The error of the query */
-  error?: Error;
+  error?: Error
   /* The error state of the query  */
-  isError: boolean;
+  isError: boolean
   /* The loading state of the query */
-  isLoading: boolean;
+  isLoading: boolean
 }
 
 /**
@@ -21,7 +20,7 @@ export interface UseAsyncReturn<Data> {
  * @usage medium
  *
  * @param {() => Promise<Data>} callback The async callback
- * @param {DependencyList} [deps=[]] The dependencies of the callback
+ * @param {DependencyList} [deps] The dependencies of the callback
  * @returns {UseAsyncReturn<Data>} The state of the async callback
  *
  * @example
@@ -29,35 +28,35 @@ export interface UseAsyncReturn<Data> {
  */
 export const useAsync = <Data>(
   callback: () => Promise<Data>,
-  deps: DependencyList = []
+  deps: DependencyList = [],
 ): UseAsyncReturn<Data> => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true)
+  const [isError, setIsError] = useState(false)
 
-  const [error, setError] = useState<Error | undefined>(undefined);
-  const [data, setData] = useState<Data | undefined>(undefined);
+  const [error, setError] = useState<Error | undefined>(undefined)
+  const [data, setData] = useState<Data | undefined>(undefined)
 
   useEffect(() => {
-    setIsLoading(true);
+    setIsLoading(true)
     callback()
       .then((response) => {
-        setData(response);
-        setError(undefined);
-        setIsError(false);
+        setData(response)
+        setError(undefined)
+        setIsError(false)
       })
       .catch((error: Error) => {
-        setError(error);
-        setIsError(true);
+        setError(error)
+        setIsError(true)
       })
       .finally(() => {
-        setIsLoading(false);
-      });
-  }, deps);
+        setIsLoading(false)
+      })
+  }, deps)
 
   return {
     data,
     isLoading,
     isError,
-    error
-  };
-};
+    error,
+  }
+}

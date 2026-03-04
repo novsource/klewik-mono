@@ -4,5 +4,5 @@ export const INTEGRATIONS_PLATFORM_NAMES: Record<IntegrationsPlatforms, string> 
   donatePay: 'Donate Pay',
   donationAlerts: 'Donation Alerts',
   twitch: 'Twitch',
-  userInput: '',
+  userInput: 'Custom',
 }

@@ -61,7 +61,7 @@ function DesktopSettingsDialog(props: DesktopSettingsDialogProps) {
     setDialogOpenStatus({ dialog: 'settings', status: open })
   }
 
-  const closeDialog = () => setDialogOpenStatus({ dialog: 'settings', status: false })
+  // const closeDialog = () => setDialogOpenStatus({ dialog: 'settings', status: false })
 
   return (
     <Modal open={isOpen} onOpenChange={handleOnOpenChange} {...restProps}>

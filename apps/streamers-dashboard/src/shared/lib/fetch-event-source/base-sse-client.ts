@@ -10,6 +10,7 @@ import {
 } from '@microsoft/fetch-event-source'
 import { Mutex } from 'async-mutex'
 import { AxiosError } from 'axios'
+import z from 'zod'
 
 import { refreshTokens } from '~shared/api/http/auth/auth.api'
 
@@ -17,11 +18,12 @@ import { wait } from '~shared/utils/common'
 
 import { EventSourceMessageSchema } from './models'
 
+const mutex = new Mutex()
+
 type RetrySSEConnectOptions = Omit<SSEClientConnectOptions, 'retry'> & {
   retry: NonNullable<SSEClientConnectOptions['retry']>
 }
 
-const mutex = new Mutex()
 export class BaseSSEClient {
   async connect(
     url: string,
@@ -87,7 +89,7 @@ export class BaseSSEClient {
       if (!parsedMessage.success) {
         inputListeners.onerror(
           new Error(
-            `Invalid SSE message: ${parsedMessage.error.errors.join('')}`,
+            `Invalid SSE message: ${z.treeifyError(parsedMessage.error).errors.join('; ')}`,
           ),
         )
         return

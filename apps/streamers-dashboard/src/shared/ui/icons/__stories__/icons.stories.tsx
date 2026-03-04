@@ -33,6 +33,7 @@ type IconStory = StoryObj<typeof meta>
 
 export const All: IconStory = {
   render: (args) => {
+    // @ts-expect-error check args
     const { icon, ...restArgs } = args
     const iconName = icon as keyof typeof Icons
 

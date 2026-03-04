@@ -27,7 +27,7 @@ const compareSlotsFields = (
       sensitivity: 'base',
     })
   }
-  if (typeof slotOne[field] === 'number') {
+  if (typeof slotOne[field] === 'number' && typeof slotTwo[field] === 'number') {
     diff = slotOne[field] - slotTwo[field]
   }
 

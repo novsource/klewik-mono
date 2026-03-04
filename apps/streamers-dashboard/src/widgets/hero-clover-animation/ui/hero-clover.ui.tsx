@@ -27,7 +27,7 @@ export const HeroCloverAnimation = memo((props: HeroCloverAnimationProps) => {
   return (
     <div
       ref={ref}
-      className={cn('relative h-full w-full overflow-clip border-1 border-dark/50 rounded-large', className)}
+      className={cn('relative h-full w-full overflow-clip border-1 border-dark-light rounded-large', className)}
       {...restProps}
     >
       <HeroCloversAnimationCanvas width={width} height={height} />
@@ -56,7 +56,7 @@ function HeroCloversAnimationCanvas(props: MainCloverCanvasProps) {
     if (!drawerInstanceRef.current) {
       drawerInstanceRef.current = new CloverCanvasDrawer({
         canvas,
-        devicePixelRatio: 1,
+        devicePixelRatio: window.devicePixelRatio,
         wrapper: canvas.parentElement || document.body,
         size: {
           width,

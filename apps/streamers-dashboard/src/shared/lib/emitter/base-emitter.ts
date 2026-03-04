@@ -6,9 +6,9 @@
   Second related issue: https://github.com/microsoft/TypeScript/issues/39600
 */
 
-type EventHandler = (...args: any[]) => void
+export type EventHandler<T = any> = (...args: T[]) => void
 
-type BaseEmitterMethods<T extends Record<string, EventHandler>> = {
+type BaseEmitterMethods<T extends Record<string, any>> = {
   /**
    * Calls all handlers with data corresponding to the event data type
    * @param eventName
@@ -16,7 +16,7 @@ type BaseEmitterMethods<T extends Record<string, EventHandler>> = {
    */
   emit: <EventName extends keyof T>(
     eventName: EventName,
-    ...eventArgs: Parameters<T[EventName]>
+    eventArgs: T[EventName]
   ) => void
 
   /**
@@ -27,7 +27,7 @@ type BaseEmitterMethods<T extends Record<string, EventHandler>> = {
    */
   on: <EventName extends keyof T>(
     eventName: EventName,
-    handler: (...eventArgs: Parameters<T[EventName]>) => void
+    handler: (eventArgs: T[EventName]) => void
   ) => void
 
   /**
@@ -37,48 +37,48 @@ type BaseEmitterMethods<T extends Record<string, EventHandler>> = {
    */
   off: <EventName extends keyof T>(
     eventName: EventName,
-    handler: (...eventArgs: Parameters<T[EventName]>) => void
+    handler: (eventArgs: T[EventName]) => void
   ) => void
 }
 
 /**
   Base implemention of EventEmitter
  */
-export class BaseEmitter<EventsMap extends Record<string, EventHandler> = Record<string, any>>
+export class BaseEmitter<EventsMap extends Record<string, any> = Record<string, any>>
 implements BaseEmitterMethods<EventsMap> {
   /**
     Map of event emitter handlers
    */
-  private _subscriptions = new Map<keyof EventsMap, Array<EventHandler>>([])
+  private _subscriptions = new Map<keyof EventsMap, any[]>([])
 
   /*
     Here the problem. Emit method (and others methods like on, off, etc.) always require second argument -
     if we want call emit without any linked data, TS give us TypeError
   */
-  emit<EventName extends keyof EventsMap>(
-    eventName: EventName,
-    ...eventArgs: Parameters<EventsMap[EventName]>
+  emit<Event extends keyof EventsMap>(
+    eventName: Event,
+    eventArgs: EventsMap[Event],
   ) {
-    this._internalEmit(eventName, ...eventArgs)
+    this._internalEmit(eventName, eventArgs)
   }
 
-  on<EventName extends keyof EventsMap>(
-    eventName: EventName,
-    handler: (...eventArgs: Parameters<EventsMap[EventName]>) => void,
+  on<Event extends keyof EventsMap>(
+    eventName: Event,
+    handler: (eventArgs: EventsMap[Event]) => void,
   ) {
     return this._internalSubscribe(eventName, handler)
   }
 
-  off<EventName extends keyof EventsMap>(
-    eventName: EventName,
-    handler: (...eventArgs: Parameters<EventsMap[EventName]>) => void,
+  off<Event extends keyof EventsMap>(
+    eventName: Event,
+    handler: (eventArgs: EventsMap[Event]) => void,
   ) {
     this._internalUnsubscribe(eventName, handler)
   }
 
-  private _internalSubscribe<EventMap extends keyof EventsMap>(
-    eventName: EventMap,
-    handler: (...eventArgs: Parameters<EventsMap[EventMap]>) => void,
+  private _internalSubscribe<Event extends keyof EventsMap>(
+    eventName: Event,
+    handler: (eventArgs: EventsMap[Event]) => void,
   ) {
     let settedHandlers: EventHandler[] = []
 
@@ -95,9 +95,9 @@ implements BaseEmitterMethods<EventsMap> {
     }
   }
 
-  private _internalUnsubscribe<EventMap extends keyof EventsMap>(
-    eventName: EventMap,
-    handler: (...eventArgs: Parameters<EventsMap[EventMap]>) => void,
+  private _internalUnsubscribe<Event extends keyof EventsMap>(
+    eventName: Event,
+    handler: (eventArgs: EventsMap[Event]) => void,
   ) {
     const storedHandlers = this._subscriptions.get(eventName)
 
@@ -111,9 +111,9 @@ implements BaseEmitterMethods<EventsMap> {
     this._subscriptions.set(eventName, filtredHandlers)
   }
 
-  private _internalEmit<EventMap extends keyof EventsMap>(
-    eventName: EventMap,
-    ...eventArgs: Parameters<EventsMap[EventMap]>
+  private _internalEmit<Event extends keyof EventsMap>(
+    eventName: Event,
+    eventArgs: EventsMap[Event],
   ) {
     const storedHandlers = this._subscriptions.get(eventName)
 
@@ -121,7 +121,7 @@ implements BaseEmitterMethods<EventsMap> {
       return
 
     for (const subscription of storedHandlers) {
-      subscription(...eventArgs)
+      subscription(eventArgs)
     }
   }
 }

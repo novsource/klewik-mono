@@ -12,7 +12,7 @@ import {
   useState,
 } from 'react'
 
-import * as TabsPrimitive from '@radix-ui/react-tabs'
+import { Tabs as TabsPrimitive } from '@base-ui/react/tabs'
 
 import { useMergedRefs, useResizeObserver } from '~shared/hooks'
 
@@ -152,13 +152,13 @@ TabsListProps
 })
 TabsList.displayName = TabsPrimitive.List.displayName
 
-export type TabsTriggerProps = ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> & {
+export type TabsTriggerProps = ComponentPropsWithoutRef<typeof TabsPrimitive.Tab> & {
   startContent?: ReactNode
   endContent?: ReactNode
 }
 
 export const TabsTrigger = forwardRef<
-  ElementRef<typeof TabsPrimitive.Trigger>,
+  ElementRef<typeof TabsPrimitive.Tab>,
   TabsTriggerProps
 >((props, forwardRef) => {
   const {
@@ -258,7 +258,7 @@ export const TabsTrigger = forwardRef<
   const triggerProps = mergeProps(restProps, { onClick: () => setSelectedKey(value) })
 
   return (
-    <TabsPrimitive.Trigger
+    <TabsPrimitive.Tab
       ref={triggerMergedRef}
       value={value}
       className={styles}
@@ -267,15 +267,15 @@ export const TabsTrigger = forwardRef<
       {startContent}
       {children}
       {endContent}
-    </TabsPrimitive.Trigger>
+    </TabsPrimitive.Tab>
   )
 })
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+TabsTrigger.displayName = TabsPrimitive.Tab.displayName
 
-export type TabsContentProps = ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+export type TabsContentProps = ComponentPropsWithoutRef<typeof TabsPrimitive.Panel>
 
 export const TabsContent = forwardRef<
-ElementRef<typeof TabsPrimitive.Content>,
+ElementRef<typeof TabsPrimitive.Panel>,
 TabsContentProps
 >((props, forwardRef) => {
   const { className, ...restProps } = props
@@ -285,6 +285,6 @@ TabsContentProps
     [className],
   )
 
-  return <TabsPrimitive.Content ref={forwardRef} className={styles} {...restProps} />
+  return <TabsPrimitive.Panel ref={forwardRef} className={styles} {...restProps} />
 })
-TabsContent.displayName = TabsPrimitive.Content.displayName
+TabsContent.displayName = TabsPrimitive.Panel.displayName

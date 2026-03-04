@@ -71,7 +71,7 @@ export const WizardSuccessCreatedItem = (props: WizardSuccessCreatedItemProps) =
               id: 'auctionURL',
               value: 'Ссылка на аукцион для участников',
             }}
-            value={auctionInfo.url}
+            value={`${import.meta.env.VITE_AUCTIONS_VIEWER_URL}/${auctionInfo.auctionUUID}`}
             endContent={(
               <CopyToClipboardButton
                 className="pointer-events-auto"
@@ -82,7 +82,7 @@ export const WizardSuccessCreatedItem = (props: WizardSuccessCreatedItemProps) =
           />
         </Flex>
       </Flex>
-      <Link to={`/dashboard/${auctionInfo.url?.split('/').at(-1)}`}>
+      <Link to={`/dashboard/${auctionInfo.auctionUUID}`}>
         <Button
           className="w-full"
           variant="action"

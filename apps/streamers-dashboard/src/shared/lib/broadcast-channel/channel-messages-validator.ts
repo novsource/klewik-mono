@@ -1,14 +1,20 @@
-import { ZodError, ZodSchema } from 'zod'
+import type { ZodType } from 'zod'
 
-import { EventSourceMessage } from '../fetch-event-source/models'
-import {
-  CommunicableSSEChannelMessage,
-  CommunicableSourceMessageSchema,
-} from './model'
+import type { EventHandler } from '../emitter'
+import type { EventSourceMessage } from '../fetch-event-source/models'
 
-interface ChannelMessagesValidatorMethods<
+import z, { ZodError } from 'zod'
+
+import { isError } from '~shared/utils'
+
+type ValidateMessageResult<T extends EventSourceMessage, ChannelsEventsMap extends Record<string, any>> = Omit<T, 'data'> & {
+  data: ChannelsEventsMap[T['event']]
+}
+
+type ChannelMessagesValidatorMethods<
   SourceMessage extends EventSourceMessage,
-> {
+  ChannelEventsMap extends Record<string, any>,
+> = {
   /**
    * The method validates the message for general compliance with the channel's message schema,
    and also validates the message data if a schema representing the event data was passed during class initialization.
@@ -18,79 +24,55 @@ interface ChannelMessagesValidatorMethods<
    */
   validate: (
     message: SourceMessage
-  ) => CommunicableSSEChannelMessage<SourceMessage> | Error | undefined
+  ) => ValidateMessageResult<SourceMessage, ChannelEventsMap> | Error
 }
 
 type ChannelMessagesValidatorOptions<
   SourceMessage extends EventSourceMessage,
-  ChannelEventsMap extends Record<string, any>,
+  ChannelEventsMap extends Record<SourceMessage['event'], any>,
 > = {
-  messageSchema: ZodSchema<SourceMessage>
-  validateEventDataMessages?: {
-    [Event in keyof ChannelEventsMap]?: ZodSchema
+  messageSchema: ZodType<SourceMessage>
+  validateEventDataMessages: {
+    [Event in keyof ChannelEventsMap]: ZodType<ChannelEventsMap[Event]>
   }
 }
 
 /**
  * Class for message of broadcast channel validation
  */
-class ChannelMessagesValidator<
+export class ChannelMessagesValidator<
   SourceMessage extends EventSourceMessage,
-  ChannelEventsMap extends Record<string, any>,
-> implements ChannelMessagesValidatorMethods<SourceMessage>
-{
+  ChannelEventsMap extends Record<string, EventHandler>,
+> implements ChannelMessagesValidatorMethods<SourceMessage, ChannelEventsMap> {
   constructor(
     private readonly _options: ChannelMessagesValidatorOptions<
       SourceMessage,
       ChannelEventsMap
-    >
+    >,
   ) {}
 
-  validate(
-    message: SourceMessage
-  ): CommunicableSSEChannelMessage<SourceMessage> | Error | undefined {
+  validate(message: SourceMessage): ValidateMessageResult<SourceMessage, ChannelEventsMap> | Error {
     try {
-      const validateCommunicaveMessageResult =
-        CommunicableSourceMessageSchema.safeParse(message)
-
-      if (validateCommunicaveMessageResult.success) {
-        return validateCommunicaveMessageResult.data
-      }
-
       const validatedMessage = this._options.messageSchema.parse(message)
+      const deserializedMessageData = JSON.parse(message.data)
 
-      const event = validatedMessage.event
+      const messageEvent = validatedMessage.event as SourceMessage['event']
+      const eventDataSchema = this._options.validateEventDataMessages[messageEvent]
 
-      if (
-        this._options.validateEventDataMessages &&
-        this._options.validateEventDataMessages[event]
-      ) {
-        const eventDataSchema = this._options.validateEventDataMessages[event]
+      const validatedEventMessageData = eventDataSchema.parse(deserializedMessageData)
 
-        const parsedData = JSON.parse(message.data)
-
-        if (Array.isArray(parsedData)) {
-          parsedData.reduce((acc, item) => {
-            acc.push(eventDataSchema.parse(item))
-            return acc
-          }, [])
-
-          return { ...message, data: parsedData }
-        }
-
-        return { ...message, data: eventDataSchema.parse(parsedData) }
+      return { ...message, data: validatedEventMessageData }
+    }
+    catch (error) {
+      if (error instanceof ZodError) {
+        return new Error(z.treeifyError(error).errors.join('; '))
       }
 
-      return validatedMessage
-    } catch (err: unknown) {
-      if (err instanceof ZodError) {
-        console.log(err)
-        return new Error(err.errors.join(' '))
-      } else if (err instanceof Error) {
-        return err
+      if (isError(error)) {
+        return error
       }
+
+      return new Error('Unknown error on sse channel message validating')
     }
   }
 }
-
-export { ChannelMessagesValidator }

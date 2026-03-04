@@ -110,12 +110,12 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
             if (value.length === 0)
               return
 
-            setSlotCategory(value[0]!)
+            setSlotCategory(value[0] as typeof slotCategory)
           }}
         >
           <Toggle value="all" className="text-sm data-[pressed]:text-gray-accent data-[pressed]:bg-dark-accent h-full hover:bg-dark-light">Все</Toggle>
-          <Toggle value="active" className="data-[pressed]:bg-red/10 data-[pressed]:text-red h-full hover:bg-dark-light" isIconOnly icon={<Icons.Heart />} />
-          <Toggle value="dropped" className="data-[pressed]:text-gray-accent data-[pressed]:bg-dark-accent h-full hover:bg-dark-light" isIconOnly icon={<Icons.BrokenHeart />} />
+          <Toggle value="active" className="data-[pressed]:bg-red/10 data-[pressed]:text-red h-full hover:bg-dark-light" buttonProps={{ isIconOnly: true, icon: <Icons.Heart /> }} />
+          <Toggle value="dropped" className="data-[pressed]:text-gray-accent data-[pressed]:bg-dark-accent h-full hover:bg-dark-light" buttonProps={{ isIconOnly: true, icon: <Icons.BrokenHeart /> }} />
         </ToggleGroup>
       </Flex>
       <AuctionGameSlotsList data={searchedSlots} gap={8} />

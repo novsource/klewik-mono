@@ -1,12 +1,12 @@
+import type { ClassValue } from 'clsx'
+
 import { useEffect, useRef, useState } from 'react'
 
-import { ClassValue } from 'clsx'
 import { animate } from 'motion'
 import { useMotionValue } from 'motion/react'
 
-import { fitTextEllipsis } from '~shared/utils/canvas'
-
-import { cn } from '~shared/utils'
+import { fitTextEllipsis } from '~shared/utils/common/canvas'
+import { cn } from '~shared/utils/react'
 
 const trimText = (text: string, maxWidth: number): string => {
   const canvas = document.createElement('canvas')
@@ -62,8 +62,10 @@ const AnimatedTruncText = ({
     let spanElement: HTMLSpanElement | null = null
     let boxElement: HTMLDivElement | null = null
 
-    if (spanRef.current) spanElement = spanRef.current
-    if (boxRef.current) boxElement = boxRef.current
+    if (spanRef.current)
+      spanElement = spanRef.current
+    if (boxRef.current)
+      boxElement = boxRef.current
 
     if (spanElement && boxElement && needToTranslate.current === 0) {
       const boxWidth = boxElement.getBoundingClientRect().width
@@ -88,12 +90,12 @@ const AnimatedTruncText = ({
           onUpdate: (latest) => {
             spanElement?.setAttribute(
               'style',
-              `transform:translate(-${latest}px,-50%)`
+              `transform:translate(-${latest}px,-50%)`,
             )
 
             const newText = trimText(
               children,
-              (boxElement?.getBoundingClientRect().width as number) + latest
+              (boxElement?.getBoundingClientRect().width as number) + latest,
             )
 
             setIsNeedToShowEllipsis(newText.includes('...'))
@@ -110,9 +112,9 @@ const AnimatedTruncText = ({
     }
 
     if (
-      isHovered &&
-      translateValue.get() === needToTranslate.current &&
-      needToTranslate.current !== 0
+      isHovered
+      && translateValue.get() === needToTranslate.current
+      && needToTranslate.current !== 0
     ) {
       animate(1, 0, {
         ease: 'easeIn',
@@ -124,7 +126,7 @@ const AnimatedTruncText = ({
         onUpdate(latest) {
           spanElement?.setAttribute(
             'style',
-            `transform:translate(-${needToTranslate.current}px,-50%); opacity: ${latest}`
+            `transform:translate(-${needToTranslate.current}px,-50%); opacity: ${latest}`,
           )
         },
       }).then(() => {
@@ -134,7 +136,7 @@ const AnimatedTruncText = ({
           onUpdate(op) {
             spanElement?.setAttribute(
               'style',
-              `transform:translate(0px,-50%); opacity: ${op}`
+              `transform:translate(0px,-50%); opacity: ${op}`,
             )
           },
           onComplete: () => {
@@ -157,7 +159,7 @@ const AnimatedTruncText = ({
 
       const trimmedText = trimText(
         children,
-        boxElement?.getBoundingClientRect().width as number
+        boxElement?.getBoundingClientRect().width as number,
       )
 
       setAnimationPlaying(false)
@@ -185,7 +187,7 @@ const AnimatedTruncText = ({
 
           const trimmedText = trimText(
             children,
-            boxElement?.getBoundingClientRect().width as number
+            boxElement?.getBoundingClientRect().width as number,
           )
 
           setAnimationPlaying(false)
@@ -194,7 +196,7 @@ const AnimatedTruncText = ({
         },
         {
           signal: eventController.signal,
-        }
+        },
       )
     }
 
@@ -221,7 +223,7 @@ const AnimatedTruncText = ({
         <span
           className={cn(
             'absolute top-1/2 right-0 -translate-y-1/2 font-medium',
-            className
+            className,
           )}
         >
           ...

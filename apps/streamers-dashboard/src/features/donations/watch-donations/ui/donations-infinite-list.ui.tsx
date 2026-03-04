@@ -1,40 +1,21 @@
-import { useLayoutEffect } from 'react'
-
 import type { ProcessedDonation } from '~entities/donation/model'
 import { SkeletonDonationCard, SolidDonationCard } from '~entities/donation/ui/card'
 
-import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
-
-import { useMediaQuery } from '~shared/hooks'
-
 import type { FlexProps } from '~shared/ui/flex'
-import { Flex } from '~shared/ui/flex'
-import { InfiniteList, WindowInfiniteList } from '~shared/ui/infinite-list'
-import type { InfiniteListProps, InfiniteListRenderFunction } from '~shared/ui/infinite-list'
+import { WindowInfiniteList } from '~shared/ui/infinite-list'
+import type { InfiniteListRenderFunction, WindowInfiniteListProps } from '~shared/ui/infinite-list'
 import { MotionBox } from '~shared/ui/motion-box'
 
-import { cn, isFunction } from '~shared/utils'
+import { isFunction } from '~shared/utils'
 
-export type DonationsInfiniteListProps = Omit<InfiniteListProps<ProcessedDonation>, 'children'> & {
+export type DonationsInfiniteListProps = Omit<WindowInfiniteListProps<ProcessedDonation>, 'children'> & {
   listContainerProps?: Omit<FlexProps, 'children'>
   children?: InfiniteListRenderFunction<ProcessedDonation>
   onScroll?: () => void
 }
 
 export const DonationsInfiniteList = (props: DonationsInfiniteListProps) => {
-  const { listContainerProps, listRef, children, ...infiniteListProps } = props
-
-  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
-
-  useLayoutEffect(() => {
-    if (!isLargeThenTablet) {
-      listRef.current = window
-    }
-
-    if (!isLargeThenTablet && window.scrollY !== 0) {
-      window.scrollTo({ top: 0 })
-    }
-  }, [isLargeThenTablet, listRef])
+  const { listContainerProps, children, ...infiniteListProps } = props
 
   const renderDefaultDonation: InfiniteListRenderFunction<ProcessedDonation> = (
     donation,
@@ -75,15 +56,15 @@ export const DonationsInfiniteList = (props: DonationsInfiniteListProps) => {
     )
   }
 
-  if (isLargeThenTablet) {
-    return (
-      <Flex className={cn('h-full w-full', listContainerProps?.className)} {...listContainerProps}>
-        <InfiniteList listRef={listRef} {...infiniteListProps}>
-          {isFunction(children) ? children : renderDefaultDonation}
-        </InfiniteList>
-      </Flex>
-    )
-  }
+  // if (isLargeThenTablet) {
+  //   return (
+  //     <Flex className={cn('h-full w-full', listContainerProps?.className)} {...listContainerProps}>
+  //       <InfiniteList listRef={listRef} {...infiniteListProps}>
+  //         {isFunction(children) ? children : renderDefaultDonation}
+  //       </InfiniteList>
+  //     </Flex>
+  //   )
+  // }
 
   return (
     <WindowInfiniteList {...infiniteListProps}>

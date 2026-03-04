@@ -31,15 +31,17 @@ const IntegrationsStatisticsCard = ({
   )
 }
 
+const integrationsLogo: Record<IntegrationsPlatforms, ReactNode> = {
+  donationAlerts: <Icons.DonationAlerts width={18} height={24} />,
+  donatePay: <Icons.DonatePay />,
+  twitch: <Icons.TwitchLogo />,
+  userInput: <></>,
+}
+
 const ConnectedIntegrationsStatisticCard = memo(() => {
   const integrationsStatuses = useStoreSelector(
     integrationsSelectors.getAllIntegrationsStatuses,
   )
-
-  const integrationsLogo: Record<IntegrationsPlatforms, ReactNode> = {
-    donationAlerts: <Icons.DonationAlerts width={18} height={24} />,
-    donatePay: <Icons.DonatePay />,
-  }
 
   const isAllIntegrationsNotConnected = useMemo(() => {
     return (

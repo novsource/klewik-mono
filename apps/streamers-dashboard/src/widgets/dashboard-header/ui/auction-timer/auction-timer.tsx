@@ -1,7 +1,3 @@
-import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
-
-import { useMediaQuery } from '~shared/hooks'
-
 import { Button } from '~shared/ui/button'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '~shared/ui/dialog'
 import { Divider } from '~shared/ui/divider'
@@ -26,8 +22,6 @@ type AuctionTimerProps = {
 }
 
 export const AuctionTimer = (props: AuctionTimerProps) => {
-  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
-
   const timer = useTimer({ initTime: 3600, immediately: false })
 
   return (

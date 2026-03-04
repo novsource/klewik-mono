@@ -1,6 +1,7 @@
 import type { ButtonVariantsProps } from '../styles/button-variants'
 
-import * as React from 'react'
+import type { ComponentProps, ReactNode } from 'react'
+import { forwardRef, useMemo } from 'react'
 
 import { Icons } from '~shared/ui/icons'
 
@@ -10,19 +11,19 @@ import { buttonVariants } from '../styles/button-variants'
 
 export type ButtonProps = {
   loading?: boolean
-  startContent?: React.ReactNode
-  endContent?: React.ReactNode
-  icon?: React.ReactNode
-} & React.ComponentProps<'button'> & Omit<ButtonVariantsProps, 'startContent' | 'endContent'>
+  startContent?: ReactNode
+  endContent?: ReactNode
+  icon?: ReactNode
+} & ComponentProps<'button'> & Omit<ButtonVariantsProps, 'startContent' | 'endContent'>
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     { className, isIconOnly, variant, size, icon, ...props },
     ref,
   ) => {
     const { children, startContent, endContent, loading = false, disabled, ...restProps } = props
 
-    const classes = React.useMemo(
+    const classes = useMemo(
       () =>
         cn(buttonVariants({
           variant,

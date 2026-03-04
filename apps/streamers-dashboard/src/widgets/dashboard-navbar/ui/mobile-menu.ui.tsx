@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom'
 
 import NumberFlow from '@number-flow/react'
 
-import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
-
 import { useUpdateBetsStatusMutation } from '~features/auction/update-bets-status/api'
 
 import { ConnectedIntegrationsStatisticCard } from '~features/integrations/show-connected-integrations/ui'
@@ -20,7 +18,7 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 
 import { useMediaQuery } from '~shared/hooks'
 
-import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
@@ -86,25 +84,6 @@ export const MobileMenu = () => {
 
       </SheetContent>
     </Sheet>
-  )
-}
-
-function OpenSettingsDialogButton() {
-  const { setDialogOpenStatus } = useActionCreators(globalDialogsActions)
-
-  const openSettingsDialog = () => {
-    setDialogOpenStatus({ dialog: 'settings', status: true })
-  }
-
-  return (
-    <Button
-      className="mobile:text-title text-gray-accent justify-start pl-0"
-      variant="ghost"
-      startContent={<Icons.Settings size="sm" />}
-      onClick={openSettingsDialog}
-    >
-      Настройки
-    </Button>
   )
 }
 

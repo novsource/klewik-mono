@@ -4,17 +4,20 @@ import { ToggleGroup as ToggleGroupPrimitive } from '@base-ui/react/toggle-group
 import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
 
-export type ToggleProps = Omit<ButtonProps, 'value'> & {
+export type ToggleProps = Omit<TogglePrimitive.Props, 'render'> & {
+  buttonProps?: ButtonProps
   value: string
 }
 
 export const Toggle = (props: ToggleProps) => {
+  const { buttonProps, ...toggleProps } = props
+
   return (
     <TogglePrimitive
-      render={(props: ButtonProps, state) => {
-        return <Button variant="ghost" disabled={state.disabled} {...props} />
+      render={(props, state) => {
+        return <Button variant="ghost" disabled={state.disabled} {...buttonProps} {...props} />
       }}
-      {...props}
+      {...toggleProps}
     />
   )
 }

@@ -13,6 +13,8 @@ import {
 
 import { BaseEmitter } from '../emitter'
 
+type BroadcastLeaderChannelEvents<T> = DefaultChannelEventMap<BaseEventSourceMessage> & T
+
 /**
  * Methods of BroadcastLeaderChannel
  */
@@ -21,19 +23,17 @@ type BroadcastLeaderChannelMethods<
   ChannelEventMap extends Record<string, any>,
 > = {
   on: <
-    EventName extends keyof (ChannelEventMap
-      & DefaultChannelEventMap<SourceMessage>),
+    EventName extends keyof ChannelEventMap,
   >(
     eventName: EventName,
-    handler: (...args: Parameters<ChannelEventMap[EventName]>) => void
+    handler: (args: ChannelEventMap[EventName]) => void
   ) => void
 
   emit: <
-    EventName extends keyof (ChannelEventMap
-      & DefaultChannelEventMap<SourceMessage>),
+    EventName extends keyof ChannelEventMap,
   >(
     eventName: EventName,
-    ...args: Parameters<ChannelEventMap[EventName]>
+    args: ChannelEventMap[EventName]
   ) => void
 
   /**
@@ -91,11 +91,9 @@ export type BroadcastLeaderChannelOptions = BroadcastChannelOptions & {
 export class BroadcastLeaderChannel<
   SourceMessage extends BaseEventSourceMessage,
   ChannelEventMap extends Record<string, any>,
-> implements BroadcastLeaderChannelMethods<SourceMessage, ChannelEventMap> {
+> implements BroadcastLeaderChannelMethods<SourceMessage, BroadcastLeaderChannelEvents<ChannelEventMap>> {
   private readonly _elector: LeaderElector
-  private readonly _emitter: BaseEmitter<
-    ChannelEventMap & DefaultChannelEventMap<SourceMessage>
-  > = new BaseEmitter()
+  private readonly _emitter: BaseEmitter<BroadcastLeaderChannelEvents<ChannelEventMap>> = new BaseEmitter()
 
   /**
    * Creates a broadcast channel with the opportunity to become a leader.
@@ -129,12 +127,9 @@ export class BroadcastLeaderChannel<
     return this._elector.isLeader
   }
 
-  on<
-    Event extends keyof (ChannelEventMap
-      & DefaultChannelEventMap<SourceMessage>),
-    EventMap extends ChannelEventMap & DefaultChannelEventMap<SourceMessage>,
-  >(eventName: Event,
-    handler: (...args: Parameters<EventMap[Event]>) => void,
+  on<Event extends keyof BroadcastLeaderChannelEvents<ChannelEventMap>>(
+    eventName: Event,
+    handler: (args: BroadcastLeaderChannelEvents<ChannelEventMap>[Event]) => void,
   ) {
     this._emitter.on(eventName, handler)
 
@@ -143,24 +138,18 @@ export class BroadcastLeaderChannel<
     }
   }
 
-  off<
-    Event extends keyof (ChannelEventMap
-      & DefaultChannelEventMap<SourceMessage>),
-    EventMap extends ChannelEventMap & DefaultChannelEventMap<SourceMessage>,
-  >(eventName: Event,
-    handler: (...args: Parameters<EventMap[Event]>) => void,
+  off<Event extends keyof BroadcastLeaderChannelEvents<ChannelEventMap>>(
+    eventName: Event,
+    handler: (args: BroadcastLeaderChannelEvents<ChannelEventMap>[Event]) => void,
   ) {
     this._emitter.off(eventName, handler)
   }
 
-  emit<
-    Event extends keyof (ChannelEventMap
-      & DefaultChannelEventMap<SourceMessage>),
-    EventMap extends ChannelEventMap & DefaultChannelEventMap<SourceMessage>,
-  >(eventName: Event,
-    ...args: Parameters<EventMap[Event]>
+  emit<Event extends keyof BroadcastLeaderChannelEvents<ChannelEventMap>>(
+    eventName: Event,
+    args: BroadcastLeaderChannelEvents<ChannelEventMap>[Event],
   ) {
-    this._emitter.emit(eventName, ...args)
+    this._emitter.emit(eventName, args)
   }
 
   onMessage(handler: (message: SourceMessage) => void) {

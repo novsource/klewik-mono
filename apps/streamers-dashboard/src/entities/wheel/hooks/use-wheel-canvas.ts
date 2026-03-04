@@ -159,7 +159,7 @@ type UseWheelInitReturn = {
 }
 
 const useWheelInit = (
-  slots: AuctionSlot[] | WheelSlot[],
+  slots: WheelSlot[],
 ): UseWheelInitReturn => {
   const [wheelSize, setWheelSize] = useState(0)
 
@@ -383,7 +383,7 @@ export const useWheelCanvas = (slots: AuctionSlot[]): UseWheelCanvasReturn => {
   const {
     refs: { wheelRef, innerRef },
     functions: { drawWheel, drawInner, resizeInnerBackground, resizeWheel },
-  } = useWheelInit(preparedSlots)
+  } = useWheelInit(transformSlotsToWheelSlots(preparedSlots))
 
   const {
     state: { wheelRotateCSSValue, selectorTargetTitle, isWheelSpinning },

@@ -1,4 +1,5 @@
-import { RefObject, useEffect, useRef } from 'react'
+import type { RefObject } from 'react'
+import { useEffect } from 'react'
 
 function useEventListener<
   Target extends Window,
@@ -27,17 +28,18 @@ function useEventListener<
 function useEventListener<Target extends Element | RefObject<Element>>(
   target: Target,
   type: keyof Event,
-  listener: (this: Target, event: Event) => void
+  listener: (this: Target, event: Event) => void,
 ): void {
   useEffect(() => {
-    const element =
-      target instanceof Window || target instanceof Document
+    const element
+      = target instanceof Window || target instanceof Document
         ? target
         : 'current' in target
           ? target.current
           : null
 
-    if (!element) return
+    if (!element)
+      return
 
     element.addEventListener(type, listener)
 

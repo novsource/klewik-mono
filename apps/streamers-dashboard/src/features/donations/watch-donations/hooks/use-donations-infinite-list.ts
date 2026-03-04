@@ -28,7 +28,7 @@ export const useDonationsInfiniteList
       ref,
       state: infiniteListState,
       functions: { loadMore, reset },
-    } = useInfiniteList<ProcessedDonation>(query, options)
+    } = useInfiniteList<ProcessedDonation, Window>(query, options)
 
     const listItems = useMemo(() => {
       const newDonations = [...donations]

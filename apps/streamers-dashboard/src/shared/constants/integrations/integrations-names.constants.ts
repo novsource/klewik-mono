@@ -1,8 +1,8 @@
-export const integrationsPlatforms = ['donationAlerts', 'donatePay', 'twitch', 'custom'] as const
+export const integrationsPlatforms = ['donationAlerts', 'donatePay', 'twitch', 'userInput'] as const
 
 export enum FORMATTED_INTEGRATIONS_PLATFORMS_NAMES {
   donationAlerts = 'DonationAlerts',
   donatePay = 'Donate Pay',
   twitch = 'Twitch',
-  custom = 'Custom',
+  userInput = 'Custom',
 }

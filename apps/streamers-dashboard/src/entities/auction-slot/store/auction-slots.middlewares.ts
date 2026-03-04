@@ -28,7 +28,7 @@ startSlotsActionsListening({
     if (!isShouldDispatchUpdatePoints)
       return
 
-    api.dispatch(auctionSlotsActions.updateSlotsPointsSum([{ id, points }]))
+    api.dispatch(auctionSlotsActions.updateSlotsPointsSum([{ id, points: points ?? 0 }]))
   },
 })
 

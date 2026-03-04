@@ -1,5 +1,4 @@
-import type { TransformedCreateSlotsFormData } from '../lib'
-import type { CreateSlotForm } from '../model'
+import type { CreateSlotForm, TransformedCreateSlotsFormData } from '../model'
 
 import type { ComponentProps } from 'react'
 import { useCallback, useMemo, useState } from 'react'
@@ -8,6 +7,8 @@ import type { Control, FieldErrors, UseFormReturn, UseFormTrigger } from 'react-
 import { useFieldArray, useFormState } from 'react-hook-form'
 
 import * as m from 'motion/react-m'
+
+import type { AuctionSlotDTO } from '~shared/api/sse/clients/auction-slots'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
@@ -42,7 +43,7 @@ type CreateSlotsFormProps = Omit<
   maxCreatingSlotsCount?: number
   multiplySlots?: boolean
   multiplySlotsCount?: number
-  onSuccess?: (formData: TransformedCreateSlotsFormData) => void
+  onSuccess?: (formData: AuctionSlotDTO[]) => void
   onError?: () => void
 }
 

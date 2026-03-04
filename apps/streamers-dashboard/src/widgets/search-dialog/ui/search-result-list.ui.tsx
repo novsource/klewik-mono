@@ -19,6 +19,8 @@ import { IntegrationBadge } from '~entities/integrations/ui/badge'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
+import { Text } from '~shared/components/typography'
+
 import { useHover, useMediaQuery } from '~shared/hooks'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -134,7 +136,7 @@ const SearchResultInfinityList = <T = unknown>(props: SearchResultInfinityListPr
   if (isSearchValueEmpty) {
     return (
       <Flex className="w-full h-full" justify="center" align="center">
-        <Typography className="font-breeze text-gray" tag="span">Пустое поле ввода</Typography>
+        <Text className=" text-gray" asSpan>Пустое поле ввода</Text>
       </Flex>
     )
   }

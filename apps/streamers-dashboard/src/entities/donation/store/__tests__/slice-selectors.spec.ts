@@ -32,6 +32,7 @@ const createFakeDonation: () => DonationAlertsDonation = () => ({
     status: getFromFakerArray<DonationAlertsDonation['processData']['status']>('added', 'checkRequested', 'empty', 'error', 'inProgress', 'rejected'),
     addedPoints: null,
     title: null,
+    donationCode: null,
   },
 })
 

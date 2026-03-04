@@ -1,133 +1,95 @@
-import type {
-  DrawerContentVariantsProps,
-} from '../styles/drawer-variants'
+import type { DrawerSide, DrawerSize } from '../styles/drawer.variants'
 
-import type { ComponentProps } from 'react'
+import { useMemo } from 'react'
 
-import { Drawer as DrawerPrimitive } from 'vaul'
+import { DrawerPreview as DrawerPrimitive } from '@base-ui/react/drawer'
 
-import { cn } from '~shared/utils'
+import { cn } from '~shared/utils/react'
 
-import {
-  drawerContentVariants,
-  drawerDescriptionVariants,
-  drawerFooterVariants,
-  drawerHeaderVariants,
-  drawerOverlayVariants,
-  drawerPillVariants,
-  drawerTitleVariants,
-} from '../styles/drawer-variants'
+import { DrawerContextProvider, useDrawerContext } from '../context/drawer.context'
+import { drawerBackdropVariants, drawerContentVariants, drawerPopupVariants, drawerViewportVariants } from '../styles/drawer.variants'
 
-export type DrawerProps = ComponentProps<typeof DrawerPrimitive.Root>
-
-export function Drawer(props: DrawerProps) {
-  return <DrawerPrimitive.Root data-slot="drawer" {...props} />
+export type DrawerProps = DrawerPrimitive.Root.Props & {
+  side?: DrawerSide
+  size?: DrawerSize
 }
 
-export type DrawerTriggerProps = ComponentProps<typeof DrawerPrimitive.Trigger>
+export const Drawer = (props: DrawerProps) => {
+  const { side = 'right', size = 'default', ...restProps } = props
 
-export function DrawerTrigger(props: DrawerTriggerProps) {
-  return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />
-}
-
-export type DrawerPortalProps = ComponentProps<typeof DrawerPrimitive.Portal>
-
-function DrawerPortal(props: DrawerPortalProps) {
-  return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />
-}
-
-export type DrawerCloseProps = ComponentProps<typeof DrawerPrimitive.Close>
-
-export function DrawerClose(props: DrawerCloseProps) {
-  return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />
-}
-
-export type DrawerOverlayProps = ComponentProps<typeof DrawerPrimitive.Overlay>
-
-function DrawerOverlay(props: DrawerOverlayProps) {
-  const { className, ...restProps } = props
+  const contextValue = useMemo<ReturnType<typeof useDrawerContext>>(() => ({
+    styles: {
+      side,
+      size,
+    },
+  }), [side, size])
 
   return (
-    <DrawerPrimitive.Overlay
-      data-slot="drawer-overlay"
-      className={cn(drawerOverlayVariants(), className)}
-      {...restProps}
-    />
+    <DrawerContextProvider value={contextValue}>
+      <DrawerPrimitive.Root {...restProps} />
+    </DrawerContextProvider>
   )
 }
 
-export type DrawerContentProps = ComponentProps<typeof DrawerPrimitive.Content>
-  & DrawerContentVariantsProps & { hidePill?: boolean }
+export type DrawerTriggerProps = DrawerPrimitive.Trigger.Props
 
-export function DrawerContent(props: DrawerContentProps) {
-  const { className, children, isFullPageHeight, hidePill = false, ...restProps } = props
-
-  return (
-    <DrawerPortal data-slot="drawer-portal">
-      <DrawerOverlay />
-      <DrawerPrimitive.Content
-        data-slot="drawer-content"
-        className={cn(drawerContentVariants({ isFullPageHeight }), className)}
-        {...restProps}
-      >
-        {!hidePill && <div className={drawerPillVariants()} />}
-        {children}
-      </DrawerPrimitive.Content>
-    </DrawerPortal>
-  )
+export const DrawerTrigger = (props: DrawerTriggerProps) => {
+  return <DrawerPrimitive.Trigger {...props} />
 }
 
-export type DrawerHeaderProps = ComponentProps<'div'>
-
-export function DrawerHeader(props: DrawerHeaderProps) {
-  const { className, ...restProps } = props
-
-  return (
-    <div
-      data-slot="drawer-header"
-      className={cn(drawerHeaderVariants(), className)}
-      {...restProps}
-    />
-  )
+export const DrawerTitle = (props: DrawerPrimitive.Title.Props) => {
+  return <DrawerPrimitive.Title {...props} />
 }
 
-export type DrawerFooterProps = ComponentProps<'div'>
-
-export function DrawerFooter(props: DrawerFooterProps) {
-  const { className, ...restProps } = props
-
-  return (
-    <div
-      data-slot="drawer-footer"
-      className={cn(drawerFooterVariants(), className)}
-      {...restProps}
-    />
-  )
+export const DrawerDescription = (props: DrawerPrimitive.Description.Props) => {
+  return <DrawerPrimitive.Description {...props} />
 }
 
-export type DrawerTitleProps = ComponentProps<typeof DrawerPrimitive.Title>
-
-export function DrawerTitle(props: DrawerTitleProps) {
-  const { className, ...restProps } = props
-
-  return (
-    <DrawerPrimitive.Title
-      data-slot="drawer-title"
-      className={cn(drawerTitleVariants(), className)}
-      {...restProps}
-    />
-  )
+export const DrawerClose = (props: DrawerPrimitive.Close.Props) => {
+  return <DrawerPrimitive.Close {...props} />
 }
 
-export type DrawerDescriptionProps = ComponentProps<typeof DrawerPrimitive.Description>
+export type DrawerContentProps = ExtractComponentClassnameToSlot<DrawerPrimitive.Content.Props, 'content'>
+  & ExtractComponentClassnameToSlot<DrawerPrimitive.Backdrop.Props, 'backdrop', 'backdropProps'>
+  & ExtractComponentClassnameToSlot<DrawerPrimitive.Viewport.Props, 'viewport', 'viewportProps'>
+  & ExtractComponentClassnameToSlot<DrawerPrimitive.Popup.Props, 'popup', 'popupProps'>
+  & {
+    portalProps?: DrawerPrimitive.Portal.Props
+    showPill?: boolean
+  }
 
-export function DrawerDescription(props: DrawerDescriptionProps) {
-  const { className, ...restProps } = props
+export const DrawerContent = (props: DrawerContentProps) => {
+  const {
+    slotClassnames,
+    children,
+    popupProps,
+    portalProps,
+    viewportProps,
+    backdropProps,
+    showPill = true,
+    ...contentProps
+  } = props
+
+  const drawerContext = useDrawerContext()
+
+  const classes = useMemo<NonNullable<typeof slotClassnames>>(() => ({
+    content: cn(drawerContentVariants({ ...drawerContext.styles, className: slotClassnames?.content })),
+    backdrop: cn(drawerBackdropVariants({ ...drawerContext.styles, className: slotClassnames?.backdrop })),
+    popup: cn(drawerPopupVariants({ ...drawerContext.styles, className: slotClassnames?.popup })),
+    viewport: cn(drawerViewportVariants({ ...drawerContext.styles, className: slotClassnames?.viewport })),
+  }), [slotClassnames, drawerContext.styles])
+
   return (
-    <DrawerPrimitive.Description
-      data-slot="drawer-description"
-      className={cn(drawerDescriptionVariants(), className)}
-      {...restProps}
-    />
+    <DrawerPrimitive.Portal {...portalProps}>
+      <DrawerPrimitive.Backdrop className={classes.backdrop} {...backdropProps} />
+      <DrawerPrimitive.Viewport className={classes.viewport} {...viewportProps}>
+        <DrawerPrimitive.Popup className={classes.popup} {...popupProps}>
+          {showPill && drawerContext.styles.side === 'bottom' && <div className="mx-auto mb-3 h-1 w-12 shrink-0 rounded-full bg-gray pointer-events-none" />}
+          <DrawerPrimitive.Content className={classes.content} {...contentProps}>
+            {children}
+          </DrawerPrimitive.Content>
+        </DrawerPrimitive.Popup>
+      </DrawerPrimitive.Viewport>
+    </DrawerPrimitive.Portal>
   )
 }

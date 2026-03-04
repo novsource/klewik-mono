@@ -9,7 +9,6 @@ import type {
 import {
   useController,
 } from 'react-hook-form'
-import type { NumberFormatValues } from 'react-number-format'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
@@ -196,26 +195,6 @@ export const SlotPointsFormInput = <
       setPointsValue(Math.floor(defaultPointsValue).toString())
       setPercentInputValue(defaultPercents.toString())
     }
-  }
-
-  const checkPointsBoundaries = (values: NumberFormatValues) => {
-    const { floatValue } = values
-
-    const maxPointsValue = Math.floor(slotsPointsSum * 99)
-
-    if (!floatValue)
-      return true
-
-    return floatValue <= maxPointsValue
-  }
-
-  const checkPercentBoundaries = (values: NumberFormatValues) => {
-    const { floatValue } = values
-
-    if (!floatValue)
-      return true
-
-    return floatValue <= 99
   }
 
   const pointsInputHandlers: NumberInputProps = {

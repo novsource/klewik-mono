@@ -37,9 +37,8 @@ const meta = {
   },
   render: (args) => {
     const { label, ...restArgs } = args
-    const isShowingLabel = label !== undefined
 
-    return <Input label={isShowingLabel ? { id: label!, value: label! } : undefined} {...restArgs} />
+    return <Input label={label} {...restArgs} />
   },
 } satisfies Meta<Omit<InputProps, 'slotClassNames'>>
 

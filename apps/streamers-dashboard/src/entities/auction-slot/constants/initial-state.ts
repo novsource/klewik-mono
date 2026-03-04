@@ -9,6 +9,7 @@ import type { AuctionSlotsSliceState } from '../store'
 
 export const AUCTION_SLOTS_SLICE_INITIAL_STATE: AuctionSlotsSliceState = {
   slots: [],
+  alivedSlots: [],
   sortedSlots: [],
   dropoutSlots: [],
   slotsPointsSum: 0,

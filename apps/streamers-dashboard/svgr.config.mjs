@@ -1,15 +1,13 @@
-import { basename, extname } from 'path'
+import { basename, extname } from 'node:path'
 
 const outDir = './src/shared/ui/icons' // путь, до папки, где будут храниться преобразованные иконки
 
 // Шаблон компонента с иконкой
 const iconTemplate = (
-  { imports, interfaces, props, componentName, jsx, exports },
-  { tpl }
+  { componentName, jsx, exports },
+  { tpl },
 ) => tpl`
-${imports};
-
-${interfaces};
+import type { SVGProps } from "react"
 
 type Sizes = 'xs' | 'sm' | 'default' | 'lg'
 

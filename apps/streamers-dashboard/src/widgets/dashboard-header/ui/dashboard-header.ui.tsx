@@ -1,5 +1,5 @@
 import type { ComponentProps, ComponentPropsWithoutRef, ReactNode } from 'react'
-import { memo, useMemo, useState } from 'react'
+import { memo, useMemo } from 'react'
 
 import { useLocation } from 'react-router-dom'
 
@@ -21,7 +21,7 @@ import { ROUTES_TITLES } from '~shared/constants/router'
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
-import { Text } from '~shared/components/typography'
+import { Text, Title } from '~shared/components/typography'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -32,8 +32,6 @@ import { Icons } from '~shared/ui/icons'
 import { MotionBox } from '~shared/ui/motion-box'
 import { Popover, PopoverContent, PopoverTrigger } from '~shared/ui/popover'
 import { toastSuccessNotification } from '~shared/ui/toaster/lib'
-import { Tooltip, TooltipContent, TooltipTrigger } from '~shared/ui/tooltip'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
@@ -88,15 +86,9 @@ function BaseHeader(props: BaseHeaderProps) {
 }
 
 function DesktopDashboardHeader() {
-  const [isTimerVisible, setIsTimerVisible] = useState(false)
-
   const uuid = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const { setDialogOpenStatus } = useActionCreators(globalDialogsActions)
-
-  const toggleTimerVisibility = () => {
-    setIsTimerVisible(curr => !curr)
-  }
 
   const openSettingsDialog = () => {
     setDialogOpenStatus({ dialog: 'settings', status: true })
@@ -206,12 +198,12 @@ function MobilePageTitle() {
   const pageTitle = useMemo(() => {
     const route = pathname.split('/').at(3) || 'slots'
 
-    return route in ROUTES_TITLES ? ROUTES_TITLES[route]! : ''
+    return route in ROUTES_TITLES ? ROUTES_TITLES[route as keyof typeof ROUTES_TITLES] : ''
   }, [pathname])
 
   return (
     <MotionBox initial={{ height: 0 }} animate={{ height: 'auto' }}>
-      <Typography tag="h2">{pageTitle }</Typography>
+      <Title order={2}>{pageTitle }</Title>
     </MotionBox>
   )
 }
@@ -299,18 +291,25 @@ function IntegrationsStatisticCard(props: IntegrationsStatisticCardProps) {
   }, [integrations])
 
   return (
-    <Tooltip delayDuration={500}>
-      <TooltipTrigger>
-        <StatisticCard className={cn(!connectedIntegrationsCount && 'gap-x-2', props.className)}>
-          <Icons.Integrations width={18} height={18} />
-          {connectedIntegrationsCount === 0 ? 'Нет интеграций' : `${connectedIntegrationsCount} подключено`}
-        </StatisticCard>
-      </TooltipTrigger>
-      <TooltipContent>
-        <Typography tag="span" className="text-gray-accent">
-          Подключенные к аукциону интеграции
-        </Typography>
-      </TooltipContent>
-    </Tooltip>
+    <StatisticCard className={cn(!connectedIntegrationsCount && 'gap-x-2', props.className)}>
+      <Icons.Integrations width={18} height={18} />
+      {connectedIntegrationsCount === 0 ? 'Нет интеграций' : `${connectedIntegrationsCount} подключено`}
+    </StatisticCard>
   )
+
+  // return (
+  //   <Tooltip delay={500}>
+  //     <TooltipTrigger>
+  //       <StatisticCard className={cn(!connectedIntegrationsCount && 'gap-x-2', props.className)}>
+  //         <Icons.Integrations width={18} height={18} />
+  //         {connectedIntegrationsCount === 0 ? 'Нет интеграций' : `${connectedIntegrationsCount} подключено`}
+  //       </StatisticCard>
+  //     </TooltipTrigger>
+  //     <TooltipContent>
+  //       <Typography tag="span" className="text-gray-accent">
+  //         Подключенные к аукциону интеграции
+  //       </Typography>
+  //     </TooltipContent>
+  //   </Tooltip>
+  // )
 }

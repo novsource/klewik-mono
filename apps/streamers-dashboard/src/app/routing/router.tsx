@@ -1,6 +1,5 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 
-import { auctionSettingsPageRoute } from '~pages/auction-settings/routing'
 import { auctionDonationsPageRoute } from '~pages/dashboard/donations/routing'
 import { auctionWheelPageRoute } from '~pages/dashboard/games/routing'
 import { auctionSlotsPageRoute } from '~pages/dashboard/slots/routing'
@@ -15,7 +14,7 @@ import { prepareDashboardRoute } from './prepate-dashboard.route'
 const WelcomePageRouteObject = welcomePageRoute()
 const AuctionSlotsRouteObject = auctionSlotsPageRoute({ disableTransition: true })
 const AuctionGamesRouteObject = auctionWheelPageRoute({ disableTransition: true })
-const AuctionSettingsRouteObject = auctionSettingsPageRoute({ disableTransition: true })
+
 const AuctionDonationsRouteObject = auctionDonationsPageRoute({ disableTransition: true })
 const RedirectRouteObject = redirectPageRoute()
 const ErrorPageRouteObject = errorPageRoute()
@@ -41,7 +40,6 @@ const browserRouter = createBrowserRouter([
                 { index: true, element: <Navigate to="slots" /> },
                 AuctionSlotsRouteObject,
                 AuctionGamesRouteObject,
-                AuctionSettingsRouteObject,
                 AuctionDonationsRouteObject,
                 { path: '*', element: <Navigate to="slots" /> },
               ]),
