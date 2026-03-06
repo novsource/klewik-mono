@@ -1,4 +1,4 @@
-import type { CardsGameContextState } from '~entities/games/context/cards-game/cards-game.context'
+import type { CardsGameContextValue } from '~entities/games/context/cards-game/cards-game.context'
 import type { CardsGameUnit } from '~entities/games/model/cards-game'
 
 import { useEffect, useState } from 'react'
@@ -14,7 +14,7 @@ type UseCardsGameOptions = {
   onCardSelect?: (card: CardsGameUnit) => void
 }
 
-export type UseCardsGameReturnValue = CardsGameContextState
+export type UseCardsGameReturnValue = CardsGameContextValue
 
 export const useCardsGame = (auctionSlots: AuctionSlot[], options?: UseCardsGameOptions) => {
   const [cardsUnits, setCardsUnits] = useState<CardsGameUnit[]>(() => {

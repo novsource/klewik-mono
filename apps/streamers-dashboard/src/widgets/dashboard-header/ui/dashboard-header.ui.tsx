@@ -73,9 +73,9 @@ function BaseHeader(props: BaseHeaderProps) {
   const { className, children, ...restProps } = props
 
   return (
-    <header className={cn('h-fit w-full tablet:pt-4', className)} {...restProps}>
+    <header className={cn('h-fit w-full', className)} {...restProps}>
       <Flex
-        className="h-full w-full gap-x-4"
+        className="h-full w-full gap-x-4 tablet:pt-4"
         align="center"
         justify="between"
       >

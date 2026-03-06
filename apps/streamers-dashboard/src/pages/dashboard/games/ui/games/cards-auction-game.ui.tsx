@@ -3,6 +3,7 @@ import type { Variants } from 'motion/react'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 
+import NumberFlow from '@number-flow/react'
 import { WinnerGameSlotInfo } from '~entities/games/ui'
 import { CardsGame } from '~entities/games/ui/card-game/cards-game.ui'
 import { getCardFieldPositionByIndex } from '~entities/games/utils/cards'
@@ -10,11 +11,12 @@ import { AnimatePresence } from 'motion/react'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
-import { Title } from '~shared/components/typography'
+import { Text, Title } from '~shared/components/typography'
+
+import { useCssVar } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import type { ButtonProps } from '~shared/ui/button'
 import { Button } from '~shared/ui/button'
 import { Icons } from '~shared/ui/icons'
 import { MotionBox } from '~shared/ui/motion-box'
@@ -33,9 +35,10 @@ type ChoosedAnimationVariantsArgs = {
 }
 
 const cardsAnimationVariants: Variants = {
-  initial: { opacity: 0, scale: 0.75, clipPath: `rect(0% 100% 100% 0%)` },
+  initial: { position: 'relative', opacity: 0, scale: 0.75, clipPath: `rect(0% 100% 100% 0%)` },
   open: { opacity: 1, scale: 1, transition: { duration: 1.25, type: 'spring' }, clipPath: `rect(0% 100% 100% 0%)` },
   choosed: (args: ChoosedAnimationVariantsArgs) => ({
+    zIndex: 104,
     opacity: 1,
     scale: 1.6,
     x: args.coords.x,
@@ -43,6 +46,7 @@ const cardsAnimationVariants: Variants = {
     transition: { duration: 1.25, type: 'spring' },
   }),
   fired: (args: ChoosedAnimationVariantsArgs) => ({
+    zIndex: 104,
     opacity: 1,
     scale: 1.6,
     x: args.coords.x,
@@ -56,13 +60,20 @@ export const AuctionCardsGame = () => {
   const [isChoosedCardConfirmed, setIsChoosedCardConfirmed] = useState(false)
   const [isFireCardAnimationEnded, setIsFireCardAnimationEnded] = useState(true)
 
+  const [selectedCardIndex, setSelectedCardIndex] = useState<NullablePossible<number>>(null)
+
   const gameFieldContainerRef = useRef<HTMLDivElement>(null)
   const fireworksIntervalRef = useRef<NullablePossible<NodeJS.Timeout>>(null)
+
+  const gameCardWidthCssVar = useCssVar('--game-card-width', '0px')
+  const gameCardHeightCssVar = useCssVar('--game-card-height', '0px')
 
   const { queryState, ...game } = useAuctionCardsGame()
 
   const reset = () => {
     game.actions.clearChoosenCard()
+
+    setSelectedCardIndex(null)
     setIsChoosedCardConfirmed(false)
     setIsFireCardAnimationEnded(false)
   }
@@ -88,33 +99,42 @@ export const AuctionCardsGame = () => {
     }
   }, [isChoosedCardConfirmed, isFireCardAnimationEnded])
 
+  useEffect(() => {
+    if (selectedCardIndex === null)
+      return
+
+    const selectedCard = game.state.cardsUnits[selectedCardIndex]
+
+    if (selectedCard.color !== game.state.preparedCardUnit?.color) {
+      game.actions.chooseCard(selectedCard)
+    }
+  }, [selectedCardIndex, game.actions, game.state.cardsUnits, game.state.preparedCardUnit])
+
   const renderGameCard = (card: CardsGameUnit, index: number) => {
+    const gameFieldContainer = gameFieldContainerRef.current
+
     const isCurrentCardChoosed = game.state.choosedCardUnit?.id === card.id
 
     const fieldColumnsCount = 6
     const fieldRowsCount = 5
 
-    const fieldWidth = gameFieldContainerRef.current?.clientWidth || 0
-    const fieldHeight = gameFieldContainerRef.current?.clientHeight || 0
+    const fieldWidth = gameFieldContainer?.offsetWidth || 0
+    const fieldHeight = gameFieldContainer?.offsetHeight || 0
 
     const cardWidth = fieldWidth / fieldColumnsCount
     const cardHeight = fieldHeight / fieldRowsCount
 
     const cardPosition = getCardFieldPositionByIndex(index, fieldColumnsCount)
 
-    const initialX = cardPosition.column * cardWidth + (gameFieldContainerRef.current?.offsetLeft ?? 0)
-    const initialY = cardPosition.row * cardHeight + (gameFieldContainerRef.current?.offsetTop ?? 0)
+    const cardsGap = 1
+    const headerHeight = 48
+    const asideWidth = 65
 
-    const targetX = (document.body.clientWidth / 2) - initialX - cardWidth
-    const targetY = (document.body.clientHeight / 2) - initialY - cardHeight
+    const initialX = cardPosition.column * cardWidth + (cardPosition.column * cardsGap) + ((gameFieldContainer?.offsetLeft ?? 0) + asideWidth)
+    const initialY = cardPosition.row * cardHeight + (cardPosition.row * cardsGap) + ((gameFieldContainer?.offsetTop ?? 0) + headerHeight)
 
-    // if (isChoosedCardConfirmed && isCurrentCardChoosed && !isFireCardAnimationStartedRef.current) {
-    //   const startY = transform((document.body.clientHeight / 2) - (cardHeight / 2), [0, document.body.clientHeight], [0, 1])
-    //   const endY = transform((document.body.clientHeight / 2) + (cardHeight / 2), [0, document.body.clientHeight], [0, 1])
-
-    //   isFireCardAnimationStartedRef.current = true
-    //   // startFireCardConfetti({ duration: 6, startY, endY })
-    // }
+    const targetX = (document.body.offsetWidth / 2) - initialX - cardWidth / 2
+    const targetY = (document.body.offsetHeight / 2) - initialY - cardHeight / 2
 
     const animationVariant = isChoosedCardConfirmed && isCurrentCardChoosed
       ? 'fired'
@@ -122,9 +142,11 @@ export const AuctionCardsGame = () => {
         ? 'choosed'
         : 'open'
 
+    gameCardWidthCssVar.set(`${cardWidth}px`)
+    gameCardHeightCssVar.set(`${cardHeight}px`)
+
     return (
       <MotionBox
-        className={cn(isCurrentCardChoosed && 'z-[104]')}
         variants={cardsAnimationVariants}
         initial="initial"
         animate={animationVariant}
@@ -140,20 +162,20 @@ export const AuctionCardsGame = () => {
         exit={{ opacity: 0, scale: 0 }}
       >
         <GameCard
-          width={cardWidth}
-          height={cardHeight}
           card={card}
           confirmed={isChoosedCardConfirmed}
-          confirmButtonProps={{ onClick: () => setIsChoosedCardConfirmed(true) }}
+          onSelect={() => setSelectedCardIndex(index)}
         />
       </MotionBox>
     )
   }
 
   const isBackdropShowed = !!game.state.choosedCardUnit
+  const isShouldShowCardInfo = isFireCardAnimationEnded && isChoosedCardConfirmed
+  const isShouldShowControlsPanel = !isChoosedCardConfirmed
 
   return (
-    <div ref={gameFieldContainerRef} className="w-full h-full">
+    <div ref={gameFieldContainerRef} className="flex w-full h-full">
       <CardsGame.Field>
         {renderGameCard}
       </CardsGame.Field>
@@ -163,15 +185,26 @@ export const AuctionCardsGame = () => {
           <>
             <CardsGame.Backdrop />
 
-            {isFireCardAnimationEnded && isChoosedCardConfirmed && <GameChoosedCardInfo card={game.state.choosedCardUnit!} />}
+            {isShouldShowCardInfo && <GameChoosedCardInfo card={game.state.choosedCardUnit!} onClose={reset} />}
+            {isShouldShowControlsPanel && (
+              <GameCardControlsPanel
+                selectedCardIndex={selectedCardIndex}
+                onTurnLeft={() => {
+                  if (selectedCardIndex === null || selectedCardIndex === 0)
+                    return
 
-            <Button
-              className="absolute right-4 top-4 text-gray-accent hover:text-white transition-colors z-[100]"
-              variant="ghost"
-              isIconOnly
-              icon={<Icons.LargeCross style={{ width: 34, height: 34 }} />}
-              onClick={reset}
-            />
+                  setSelectedCardIndex(curr => curr! - 1)
+                }}
+                onTurnRight={() => {
+                  if (selectedCardIndex === null || selectedCardIndex === game.state.cardsUnits.length - 1)
+                    return
+
+                  setSelectedCardIndex(curr => curr! + 1)
+                }}
+                onClose={reset}
+                onConfirm={() => setIsChoosedCardConfirmed(true)}
+              />
+            )}
           </>
         )}
       </CardsGame.Portal>
@@ -182,13 +215,11 @@ export const AuctionCardsGame = () => {
 type GameCardProps = {
   card: CardsGameUnit
   confirmed?: boolean
-  confirmButtonProps?: Omit<ButtonProps, 'className'>
-  width: number
-  height: number
+  onSelect?: (card: CardsGameUnit) => void
 }
 
 function GameCard(props: GameCardProps) {
-  const { card, confirmed = false, confirmButtonProps, width, height } = props
+  const { card, confirmed = false, onSelect } = props
 
   const game = useAuctionCardsGame()
 
@@ -201,77 +232,123 @@ function GameCard(props: GameCardProps) {
 
   const isCurrentCardChoosed = game.state.choosedCardUnit?.id === card.id
 
-  const isConfirmButtonShowed = isCurrentCardChoosed && !confirmed
   const isCardFireAnimationStarted = isCurrentCardChoosed && confirmed
 
   return (
     <CardsGame.Card
-      key={card.id}
+      key={card.title}
       className={cn(
         'relative overflow-y-clip',
-        isCurrentCardChoosed && !confirmed && 'bg-green-dark border-green-accent data-[hovered=true]:border-green-accent',
-        confirmed && 'data-[hovered=true]:border-none cursor-default',
+        isCurrentCardChoosed && !confirmed && ' border-dark-accent data-[hovered=true]:border-dark-accent',
+        isCurrentCardChoosed && confirmed && 'data-[hovered=true]:border-none cursor-default',
       )}
       cardUnit={card}
       disableAnimation={confirmed}
-      onClick={() => game.actions.chooseCard(card)}
+      onClick={() => {
+        game.actions.chooseCard(card)
+
+        onSelect?.(card)
+      }}
     >
       <AnimatePresence>
         {isCardFireAnimationStarted && (
           <>
             <MotionBox
-              className="absolute -top-2.5 h-0.5 bg-red z-[106]"
-              initial={{ y: 6 }}
-              animate={{ y: height }}
+              className="absolute -top-2.25 h-0.5 bg-red z-[106]"
+              initial={{ y: 0 }}
+              animate={{ y: 'var(--game-card-height)' }}
               transition={{ duration: 4.5 }}
-              style={{ width }}
+              style={{ width: 'var(--game-card-width)' }}
             />
             <MotionBox
               className="absolute -top-2.75 h-1.5 bg-red/60 animate-pulse blur-sm z-[105]"
               initial={{ y: 0 }}
-              animate={{ y: height }}
+              animate={{ y: 'var(--game-card-height)' }}
               transition={{ duration: 4.5 }}
-              style={{ width }}
+              style={{ width: 'var(--game-card-width)' }}
             />
           </>
         )}
 
-        {!isCurrentCardChoosed
-          && (
-            <GameBgIcon
-              width={42}
-              height={42}
-              style={{ color: hexToRgba(color, 0.85), stroke: hexToRgba(color, 1), strokeWidth: 0.15 }}
-            />
-          )}
-
-        {isConfirmButtonShowed && (
-          <MotionBox
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0 }}
-          >
-            <Button
-              className="bg-green-light text-green-accent hover:bg-green/40 hover:text-green-accent animate-pulse hover:animate-none"
-              variant="ghost"
-              isIconOnly
-              icon={<Icons.Success />}
-              size="lg"
-              {...confirmButtonProps}
-            />
-          </MotionBox>
-        )}
+        <GameBgIcon
+          width={42}
+          height={42}
+          style={{ color: hexToRgba(color, 0.85), stroke: hexToRgba(color, 1), strokeWidth: 0.15 }}
+        />
       </AnimatePresence>
     </CardsGame.Card>
   )
 }
 
+type GameCardControlsPanelProps = {
+  selectedCardIndex: NullablePossible<number>
+  onTurnLeft?: () => void
+  onTurnRight?: () => void
+  onConfirm?: () => void
+  onClose?: () => void
+}
+
+function GameCardControlsPanel(props: GameCardControlsPanelProps) {
+  const { selectedCardIndex, onTurnLeft, onTurnRight, onConfirm, onClose } = props
+
+  const game = useAuctionCardsGame()
+
+  return (
+    <MotionBox
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ type: 'spring' }}
+    >
+      <div className="absolute inline-flex gap-x-1 items-center left-1/2 -translate-x-1/2 top-1/2 -translate-y-[var(--game-card-height)] z-[100]">
+        <NumberFlow className="font-azeret-mono text-white/80" value={(selectedCardIndex ?? 0) + 1} />
+        <Text className="font-azeret-mono text-gray-accent">
+          {`/${game.state.cardsUnits.length}`}
+        </Text>
+      </div>
+
+      <Button
+        className="absolute top-1/2 -translate-y-1/2 left-[calc(50%-var(--game-card-width)-1rem)] z-[100]"
+        isIconOnly
+        icon={<Icons.AltArrowLeft />}
+        disabled={selectedCardIndex === 0}
+        onClick={onTurnLeft}
+      />
+      <Button
+        className="absolute top-1/2 -translate-y-1/2 right-[calc(50%-var(--game-card-width)-1rem)] z-[100]"
+        isIconOnly
+        icon={<Icons.AltArrowRight />}
+        disabled={selectedCardIndex === (game.state.cardsUnits.length - 1)}
+        onClick={onTurnRight}
+      />
+
+      <Button
+        className="absolute left-1/2 -translate-x-[calc(50%-var(--game-card-width))] top-1/2 -translate-y-[var(--game-card-height)] text-gray-accent hover:text-white transition-colors z-[100]"
+        icon={<Icons.LargeCross />}
+        size="sm"
+        isIconOnly
+        onClick={onClose}
+      />
+
+      <Button
+        variant="action"
+        className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-[calc(50%-var(--game-card-height))] animate-pulse hover:animate-none z-[100]"
+        icon={<Icons.LargeCross />}
+        size="sm"
+        onClick={onConfirm}
+      >
+        Подтвердить выбор
+      </Button>
+    </MotionBox>
+  )
+}
+
 type GameCardSlotInfoProps = {
   card: CardsGameUnit
+  onClose?: () => void
 }
 
 function GameChoosedCardInfo(props: GameCardSlotInfoProps) {
-  const { card } = props
+  const { card, onClose } = props
 
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
@@ -282,7 +359,7 @@ function GameChoosedCardInfo(props: GameCardSlotInfoProps) {
   }, [storedAuctionSlots, card])
 
   return (
-    <div className="absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 z-[100] overflow-clip">
+    <div className="absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 z-[100]">
       <div className="flex flex-col gap-y-8 items-center">
         <MotionBox
           initial={{ opacity: 0, height: 0 }}
@@ -301,6 +378,14 @@ function GameChoosedCardInfo(props: GameCardSlotInfoProps) {
         >
           <WinnerGameSlotInfo auctionSlot={slotByCardId} />
         </MotionBox>
+
+        <Button
+          className="absolute left-1/2 -translate-x-[calc(50%-var(--game-card-width))] top-1/2 -translate-y-[var(--game-card-height)] text-gray-accent hover:text-white transition-colors z-[100]"
+          icon={<Icons.LargeCross />}
+          size="sm"
+          isIconOnly
+          onClick={onClose}
+        />
       </div>
     </div>
   )
