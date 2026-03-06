@@ -24,7 +24,7 @@ export const useAuctionCardsGame = () => {
       }
     }
     else {
-      const response = await await auctionGame.actions.sendWinner({ auctionUUID, slotId })
+      const response = await auctionGame.actions.sendWinner({ auctionUUID, slotId })
 
       if (response.error) {
         toastErrorNotification('Не удалось подтвердить выбор. Попробуйте еще раз')

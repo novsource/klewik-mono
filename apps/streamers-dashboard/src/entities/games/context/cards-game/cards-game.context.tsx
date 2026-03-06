@@ -4,7 +4,7 @@ import type { CardsGameUnit } from '~entities/games/model/cards-game'
 import type { ReactNode } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
-export type CardsGameContextState = {
+export type CardsGameContextValue = {
   state: {
     cardsUnits: CardsGameUnit[]
     preparedCardUnit: NullablePossible<CardsGameUnit>
@@ -18,7 +18,7 @@ export type CardsGameContextState = {
   }
 }
 
-const CardsGameContext = createContext<CardsGameContextState>({
+const CardsGameContext = createContext<CardsGameContextValue>({
   state: {
     cardsUnits: [],
     choosedCardUnit: null,

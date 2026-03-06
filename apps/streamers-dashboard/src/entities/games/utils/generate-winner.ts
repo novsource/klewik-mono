@@ -6,55 +6,33 @@ export function generateWinner(slots: AuctionSlot[]) {
   return winner
 }
 
-function getWeightedSlots(slots: AuctionSlot[]) {
-  if (slots.length === 0) {
-    return null
-  }
-
-  const totalPoints = slots.reduce((sum, slot) => sum + slot.points, 0)
-  if (totalPoints === 0)
+function getWeightedRandomSlot(slots: AuctionSlot[]) {
+  if (slots.length === 0)
     return null
 
   let cumulativeSum = 0
-  const cumulative = slots.reduce<number[]>((acc, slot) => {
+  const cumulative: number[] = []
+
+  for (const slot of slots) {
     cumulativeSum += slot.points
-    acc.push(cumulativeSum)
-
-    return acc
-  }, [])
-
-  return cumulative
-}
-
-function getWeightedRandomSlot(slots: AuctionSlot[]) {
-  if (slots.length === 0) {
-    return null
+    cumulative.push(cumulativeSum)
   }
 
-  const totalPoints = slots.reduce((sum, slot) => sum + slot.points, 0)
-  if (totalPoints === 0)
+  if (cumulativeSum === 0)
     return null
 
-  const weightedSlots = getWeightedSlots(slots)
-  if (!weightedSlots)
-    return null
+  const rand = Math.random() * cumulativeSum
 
-  // Генерируем случайный вес
-  const rand = Math.random() * totalPoints
-
-  // Бинарный поиск для нахождения индекса слота
   let low = 0
-  let high = weightedSlots.length - 1
+  let high = cumulative.length - 1
 
   while (low < high) {
-    const mid = Math.floor((low + high) / 2)
+    const mid = (low + high) >> 1
 
-    if (weightedSlots[mid] <= rand) {
+    if (cumulative[mid] <= rand)
       low = mid + 1
-    }
-    else {
+    else
       high = mid
-    }
   }
 
   return slots[low]

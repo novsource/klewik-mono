@@ -2,7 +2,7 @@ import type { StateRef } from '../use-ref-state/use-ref-state'
 
 import { useEffect, useRef } from 'react'
 
-import { getElement, isTarget } from '~shared/utils/react'
+import { isTarget } from '~shared/utils/react'
 import type { HookTarget } from '~shared/utils/react'
 
 import { useRefState } from '../use-ref-state/use-ref-state'
@@ -49,7 +49,7 @@ export const useClickOutside = ((...params: any[]) => {
     if (!target && !internalRef.state)
       return
     const onClick = (event: Event) => {
-      const element = (target ? getElement(target) : internalRef.current) as Element
+      const element = (target ? isTarget.getElement(target) : internalRef.current) as Element
 
       if (element && !element.contains(event.target as Node)) {
         internalCallbackRef.current(event)
