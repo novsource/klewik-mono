@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { WinnerGameSlotInfo } from '~entities/games/ui'
-import bgSelectorUrl from '~shared/assets/img/bgSelector.webp'
 import { AnimatePresence } from 'motion/react'
 import * as m from 'motion/react-m'
 
@@ -145,7 +144,7 @@ function WheelFortune(props: WheelFortuneProps) {
             }}
           >
             <div className="relative h-full w-full bg-dark/40 rounded-full">
-              <div
+              {/* <div
                 className={cn(
                   'absolute w-full h-full rounded-pill overflow-clip z-10 my-1',
                   'animate-pulse duration-[2.5s] bg-dark-accent',
@@ -156,7 +155,7 @@ function WheelFortune(props: WheelFortuneProps) {
                   objectFit: 'fill',
                   clipPath: 'circle(98%)',
                 }}
-              />
+              /> */}
               <WheelSelector
                 className="z-50"
                 center={{
