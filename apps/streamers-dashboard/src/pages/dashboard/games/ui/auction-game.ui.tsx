@@ -1,10 +1,12 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import type { ReactNode } from 'react'
 
 import { GameContextProvider } from '~entities/games/context/game.context'
 import { useCardsGame } from '~entities/games/hooks/cards-game'
 import { auctionGamesSelectors } from '~entities/games/store'
 import { CardsGame } from '~entities/games/ui/card-game/cards-game.ui'
+
+import { auctionSelectors } from '~entities/auction/store'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
@@ -26,12 +28,23 @@ export type AuctionGameProps = {
 export const AuctionGame = (props: AuctionGameProps) => {
   const { children, auctionSlots } = props
 
+  const { dropoutSlotsIds, winnerSlotId } = useStoreSelector(auctionSelectors.getAuctionInfo)
+
   const auctionGame = useStoreSelector(auctionGamesSelectors.getGame)
   const gameMode = useStoreSelector(auctionGamesSelectors.getGameMode)
   const wheelGameSettings = useStoreSelector(auctionGamesSelectors.getWheelGameSettings)
 
-  const cardsGame = useCardsGame(auctionSlots)
-  const wheelGame = useWheel(auctionSlots, {
+  const participatedInAuctionSlots = useMemo(() => {
+    if (winnerSlotId !== null) {
+      const winnerSlot = auctionSlots.find(slot => slot.id === winnerSlotId)
+      return winnerSlot ? [winnerSlot] : []
+    }
+
+    return auctionSlots.filter(slot => !dropoutSlotsIds.includes(slot.id))
+  }, [auctionSlots, dropoutSlotsIds, winnerSlotId])
+
+  const cardsGame = useCardsGame(participatedInAuctionSlots)
+  const wheelGame = useWheel(participatedInAuctionSlots, {
     sizeMode: wheelGameSettings.slicesDisplayMode,
     mode: gameMode,
   })
@@ -50,7 +63,7 @@ export const AuctionGame = (props: AuctionGameProps) => {
   }, [auctionGame, setDocumentTitle])
 
   return (
-    <GameContextProvider>
+    <GameContextProvider activeSlots={participatedInAuctionSlots}>
       {auctionGame === 'wheel' && (
         <WheelGameContextProvider {...wheelGame}>
           <div className="flex w-full h-full">

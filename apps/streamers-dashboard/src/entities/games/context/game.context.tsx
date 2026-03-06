@@ -45,13 +45,12 @@ export const useGameContext = () => {
 }
 
 type GameContextProviderProps = {
+  activeSlots: AuctionSlot[]
   children: ReactNode
 }
 
 export const GameContextProvider = (props: GameContextProviderProps) => {
-  const { children } = props
-
-  const [activeSlots, setActiveSlots] = useState<AuctionSlot[]>([])
+  const [activeSlots, setActiveSlots] = useState<AuctionSlot[]>(props.activeSlots)
   const [dropSlotMutation, dropSlotMutationState] = useDropoutSlotMutation()
   const [sendAuctionWinnerMutation, sendWinnerMutationState] = useSetAuctionWinnerMutation()
 
@@ -76,5 +75,5 @@ export const GameContextProvider = (props: GameContextProviderProps) => {
     sendWinnerMutationState,
   ])
 
-  return <GameContext.Provider value={contextValue}>{ children }</GameContext.Provider>
+  return <GameContext.Provider value={contextValue}>{ props.children }</GameContext.Provider>
 }
