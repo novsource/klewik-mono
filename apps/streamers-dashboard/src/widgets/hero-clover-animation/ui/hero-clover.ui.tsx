@@ -14,14 +14,14 @@ export type HeroCloverAnimationProps = ComponentPropsWithoutRef<'div'>
 export const HeroCloverAnimation = memo((props: HeroCloverAnimationProps) => {
   const { className, ...restProps } = props
 
-  const [width, setWidth] = useState(0)
-  const [height, setHeight] = useState(0)
+  const [size, setSize] = useState({ width: 0, height: 0 })
 
   const { ref } = useResizeObserver<HTMLDivElement>({ onChange: (entry) => {
     const wrapper = entry[0].target
 
-    setWidth(wrapper.clientWidth)
-    setHeight(wrapper.clientHeight)
+    if (size.width !== wrapper.clientWidth || size.height !== wrapper.clientHeight) {
+      setSize({ width: wrapper.clientWidth, height: wrapper.clientHeight })
+    }
   } })
 
   return (
@@ -30,8 +30,8 @@ export const HeroCloverAnimation = memo((props: HeroCloverAnimationProps) => {
       className={cn('relative h-full w-full overflow-clip border-1 border-dark-light rounded-large', className)}
       {...restProps}
     >
-      <HeroCloversAnimationCanvas width={width} height={height} />
-      <HeroBackgroundAnimationCanvas width={width} height={height} />
+      <HeroCloversAnimationCanvas width={size.width} height={size.height} />
+      <HeroBackgroundAnimationCanvas width={size.width} height={size.height} />
     </div>
   )
 })
@@ -66,8 +66,9 @@ function HeroCloversAnimationCanvas(props: MainCloverCanvasProps) {
 
       drawerInstanceRef.current.startAnimation()
     }
-
-    drawerInstanceRef.current.resize({ width, height })
+    else {
+      drawerInstanceRef.current.resize({ width, height })
+    }
   }, [width, height])
 
   return <canvas ref={canvasRef} className="absolute left-0 top-0" />

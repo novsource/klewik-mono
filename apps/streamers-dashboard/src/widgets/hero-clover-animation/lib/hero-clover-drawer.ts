@@ -270,6 +270,10 @@ export class CloverCanvasDrawer {
   }
 
   private _animateCloverBoxes = () => {
+    if (Array.from(this._cloversBoxesCollection.values()).length === 0) {
+      return
+    }
+
     const animationTime = Math.ceil(this._animationTimer())
 
     if (this._previousAnimationValue === animationTime && this._previousAnimationValue !== -1) {
@@ -293,18 +297,20 @@ export class CloverCanvasDrawer {
 
         const translateXValue = (this._getBgElementSize() + this._getBgElementGap()) * 2
 
-        const matrixWithTranslate = movementDirection === 'forward'
+        const isMovingToForward = movementDirection === 'forward'
+
+        const matrixWithTranslate = isMovingToForward
           ? element.matrix.e + translateXValue
           : element.matrix.e - translateXValue
 
-        const isCloverOutOfCanvas = movementDirection === 'forward'
+        const isCloverOutOfCanvas = isMovingToForward
           ? matrixWithTranslate >= this._canvas.width
           : matrixWithTranslate < 0
 
         if (isCloverOutOfCanvas) {
           const canvasWidth = this._canvas.width
 
-          const newTranslateXValue = movementDirection === 'forward'
+          const newTranslateXValue = isMovingToForward
             ? matrixWithTranslate - (canvasWidth * Math.ceil((canvasWidth / (matrixWithTranslate))))
             : Math.ceil((canvasWidth - Math.abs(matrixWithTranslate)))
 
