@@ -37,6 +37,11 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
   const slots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const { dropoutSlotsIds } = useStoreSelector(auctionSelectors.getAuctionInfo)
 
+  const [slotCategory, setSlotCategory] = useState<'all' | 'active' | 'dropped'>('all')
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const sortedSlots = useSortingSlots(slots, { type: 'descending', field: 'points' })
+
   const droppedSlotIdsCollection = useMemo<Set<number>>(() => {
     const result = new Set<number>()
 
@@ -46,12 +51,6 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
 
     return result
   }, [dropoutSlotsIds])
-
-  const [slotCategory, setSlotCategory] = useState<'all' | 'active' | 'dropped'>('all')
-  const [searchValue, setSearchValue] = useState('')
-  const [searchQuery, setSearchQuery] = useState('')
-
-  const sortedSlots = useSortingSlots(slots, { type: 'descending', field: 'points' })
 
   const searchedSlots = useMemo(() =>
     sortedSlots.filter((slot) => {
@@ -68,7 +67,6 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
   const handleSearchInputOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
 
-    setSearchValue(value)
     debouncedSearch(value)
   }
 
@@ -84,7 +82,6 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
       <Flex className="w-full gap-x-2">
         <Input
           slotClassNames={{ base: 'text-gray w-full' }}
-          value={searchValue}
           startContent={<Icons.Magnifier size="sm" />}
           endContent={(
             <Button
@@ -94,7 +91,6 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
               icon={<Icons.Close />}
               size="xs"
               onClick={() => {
-                setSearchValue('')
                 setSearchQuery('')
               }}
             />
@@ -118,7 +114,7 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
           <Toggle value="dropped" className="data-[pressed]:text-gray-accent data-[pressed]:bg-dark-accent h-full hover:bg-dark-light" buttonProps={{ isIconOnly: true, icon: <Icons.BrokenHeart /> }} />
         </ToggleGroup>
       </Flex>
-      <AuctionGameSlotsList data={searchedSlots} gap={8} />
+      <AuctionGameSlotsList data={searchedSlots} />
     </TabsContent>
   )
 }

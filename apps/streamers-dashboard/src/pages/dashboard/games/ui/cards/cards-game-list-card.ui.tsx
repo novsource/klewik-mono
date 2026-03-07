@@ -52,27 +52,4 @@ export const CardsGameListCard = (props: CardsGameListCardProps) => {
 
     </BaseAuctionSlotCard>
   )
-
-  // return (
-  //   <BaseAuctionSlotCard {...restProps}>
-  //     <SolidAuctionSlotHeader slotTitle={auctionSlot.title} />
-  //     <BaseAuctionSlotCardContent>
-  //       <Flex
-  //         className="bg-dark-light rounded-sm px-1.5 w-fit"
-  //         direction="row"
-  //         align="center"
-  //       >
-  //         <AuctionSlotCardIdInfo slotId={auctionSlot.auctionSlotOrder} />
-  //         <AuctionSlotCardContentInfoDivider />
-  //         <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
-  //         <AuctionSlotCardContentInfoDivider />
-  //         <AuctionSlotCardWinPercents winPercents={auctionSlot.winPercents} bounds={winPercentsBounds} />
-  //         <AuctionSlotCardContentInfoDivider />
-  //         {isDropped
-  //           ? <Icons.BrokenHeart className="text-gray-light" size="sm" />
-  //           : <Icons.Heart className="text-red animate-heartbeating" size="xs" />}
-  //       </Flex>
-  //     </BaseAuctionSlotCardContent>
-  //   </BaseAuctionSlotCard>
-  // )
 }
