@@ -1,6 +1,10 @@
 import { WELCOME_PAGE_WIZARD_ITEMS_IDS } from '~pages/welcome/constants'
 
+import { refreshTokens } from '~shared/api/http/auth/auth.api'
+
 import { Text, Title } from '~shared/components/typography'
+
+import { useAsync } from '~shared/hooks'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
@@ -19,7 +23,32 @@ export const WizardLoginItem = (
 ) => {
   const { className, ...restProps } = props
 
-  const { next } = useWizardContext()
+  const { currentStepId, next } = useWizardContext()
+
+  const authRefresh = async () => {
+    if (currentStepId !== WELCOME_PAGE_WIZARD_ITEMS_IDS.LOGIN)
+      return
+
+    const response = await refreshTokens()
+
+    if (response.status === 200) {
+      next(WELCOME_PAGE_WIZARD_ITEMS_IDS.CREATE_AUCTION, { force: true })
+    }
+  }
+
+  const refreshTokensQuery = useAsync(authRefresh, [currentStepId])
+
+  if (refreshTokensQuery.isLoading) {
+    return (
+      <WizardItem
+        className={cn('flex flex-col gap-y-6 items-center justify-center')}
+        value={WELCOME_PAGE_WIZARD_ITEMS_IDS.LOGIN}
+        {...restProps}
+      >
+        <Icons.Loading />
+      </WizardItem>
+    )
+  }
 
   return (
     <WizardItem

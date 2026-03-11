@@ -60,10 +60,7 @@ export class SSEClient<
     return this._clientCustomEventsEmitter.on(eventName, handler)
   }
 
-  async connectToServer(
-    url: string,
-    options?: SSEClientConnectOptions & { lastMessageId?: number },
-  ): Promise<void> {
+  async connectToServer(url: string, options?: SSEClientConnectOptions & { lastMessageId?: number }): Promise<void> {
     const defaultListeners: SSEClientListeners = {
       onopen: async (response) => {
         if (response.status === 200) {

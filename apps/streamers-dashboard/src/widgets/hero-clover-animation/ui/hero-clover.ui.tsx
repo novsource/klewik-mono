@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef, useState } from 'react'
 import type { ComponentPropsWithoutRef } from 'react'
 
-import { useResizeObserver } from '~shared/hooks'
+import { useResizeObserver, useUnmount } from '~shared/hooks'
 
 import { resizeCanvasWithSize } from '~shared/utils/common'
 import { cn } from '~shared/utils/react'
@@ -70,6 +70,10 @@ function HeroCloversAnimationCanvas(props: MainCloverCanvasProps) {
       drawerInstanceRef.current.resize({ width, height })
     }
   }, [width, height])
+
+  useUnmount(() => {
+    drawerInstanceRef.current?.endAnimation()
+  })
 
   return <canvas ref={canvasRef} className="absolute left-0 top-0" />
 }

@@ -88,7 +88,7 @@ export const WizardCreateNewAuctionItem = (
       className={cn('flex flex-col gap-y-6')}
       {...restProps}
     >
-      <WizardTrigger type="back">
+      <WizardTrigger type="reset">
         <Button startContent={<Icons.Undo size="xs" />} size="xs">Назад</Button>
       </WizardTrigger>
 

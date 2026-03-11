@@ -25,6 +25,8 @@ type RetrySSEConnectOptions = Omit<SSEClientConnectOptions, 'retry'> & {
 }
 
 export class BaseSSEClient {
+  private _abortController: Maybe<AbortController>
+
   async connect(
     url: string,
     inputListeners: SSEClientListeners,
@@ -158,14 +160,26 @@ export class BaseSSEClient {
     return this._internalRequest(url, listeners, options).catch(reconnect)
   }
 
+  disconnect() {
+    this._abortController?.abort()
+    this._abortController = undefined
+  }
+
   private _internalRequest(
     url: string,
     listeners: SSEClientListeners,
     options: SSEClientConnectOptions,
   ) {
+    if (this._abortController) {
+      this._abortController.abort()
+    }
+
+    this._abortController = new AbortController()
+
     return fetchEventSource(url, {
       ...listeners,
       ...options,
+      signal: this._abortController.signal,
     })
   }
 }

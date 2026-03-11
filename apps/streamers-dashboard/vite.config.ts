@@ -130,6 +130,7 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
         secure: false,
+        timeout: 0,
         // configure: (proxy) => {
         //   // Hook in to fix limitation in Vite's proxy middleware with req.overrideOptions!
         //   overrideProxyFunctions(proxy)

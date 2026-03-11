@@ -32,7 +32,7 @@ export const WizardWelcomeItem = (
 
   const { getNodesById } = useWizardContext()
 
-  const isMediaLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
+  const isTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   const wizardNextTriggers = useMemo(() => {
     const welcomeNodes = getNodesById(WIZARD_ITEMS_IDS.WELCOME) as Array<
@@ -42,11 +42,13 @@ export const WizardWelcomeItem = (
     return welcomeNodes.map((node) => {
       const triggerTitle = Reflect.has(nodesTitles, node) ? nodesTitles[node] : node
 
+      const isLoginNode = node === 'login'
+
       return (
         <WizardTrigger key={node} type="next" nextStepId={node}>
           <Button
             className="w-full"
-            variant={node === 'login' ? 'action' : 'default'}
+            variant={isLoginNode ? 'action' : 'default'}
             startContent={WIZARD_ICONS[node]}
           >
             {triggerTitle}
@@ -65,8 +67,8 @@ export const WizardWelcomeItem = (
       <Flex className="relative gap-y-2" direction="column">
         <Icons.Logo
           className="text-green-accent"
-          width={isMediaLargeThenTablet ? 42 : 36}
-          height={isMediaLargeThenTablet ? 42 : 36}
+          width={isTablet ? 42 : 36}
+          height={isTablet ? 42 : 36}
         />
         <Title order={1}>
           Добро пожаловать в поинтовый аукцион!

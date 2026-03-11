@@ -27,14 +27,12 @@ class CommunicableSSEChannel<
     const { messageSchema, validationEventMessage, ...channelOptions } = options
 
     super(channelName, channelOptions)
-
     this._messagesValidator = new ChannelMessagesValidator({
       messageSchema,
       validateEventDataMessages: validationEventMessage,
     })
 
     this.onMessage(incomingMessage => this.processMessage(incomingMessage))
-    this.postMessage({ id: '0', data: '', event: 'employee/new' })
   }
 
   processMessage(incomingMessage: CommunicableSSEChannelMessage<SourceMessage>) {

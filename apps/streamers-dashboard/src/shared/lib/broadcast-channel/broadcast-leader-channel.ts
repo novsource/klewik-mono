@@ -19,7 +19,7 @@ type BroadcastLeaderChannelEvents<T> = DefaultChannelEventMap<BaseEventSourceMes
  * Methods of BroadcastLeaderChannel
  */
 type BroadcastLeaderChannelMethods<
-  SourceMessage extends BaseEventSourceMessage,
+  SourceMessage,
   ChannelEventMap extends Record<string, any>,
 > = {
   on: <
@@ -89,9 +89,10 @@ export type BroadcastLeaderChannelOptions = BroadcastChannelOptions & {
  * A broadcast channel with the ability to automatically become the leader among all channels with the same name specified during creation.
  */
 export class BroadcastLeaderChannel<
-  SourceMessage extends BaseEventSourceMessage,
+  SourceMessage,
   ChannelEventMap extends Record<string, any>,
 > implements BroadcastLeaderChannelMethods<SourceMessage, BroadcastLeaderChannelEvents<ChannelEventMap>> {
+  private readonly _channel: BroadcastChannel<SourceMessage>
   private readonly _elector: LeaderElector
   private readonly _emitter: BaseEmitter<BroadcastLeaderChannelEvents<ChannelEventMap>> = new BaseEmitter()
 
@@ -102,11 +103,11 @@ export class BroadcastLeaderChannel<
    * @param options Standard broadcast channel options from the broadcast-channels library
    */
   constructor(channelName: string, options?: BroadcastLeaderChannelOptions) {
-    const channel = new BroadcastChannel<SourceMessage>(channelName, options)
+    this._channel = new BroadcastChannel<SourceMessage>(channelName, options)
 
-    this._elector = createLeaderElection(channel, {
-      fallbackInterval: 2000,
-      responseTime: 1000,
+    this._elector = createLeaderElection(this._channel, {
+      fallbackInterval: 500,
+      responseTime: 100,
     })
 
     this._elector.awaitLeadership().then(() => {
@@ -125,6 +126,10 @@ export class BroadcastLeaderChannel<
 
   get isLeader() {
     return this._elector.isLeader
+  }
+
+  get isClosed() {
+    return this._channel.isClosed ?? false
   }
 
   on<Event extends keyof BroadcastLeaderChannelEvents<ChannelEventMap>>(
@@ -152,6 +157,11 @@ export class BroadcastLeaderChannel<
     this._emitter.emit(eventName, args)
   }
 
+  async close() {
+    await this._elector.die()
+    await this._channel.close()
+  }
+
   onMessage(handler: (message: SourceMessage) => void) {
     this._elector.broadcastChannel.addEventListener('message', handler)
 
@@ -177,9 +187,5 @@ export class BroadcastLeaderChannel<
 
   async postMessage(message: SourceMessage) {
     return this._elector.broadcastChannel.postMessage(message)
-  }
-
-  async close() {
-    return this._elector.die()
   }
 }
