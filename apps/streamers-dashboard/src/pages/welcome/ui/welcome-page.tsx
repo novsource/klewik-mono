@@ -29,7 +29,7 @@ import {
 //   = !!HTMLCanvasElement.prototype.transferControlToOffscreen
 //     && !navigator.userAgent.includes('Firefox')
 
-const WelcomePage = () => {
+export const WelcomePage = () => {
   return (
     <main className="h-screen w-full">
       <Flex className="h-full w-full" direction="row">
@@ -108,5 +108,3 @@ const WelcomePage = () => {
     </main>
   )
 }
-
-export default WelcomePage

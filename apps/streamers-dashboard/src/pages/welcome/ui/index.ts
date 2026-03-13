@@ -1,3 +1,3 @@
-import WelcomePage from './welcome-page'
+import { WelcomePage } from './welcome-page'
 
 export { WelcomePage }

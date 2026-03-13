@@ -10,7 +10,7 @@ import { auctionWheelPageStyles } from '../styles'
 import { AuctionGame } from './auction-game.ui'
 import { GameTabs } from './tabs/game-tabs.ui'
 
-const AuctionGamesPage = () => {
+export const AuctionGamesPage = () => {
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
   return (
@@ -25,5 +25,3 @@ const AuctionGamesPage = () => {
     </div>
   )
 }
-
-export default AuctionGamesPage

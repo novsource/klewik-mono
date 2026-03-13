@@ -58,19 +58,16 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
       const getConnectedIntegrationsStatsPromise = splittedIntegrationsApi.endpoints.getConnectedIntegrations.initiate({ auctionUUID })
       const getAuctionSlotsPromise = getAuctionSlotsThunk(auctionUUID)
 
-      const test = dispatch(getAuctionInfoPromise)
-
       const requestsArr = [
         getAuctionInfoPromise,
         getDonationsStatusesStatsPromise,
         getConnectedIntegrationsStatsPromise,
         getAuctionSlotsPromise,
+        // @ts-expect-error unknown action
       ].map(thunkAction => dispatch(thunkAction))
 
       try {
         const responses = await Promise.all(requestsArr)
-
-        console.log(responses)
 
         responses.forEach((response) => {
           if (isAxiosError(response)) {
@@ -91,7 +88,6 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
         return null
       }
       catch (error) {
-        console.log(error)
         if (isAxiosError(error)) {
           const isRejectHaveReason = error.status !== undefined && Reflect.has(errorStatusReasons, error.status.toString())
           const reason = isRejectHaveReason
