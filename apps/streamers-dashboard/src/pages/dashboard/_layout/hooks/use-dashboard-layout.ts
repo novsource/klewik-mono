@@ -14,7 +14,11 @@ export type UseDashboardLayoutReturn = {
 }
 
 export const useDashboardLayout = (auctionUUID: Auction['auctionUUID']): UseDashboardLayoutReturn => {
-  const { isPending, isSSEConnected } = useConnectToDashboardSSEEvents(auctionUUID)
+  const { isAllEventsConnected, connectAll, isPending } = useAppSSE({
+    onNewTabLeader: () => {
+      connectAll(auctionUUID)
+    },
+  })
 
   const { addDonation, updateDonationsStatusesCounts } = useActionCreators(donationsActions)
   const { addSlots, updateSlot } = useActionCreators(auctionSlotsActions)
@@ -35,45 +39,5 @@ export const useDashboardLayout = (auctionUUID: Auction['auctionUUID']): UseDash
     },
   })
 
-  return { isPending, isSSEConnected }
-}
-
-function useConnectToDashboardSSEEvents(auctionUUID: string) {
-  const { isAllEventsConnected, connectToSSEEvents, isPending } = useAppSSE({
-    onNewTabLeader: async () => {
-      await connectToSSEEvents(auctionUUID)
-    },
-  })
-
-  // const isPendingRef = useRef(isPending)
-
-  // const connectToSSE = useCallback(async (auctionUUID: string) => {
-  //   if (isPendingRef.current)
-  //     return
-
-  //   try {
-  //     isPendingRef.current = true
-
-  //     await connectToSSEEvents(auctionUUID)
-  //   }
-  //   catch {
-  //     throw new Error('Can\'t connect to sse events')
-  //   }
-  //   finally {
-  //     isPendingRef.current = false
-  //   }
-  // }, [connectToSSEEvents])
-
-  // useEffect(() => {
-  //   if (isAllEventsConnected || isPendingRef.current)
-  //     return
-
-  //   connectToSSE(auctionUUID)
-  // }, [
-  //   connectToSSE,
-  //   isAllEventsConnected,
-  //   auctionUUID,
-  // ])
-
-  return { isSSEConnected: isAllEventsConnected, isPending }
+  return { isPending, isSSEConnected: isAllEventsConnected }
 }

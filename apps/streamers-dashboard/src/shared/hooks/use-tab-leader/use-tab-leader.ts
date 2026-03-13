@@ -36,7 +36,7 @@ export const useTabLeader = (options?: UseTabLeaderOptions) => {
 
   useEffect(() => {
     const handleUnload = () => {
-      if (channel.isClosed)
+      if (!channel.isClosed)
         channel.close()
     }
 
@@ -52,6 +52,15 @@ export const useTabLeader = (options?: UseTabLeaderOptions) => {
     channel.close()
 
     tabChannel = new BroadcastLeaderChannel('tab-leader')
+
+    tabChannel.onChannelLeadership(() => {
+      options?.onCurrentTabBecomesLeader?.()
+
+      setIsTabLeader(true)
+    })
+    tabChannel.onNewLeader(() => {
+      options?.onAnyTabBecomesLeader?.()
+    })
   }
 
   return { channel, isTabLeader, recreateChannel }

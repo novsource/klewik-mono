@@ -51,16 +51,26 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
 
       const dispatch = rootStore.dispatch
 
-      try {
-        const auctionUUID = validatedParams.data.auctionUUID
+      const auctionUUID = validatedParams.data.auctionUUID
 
-        const requestsArr = [
-          dispatch(splittedAuctionApi.endpoints.getAuctionInfo.initiate({ auctionUUID })),
-          dispatch(splittedDonationApi.endpoints.getDonationsStats.initiate({ auctionUUID })),
-          dispatch(splittedIntegrationsApi.endpoints.getConnectedIntegrations.initiate({ auctionUUID })),
-          dispatch(getAuctionSlotsThunk(auctionUUID)),
-        ] as const
+      const getAuctionInfoPromise = splittedAuctionApi.endpoints.getAuctionInfo.initiate({ auctionUUID })
+      const getDonationsStatusesStatsPromise = splittedDonationApi.endpoints.getDonationsStats.initiate({ auctionUUID })
+      const getConnectedIntegrationsStatsPromise = splittedIntegrationsApi.endpoints.getConnectedIntegrations.initiate({ auctionUUID })
+      const getAuctionSlotsPromise = getAuctionSlotsThunk(auctionUUID)
+
+      const test = dispatch(getAuctionInfoPromise)
+
+      const requestsArr = [
+        getAuctionInfoPromise,
+        getDonationsStatusesStatsPromise,
+        getConnectedIntegrationsStatsPromise,
+        getAuctionSlotsPromise,
+      ].map(thunkAction => dispatch(thunkAction))
+
+      try {
         const responses = await Promise.all(requestsArr)
+
+        console.log(responses)
 
         responses.forEach((response) => {
           if (isAxiosError(response)) {

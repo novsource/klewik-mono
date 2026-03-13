@@ -159,7 +159,7 @@ export class BroadcastLeaderChannel<
 
   async close() {
     await this._elector.die()
-    await this._channel.close()
+    return this._channel.close()
   }
 
   onMessage(handler: (message: SourceMessage) => void) {
