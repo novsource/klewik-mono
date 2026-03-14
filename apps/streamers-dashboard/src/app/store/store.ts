@@ -24,11 +24,12 @@ import { wheelReducer } from '~entities/wheel/store'
 
 import { auctionSlotsSSEApi, splittedAuthApi as authApi, donationsSSEApi, integrationsSSEApi } from '~shared/store/api'
 import { sseConnectionsListenerMiddlewares } from '~shared/store/middlewares'
-import { appReducer, sseReducer } from '~shared/store/slices'
+import { appReducer, authSliceReducer, sseReducer } from '~shared/store/slices'
 
 const rootReducer = combineReducers({
   app: appReducer,
   auction: auctionReducer,
+  auth: authSliceReducer,
   auctionSlots: auctionSlotsReducer,
   auctionGames: auctionGamesReducer,
   donations: donationsReducer,
