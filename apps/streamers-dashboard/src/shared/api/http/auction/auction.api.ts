@@ -1,3 +1,5 @@
+import type { AuctionDTO } from './auction-api.types'
+
 import { AUCTION_ENDPOINTS } from '~shared/constants/api/http'
 
 import type { HttpClientRequestOptions } from '~shared/lib/axios'
@@ -22,11 +24,11 @@ export const createAuction = async (
   })
 }
 
-export const getAuctionInfo = async <T>(
+export const getAuctionInfo = async (
   auctionUUID: string,
   fetchOptions?: HttpClientRequestOptions,
 ) => {
-  return authHttpClient.get<T>(`/api/v1/auctions/${auctionUUID}`, {
-    ...fetchOptions,
-  })
+  const url = AUCTION_ENDPOINTS.GET_AUCTION(auctionUUID)
+
+  return authHttpClient.get<AuctionDTO>(url, fetchOptions)
 }

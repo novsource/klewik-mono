@@ -7,6 +7,7 @@ import type { DonationsSSEChannelEventsMap } from '~shared/api/sse/clients/donat
 import type { IntegrationsSSEEventsCallbacksMap } from '~shared/api/sse/clients/integrations/client.types'
 import { integrationsSSEClient } from '~shared/api/sse/clients/integrations/integrations-client'
 
+import { SSE_CHANNELS_CONNECT_ENDPOINTS } from '~shared/constants/api'
 import type { SSE_CHANNELS } from '~shared/constants/api'
 
 import type { SSEClient } from '~shared/lib/fetch-event-source'
@@ -149,7 +150,7 @@ export function useDonationsSSE(listeners?: Partial<DonationsSSEChannelEventsMap
   const client = useBaseSSEClient(donationsSSEClient, {
     name: 'donations',
     eventListeners: listeners,
-    getConnectionUrl: auctionUUID => `${auctionUUID}/sse/donations-events`,
+    getConnectionUrl: SSE_CHANNELS_CONNECT_ENDPOINTS.donations,
   })
 
   return client
@@ -159,7 +160,7 @@ export function useAuctionSlotsSSE(listeners?: Partial<AuctionSlotsEventsCallbac
   const client = useBaseSSEClient(auctionSlotsSSEClient, {
     name: 'auctionSlots',
     eventListeners: listeners,
-    getConnectionUrl: auctionUUID => `${auctionUUID}/sse/slots-events`,
+    getConnectionUrl: SSE_CHANNELS_CONNECT_ENDPOINTS.auctionSlots,
   })
 
   return client
@@ -169,7 +170,7 @@ export function useIntegrationsSSE(listeners?: Partial<IntegrationsSSEEventsCall
   const client = useBaseSSEClient(integrationsSSEClient, {
     name: 'integrations',
     eventListeners: listeners,
-    getConnectionUrl: auctionUUID => `${auctionUUID}/sse/integrations-events`,
+    getConnectionUrl: SSE_CHANNELS_CONNECT_ENDPOINTS.integrations,
   })
 
   return client
