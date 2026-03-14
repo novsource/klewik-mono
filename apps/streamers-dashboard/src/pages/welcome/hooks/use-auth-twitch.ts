@@ -10,6 +10,7 @@ import { genuuid } from '~shared/utils/common'
 type UseAuthTwitchReturnValue = {
   state: {
     isAuth: boolean
+    isError: boolean
     isLoading: boolean
   }
   actions: {
@@ -24,6 +25,7 @@ type UseAuthTwitchOptions = {
 
 export const useAuthTwitch = (options?: UseAuthTwitchOptions): UseAuthTwitchReturnValue => {
   const [isAuth, setIsAuth] = useState(false)
+  const [isError, setIsError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   const optionsRef = useRef(options)
@@ -93,6 +95,7 @@ export const useAuthTwitch = (options?: UseAuthTwitchOptions): UseAuthTwitchRetu
 
     const castedLocalStorageValue = twitchAuthLocalStorageState.value as AuthTwitchRedirectParams
     const isSuccessedAuth = castedLocalStorageValue?.auth && !castedLocalStorageValue?.error
+    const isHaveError = castedLocalStorageValue.error === false
 
     if (isSuccessedAuth && isLoading) {
       optionsRef.current?.onSuccess?.()
@@ -101,8 +104,10 @@ export const useAuthTwitch = (options?: UseAuthTwitchOptions): UseAuthTwitchRetu
       setIsLoading(false)
     }
 
-    if (isSuccessedAuth && isLoading) {
+    if (isHaveError && isLoading) {
       optionsRef.current?.onError?.()
+
+      setIsError(true)
       setIsLoading(false)
     }
 
@@ -114,6 +119,7 @@ export const useAuthTwitch = (options?: UseAuthTwitchOptions): UseAuthTwitchRetu
   return {
     state: {
       isAuth,
+      isError,
       isLoading,
     },
     actions: {

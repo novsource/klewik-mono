@@ -6,6 +6,10 @@ import { Text, Title } from '~shared/components/typography'
 
 import { useAsync } from '~shared/hooks'
 
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import { authSliceActions, authSliceSelectors } from '~shared/store/slices'
+
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
@@ -15,6 +19,7 @@ import { WizardItem, WizardTrigger } from '~shared/ui/wizard'
 import { useWizardContext } from '~shared/ui/wizard/context'
 
 import { cn } from '~shared/utils'
+import { isTokenExpires } from '~shared/utils/validation'
 
 import { AuthTwitchButton } from '../buttons/auth-twitch-button.ui'
 
@@ -23,15 +28,29 @@ export const WizardLoginItem = (
 ) => {
   const { className, ...restProps } = props
 
+  const lastRefreshTimestamp = useStoreSelector(authSliceSelectors.getLastRefreshTimestamp)
+
+  const { setIsAuth, setLastRefreshTimestamp } = useActionCreators(authSliceActions)
+
   const { currentStepId, next } = useWizardContext()
 
   const authRefresh = async () => {
     if (currentStepId !== WELCOME_PAGE_WIZARD_ITEMS_IDS.LOGIN)
       return
 
+    if (!isTokenExpires('access', lastRefreshTimestamp)) {
+      setIsAuth(true)
+      next(WELCOME_PAGE_WIZARD_ITEMS_IDS.CREATE_AUCTION, { force: true })
+
+      return
+    }
+
     const response = await refreshTokens()
 
     if (response.status === 200) {
+      setIsAuth(true)
+      setLastRefreshTimestamp(Date.now())
+
       next(WELCOME_PAGE_WIZARD_ITEMS_IDS.CREATE_AUCTION, { force: true })
     }
   }
@@ -45,7 +64,7 @@ export const WizardLoginItem = (
         value={WELCOME_PAGE_WIZARD_ITEMS_IDS.LOGIN}
         {...restProps}
       >
-        <Icons.Loading />
+        <Icons.Loading size="lg" />
       </WizardItem>
     )
   }

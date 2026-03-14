@@ -23,6 +23,10 @@ const authSlice = createSlice({
       state.lastRefreshTimestamp = action.payload
     },
   },
+  selectors: {
+    getIsAuth: state => state.isAuth,
+    getLastRefreshTimestamp: state => state.lastRefreshTimestamp,
+  },
 })
 
 export const { actions: authSliceActions, selectors: authSliceSelectors, reducer: authSliceReducer } = authSlice

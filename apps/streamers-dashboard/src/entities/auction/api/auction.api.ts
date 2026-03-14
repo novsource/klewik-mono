@@ -16,7 +16,7 @@ export type GetAuctionInfoQueryArgs = {
 
 export const getAuctionInfoThunk = createAsyncThunk('auction/getAuctionInfo', async (auctionUUID: string, { rejectWithValue }) => {
   try {
-    const response = await getAuctionInfo<Auction>(auctionUUID)
+    const response = await getAuctionInfo(auctionUUID)
 
     if (response.status === 404) {
       throw new AxiosError('Can\'t get auction info', '404')
