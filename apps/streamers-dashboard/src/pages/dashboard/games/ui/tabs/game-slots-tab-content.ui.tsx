@@ -10,6 +10,7 @@ import { auctionSelectors } from '~entities/auction/store'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useDebounceCallback } from '~shared/hooks'
+import { useLocalSearchFilter } from '~shared/hooks/use-local-search-filter/use-local-search-filter'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -21,7 +22,7 @@ import type { TabsContentProps } from '~shared/ui/tabs'
 import { TabsContent } from '~shared/ui/tabs'
 import { Toggle, ToggleGroup } from '~shared/ui/toggle'
 
-import { cn, twSlotsStyles } from '~shared/utils'
+import { twSlotsStyles } from '~shared/utils'
 
 import { TABS_CONTENT_NAMES } from '../../constants'
 import { slotsWheelTabStyles } from '../../styles'
@@ -40,8 +41,6 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
   const [slotCategory, setSlotCategory] = useState<'all' | 'active' | 'dropped'>('all')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const sortedSlots = useSortingSlots(slots, { type: 'descending', field: 'points' })
-
   const droppedSlotIdsCollection = useMemo<Set<number>>(() => {
     const result = new Set<number>()
 
@@ -52,17 +51,18 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
     return result
   }, [dropoutSlotsIds])
 
-  const searchedSlots = useMemo(() =>
-    sortedSlots.filter((slot) => {
-      const isTitleIncludesSearchQuery = slot.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const sortedSlots = useSortingSlots(slots, { type: 'descending', field: 'points' })
 
-      const isSlotDropped = droppedSlotIdsCollection.has(slot.id)
-      const isSlotIncludeCategory = slotCategory === 'all' ? true : slotCategory === 'active' ? !isSlotDropped : isSlotDropped
+  const localSearchedSlots = useLocalSearchFilter(searchQuery, sortedSlots, (query, slot) => {
+    const isTitleIncludesSearchQuery = slot.title.toLowerCase().includes(query.toLowerCase())
 
-      return isTitleIncludesSearchQuery && isSlotIncludeCategory
-    }), [searchQuery, sortedSlots, slotCategory, droppedSlotIdsCollection])
+    const isSlotDropped = droppedSlotIdsCollection.has(slot.id)
+    const isSlotIncludeCategory = slotCategory === 'all' ? true : slotCategory === 'active' ? !isSlotDropped : isSlotDropped
 
-  const debouncedSearch = useDebounceCallback((value: string) => setSearchQuery(value), 250)
+    return isTitleIncludesSearchQuery && isSlotIncludeCategory
+  })
+
+  const debouncedSearch = useDebounceCallback((value: string) => setSearchQuery(value), 200)
 
   const handleSearchInputOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
@@ -75,7 +75,7 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
 
   return (
     <TabsContent
-      className={cn(tabsContentStyles.content)}
+      className={tabsContentStyles.content}
       value={TABS_CONTENT_NAMES.SLOTS}
       {...tabsContentProps}
     >
@@ -114,7 +114,7 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
           <Toggle value="dropped" className="data-[pressed]:text-gray-accent data-[pressed]:bg-dark-accent h-full hover:bg-dark-light" buttonProps={{ isIconOnly: true, icon: <Icons.BrokenHeart /> }} />
         </ToggleGroup>
       </Flex>
-      <AuctionGameSlotsList data={searchedSlots} />
+      <AuctionGameSlotsList data={localSearchedSlots} />
     </TabsContent>
   )
 }

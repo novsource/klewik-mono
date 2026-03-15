@@ -23,13 +23,13 @@ export type UseSearchOptions = {
 }
 
 export function useSearch(options?: UseSearchOptions): UseSearchReturnValue {
-  const [value, setValue] = useState(options?.initialValue ?? '')
+  const [searchValue, setSearchValue] = useState(options?.initialValue ?? '')
   const [isDebouncing, setIsDebouncing] = useState(false)
 
   const search = useDebounceCallback(() => {
     setIsDebouncing(false)
 
-    options?.onSearch?.(value)
+    options?.onSearch?.(searchValue)
   }, options?.debounceTime ?? 150)
 
   const cancel = () => {
@@ -39,7 +39,7 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturnValue {
     search.cancel()
     setIsDebouncing(false)
 
-    options?.onCancelSearch?.(value)
+    options?.onCancelSearch?.(searchValue)
   }
 
   const start = () => {
@@ -50,14 +50,14 @@ export function useSearch(options?: UseSearchOptions): UseSearchReturnValue {
 
   return {
     state: {
-      value,
+      value: searchValue,
       isDebouncing,
     },
     actions: {
       start,
-      clear: () => setValue(''),
+      clear: () => setSearchValue(''),
       cancel,
-      updateValue: setValue,
+      updateValue: setSearchValue,
     },
   }
 }

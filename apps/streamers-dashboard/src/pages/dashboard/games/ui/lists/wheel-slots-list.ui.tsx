@@ -6,11 +6,9 @@ import { auctionSelectors } from '~entities/auction/store'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
-import { SkeletonAuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import type { WheelSlot } from '~entities/wheel/model'
 
-import { StartTransitionContainer } from '~shared/components/start-transition-container'
 import { Text } from '~shared/components/typography'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -126,26 +124,21 @@ function BaseGameSlotsList(props: BaseGameSlotsListProps) {
     switch (auctionGameType) {
       case 'wheel': {
         return (
-          <StartTransitionContainer fallback={<SkeletonAuctionSlotCard />}>
-            <WheelSlotCard
-              key={slot.title}
-              wheelSlot={slot as WheelSlot}
-              winPercentsBounds={winPercentsBounds}
-              isDropped={isDropped}
-            />
-          </StartTransitionContainer>
+          <WheelSlotCard
+            wheelSlot={slot as WheelSlot}
+            winPercentsBounds={winPercentsBounds}
+            isDropped={isDropped}
+          />
         )
       }
       case 'cards': {
         return (
-          <StartTransitionContainer fallback={<SkeletonAuctionSlotCard />}>
-            <CardsGameListCard
-              key={slot.title}
-              auctionSlot={slot as AuctionSlot}
-              isDropped={isDropped}
-              winPercentsBounds={winPercentsBounds}
-            />
-          </StartTransitionContainer>
+          <CardsGameListCard
+            key={slot.title}
+            auctionSlot={slot as AuctionSlot}
+            isDropped={isDropped}
+            winPercentsBounds={winPercentsBounds}
+          />
         )
       }
     }

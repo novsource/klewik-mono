@@ -23,7 +23,7 @@ export type WheelSlotCardProps = CardProps & {
 }
 
 export const WheelSlotCard = (props: WheelSlotCardProps) => {
-  const { wheelSlot, winPercentsBounds, className, isDropped = false, isWinner = true, ...restProps } = props
+  const { wheelSlot, winPercentsBounds, className, isDropped = false, isWinner = false, ...restProps } = props
 
   return (
     <BaseAuctionSlotCard
@@ -53,7 +53,6 @@ export const WheelSlotCard = (props: WheelSlotCardProps) => {
           </Flex>
         </BaseAuctionSlotCardContent>
       </Flex>
-
     </BaseAuctionSlotCard>
   )
 }

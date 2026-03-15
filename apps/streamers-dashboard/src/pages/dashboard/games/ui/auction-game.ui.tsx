@@ -64,23 +64,25 @@ export const AuctionGame = (props: AuctionGameProps) => {
 
   return (
     <GameContextProvider activeSlots={participatedInAuctionSlots}>
+
       {auctionGame === 'wheel' && (
         <WheelGameContextProvider {...wheelGame}>
-          <div className="flex w-full h-full">
+          <div className="w-full h-full flex-[7]">
             <WheelGame />
           </div>
-          {children}
+          <div className="h-full w-full flex-[3] ">
+            {children}
+          </div>
         </WheelGameContextProvider>
       )}
 
       {auctionGame === 'cards' && (
         <CardsGame game={cardsGame}>
-          <div className="flex w-full h-full">
-            <AuctionCardsGame />
-          </div>
+          <AuctionCardsGame />
           {children}
         </CardsGame>
       )}
+
     </GameContextProvider>
   )
 }

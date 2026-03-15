@@ -1,7 +1,7 @@
 export type WheelTabsStylesSlots = 'tabTrigger' | 'tabList' | 'base'
 
 export const wheelTabsStyles: Record<WheelTabsStylesSlots, string> = {
-  base: /* tw */ 'flex h-full flex-col',
+  base: /* tw */ 'flex w-full h-full flex-col',
   tabTrigger: /* tw */ 'flex grow cursor-pointer gap-x-2 text-md font-medium text-gray-light/70 hover:text-gray-light data-[active]:rounded-medium',
   tabList: /* tw */ 'dark flex w-full justify-between rounded-large bg-dark',
 }
