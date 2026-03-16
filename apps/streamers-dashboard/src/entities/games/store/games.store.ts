@@ -4,6 +4,8 @@ import type { AuctionGameMode, AuctionGames } from '../model'
 
 import { createSlice } from '@reduxjs/toolkit'
 
+import type { AuctionSlot } from '~entities/auction-slot/model'
+
 export type WheelSlicesSizeMode = 'auto' | 'points' | 'equals'
 
 type WheelGameSettings = {
@@ -23,12 +25,22 @@ type GamesSettings = {
 export type AuctionGamesSliceState = {
   game: AuctionGames
   mode: AuctionGameMode
+  slots: {
+    winner: NullablePossible<AuctionSlot>
+    alived: AuctionSlot[]
+    dropped: AuctionSlot[]
+  }
   gamesSettings: GamesSettings
 }
 
 const initialState: AuctionGamesSliceState = {
   game: 'wheel',
   mode: 'classic',
+  slots: {
+    winner: null,
+    alived: [],
+    dropped: [],
+  },
   gamesSettings: {
     wheel: {
       spinTime: 2,
@@ -44,6 +56,12 @@ const auctionGamesSlice = createSlice({
   name: 'auctionGames',
   initialState,
   reducers: {
+    setAlivedSlots: (state, action: PayloadAction<AuctionSlot[]>) => {
+      state.slots.alived = action.payload
+    },
+    setDroppedSlots: (state, action: PayloadAction<AuctionSlot[]>) => {
+      state.slots.dropped = action.payload
+    },
     setGame: (state, action: PayloadAction<AuctionGames>) => {
       state.game = action.payload
     },
@@ -60,6 +78,8 @@ const auctionGamesSlice = createSlice({
   selectors: {
     getGame: state => state.game,
     getGameMode: state => state.mode,
+    getAlivedSlots: state => state.slots.alived,
+    getDroppedSlots: state => state.slots.dropped,
     getWheelGameSettings: state => state.gamesSettings.wheel,
     getCardsGameSettings: state => state.gamesSettings.cards,
   },

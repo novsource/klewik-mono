@@ -15,7 +15,7 @@ import { ErrorPage } from '~pages/error/ui'
 import { splittedAuctionApi } from '~entities/auction/api'
 import { auctionActions } from '~entities/auction/store'
 
-import { getAuctionSlotsThunk } from '~entities/auction-slot/api'
+import { splittedAuctionSlotsApi } from '~entities/auction-slot/api'
 
 import { splittedDonationApi } from '~entities/donation/api'
 
@@ -56,7 +56,8 @@ export const prepareDashboardRoute = (childrens: RouteObject[]): RouteObject => 
       const getAuctionInfoPromise = splittedAuctionApi.endpoints.getAuctionInfo.initiate({ auctionUUID })
       const getDonationsStatusesStatsPromise = splittedDonationApi.endpoints.getDonationsStats.initiate({ auctionUUID })
       const getConnectedIntegrationsStatsPromise = splittedIntegrationsApi.endpoints.getConnectedIntegrations.initiate({ auctionUUID })
-      const getAuctionSlotsPromise = getAuctionSlotsThunk(auctionUUID)
+      const getAuctionSlotsPromise = splittedAuctionSlotsApi.endpoints.getAuctionSlots.initiate({ auctionUUID })
+      // const getAuctionSlotsPromise = getAuctionSlotsThunk(auctionUUID)
 
       const requestsArr = [
         getAuctionInfoPromise,

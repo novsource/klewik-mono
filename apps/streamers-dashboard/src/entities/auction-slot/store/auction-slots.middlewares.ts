@@ -1,11 +1,42 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit'
 
+import { auctionActions } from '~entities/auction/store'
+
+import { getPercentValue } from '~shared/utils/common'
+
 import { auctionSlotsActions } from './auction-slots.slice'
 
 const listeningMiddleware = createListenerMiddleware()
 const startSlotsActionsListening = listeningMiddleware.startListening.withTypes<RootState, StoreDispatch>()
 
 export const auctionSlotsListenerMiddlewares = [listeningMiddleware.middleware]
+
+startSlotsActionsListening({
+  actionCreator: auctionActions.setAuction,
+  effect: (action, api) => {
+    const { dropoutSlotsIds, slotsIds } = action.payload
+
+    if (!slotsIds)
+      return
+
+    const alivedSlotsIds = slotsIds.filter(id => !dropoutSlotsIds?.includes(id))
+
+    api.dispatch(auctionSlotsActions.updateAlivedSlotsIds({
+      mode: 'update',
+      data: alivedSlotsIds,
+    }))
+  },
+})
+
+startSlotsActionsListening({
+  actionCreator: auctionActions.setAuction,
+  effect: (action, api) => {
+    api.dispatch(auctionSlotsActions.updateAlivedSlotsIds({
+      mode: 'update',
+      data: action.payload.dropoutSlotsIds ?? [],
+    }))
+  },
+})
 
 startSlotsActionsListening({
   actionCreator: auctionSlotsActions.addSlots,
@@ -22,8 +53,8 @@ startSlotsActionsListening({
       data: { points },
     } = action.payload
 
-    const pointsSum = api.getState().auctionSlots.slots.reduce((acc, slot) => acc + slot.points, 0)
-    const isShouldDispatchUpdatePoints = pointsSum !== api.getState().auctionSlots.slotsPointsSum
+    const pointsSum = api.getState().auctionSlots.slots.reduce((sum, slot) => sum + slot.points, 0)
+    const isShouldDispatchUpdatePoints = pointsSum !== api.getOriginalState().auctionSlots.slotsPointsSum
 
     if (!isShouldDispatchUpdatePoints)
       return
@@ -38,7 +69,24 @@ startSlotsActionsListening({
     const { slots, slotsPointsSum } = api.getState().auctionSlots
 
     const updatedSlots = slots.reduce((acc, slot) => {
-      const winPercents = (slot.points / slotsPointsSum) * 100
+      const winPercents = getPercentValue(slotsPointsSum, slot.points) * 100
+
+      acc.push({ ...slot, winPercents })
+
+      return acc
+    }, [] as typeof slots)
+
+    api.dispatch(auctionSlotsActions.updateSlots(updatedSlots))
+  },
+})
+
+startSlotsActionsListening({
+  actionCreator: auctionSlotsActions.setPointsSum,
+  effect: (_, api) => {
+    const { slots, slotsPointsSum } = api.getState().auctionSlots
+
+    const updatedSlots = slots.reduce((acc, slot) => {
+      const winPercents = getPercentValue(slotsPointsSum, slot.points) * 100
 
       acc.push({ ...slot, winPercents })
 

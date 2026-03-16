@@ -1,4 +1,6 @@
-import type { AuctionSlotsSliceState } from '../store'
+import type { AuctionSlot } from '../model'
+
+import type { SortingOptions } from '~shared/store/model'
 
 // const fakeAuctionSlots = createFakeAuctionSlotsArray({ minLength: 50, maxLength: 130 })
 
@@ -7,11 +9,20 @@ import type { AuctionSlotsSliceState } from '../store'
 //   0,
 // )
 
+export type AuctionSlotsSliceState = {
+  slots: AuctionSlot[]
+  alivedSlotsIds: number[]
+  droppedSlotsIds: number[]
+  sortedSlots: AuctionSlot[]
+  slotsPointsSum: number
+  sortingOptions: SortingOptions<AuctionSlot>
+}
+
 export const AUCTION_SLOTS_SLICE_INITIAL_STATE: AuctionSlotsSliceState = {
   slots: [],
-  alivedSlots: [],
+  alivedSlotsIds: [],
   sortedSlots: [],
-  dropoutSlots: [],
+  droppedSlotsIds: [],
   slotsPointsSum: 0,
   sortingOptions: {
     field: 'points',

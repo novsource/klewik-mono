@@ -7,6 +7,7 @@ import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import type { SortingOptions } from '~shared/store/model'
 
+import { auctionSlotsListenerMiddlewares } from '../auction-slots.middlewares'
 import { auctionSlotsActions, auctionSlotsReducer } from '../auction-slots.slice'
 
 let state: ReturnType<typeof auctionSlotsReducer>
@@ -20,6 +21,11 @@ const dispatch = (action: UnknownAction) => {
 beforeEach(() => {
   store = configureStore({
     reducer: combineReducers({ auctionSlots: auctionSlotsReducer }),
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware()
+        .prepend([
+          ...auctionSlotsListenerMiddlewares,
+        ]),
   })
 
   state = store.getState().auctionSlots
@@ -73,8 +79,17 @@ describe('auction slots slice reducers', () => {
     const randomSlotIndex = Math.floor(Math.random() * state.slots.length)
     const targetSlot = state.slots[randomSlotIndex]
 
-    dispatch(auctionSlotsActions.updateSlot({ id: targetSlot.id, data: { ...targetSlot, title: 'Updated slot', points: 2000 } }))
-    expect(state.slots[randomSlotIndex]).toEqual({ ...targetSlot, title: 'Updated slot', points: 2000 })
+    dispatch(auctionSlotsActions.updateSlot({ id: targetSlot.id, data: { ...targetSlot, title: 'Updated slot', points: 2200 } }))
+
+    expect({
+      ...state.slots[randomSlotIndex],
+      winPercents: state.slots[randomSlotIndex].winPercents,
+    }).toEqual({
+      ...targetSlot,
+      title: 'Updated slot',
+      points: 2200,
+      winPercents: 68.75,
+    })
   })
 
   it('should delete slot', () => {
