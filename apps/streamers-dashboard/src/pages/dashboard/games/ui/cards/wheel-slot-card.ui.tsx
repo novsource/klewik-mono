@@ -23,7 +23,14 @@ export type WheelSlotCardProps = CardProps & {
 }
 
 export const WheelSlotCard = (props: WheelSlotCardProps) => {
-  const { wheelSlot, winPercentsBounds, className, isDropped = false, isWinner = false, ...restProps } = props
+  const {
+    wheelSlot,
+    winPercentsBounds,
+    className,
+    isDropped = false,
+    isWinner = false,
+    ...restProps
+  } = props
 
   return (
     <BaseAuctionSlotCard

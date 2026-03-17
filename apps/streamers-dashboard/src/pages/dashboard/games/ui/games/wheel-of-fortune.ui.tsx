@@ -5,7 +5,6 @@ import { AnimatePresence } from 'motion/react'
 import * as m from 'motion/react-m'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
-import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import type { WheelSlot } from '~entities/wheel/model'
 import { BaseWheel, WheelItem, WheelSelector } from '~entities/wheel/ui'
@@ -14,32 +13,30 @@ import { Text } from '~shared/components/typography'
 
 import { useElementSize } from '~shared/hooks'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
 import type { FlexProps } from '~shared/ui/flex'
 import { Flex } from '~shared/ui/flex'
 import { MotionBox } from '~shared/ui/motion-box'
 
 import { cn } from '~shared/utils'
 
+import { useAuctionGameContext } from '../../context/auction-game-context'
 import { useAuctionWheelGame } from '../../hooks/use-auction-wheel-game'
 
 export type WheelProps = FlexProps
 
 export const WheelGame = (props: WheelProps) => {
-  const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-
   const [slotUnderSelector, setSlotUnderSelector] = useState<NullablePossible<AuctionSlot>>(null)
 
+  const auctionGameContext = useAuctionGameContext()
   const { state } = useAuctionWheelGame()
 
   useEffect(() => {
     if (state.isSpinning || !state.selectorCurrentSlot)
       return
 
-    const slot = auctionSlots.filter(slot => slot.title === state.selectorCurrentSlot)[0]
+    const slot = auctionGameContext.state.slots.alived.filter(slot => slot.title === state.selectorCurrentSlot)[0]
     setSlotUnderSelector(slot)
-  }, [state.isSpinning, state.selectorCurrentSlot, auctionSlots])
+  }, [state.isSpinning, state.selectorCurrentSlot, auctionGameContext.state.slots.alived])
 
   const isShouldShowSlotInfo = !state.isSpinning && !!slotUnderSelector
 

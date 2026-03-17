@@ -22,7 +22,7 @@ startSlotsActionsListening({
     const alivedSlotsIds = slotsIds.filter(id => !dropoutSlotsIds?.includes(id))
 
     api.dispatch(auctionSlotsActions.updateAlivedSlotsIds({
-      mode: 'update',
+      mode: 'add',
       data: alivedSlotsIds,
     }))
   },
@@ -31,8 +31,8 @@ startSlotsActionsListening({
 startSlotsActionsListening({
   actionCreator: auctionActions.setAuction,
   effect: (action, api) => {
-    api.dispatch(auctionSlotsActions.updateAlivedSlotsIds({
-      mode: 'update',
+    api.dispatch(auctionSlotsActions.updateDroppedSlotsIds({
+      mode: 'add',
       data: action.payload.dropoutSlotsIds ?? [],
     }))
   },

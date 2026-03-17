@@ -21,6 +21,7 @@ import { TabsContent } from '~shared/ui/tabs'
 import { twSlotsStyles } from '~shared/utils'
 
 import { TABS_CONTENT_NAMES } from '../../constants'
+import { useAuctionGameContext } from '../../context/auction-game-context'
 import { controlWheelTabStyles } from '../../styles'
 import { CardsGameControllers } from './cards/control-tab-content.ui'
 import { WheelGameControllers } from './wheel/control-tab-content.ui'
@@ -32,7 +33,7 @@ type ControlWheelTabContentProps = Omit<TabsContentProps, 'value'> & {
 export const GameContorlTabContent = (props: ControlWheelTabContentProps) => {
   const { slotsClassnames, ...tabsContentProps } = props
 
-  const game = useStoreSelector(auctionGamesSelectors.getGame)
+  const auctionGame = useAuctionGameContext()
 
   const tabsContentStyles = useMemo(() => twSlotsStyles(controlWheelTabStyles, slotsClassnames), [slotsClassnames])
 
@@ -42,8 +43,8 @@ export const GameContorlTabContent = (props: ControlWheelTabContentProps) => {
       value={TABS_CONTENT_NAMES.CONTROL}
       {...tabsContentProps}
     >
-      {game === 'wheel' && <WheelGameControllers />}
-      {game === 'cards' && <CardsGameControllers />}
+      {auctionGame.state.game === 'wheel' && <WheelGameControllers />}
+      {auctionGame.state.game === 'cards' && <CardsGameControllers />}
       <Divider className="mt-2.5 mb-3 border-gray/20" />
       <GameTypeRadioGroup />
       <Divider className="mt-2.5 mb-3 border-gray/20" />

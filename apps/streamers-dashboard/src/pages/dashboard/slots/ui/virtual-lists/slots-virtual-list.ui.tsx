@@ -34,18 +34,14 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
   } = props
 
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-  const storedDroppedSlots = useStoreSelector(auctionSlotsSelectors.getDropoutSlots)
+  const storedDroppedSlotsIds = useStoreSelector(auctionSlotsSelectors.getDroppedSlotsIds)
   const sortingOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
 
   const [listItems, setListItems] = useState(data ?? storedAuctionSlots)
 
-  const droppedSlotsByIds = useMemo<Record<number, boolean>>(() => {
-    return storedDroppedSlots.reduce((acc, curr) => {
-      acc[curr.id] = true
-
-      return acc
-    }, {} as Record<number, boolean>)
-  }, [storedDroppedSlots])
+  const droppedSlotsByIds = useMemo(() => {
+    return new Set(storedDroppedSlotsIds)
+  }, [storedDroppedSlotsIds])
 
   const { setDialogState } = useActionCreators(globalDialogsActions)
 
@@ -65,7 +61,7 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
 
   const renderAuctionSlotCard = useCallback(
     (auctionSlot: AuctionSlot) => {
-      const isDropped = droppedSlotsByIds[auctionSlot.id]
+      const isDropped = droppedSlotsByIds.has(auctionSlot.id)
 
       return (
         <StartTransitionContainer fallback={(

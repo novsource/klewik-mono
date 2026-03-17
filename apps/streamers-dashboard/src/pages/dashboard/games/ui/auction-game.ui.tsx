@@ -78,8 +78,12 @@ export const AuctionGame = (props: AuctionGameProps) => {
 
       {auctionGame === 'cards' && (
         <CardsGame game={cardsGame}>
-          <AuctionCardsGame />
-          {children}
+          <div className="w-full h-full flex-[7]">
+            <AuctionCardsGame />
+          </div>
+          <div className="h-full w-full flex-[3] ">
+            {children}
+          </div>
         </CardsGame>
       )}
 

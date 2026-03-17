@@ -24,6 +24,7 @@ import { MotionBox } from '~shared/ui/motion-box'
 import { cn, getHEXColor, hexToRgba } from '~shared/utils'
 
 import { GAME_CARDS_BG_ICONS } from '../../constants/game-cards-icons'
+import { useAuctionGameContext } from '../../context/auction-game-context'
 import { useAuctionCardsGame } from '../../hooks/use-auction-cards-game'
 import { startWinnerConfetti } from '../../utils/cards-game-confetti'
 
@@ -259,35 +260,36 @@ type GameCardControlsPanelProps = {
 function GameCardControlsPanel(props: GameCardControlsPanelProps) {
   const { onConfirm, onClose } = props
 
-  const game = useAuctionCardsGame()
+  const auctionGame = useAuctionGameContext()
+  const cardsGame = useAuctionCardsGame()
 
-  const currentCardIndex = game.state.choosedCardUnit?.id ?? -1
+  const currentCardIndex = cardsGame.state.choosedCardUnit?.id ?? -1
   const isPossibleToSwapLeft = currentCardIndex > 1
-  const isPossibleToSwapRight = currentCardIndex >= 1 && currentCardIndex < game.state.cardsUnits.length
+  const isPossibleToSwapRight = currentCardIndex >= 1 && currentCardIndex < cardsGame.state.cardsUnits.length
 
   const swapToLeft = () => {
     if (!isPossibleToSwapLeft)
       return
 
-    const backwardCard = game.state.cardsUnits[currentCardIndex - 2]
+    const backwardCard = cardsGame.state.cardsUnits[currentCardIndex - 2]
 
-    game.actions.chooseCard(backwardCard)
+    cardsGame.actions.chooseCard(backwardCard)
   }
 
   const swapToRight = () => {
     if (!isPossibleToSwapRight)
       return
 
-    const forwardCard = game.state.cardsUnits[currentCardIndex]
+    const forwardCard = cardsGame.state.cardsUnits[currentCardIndex]
 
-    game.actions.chooseCard(forwardCard)
+    cardsGame.actions.chooseCard(forwardCard)
   }
 
   const confirmChoice = async () => {
-    if (!game.state.choosedCardUnit)
+    if (!cardsGame.state.choosedCardUnit)
       return
 
-    const response = await game.actions.confirmCardChoice(game.state.choosedCardUnit.auctionSlotId)
+    const response = await cardsGame.actions.confirmCardChoice(cardsGame.state.choosedCardUnit.auctionSlotId)
     if (response?.error || !response)
       return
 
@@ -303,7 +305,7 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
       <div className="absolute inline-flex gap-x-1 items-center left-1/2 -translate-x-1/2 top-1/2 -translate-y-[var(--game-card-height)] z-[100]">
         <NumberFlow className="font-azeret-mono text-white/80" value={((currentCardIndex) ?? 0)} />
         <Text className="font-azeret-mono text-gray-accent">
-          {`/${game.state.cardsUnits.length}`}
+          {`/${cardsGame.state.cardsUnits.length}`}
         </Text>
       </div>
 
@@ -311,14 +313,14 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
         className="absolute top-1/2 -translate-y-1/2 left-[calc(50%-var(--game-card-width)-1rem)] z-[100]"
         isIconOnly
         icon={<Icons.AltArrowLeft />}
-        disabled={!isPossibleToSwapLeft || game.queryState.isLoading}
+        disabled={!isPossibleToSwapLeft || auctionGame.state.playMutationState.isLoading}
         onClick={swapToLeft}
       />
       <Button
         className="absolute top-1/2 -translate-y-1/2 right-[calc(50%-var(--game-card-width)-1rem)] z-[100]"
         isIconOnly
         icon={<Icons.AltArrowRight />}
-        disabled={!isPossibleToSwapRight || game.queryState.isLoading}
+        disabled={!isPossibleToSwapRight || auctionGame.state.playMutationState.isLoading}
         onClick={swapToRight}
       />
 
@@ -327,7 +329,7 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
         icon={<Icons.LargeCross />}
         size="sm"
         isIconOnly
-        disabled={game.queryState.isLoading}
+        disabled={auctionGame.state.playMutationState.isLoading}
         onClick={onClose}
       />
 
@@ -336,7 +338,7 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
         className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-[calc(50%-var(--game-card-height))] animate-pulse hover:animate-none z-[100]"
         icon={<Icons.LargeCross />}
         size="sm"
-        loading={game.queryState.isLoading}
+        loading={auctionGame.state.playMutationState.isLoading}
         onClick={confirmChoice}
       >
         Подтвердить выбор

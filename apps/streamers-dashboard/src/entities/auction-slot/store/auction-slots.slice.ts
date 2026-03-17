@@ -15,7 +15,7 @@ import { AUCTION_SLOTS_SLICE_INITIAL_STATE as initialState } from '../constants'
 
 type UpdateAlivedSlotsActionPayload = {
   data: number[]
-  mode: 'update' | 'delete'
+  mode: 'add' | 'delete'
 }
 
 const slice = createSlice({
@@ -107,20 +107,8 @@ const slice = createSlice({
         return
 
       switch (mode) {
-        case 'update': {
-          const updatedSlotsIdsCollection = new Set(data)
-
-          const updatedSlotsIds = state.alivedSlotsIds.filter((slotId) => {
-            const isShouldBeUpdated = updatedSlotsIdsCollection.has(slotId)
-
-            if (!isShouldBeUpdated)
-              return false
-
-            updatedSlotsIdsCollection.delete(slotId)
-            return true
-          })
-
-          state.alivedSlotsIds = [...state.alivedSlotsIds, ...updatedSlotsIds, ...updatedSlotsIdsCollection.values()]
+        case 'add': {
+          state.alivedSlotsIds = [...state.alivedSlotsIds, ...data]
 
           break
         }
@@ -138,20 +126,8 @@ const slice = createSlice({
         return
 
       switch (mode) {
-        case 'update': {
-          const updatedSlotsIdsCollection = new Set(data)
-
-          const updatedSlotsIds = state.droppedSlotsIds.filter((slotId) => {
-            const isShouldBeUpdated = updatedSlotsIdsCollection.has(slotId)
-
-            if (!isShouldBeUpdated)
-              return false
-
-            updatedSlotsIdsCollection.delete(slotId)
-            return true
-          })
-
-          state.droppedSlotsIds = [...state.droppedSlotsIds, ...updatedSlotsIds, ...updatedSlotsIdsCollection.values()]
+        case 'add': {
+          state.droppedSlotsIds = [...state.droppedSlotsIds, ...data]
 
           break
         }

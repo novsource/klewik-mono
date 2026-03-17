@@ -18,6 +18,9 @@ import { Icons } from '~shared/ui/icons'
 import { ShadowVirtualList } from '~shared/ui/shadow-virtual-list'
 import type { VirtualListRenderFunction } from '~shared/ui/virtual-list'
 
+import { getPercentValue } from '~shared/utils/common'
+
+import { useAuctionGameContext } from '../../context/auction-game-context'
 import { useAuctionWheelGame } from '../../hooks/use-auction-wheel-game'
 import { CardsGameListCard } from '../cards/cards-game-list-card.ui'
 import { WheelSlotCard } from '../cards/wheel-slot-card.ui'
@@ -71,32 +74,27 @@ type BaseGameSlotsListProps = {
 function BaseGameSlotsList(props: BaseGameSlotsListProps) {
   const { data } = props
 
-  const auctionGameType = useStoreSelector(auctionGamesSelectors.getGame)
-  const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-  const storedPointsSum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
+  const auctionGame = useAuctionGameContext()
+
   const { dropoutSlotsIds } = useStoreSelector(auctionSelectors.getAuctionInfo)
 
+  const storedPointsSum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
+
   const droppedSlotIdsCollection = useMemo<Set<number>>(() => {
-    const result = new Set<number>()
-
-    dropoutSlotsIds.forEach((slotId) => {
-      result.add(slotId)
-    })
-
-    return result
+    return new Set(dropoutSlotsIds)
   }, [dropoutSlotsIds])
 
   const winPercentsBounds = useMemo(() => {
-    if (storedAuctionSlots.length === 0)
+    if (auctionGame.state.slots.alived.length === 0)
       return { min: 0, max: 0 }
 
-    const sortedSlots = [...storedAuctionSlots].sort((a, b) => a.points - b.points)
+    const sortedSlots = [...auctionGame.state.slots.alived].sort((a, b) => a.points - b.points)
 
-    const minPercents = (sortedSlots[0].points / storedPointsSum) * 100
+    const minPercents = getPercentValue(storedPointsSum, sortedSlots[0].points) * 100
     const maxPercents = (sortedSlots[sortedSlots.length - 1].points / storedPointsSum) * 100
 
     return { min: minPercents, max: maxPercents }
-  }, [storedPointsSum, storedAuctionSlots])
+  }, [storedPointsSum, auctionGame.state.slots.alived])
 
   if (data.length === 0) {
     return (
@@ -119,15 +117,20 @@ function BaseGameSlotsList(props: BaseGameSlotsListProps) {
 
   const renderGameSlotCard: VirtualListRenderFunction<WheelSlot | AuctionSlot> = (slots, virtualizedItem) => {
     const slot = slots[virtualizedItem.index]
-    const isDropped = droppedSlotIdsCollection.has(slot.id)
 
-    switch (auctionGameType) {
+    const isWinnerExist = auctionGame.state.slots.winner !== null
+    const isDropped = isWinnerExist || droppedSlotIdsCollection.has(slot.id)
+
+    const isWinner = auctionGame.state.slots.winner?.id === slot.id
+
+    switch (auctionGame.state.game) {
       case 'wheel': {
         return (
           <WheelSlotCard
             wheelSlot={slot as WheelSlot}
             winPercentsBounds={winPercentsBounds}
             isDropped={isDropped}
+            isWinner={isWinner}
           />
         )
       }
@@ -137,6 +140,7 @@ function BaseGameSlotsList(props: BaseGameSlotsListProps) {
             key={slot.title}
             auctionSlot={slot as AuctionSlot}
             isDropped={isDropped}
+            isWinner={isWinner}
             winPercentsBounds={winPercentsBounds}
           />
         )

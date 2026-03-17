@@ -1,4 +1,5 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import { splittedAuctionGamesApi as auctionGamesApi } from '~entities/games/api'
 import { auctionGamesReducer } from '~entities/games/store'
 
 import { globalDialogsReducer } from '~app/components/global-dialogs/store/global-dialogs.slice'
@@ -41,6 +42,7 @@ const rootReducer = combineReducers({
   [auctionApi.reducerPath]: auctionApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [auctionSlotsApi.reducerPath]: auctionSlotsApi.reducer,
+  [auctionGamesApi.reducerPath]: auctionGamesApi.reducer,
   [integrationsApi.reducerPath]: integrationsApi.reducer,
   [donationsApi.reducerPath]: donationsApi.reducer,
   [donationsSSEApi.reducerPath]: donationsSSEApi.reducer,
@@ -95,6 +97,7 @@ export const createStore = () => configureStore({
         auctionApi.middleware,
         authApi.middleware,
         auctionSlotsApi.middleware,
+        auctionGamesApi.middleware,
         donationsApi.middleware,
         wheelApi.middleware,
         integrationsApi.middleware,

@@ -1,11 +1,8 @@
 import { useMemo } from 'react'
 
+import { useAuctionGameContext } from '~pages/dashboard/games/context/auction-game-context'
 import { useAuctionCardsGame } from '~pages/dashboard/games/hooks/use-auction-cards-game'
 import { controlWheelTabStyles } from '~pages/dashboard/games/styles'
-
-import { auctionSlotsSelectors } from '~entities/auction-slot/store'
-
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
@@ -24,10 +21,11 @@ export const CardsGameControllers = () => {
 }
 
 function ShuffleCardsButton() {
-  const cardsGame = useAuctionCardsGame()
-  const alivedSlots = useStoreSelector(auctionSlotsSelectors.getAlivedSlots)
+  const auctionGame = useAuctionGameContext()
 
-  const isDisabled = alivedSlots.length < 2
+  const cardsGame = useAuctionCardsGame()
+
+  const isDisabled = auctionGame.state.slots.alived.length < 2 || auctionGame.state.slots.winner !== null
 
   const shuffleCards = () => {
     if (isDisabled)
