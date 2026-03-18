@@ -6,6 +6,8 @@ import z from 'zod'
 
 import { DonationsStats } from '~widgets/dashboard-header/ui/donations-stats'
 
+import { DonationCodeInfoDrawer } from '~features/donations/check-donation-code/ui'
+
 import { donationsSelectors } from '~entities/donation/store'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
@@ -64,11 +66,14 @@ export const AuctionDonationsPage = () => {
         <MediaQueryViewToggler.MatchedItem>
           <PageHeader />
 
-          <DonationsStatusFilterSelect
-            className="justify-self-end"
-            status={donationsFilterValue}
-            onValueChange={setDonationsFilterValue}
-          />
+          <Flex className="gap-x-3 justify-self-end">
+            <DonationsStatusFilterSelect
+              status={donationsFilterValue}
+              onValueChange={setDonationsFilterValue}
+            />
+            <DonationCodeInfoDrawer />
+          </Flex>
+
         </MediaQueryViewToggler.MatchedItem>
 
         <MediaQueryViewToggler.NotMatchedItem>

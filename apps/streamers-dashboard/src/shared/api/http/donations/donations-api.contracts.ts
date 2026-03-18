@@ -31,8 +31,8 @@ const DonationDTOSchema = z.object({
   messageType: z.enum(['audio', 'empty', 'text']),
   amount: z.number(),
   currency: z.string(),
-  createdAt: z.string().date(),
-  updatedAt: z.string().date(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 })
 
 export const ProcessedDonationDTOSchema = DonationDTOSchema.extend({
@@ -44,5 +44,18 @@ export const ProcessedDonationDTOSchema = DonationDTOSchema.extend({
     status: z.enum(
       zodEnum<ProcessedDonationDTOStatus>(processedDonationStatuses),
     ),
+    addedPoints: z.number().nullable(),
+    title: z.string().max(40).nullable(),
+    donationCode: z.string().max(8).nullable(),
   }),
+})
+
+export const DonationCodeDTOSchema = z.object({
+  id: z.number(),
+  auctionId: z.number(),
+  title: z.string(),
+  code: z.string().length(8),
+  slotId: z.number().nullable(),
+  createdAt: z.iso.datetime(),
+  isUsed: z.boolean(),
 })

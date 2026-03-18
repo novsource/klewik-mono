@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
-import { useMediaQuery } from '~shared/hooks'
-
 type MediaQueryViewTogglerContextState = {
   isMatched: boolean
 }
@@ -22,14 +20,12 @@ export const useMediaQuerySwitcherContext = () => {
 }
 
 type MediaQueryViewTogglerContextProviderProps = {
-  query: string
+  isMatched: boolean
   children: ReactNode
 }
 
 export const MediaQueryViewTogglerContextProvider = (props: MediaQueryViewTogglerContextProviderProps) => {
-  const { query, children } = props
-
-  const isMatched = useMediaQuery(query)
+  const { isMatched, children } = props
 
   const contextValue = useMemo(() => ({ isMatched }), [isMatched])
 

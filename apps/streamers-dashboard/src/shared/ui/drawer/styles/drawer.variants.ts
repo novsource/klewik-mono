@@ -40,7 +40,7 @@ export const drawerViewportVariants = cva<DrawerSideVariants>([
 
 export const drawerPopupVariants = cva<DrawerSideVariants & DrawerSizeVariants>([
   'text-gray-900',
-  'outline-1 outline-gray overflow-y-auto overscroll-contain touch-auto',
+  'outline-1 outline-dark-light overflow-y-auto overscroll-contain touch-auto',
   'transition-transform duration-[450ms] ease-[cubic-bezier(0.32,0.72,0,1)]',
   'data-[swiping]:select-none data-[ending-style]:duration-[calc(var(--drawer-swipe-strength)*400ms)]',
 ], {
@@ -51,7 +51,8 @@ export const drawerPopupVariants = cva<DrawerSideVariants & DrawerSizeVariants>(
     },
     side: {
       right: [
-        'bg-dark-foreground p-6',
+        'bg-dark-foreground p-6 rounded-small',
+        'landtop:max-w-[500px] desktop:max-w-[550px] tablet:max-w-[450px]',
         '[transform:translateX(var(--drawer-swipe-movement-x))] data-[ending-style]:[transform:translateX(calc(100%-var(--bleed)+var(--viewport-padding)))] data-[starting-style]:[transform:translateX(calc(100%-var(--bleed)+var(--viewport-padding)))]',
         '[--bleed:3rem] supports-[-webkit-touch-callout:none]:[--bleed:0px]',
         'supports-[-webkit-touch-callout:none]:mr-0 supports-[-webkit-touch-callout:none]:w-[20rem] supports-[-webkit-touch-callout:none]:max-w-[calc(100vw-20px)] supports-[-webkit-touch-callout:none]:rounded-[10px] supports-[-webkit-touch-callout:none]:pr-6',
@@ -64,7 +65,7 @@ export const drawerPopupVariants = cva<DrawerSideVariants & DrawerSizeVariants>(
   compoundVariants: [{
     size: 'default',
     side: 'right',
-    className: '-mr-[3rem] w-[calc(20rem+3rem)] max-w-[calc(100vw-3rem+3rem)] pr-[calc(1.5rem+3rem)] h-full',
+    className: '-mr-[3rem] w-3/4 max-w-[calc(100vw-3rem+3rem)] pr-[calc(1.5rem+3rem)] h-full',
   }, {
     size: 'full',
     side: 'right',

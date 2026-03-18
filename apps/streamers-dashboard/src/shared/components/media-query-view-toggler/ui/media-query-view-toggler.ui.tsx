@@ -1,18 +1,24 @@
 import type { ReactNode } from 'react'
 
+import { useMediaQuery } from '~shared/hooks'
+
+import { isFunction } from '~shared/utils'
+
 import { MediaQueryViewTogglerContextProvider, useMediaQuerySwitcherContext } from '../context/media-query-view-toggler.context'
 
 export type MediaQueryViewTogglerProps = {
   query: string
-  children: ReactNode
+  children: ReactNode | ((isMatched: boolean) => ReactNode)
 }
 
 export const MediaQueryViewToggler = (props: MediaQueryViewTogglerProps) => {
   const { query, children } = props
 
+  const isMatched = useMediaQuery(query)
+
   return (
-    <MediaQueryViewTogglerContextProvider query={query}>
-      {children}
+    <MediaQueryViewTogglerContextProvider isMatched={isMatched}>
+      {isFunction(children) ? children(isMatched) : children}
     </MediaQueryViewTogglerContextProvider>
   )
 }
