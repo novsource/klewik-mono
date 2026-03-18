@@ -34,19 +34,16 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
   const { slotsClassnames, ...tabsContentProps } = props
 
   const slots = useStoreSelector(auctionSlotsSelectors.getSlots)
-  const droppedSlotsIds = useStoreSelector(auctionSlotsSelectors.getDroppedSlotsIds)
 
   const [slotCategory, setSlotCategory] = useState<'all' | 'active' | 'dropped'>('all')
   const [searchQuery, setSearchQuery] = useState('')
-
-  const droppedSlotIdsCollection = useMemo<Set<number>>(() => new Set(droppedSlotsIds), [droppedSlotsIds])
 
   const sortedSlots = useSortingSlots(slots, { type: 'descending', field: 'points' })
 
   const localSearchedSlots = useLocalSearchFilter(searchQuery, sortedSlots, (query, slot) => {
     const isTitleIncludesSearchQuery = slot.title.toLowerCase().includes(query.toLowerCase())
 
-    const isSlotDropped = droppedSlotIdsCollection.has(slot.id)
+    const isSlotDropped = slot.isDropped
     const isSlotIncludeCategory = slotCategory === 'all' ? true : slotCategory === 'active' ? !isSlotDropped : isSlotDropped
 
     return isTitleIncludesSearchQuery && isSlotIncludeCategory

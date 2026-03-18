@@ -32,6 +32,7 @@ const auctionSlice = createSlice({
     getInfo: state => state.info,
     getAuctionUUID: state => state.info.uuid,
     getIsBetsClosed: state => state.info.isBetsClosed,
+    getWinnerId: state => state.info.winnerSlotId,
     getIsAuctionEnded: state => state.info.isEnded,
   },
 })

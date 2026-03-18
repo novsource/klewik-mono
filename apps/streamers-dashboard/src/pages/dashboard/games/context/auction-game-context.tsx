@@ -48,8 +48,6 @@ export const AuctionGameContextProvider = (props: AuctionGameContextProviderProp
   const { uuid: auctionUUID, winnerSlotId } = useStoreSelector(auctionSelectors.getInfo)
 
   const allAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-  const alivedSlotsIds = useStoreSelector(auctionSlotsSelectors.getAlivedSlotsIds)
-  const droppedSlotsIds = useStoreSelector(auctionSlotsSelectors.getDroppedSlotsIds)
 
   const gameSlice = useStoreSelector(state => state.auctionGames)
 
@@ -61,20 +59,20 @@ export const AuctionGameContextProvider = (props: AuctionGameContextProviderProp
   const winner = winnerSlotId !== null ? allAuctionSlots.find(slot => slot.id === winnerSlotId)! : null
 
   const alivedSlots = useMemo(() => {
-    return allAuctionSlots.filter(slot => alivedSlotsIds.includes(slot.id))
-  }, [allAuctionSlots, alivedSlotsIds])
+    return allAuctionSlots.filter(slot => slot.isAlived)
+  }, [allAuctionSlots])
 
   const droppedSlots = useMemo(() => {
-    return allAuctionSlots.filter(slot => droppedSlotsIds.includes(slot.id))
-  }, [allAuctionSlots, droppedSlotsIds])
+    return allAuctionSlots.filter(slot => slot.isDropped)
+  }, [allAuctionSlots])
 
   const dropSlot = useCallback(async (...args: Parameters<typeof dropSlotMutation>) => {
     const [{ slotId, auctionUUID }] = args
 
-    if (alivedSlotsIds.length === 2) {
-      const winnerId = alivedSlotsIds.filter(id => id !== slotId)[0]
+    if (alivedSlots.length === 2) {
+      const winner = alivedSlots.filter(slot => slot.id !== slotId)[0]
 
-      const sendWinnerResponse = await sendAuctionWinnerMutation({ auctionUUID, slotId: winnerId })
+      const sendWinnerResponse = await sendAuctionWinnerMutation({ auctionUUID, slotId: winner.id })
 
       if (sendWinnerResponse.error) {
         return sendWinnerResponse
@@ -86,7 +84,7 @@ export const AuctionGameContextProvider = (props: AuctionGameContextProviderProp
         onWinner?.(winnerSlot)
       }
 
-      updateInfo({ winnerSlotId: winnerId })
+      updateInfo({ winnerSlotId: winner.id })
     }
 
     const response = await dropSlotMutation(...args)
@@ -103,7 +101,6 @@ export const AuctionGameContextProvider = (props: AuctionGameContextProviderProp
   }, [
     updateInfo,
     dropSlotMutation,
-    alivedSlotsIds,
     alivedSlots,
     allAuctionSlots,
     onDrop,
@@ -133,7 +130,7 @@ export const AuctionGameContextProvider = (props: AuctionGameContextProviderProp
 
   const play = useCallback(async (slotId: number) => {
     const isSlotAlreadyWasPlayed
-      = droppedSlotsIds.includes(slotId)
+      = droppedSlots.some(slot => slot.id === slotId)
         || gameSlice.slots.winner?.id === slotId
 
     if (isSlotAlreadyWasPlayed) {
@@ -151,7 +148,7 @@ export const AuctionGameContextProvider = (props: AuctionGameContextProviderProp
   }, [
     gameSlice.mode,
     gameSlice.slots.winner,
-    droppedSlotsIds,
+    droppedSlots,
     auctionUUID,
     dropSlot,
     sendWinnerSlot,
