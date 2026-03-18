@@ -1,7 +1,3 @@
-import { auctionSlotsSelectors } from '~entities/auction-slot/store'
-
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
 import { Flex } from '~shared/ui/flex'
 
 import { cn } from '~shared/utils'
@@ -12,14 +8,12 @@ import { AuctionGame } from './auction-game.ui'
 import { GameTabs } from './tabs/game-tabs.ui'
 
 export const AuctionGamesPage = () => {
-  const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-
   return (
     <div className={cn(auctionWheelPageStyles.pageWrapper)}>
       <Flex className={cn(auctionWheelPageStyles.wheelWrapper)}>
 
         <AuctionGameContextProvider>
-          <AuctionGame auctionSlots={auctionSlots}>
+          <AuctionGame>
             <div className={cn(auctionWheelPageStyles.wheelTabsWrapper)}>
               <GameTabs />
             </div>

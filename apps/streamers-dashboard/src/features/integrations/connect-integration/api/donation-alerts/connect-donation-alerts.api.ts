@@ -4,7 +4,7 @@ import { splittedIntegrationsApi } from '~entities/integrations/api'
 import { integrationsActions } from '~entities/integrations/store'
 
 type ConnectSSEPlatformQueryArgs = {
-  auctionUUID: Auction['auctionUUID']
+  auctionUUID: Auction['uuid']
 }
 
 type ConnectSSEPlatformQueryResult = void

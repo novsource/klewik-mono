@@ -19,6 +19,7 @@ export const AuctionSchema = z.object({
   id: z.number(),
   uuid: z.string().uuid(),
   ownerId: z.string().uuid(),
+  winnerSlotId: z.number().nullable(),
   isBetsClosed: z.boolean(),
   isEnded: z.boolean(),
   createdAt: z.iso.datetime(),

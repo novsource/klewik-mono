@@ -20,7 +20,7 @@ import { Icons } from '~shared/ui/icons'
 import { useDashboardLayout } from '../hooks/use-dashboard-layout'
 
 export const DashboardLayout = () => {
-  const { auctionUUID } = useParams() as { auctionUUID: Auction['auctionUUID'] }
+  const { auctionUUID } = useParams() as { auctionUUID: Auction['uuid'] }
 
   const { isSSEConnected } = useDashboardLayout(auctionUUID)
 

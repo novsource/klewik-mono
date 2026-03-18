@@ -1,9 +1,10 @@
-import { splittedAuctionSlotsApi } from '~entities/auction-slot/api'
-import type { AuctionSlot } from '~entities/auction-slot/model'
 import type { Auction } from '~entities/auction/model'
 
+import { splittedAuctionSlotsApi } from '~entities/auction-slot/api'
+import type { AuctionSlot } from '~entities/auction-slot/model'
+
 type DeleteSlotRequestArgs = {
-  auctionUUID: Auction['auctionUUID']
+  auctionUUID: Auction['uuid']
   slotId: AuctionSlot['id']
 }
 

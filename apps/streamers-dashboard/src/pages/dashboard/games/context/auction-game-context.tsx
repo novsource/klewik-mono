@@ -8,6 +8,7 @@ import { useDropoutSlotMutation, useSetAuctionWinnerMutation } from '~entities/g
 
 import { auctionActions, auctionSelectors } from '~entities/auction/store'
 
+import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useMutation } from '~shared/hooks'
@@ -37,12 +38,14 @@ const [Provider, useAuctionGameContext] = createReactContext<AuctionGameContextV
 
 type AuctionGameContextProviderProps = {
   children: ReactNode
+  onDrop?: (slot: AuctionSlot) => void
+  onWinner?: (slot: AuctionSlot) => void
 }
 
 export const AuctionGameContextProvider = (props: AuctionGameContextProviderProps) => {
-  const { children } = props
+  const { children, onWinner, onDrop } = props
 
-  const { auctionUUID, winnerSlotId } = useStoreSelector(auctionSelectors.getAuctionInfo)
+  const { uuid: auctionUUID, winnerSlotId } = useStoreSelector(auctionSelectors.getInfo)
 
   const allAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const alivedSlotsIds = useStoreSelector(auctionSlotsSelectors.getAlivedSlotsIds)
@@ -50,7 +53,7 @@ export const AuctionGameContextProvider = (props: AuctionGameContextProviderProp
 
   const gameSlice = useStoreSelector(state => state.auctionGames)
 
-  const { setAuction } = useActionCreators(auctionActions)
+  const { updateInfo } = useActionCreators(auctionActions)
 
   const [dropSlotMutation] = useDropoutSlotMutation()
   const [sendAuctionWinnerMutation] = useSetAuctionWinnerMutation()
@@ -77,7 +80,13 @@ export const AuctionGameContextProvider = (props: AuctionGameContextProviderProp
         return sendWinnerResponse
       }
 
-      setAuction({ winnerSlotId: winnerId })
+      const winnerSlot = allAuctionSlots.find(slot => slot.id === slotId)
+
+      if (winnerSlot) {
+        onWinner?.(winnerSlot)
+      }
+
+      updateInfo({ winnerSlotId: winnerId })
     }
 
     const response = await dropSlotMutation(...args)
@@ -86,12 +95,21 @@ export const AuctionGameContextProvider = (props: AuctionGameContextProviderProp
       return response
     }
 
-    const updatedDroppedSlotsIds = [...droppedSlotsIds, slotId]
+    const droppedSlot = alivedSlots.find(slot => slot.id === slotId)!
 
-    setAuction({ dropoutSlotsIds: updatedDroppedSlotsIds })
+    onDrop?.(droppedSlot)
 
     return response
-  }, [setAuction, dropSlotMutation, alivedSlotsIds, droppedSlotsIds, sendAuctionWinnerMutation])
+  }, [
+    updateInfo,
+    dropSlotMutation,
+    alivedSlotsIds,
+    alivedSlots,
+    allAuctionSlots,
+    onDrop,
+    onWinner,
+    sendAuctionWinnerMutation,
+  ])
 
   const sendWinnerSlot = useCallback(async (...args: Parameters<typeof sendAuctionWinnerMutation>) => {
     const response = await sendAuctionWinnerMutation(...args)
@@ -102,10 +120,16 @@ export const AuctionGameContextProvider = (props: AuctionGameContextProviderProp
 
     const [{ slotId }] = args
 
-    setAuction({ winnerSlotId: slotId })
+    updateInfo({ winnerSlotId: slotId })
+
+    const winnerSlot = allAuctionSlots.find(slot => slot.id === slotId)
+
+    if (winnerSlot) {
+      onWinner?.(winnerSlot)
+    }
 
     return response
-  }, [sendAuctionWinnerMutation, setAuction])
+  }, [sendAuctionWinnerMutation, allAuctionSlots, onWinner, updateInfo])
 
   const play = useCallback(async (slotId: number) => {
     const isSlotAlreadyWasPlayed

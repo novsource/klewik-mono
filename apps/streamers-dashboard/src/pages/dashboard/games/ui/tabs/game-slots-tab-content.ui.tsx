@@ -5,8 +5,6 @@ import { useMemo, useState } from 'react'
 
 import { useSortingSlots } from '~pages/dashboard/slots/lib'
 
-import { auctionSelectors } from '~entities/auction/store'
-
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useDebounceCallback } from '~shared/hooks'
@@ -36,20 +34,12 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
   const { slotsClassnames, ...tabsContentProps } = props
 
   const slots = useStoreSelector(auctionSlotsSelectors.getSlots)
-  const { dropoutSlotsIds } = useStoreSelector(auctionSelectors.getAuctionInfo)
+  const droppedSlotsIds = useStoreSelector(auctionSlotsSelectors.getDroppedSlotsIds)
 
   const [slotCategory, setSlotCategory] = useState<'all' | 'active' | 'dropped'>('all')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const droppedSlotIdsCollection = useMemo<Set<number>>(() => {
-    const result = new Set<number>()
-
-    dropoutSlotsIds.forEach((slotId) => {
-      result.add(slotId)
-    })
-
-    return result
-  }, [dropoutSlotsIds])
+  const droppedSlotIdsCollection = useMemo<Set<number>>(() => new Set(droppedSlotsIds), [droppedSlotsIds])
 
   const sortedSlots = useSortingSlots(slots, { type: 'descending', field: 'points' })
 

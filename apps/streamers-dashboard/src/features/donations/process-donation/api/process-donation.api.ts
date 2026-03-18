@@ -7,26 +7,26 @@ import type { DonationCode, ProcessedDonation } from '~entities/donation/model'
 
 type ProcessDonationMutationArgs = Omit<ProcessDonationForm, 'points'> & {
   id: ProcessedDonation['id']
-  auctionUUID: Auction['auctionUUID']
+  auctionUUID: Auction['uuid']
   title: string
   points: number
 }
 
 type ApproveDonationMutationArgs = {
   id: ProcessedDonation['id']
-  auctionUUID: Auction['auctionUUID']
+  auctionUUID: Auction['uuid']
   title: string
   points: number
 }
 
 type DeclineDonationMutationArgs = {
   id: ProcessedDonation['id']
-  auctionUUID: Auction['auctionUUID']
+  auctionUUID: Auction['uuid']
 }
 
 type GetDonationCodeInfo = {
   code: string
-  auctionUUID: Auction['auctionUUID']
+  auctionUUID: Auction['uuid']
 }
 
 const processDonationApi = splittedDonationApi.injectEndpoints({

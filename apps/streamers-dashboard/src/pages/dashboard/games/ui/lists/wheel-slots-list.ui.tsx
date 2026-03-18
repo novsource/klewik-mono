@@ -2,8 +2,6 @@ import { useMemo } from 'react'
 
 import { auctionGamesSelectors } from '~entities/games/store'
 
-import { auctionSelectors } from '~entities/auction/store'
-
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
@@ -76,13 +74,7 @@ function BaseGameSlotsList(props: BaseGameSlotsListProps) {
 
   const auctionGame = useAuctionGameContext()
 
-  const { dropoutSlotsIds } = useStoreSelector(auctionSelectors.getAuctionInfo)
-
   const storedPointsSum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
-
-  const droppedSlotIdsCollection = useMemo<Set<number>>(() => {
-    return new Set(dropoutSlotsIds)
-  }, [dropoutSlotsIds])
 
   const winPercentsBounds = useMemo(() => {
     if (auctionGame.state.slots.alived.length === 0)
@@ -119,7 +111,7 @@ function BaseGameSlotsList(props: BaseGameSlotsListProps) {
     const slot = slots[virtualizedItem.index]
 
     const isWinnerExist = auctionGame.state.slots.winner !== null
-    const isDropped = isWinnerExist || droppedSlotIdsCollection.has(slot.id)
+    const isDropped = isWinnerExist || slot.isDropped
 
     const isWinner = auctionGame.state.slots.winner?.id === slot.id
 

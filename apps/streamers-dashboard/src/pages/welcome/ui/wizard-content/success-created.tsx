@@ -26,7 +26,7 @@ type WizardSuccessCreatedItemProps = Omit<WizardItemProps, 'value' | 'children'>
 export const WizardSuccessCreatedItem = (props: WizardSuccessCreatedItemProps) => {
   const { className, ...restProps } = props
 
-  const auctionInfo = useStoreSelector(auctionSelectors.getAuctionInfo)
+  const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)
 
   const inputNumberRef = useRef<HTMLInputElement>(null)
   const inputURLRef = useRef<HTMLInputElement>(null)
@@ -50,7 +50,7 @@ export const WizardSuccessCreatedItem = (props: WizardSuccessCreatedItemProps) =
           <Input
             ref={inputNumberRef}
             disabled
-            value={auctionInfo.auctionUUID}
+            value={auctionUUID}
             slotClassNames={{ base: 'w-full', wrapper: 'pr-0' }}
             label={{ id: 'auctionUUID', value: 'Номер аукциона' }}
             endContent={(
@@ -71,7 +71,7 @@ export const WizardSuccessCreatedItem = (props: WizardSuccessCreatedItemProps) =
               id: 'auctionURL',
               value: 'Ссылка на аукцион для участников',
             }}
-            value={`${import.meta.env.VITE_AUCTIONS_VIEWER_URL}/${auctionInfo.auctionUUID}`}
+            value={`${import.meta.env.VITE_AUCTIONS_VIEWER_URL}/${auctionUUID}`}
             endContent={(
               <CopyToClipboardButton
                 className="pointer-events-auto"
@@ -82,7 +82,7 @@ export const WizardSuccessCreatedItem = (props: WizardSuccessCreatedItemProps) =
           />
         </Flex>
       </Flex>
-      <Link to={`/dashboard/${auctionInfo.auctionUUID}`}>
+      <Link to={`/dashboard/${auctionUUID}`}>
         <Button
           className="w-full"
           variant="action"

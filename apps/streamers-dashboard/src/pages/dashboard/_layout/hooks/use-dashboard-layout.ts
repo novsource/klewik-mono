@@ -13,7 +13,7 @@ export type UseDashboardLayoutReturn = {
   isPending: boolean
 }
 
-export const useDashboardLayout = (auctionUUID: Auction['auctionUUID']): UseDashboardLayoutReturn => {
+export const useDashboardLayout = (auctionUUID: Auction['uuid']): UseDashboardLayoutReturn => {
   const { isAllEventsConnected, connectAll, isPending } = useAppSSE({
     onNewTabLeader: () => {
       connectAll(auctionUUID)
