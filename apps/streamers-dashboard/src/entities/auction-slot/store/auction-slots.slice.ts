@@ -12,6 +12,7 @@ import { getPercentValue } from '~shared/utils/common'
 
 import { getAuctionSlotsThunk } from '../api'
 import { AUCTION_SLOTS_SLICE_INITIAL_STATE as initialState } from '../constants'
+import { transformAuctionSlotDTO } from '../lib'
 
 type UpdateAlivedSlotsActionPayload = {
   data: number[]
@@ -108,7 +109,7 @@ const slice = createSlice({
 
       switch (mode) {
         case 'add': {
-          state.alivedSlotsIds = [...state.alivedSlotsIds, ...data]
+          state.alivedSlotsIds = [...state.alivedSlotsIds.filter(id => !data.includes(id)), ...data]
 
           break
         }
@@ -127,7 +128,7 @@ const slice = createSlice({
 
       switch (mode) {
         case 'add': {
-          state.droppedSlotsIds = [...state.droppedSlotsIds, ...data]
+          state.droppedSlotsIds = [...state.droppedSlotsIds.filter(id => !data.includes(id)), ...data]
 
           break
         }
@@ -200,6 +201,11 @@ const slice = createSlice({
     //     }
     //   }
     // },
+    setSlots(state, action: PayloadAction<AuctionSlotsDTO[]>) {
+      const transformedSlots = action.payload.map(slot => transformAuctionSlotDTO(slot, state.slotsPointsSum))
+
+      state.slots = transformedSlots
+    },
     setSortedSlots(state, action: PayloadAction<AuctionSlot[]>) {
       const payload = action.payload
 

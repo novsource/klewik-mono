@@ -1,46 +1,42 @@
 import type { Auction } from '../model'
 
-import { createAsyncThunk } from '@reduxjs/toolkit'
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { AxiosError, isAxiosError } from 'axios'
-
-import { getAuctionInfo } from '~shared/api/http/auction/auction.api'
 
 import { axiosAuthBaseQuery } from '~shared/lib/redux-toolkit'
 
 import { auctionActions } from '../store'
 
 export type GetAuctionInfoQueryArgs = {
-  auctionUUID: Auction['auctionUUID']
+  auctionUUID: Auction['uuid']
 }
 
-export const getAuctionInfoThunk = createAsyncThunk('auction/getAuctionInfo', async (auctionUUID: string, { rejectWithValue }) => {
-  try {
-    const response = await getAuctionInfo(auctionUUID)
+// export const getAuctionInfoThunk = createAsyncThunk('auction/getAuctionInfo', async (auctionUUID: string, { rejectWithValue }) => {
+//   try {
+//     const response = await getAuctionInfo(auctionUUID)
 
-    if (response.status === 404) {
-      throw new AxiosError('Can\'t get auction info', '404')
-    }
+//     if (response.status === 404) {
+//       throw new AxiosError('Can\'t get auction info', '404')
+//     }
 
-    if (!response.data) {
-      throw new AxiosError('Can\'t get auction info', '500')
-    }
+//     if (!response.data) {
+//       throw new AxiosError('Can\'t get auction info', '500')
+//     }
 
-    return response.data
-  }
-  catch (error) {
-    if (isAxiosError(error)) {
-      return rejectWithValue(error)
-    }
+//     return response.data
+//   }
+//   catch (error) {
+//     if (isAxiosError(error)) {
+//       return rejectWithValue(error)
+//     }
 
-    if (error instanceof Error) {
-      return rejectWithValue(new AxiosError(error.message, '500'))
-    }
-  }
-})
+//     if (error instanceof Error) {
+//       return rejectWithValue(new AxiosError(error.message, '500'))
+//     }
+//   }
+// })
 
 export type UpdateBetsStatusQueryArgs = {
-  auctionUUID: Auction['auctionUUID']
+  auctionUUID: Auction['uuid']
   status: boolean
 }
 
@@ -76,7 +72,7 @@ export const splittedAuctionApi = createApi({
       }),
       onQueryStarted: async ({ status }, { dispatch, queryFulfilled }) => {
         await queryFulfilled
-        dispatch(auctionActions.setAuction({ isBetsClosed: status }))
+        dispatch(auctionActions.updateInfo({ isBetsClosed: status }))
       },
     }),
     search: builder.query<unknown[], SearchQueryArgs>((

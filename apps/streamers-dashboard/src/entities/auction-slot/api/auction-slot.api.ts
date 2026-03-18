@@ -46,7 +46,7 @@ const splittedAuctionSlotsApi = createApi({
       onQueryStarted: async (_, api) => {
         const response = await api.queryFulfilled
 
-        api.dispatch(auctionSlotsActions.addSlots(response.data))
+        api.dispatch(auctionSlotsActions.setSlots(response.data))
       },
     }),
   }),

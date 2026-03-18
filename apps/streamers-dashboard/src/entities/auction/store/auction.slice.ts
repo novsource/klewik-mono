@@ -4,54 +4,35 @@ import type { Auction } from '../model'
 
 import { createSlice } from '@reduxjs/toolkit'
 
-import { getAuctionInfoThunk } from '../api'
+import type { AuctionDTO } from '~shared/api/http/auction'
 
-type AuctionSliceState = {
-  auctionInfo: Auction
-}
+import { AUCTION_SLICE_INITIAL_STATE } from '../constants/slice-initial-state'
+import { transformAuctionDTO } from '../lib'
 
-const initialState: AuctionSliceState = {
-  auctionInfo: {
-    id: 0,
-    auctionUUID: '',
-    dropoutSlotsIds: [],
-    slotsIds: [],
-    winnerSlotId: null,
-    processedDonationsIds: [],
-    ownerId: '',
-    createdAt: '',
-    endedAt: null,
-    isBetsClosed: false,
-    isEnded: false,
-    wheelMode: 'classic',
-  },
+export type AuctionSliceState = {
+  info: Auction
 }
 
 const auctionSlice = createSlice({
   name: 'auction',
-  initialState,
+  initialState: AUCTION_SLICE_INITIAL_STATE,
   reducers: {
-    setAuction(state, action: PayloadAction<Partial<Auction>>) {
-      const auctionData = action.payload
-
-      state.auctionInfo = { ...state.auctionInfo, ...auctionData }
+    updateInfo(state, action: PayloadAction<Partial<Auction>>) {
+      state.info = { ...state.info, ...action.payload }
     },
-    updateWheelMode(state, action: PayloadAction<Auction['wheelMode']>) {
-      state.auctionInfo.wheelMode = action.payload
+    setAuction(state, action: PayloadAction<AuctionDTO>) {
+      const auctionDTO = action.payload
+
+      const transformedData = transformAuctionDTO(auctionDTO)
+
+      state.info = transformedData
     },
   },
   selectors: {
-    getAuctionUUID: state => state.auctionInfo.auctionUUID,
-    getAuctionInfo: state => state.auctionInfo,
-    getIsBetsClosed: state => state.auctionInfo.isBetsClosed,
-    getWheelMode: state => state.auctionInfo.wheelMode,
-  },
-  extraReducers: (builder) => {
-    builder.addCase(getAuctionInfoThunk.fulfilled, (state, action) => {
-      const auctionInfo = action.payload
-
-      state.auctionInfo = auctionInfo!
-    })
+    getInfo: state => state.info,
+    getAuctionUUID: state => state.info.uuid,
+    getIsBetsClosed: state => state.info.isBetsClosed,
+    getIsAuctionEnded: state => state.info.isEnded,
   },
 })
 

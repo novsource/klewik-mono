@@ -1,7 +1,5 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit'
 
-import { auctionActions } from '~entities/auction/store'
-
 import { getPercentValue } from '~shared/utils/common'
 
 import { auctionSlotsActions } from './auction-slots.slice'
@@ -11,32 +9,44 @@ const startSlotsActionsListening = listeningMiddleware.startListening.withTypes<
 
 export const auctionSlotsListenerMiddlewares = [listeningMiddleware.middleware]
 
+// startSlotsActionsListening({
+//   actionCreator: auctionActions.setAuction,
+//   effect: (action, api) => {
+//     const { dropoutSlotsIds, slotsIds } = action.payload
+
+//     if (!slotsIds)
+//       return
+
+//     const alivedSlotsIds = slotsIds.filter(id => !dropoutSlotsIds?.includes(id))
+
+//     api.dispatch(auctionSlotsActions.updateAlivedSlotsIds({
+//       mode: 'add',
+//       data: alivedSlotsIds,
+//     }))
+//   },
+// })
+
 startSlotsActionsListening({
-  actionCreator: auctionActions.setAuction,
+  actionCreator: auctionSlotsActions.addSlots,
   effect: (action, api) => {
-    const { dropoutSlotsIds, slotsIds } = action.payload
-
-    if (!slotsIds)
-      return
-
-    const alivedSlotsIds = slotsIds.filter(id => !dropoutSlotsIds?.includes(id))
+    const slots = action.payload
 
     api.dispatch(auctionSlotsActions.updateAlivedSlotsIds({
       mode: 'add',
-      data: alivedSlotsIds,
+      data: slots.map(slot => slot.id),
     }))
   },
 })
 
-startSlotsActionsListening({
-  actionCreator: auctionActions.setAuction,
-  effect: (action, api) => {
-    api.dispatch(auctionSlotsActions.updateDroppedSlotsIds({
-      mode: 'add',
-      data: action.payload.dropoutSlotsIds ?? [],
-    }))
-  },
-})
+// startSlotsActionsListening({
+//   actionCreator: auctionActions.setAuction,
+//   effect: (action, api) => {
+//     api.dispatch(auctionSlotsActions.updateDroppedSlotsIds({
+//       mode: 'add',
+//       data: action.payload.dropoutSlotsIds ?? [],
+//     }))
+//   },
+// })
 
 startSlotsActionsListening({
   actionCreator: auctionSlotsActions.addSlots,
@@ -94,6 +104,17 @@ startSlotsActionsListening({
     }, [] as typeof slots)
 
     api.dispatch(auctionSlotsActions.updateSlots(updatedSlots))
+  },
+})
+
+startSlotsActionsListening({
+  actionCreator: auctionSlotsActions.setSlots,
+  effect: (action, api) => {
+    const slots = action.payload
+
+    const pointsSum = slots.reduce((sum, slot) => sum + slot.points, 0)
+
+    api.dispatch(auctionSlotsActions.setPointsSum(pointsSum))
   },
 })
 
