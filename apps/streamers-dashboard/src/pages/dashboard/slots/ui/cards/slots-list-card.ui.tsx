@@ -58,7 +58,7 @@ export const AuctionSlotsListCard = (props: AuctionSlotsListCardProps) => {
                 ? <Icons.Crown className="text-orange" />
                 : isDropped
                   ? <Icons.BrokenHeart className="text-gray-light" />
-                  : <Icons.Heart className=" bg-red/10 text-red animate-heartbeating" size="xs" />}
+                  : <Icons.Heart className="  text-red animate-heartbeating" size="xs" />}
             </div>
             <AuctionSlotCardContentInfoDivider />
             <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />

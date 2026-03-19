@@ -252,7 +252,7 @@
 
 @utility animate-heartbeating {
     animation-name: heartbeating;
-    animation-duration: 1.25s;
+    animation-duration: 1.75s;
     animation-iteration-count: infinite;
 }
 

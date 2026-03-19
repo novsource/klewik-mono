@@ -60,7 +60,7 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
   const renderAuctionSlotCard = useCallback(
     (slot: AuctionSlot) => {
       const isWinner = winnerId === slot.id
-      const isSlotDropped = winnerId !== slot.id || slot.isDropped
+      const isSlotDropped = (winnerId !== null && winnerId !== slot.id) || slot.isDropped
 
       return (
         <StartTransitionContainer fallback={(

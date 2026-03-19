@@ -101,13 +101,16 @@ export const ProcessDonationContextProvider = (props: ProcessDonationContextProv
   ])
 
   useEffect(() => {
-    donationCodeQuery(donation.message)
-  }, [donation.id, donation.message, donationCodeQuery])
+    if (donationCodeMutationState.isUninitialized) {
+      donationCodeQuery(donation.message)
+    }
+  }, [donationCodeMutationState, donation.message, donationCodeQuery])
 
   if (donation.id !== processedDonationIdRef.current) {
     processedDonationIdRef.current = donation.id
 
     setDonationCode(null)
+    donationCodeMutationState.reset()
   }
 
   const contextValue = useMemo<ProcessDonationContextState>(() => ({

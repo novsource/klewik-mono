@@ -23,14 +23,13 @@ export const ExportSlotsPopover = (props: ButtonProps) => {
 
   const { exportFile } = useExportSlots({
     serializer: platform ? AUCTION_PLATFORM_SLOTS_EXPORT_SERIALIZER[platform] : JSON.stringify,
-    skipDropped: false,
+    skipDropped,
   })
 
   const isExportButtonDisabled = !platform
 
   return (
     <Popover>
-
       <PopoverTrigger
         render={(
           <Button
@@ -80,7 +79,7 @@ type DisplayedSelectItemData = {
 }
 
 type AuctionPlatformSelectProps = {
-  onSelect?: (value: AuctionPlatform) => void
+  onSelect?: (value: NullablePossible<AuctionPlatform>) => void
 }
 
 const auctionPlatformSelectItems: DisplayedSelectItemData[] = [

@@ -1,5 +1,5 @@
 import type { integrationsPlatforms } from '~shared/constants/integrations'
 
-type IntegrationsPlatforms = (typeof integrationsPlatforms)[number]
+export type IntegrationsPlatforms = (typeof integrationsPlatforms)[number]
 
-export type { IntegrationsPlatforms }
+export type AuctionPlatform = 'pointauc' | 'wheelofnames'
