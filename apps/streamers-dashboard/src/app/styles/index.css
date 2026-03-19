@@ -50,6 +50,7 @@
 
     --radius-*: initial;
     --radius-none: 0px;
+    --radius-xs: 4px;
     --radius-small: 8px;
     --radius-medium: 10px;
     --radius-large: 12.5px;
@@ -65,9 +66,6 @@
     --breakpoint-landtop: 1440px;
     --breakpoint-desktop: 1920px;
     --breakpoint-desktop-lg: 2560px;
-
-    --shadow-*: initial;
-    --shadow-table-border: 0px 4x 0px 0px rgba(85, 85, 85, 0.7);
 
     --font-*: initial;
     --font-golos-f: "Golos Text", sans-serif;

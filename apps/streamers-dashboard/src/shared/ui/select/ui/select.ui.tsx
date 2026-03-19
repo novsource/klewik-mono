@@ -48,6 +48,12 @@ export const SelectValue = (props: SelectValueProps) => {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />
 }
 
+export type SelectLabelProps = SelectPrimitive.Label.Props
+
+export const SelectLabel = (props: SelectLabelProps) => {
+  return <SelectPrimitive.Label data-slot="select-label" {...props} />
+}
+
 export type SelectTriggerProps = SelectPrimitive.Trigger.Props & {
   size?: 'sm' | 'default'
   leftIcon?: ReactNode
@@ -109,7 +115,7 @@ export const SelectContent = (props: SelectContentProps) => {
   return (
     <SelectPrimitive.Portal {...portalProps}>
       <SelectPrimitive.Positioner className={cn(selectPositionerVariants())} sideOffset={12} {...positionerProps}>
-        <SelectPrimitive.Popup className={cn(selectPopupVariants(), className)} {...popupProps}>
+        <SelectPrimitive.Popup className={cn(selectPopupVariants({ className }))} {...popupProps}>
           <SelectPrimitive.ScrollUpArrow />
           {children}
           <SelectPrimitive.ScrollDownArrow />

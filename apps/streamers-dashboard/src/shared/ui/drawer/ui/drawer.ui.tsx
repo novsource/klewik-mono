@@ -2,7 +2,7 @@ import type { DrawerSide, DrawerSize } from '../styles/drawer.variants'
 
 import { useMemo } from 'react'
 
-import { DrawerPreview as DrawerPrimitive } from '@base-ui/react/drawer'
+import { Drawer as DrawerPrimitive } from '@base-ui/react/drawer'
 
 import { cn } from '~shared/utils/react'
 
