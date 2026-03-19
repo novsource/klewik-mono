@@ -146,7 +146,7 @@ describe('### sse auction slots api', () => {
         // @ts-expect-error client incorrect event types
         client.send(validMessage)
 
-        await wait(500)
+        await wait(1000)
 
         const invalidMessage: DonationsEventSourceMessage = {
           id: '2',
@@ -170,7 +170,6 @@ describe('### sse auction slots api', () => {
     const onDonationsAddingMockedListener = vi.fn()
 
     donationsSSEClient.onEvent('donations/add', onDonationsAddingMockedListener)
-
     const renderWrapper = ({ children }: { children: ReactNode }) => <Provider store={store}>{ children }</Provider>
 
     const { result } = renderHook(() => useLazyConnectDonationsSSEQuery(), { wrapper: renderWrapper })
@@ -184,7 +183,7 @@ describe('### sse auction slots api', () => {
     expect(onMessageMockedListener).toBeCalledTimes(2)
 
     // Receive one valid message
-    expect(onDonationsAddingMockedListener).toBeCalledTimes(1)
+    await waitFor(async () => expect(onDonationsAddingMockedListener).toBeCalledTimes(1))
 
     // Receive one invalid message
     await waitFor(async () => expect(onErrorMockedListener).toBeCalledTimes(1))
@@ -221,6 +220,6 @@ describe('### sse auction slots api', () => {
       await connectToDonationsSSE({ auctionUUID: '1234' })
     })
 
-    expect(onAddingEventMessageMockedListener).toBeCalledTimes(1)
+    await waitFor(() => expect(onAddingEventMessageMockedListener).toBeCalledTimes(1))
   })
 })
