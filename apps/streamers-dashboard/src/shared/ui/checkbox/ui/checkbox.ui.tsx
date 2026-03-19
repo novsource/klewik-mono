@@ -9,15 +9,15 @@ import { cn } from '~shared/utils/react'
 import { checkboxIndicatorVariants, checkboxRootVariants } from '../styles/checkbox.variants'
 
 export type CheckboxProps
-  = ExtractComponentClassnameToSlot<PrimitiveCheckbox.Indicator.Props, 'indicator'>
-    & ExtractComponentClassnameToSlot<Omit<PrimitiveCheckbox.Root.Props, 'children'>, 'root', 'rootProps'>
+  = ExtractComponentClassnameToSlot<PrimitiveCheckbox.Indicator.Props, 'indicator', 'indicatorProps'>
+    & ExtractComponentClassnameToSlot<Omit<PrimitiveCheckbox.Root.Props, 'children'>, 'root'>
     & ExtractComponentClassnameToSlot<Omit<ComponentPropsWithoutRef<'label'>, 'children'>, 'label', 'labelProps'>
     & {
       labelText?: string
     }
 
 export const Checkbox = (props: CheckboxProps) => {
-  const { rootProps, slotClassnames, labelText, ...indicatorProps } = props
+  const { indicatorProps, slotClassnames, labelText, ...rootProps } = props
 
   const classes = useMemo(() => ({
     root: checkboxRootVariants({ className: slotClassnames?.root }),

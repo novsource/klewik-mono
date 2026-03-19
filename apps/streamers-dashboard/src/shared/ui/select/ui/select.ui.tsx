@@ -59,7 +59,8 @@ export type SelectTriggerProps = SelectPrimitive.Trigger.Props & {
   leftIcon?: ReactNode
   hideChevron?: boolean
   hideSelectedValue?: boolean
-  label?: string
+  chevronDirection?: 'right-to-left' | 'bottom-to-up'
+  placeholder?: string
 }
 
 export const SelectTrigger = (props: SelectTriggerProps) => {
@@ -67,31 +68,44 @@ export const SelectTrigger = (props: SelectTriggerProps) => {
     className,
     children,
     leftIcon,
-    label,
+    placeholder,
     hideChevron = false,
     hideSelectedValue = false,
+    chevronDirection = 'bottom-to-up',
     ...triggerProps
   } = props
 
   const { size } = useSelectContext()
 
-  const style = useMemo(() => {
-    return cn(selectTriggerVariants({ size }), className)
-  }, [size, className])
+  const classes = useMemo(() => selectTriggerVariants({ size, className }), [size, className])
 
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
       data-size={size}
-      className={style}
+      className={classes}
       {...triggerProps}
     >
-      {leftIcon}
-      {!label && !hideSelectedValue && <SelectPrimitive.Value />}
-      {label}
+      {
+        leftIcon
+          ? (
+              <div className="flex gap-x-2">
+                {leftIcon}
+                {!hideSelectedValue
+                  && <SelectPrimitive.Value placeholder={placeholder} />}
+              </div>
+            )
+          : !hideSelectedValue && <SelectPrimitive.Value placeholder={placeholder} />
+      }
+
       {!hideChevron && (
-        <SelectPrimitive.Icon>
-          <ChevronDownIcon className="size-4 opacity-50" />
+        <SelectPrimitive.Icon className="group">
+          <ChevronDownIcon className={cn(
+            'size-4 opacity-50 transition-[rotate]',
+            chevronDirection === 'bottom-to-up' && 'group-data-[popup-open]:rotate-180',
+            chevronDirection === 'right-to-left' && '-rotate-90 group-data-[popup-open]:rotate-90',
+          )}
+          />
         </SelectPrimitive.Icon>
       )}
     </SelectPrimitive.Trigger>
@@ -134,6 +148,7 @@ export const SelectList = (props: SelectListProps) => {
 }
 
 export type SelectItemProps = SelectPrimitive.Item.Props & {
+  icon?: ReactNode
   itemWrapperProps?: SelectPrimitive.ItemText.Props
 }
 
@@ -142,6 +157,7 @@ export const SelectItem = (props: SelectItemProps) => {
     className,
     itemWrapperProps,
     label,
+    icon,
     children,
     ...restProps
   } = props
@@ -157,9 +173,21 @@ export const SelectItem = (props: SelectItemProps) => {
           <CheckIcon className="size-4" />
         </SelectPrimitive.ItemIndicator>
       </span>
-      <SelectPrimitive.ItemText {...itemWrapperProps}>
-        {label}
-      </SelectPrimitive.ItemText>
+
+      {icon
+        ? (
+            <div className="flex gap-x-2 items-center">
+              {icon}
+              <SelectPrimitive.ItemText {...itemWrapperProps}>
+                {label}
+              </SelectPrimitive.ItemText>
+            </div>
+          )
+        : (
+            <SelectPrimitive.ItemText {...itemWrapperProps}>
+              {label}
+            </SelectPrimitive.ItemText>
+          )}
     </SelectPrimitive.Item>
   )
 }

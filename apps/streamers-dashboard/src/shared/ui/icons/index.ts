@@ -107,6 +107,7 @@ import { default as User } from './User';
 import { default as Warning } from './Warning';
 import { default as Wheel } from './Wheel';
 import { default as YoutubeLogo } from './YoutubeLogo';
+import { default as PointaucLogo } from './PointaucLogo';
 
     export const Icons = {
       Actions,
@@ -217,6 +218,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   User,
   Warning,
   Wheel,
-  YoutubeLogo
+  YoutubeLogo,
+  PointaucLogo
     };
   
