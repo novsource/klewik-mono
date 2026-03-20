@@ -2,7 +2,9 @@
   "name": "@klewik-mono/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "dev:dashboard": "nx dev apps/streamers-dashboard"
+  },
   "private": true,
   "dependencies": {},
   "devDependencies": {
@@ -17,5 +19,6 @@
   "workspaces": [
     "packages/*",
     "apps/streamers-dashboard"
-  ]
+  ],
+  "packageManager": "pnpm@10.20.0"
 }
