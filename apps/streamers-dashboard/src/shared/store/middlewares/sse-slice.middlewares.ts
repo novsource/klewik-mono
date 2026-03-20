@@ -13,8 +13,6 @@ startSSEListening({
 
     const sseSliceState = getState().sse
 
-    const isStoreKeepAllConnected = sseSliceState.isAllConnected
-
     let isAllConnected = true
 
     for (const channelName in sseSliceState.channels) {
@@ -28,11 +26,11 @@ startSSEListening({
       }
     }
 
-    if (isAllConnected && !isStoreKeepAllConnected) {
+    if (isAllConnected && !sseSliceState.isAllConnected) {
       dispatch(sseActions.setAllConnected(true))
     }
 
-    if (!isAllConnected && isStoreKeepAllConnected) {
+    if (!isAllConnected && sseSliceState.isAllConnected) {
       dispatch(sseActions.setAllConnected(false))
     }
   },

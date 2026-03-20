@@ -24,6 +24,7 @@ import { MotionBox } from '~shared/ui/motion-box'
 import { cn, getHEXColor, hexToRgba } from '~shared/utils'
 
 import { GAME_CARDS_BG_ICONS } from '../../constants/game-cards-icons'
+import { useAuctionGameContext } from '../../context/auction-game-context'
 import { useAuctionCardsGame } from '../../hooks/use-auction-cards-game'
 import { startWinnerConfetti } from '../../utils/cards-game-confetti'
 
@@ -60,8 +61,6 @@ export const AuctionCardsGame = () => {
   const [isChoosedCardConfirmed, setIsChoosedCardConfirmed] = useState(false)
   const [isFireCardAnimationEnded, setIsFireCardAnimationEnded] = useState(true)
 
-  const [selectedCardIndex, setSelectedCardIndex] = useState<NullablePossible<number>>(null)
-
   const gameFieldContainerRef = useRef<HTMLDivElement>(null)
   const fireworksIntervalRef = useRef<NullablePossible<NodeJS.Timeout>>(null)
 
@@ -73,7 +72,6 @@ export const AuctionCardsGame = () => {
   const reset = () => {
     game.actions.clearChoosenCard()
 
-    setSelectedCardIndex(null)
     setIsChoosedCardConfirmed(false)
     setIsFireCardAnimationEnded(false)
   }
@@ -98,17 +96,6 @@ export const AuctionCardsGame = () => {
       }
     }
   }, [isChoosedCardConfirmed, isFireCardAnimationEnded])
-
-  useEffect(() => {
-    if (selectedCardIndex === null)
-      return
-
-    const selectedCard = game.state.cardsUnits[selectedCardIndex]
-
-    if (selectedCard.color !== game.state.preparedCardUnit?.color) {
-      game.actions.chooseCard(selectedCard)
-    }
-  }, [selectedCardIndex, game.actions, game.state.cardsUnits, game.state.preparedCardUnit])
 
   const renderGameCard = (card: CardsGameUnit, index: number) => {
     const gameFieldContainer = gameFieldContainerRef.current
@@ -161,11 +148,7 @@ export const AuctionCardsGame = () => {
         custom={{ coords: { x: targetX, y: targetY } }}
         exit={{ opacity: 0, scale: 0 }}
       >
-        <GameCard
-          card={card}
-          confirmed={isChoosedCardConfirmed}
-          onSelect={() => setSelectedCardIndex(index)}
-        />
+        <GameCard card={card} confirmed={isChoosedCardConfirmed} />
       </MotionBox>
     )
   }
@@ -188,21 +171,10 @@ export const AuctionCardsGame = () => {
             {isShouldShowCardInfo && <GameChoosedCardInfo card={game.state.choosedCardUnit!} onClose={reset} />}
             {isShouldShowControlsPanel && (
               <GameCardControlsPanel
-                selectedCardIndex={selectedCardIndex}
-                onTurnLeft={() => {
-                  if (selectedCardIndex === null || selectedCardIndex === 0)
-                    return
-
-                  setSelectedCardIndex(curr => curr! - 1)
-                }}
-                onTurnRight={() => {
-                  if (selectedCardIndex === null || selectedCardIndex === game.state.cardsUnits.length - 1)
-                    return
-
-                  setSelectedCardIndex(curr => curr! + 1)
+                onConfirm={() => {
+                  setIsChoosedCardConfirmed(true)
                 }}
                 onClose={reset}
-                onConfirm={() => setIsChoosedCardConfirmed(true)}
               />
             )}
           </>
@@ -281,17 +253,48 @@ function GameCard(props: GameCardProps) {
 }
 
 type GameCardControlsPanelProps = {
-  selectedCardIndex: NullablePossible<number>
-  onTurnLeft?: () => void
-  onTurnRight?: () => void
   onConfirm?: () => void
   onClose?: () => void
 }
 
 function GameCardControlsPanel(props: GameCardControlsPanelProps) {
-  const { selectedCardIndex, onTurnLeft, onTurnRight, onConfirm, onClose } = props
+  const { onConfirm, onClose } = props
 
-  const game = useAuctionCardsGame()
+  const auctionGame = useAuctionGameContext()
+  const cardsGame = useAuctionCardsGame()
+
+  const currentCardIndex = cardsGame.state.choosedCardUnit?.id ?? -1
+  const isPossibleToSwapLeft = currentCardIndex > 1
+  const isPossibleToSwapRight = currentCardIndex >= 1 && currentCardIndex < cardsGame.state.cardsUnits.length
+
+  const swapToLeft = () => {
+    if (!isPossibleToSwapLeft)
+      return
+
+    const backwardCard = cardsGame.state.cardsUnits[currentCardIndex - 2]
+
+    cardsGame.actions.chooseCard(backwardCard)
+  }
+
+  const swapToRight = () => {
+    if (!isPossibleToSwapRight)
+      return
+
+    const forwardCard = cardsGame.state.cardsUnits[currentCardIndex]
+
+    cardsGame.actions.chooseCard(forwardCard)
+  }
+
+  const confirmChoice = async () => {
+    if (!cardsGame.state.choosedCardUnit)
+      return
+
+    const response = await cardsGame.actions.confirmCardChoice(cardsGame.state.choosedCardUnit.auctionSlotId)
+    if (response?.error || !response)
+      return
+
+    onConfirm?.()
+  }
 
   return (
     <MotionBox
@@ -300,9 +303,9 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
       transition={{ type: 'spring' }}
     >
       <div className="absolute inline-flex gap-x-1 items-center left-1/2 -translate-x-1/2 top-1/2 -translate-y-[var(--game-card-height)] z-[100]">
-        <NumberFlow className="font-azeret-mono text-white/80" value={(selectedCardIndex ?? 0) + 1} />
+        <NumberFlow className="font-azeret-mono text-white/80" value={((currentCardIndex) ?? 0)} />
         <Text className="font-azeret-mono text-gray-accent">
-          {`/${game.state.cardsUnits.length}`}
+          {`/${cardsGame.state.cardsUnits.length}`}
         </Text>
       </div>
 
@@ -310,15 +313,15 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
         className="absolute top-1/2 -translate-y-1/2 left-[calc(50%-var(--game-card-width)-1rem)] z-[100]"
         isIconOnly
         icon={<Icons.AltArrowLeft />}
-        disabled={selectedCardIndex === 0}
-        onClick={onTurnLeft}
+        disabled={!isPossibleToSwapLeft || auctionGame.state.playMutationState.isLoading}
+        onClick={swapToLeft}
       />
       <Button
         className="absolute top-1/2 -translate-y-1/2 right-[calc(50%-var(--game-card-width)-1rem)] z-[100]"
         isIconOnly
         icon={<Icons.AltArrowRight />}
-        disabled={selectedCardIndex === (game.state.cardsUnits.length - 1)}
-        onClick={onTurnRight}
+        disabled={!isPossibleToSwapRight || auctionGame.state.playMutationState.isLoading}
+        onClick={swapToRight}
       />
 
       <Button
@@ -326,6 +329,7 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
         icon={<Icons.LargeCross />}
         size="sm"
         isIconOnly
+        disabled={auctionGame.state.playMutationState.isLoading}
         onClick={onClose}
       />
 
@@ -334,7 +338,8 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
         className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-[calc(50%-var(--game-card-height))] animate-pulse hover:animate-none z-[100]"
         icon={<Icons.LargeCross />}
         size="sm"
-        onClick={onConfirm}
+        loading={auctionGame.state.playMutationState.isLoading}
+        onClick={confirmChoice}
       >
         Подтвердить выбор
       </Button>

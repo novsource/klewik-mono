@@ -1,22 +1,27 @@
-import { useCallback, useEffect, useRef } from 'react'
-
 import type { Auction } from '~entities/auction/model'
+
+import { auctionSlotsActions } from '~entities/auction-slot/store'
 
 import { donationsActions } from '~entities/donation/store'
 
-import { useAppSSE, useDonationsSSE, useTabLeader } from '~shared/hooks'
+import { useAppSSE, useAuctionSlotsSSE, useDonationsSSE } from '~shared/hooks'
 
 import { useActionCreators } from '~shared/lib/redux-toolkit'
 
-export type useDashboardLayoutReturn = {
+export type UseDashboardLayoutReturn = {
   isSSEConnected: boolean
   isPending: boolean
 }
 
-export const useDashboardLayout = (auctionUUID: Auction['auctionUUID']): useDashboardLayoutReturn => {
-  const { isPending, isSSEConnected } = useConnectToDashboardSSEEvents(auctionUUID)
+export const useDashboardLayout = (auctionUUID: Auction['uuid']): UseDashboardLayoutReturn => {
+  const { isAllEventsConnected, connectAll, isPending } = useAppSSE({
+    onNewTabLeader: () => {
+      connectAll(auctionUUID)
+    },
+  })
 
   const { addDonation, updateDonationsStatusesCounts } = useActionCreators(donationsActions)
+  const { addSlots, updateSlot } = useActionCreators(auctionSlotsActions)
 
   useDonationsSSE({
     'donations/add': (donation) => {
@@ -25,55 +30,14 @@ export const useDashboardLayout = (auctionUUID: Auction['auctionUUID']): useDash
     },
   })
 
-  return { isPending, isSSEConnected }
-}
+  useAuctionSlotsSSE({
+    'auction-slots/add': (slots) => {
+      addSlots(slots)
+    },
+    'auction-slots/update': (slot) => {
+      updateSlot({ id: slot.id, data: slot })
+    },
+  })
 
-function useConnectToDashboardSSEEvents(auctionUUID: string) {
-  const { isAllEventsConnected, connectToSSEEvents, isPending } = useAppSSE()
-  const { isTabLeader } = useTabLeader()
-
-  const isTabInitAsLeaderRef = useRef(isTabLeader)
-  const isShouldConnectRef = useRef(true)
-
-  const connectToSSE = useCallback(async (auctionUUID: string) => {
-    try {
-      await connectToSSEEvents(auctionUUID)
-
-      isShouldConnectRef.current = false
-    }
-    catch (error) {
-      console.log(error)
-    }
-  }, [connectToSSEEvents])
-
-  useEffect(() => {
-    const isTabBecomeLeader = !isTabInitAsLeaderRef.current && isTabLeader
-
-    if (isTabBecomeLeader && !isPending) {
-      isTabInitAsLeaderRef.current = true
-
-      connectToSSE(auctionUUID)
-    }
-  }, [
-    isPending,
-    isAllEventsConnected,
-    auctionUUID,
-    isTabLeader,
-    connectToSSE,
-  ])
-
-  useEffect(() => {
-    if (isAllEventsConnected || isPending || !isTabLeader || !isShouldConnectRef.current)
-      return
-
-    connectToSSE(auctionUUID)
-  }, [
-    isPending,
-    isTabLeader,
-    connectToSSE,
-    isAllEventsConnected,
-    auctionUUID,
-  ])
-
-  return { isSSEConnected: isAllEventsConnected, isPending }
+  return { isPending, isSSEConnected: isAllEventsConnected }
 }

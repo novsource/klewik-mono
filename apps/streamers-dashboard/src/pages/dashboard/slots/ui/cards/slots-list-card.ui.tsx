@@ -23,7 +23,8 @@ import { cn } from '~shared/utils'
 export type AuctionSlotsListCardProps = CardProps & {
   auctionSlot: AuctionSlot
   actionButtonProps?: ButtonProps
-  isDroped?: boolean
+  isWinner?: boolean
+  isDropped?: boolean
 }
 
 export const AuctionSlotsListCard = (props: AuctionSlotsListCardProps) => {
@@ -31,7 +32,8 @@ export const AuctionSlotsListCard = (props: AuctionSlotsListCardProps) => {
     auctionSlot,
     className,
     actionButtonProps,
-    isDroped = false,
+    isWinner = false,
+    isDropped = false,
     ...restProps
   } = props
 
@@ -51,10 +53,12 @@ export const AuctionSlotsListCard = (props: AuctionSlotsListCardProps) => {
             direction="row"
             align="center"
           >
-            <div className="size-7.5 tablet:size-8 bg-red/10 flex items-center justify-center rounded-small">
-              {isDroped
-                ? <Icons.BrokenHeart className="text-gray-light" />
-                : <Icons.Heart className="text-red animate-heartbeating" size="xs" />}
+            <div className={cn('size-7.5 tablet:size-8 bg-red/10 flex items-center justify-center rounded-small', isDropped && 'bg-dark-light', isWinner && 'bg-orange/10')}>
+              {isWinner
+                ? <Icons.Crown className="text-orange" />
+                : isDropped
+                  ? <Icons.BrokenHeart className="text-gray-light" />
+                  : <Icons.Heart className="  text-red animate-heartbeating" size="xs" />}
             </div>
             <AuctionSlotCardContentInfoDivider />
             <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
@@ -74,51 +78,4 @@ export const AuctionSlotsListCard = (props: AuctionSlotsListCardProps) => {
 
     </BaseAuctionSlotCard>
   )
-  // return (
-  //   <BaseAuctionSlotCard
-  //     className={cn('flex-row items-end pr-2', className)}
-  //     {...restProps}
-  //   >
-  //     <Flex className="gap-y-3.5 pr-3.5" direction="column">
-  //       <SolidAuctionSlotHeader slotTitle={auctionSlot.title} />
-
-  //       <BaseAuctionSlotCardContent {...restProps}>
-  //         <Flex
-  //           className="w-fit"
-  //           direction="row"
-  //           align="center"
-  //         >
-  //           <div className="size-7.5 tablet:size-9 bg-red/10 flex items-center justify-center rounded-small">
-  //             {isDroped
-  //               ? <Icons.BrokenHeart className="text-gray-light" />
-  //               : <Icons.Heart className="text-red animate-heartbeating" size="xs" />}
-  //           </div>
-
-  //           <Divider className="mx-5" orientation="vertical" />
-
-  //           <Flex className="gap-y-1" direction="column">
-  //             <Text className="text-gray-light">Очки</Text>
-  //             <Text className="font-golos-f font-semibold text-gray-accent">{formatNumberToIntlString(auctionSlot.points)}</Text>
-  //           </Flex>
-
-  //           <Divider className="mx-5" orientation="vertical" />
-
-  //           <Flex className="gap-y-1" direction="column">
-  //             <Text className="text-gray-light">Вероятность победы</Text>
-  //             <Text className="font-golos-f font-semibold text-green">{`${formatNumberToIntlString(auctionSlot.winPercents)}%`}</Text>
-  //           </Flex>
-  //         </Flex>
-  //       </BaseAuctionSlotCardContent>
-  //     </Flex>
-
-  //     <Button
-  //       className="bg-dark-light text-gray-light transition-colors hover:text-white"
-  //       isIconOnly
-  //       icon={<Icons.ArrowRight size={isLargeThenTablet ? 'default' : 'sm'} />}
-  //       size={isLargeThenTablet ? 'sm' : 'xs'}
-  //       {...actionButtonProps}
-  //     />
-
-  //   </BaseAuctionSlotCard>
-  // )
 }

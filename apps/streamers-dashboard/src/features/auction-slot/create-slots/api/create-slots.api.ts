@@ -5,7 +5,7 @@ import { splittedAuctionSlotsApi } from '~entities/auction-slot/api'
 import type { AuctionSlotDTO } from '~shared/api/sse/clients/auction-slots'
 
 type CreateSlotsQueryArgs = {
-  auctionUUID: Auction['auctionUUID']
+  auctionUUID: Auction['uuid']
   slots: Array<Omit<AuctionSlotDTO, 'id' | 'auctionSlotOrder'>>
 }
 

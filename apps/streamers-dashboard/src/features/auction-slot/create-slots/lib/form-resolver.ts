@@ -26,6 +26,8 @@ const zodFormValidation: CreateSlotsFormZodResolver = (values: unknown) => {
       const transformedValuesArray: TransformedCreateSlotsFormData['slots'] = value.slots.map(slot => ({
         ...slot,
         points: typeof slot.points === 'number' ? slot.points : Number(deleteAllSpacesFromString(slot.points)),
+        isAlived: true,
+        isDropped: false,
       }))
 
       return { slots: transformedValuesArray }

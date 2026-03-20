@@ -1,4 +1,3 @@
-import { AUCTION_ENDPOINTS } from './auction-endpoints'
-import { AUTH_ENDPOINTS } from './auth-endpoints'
-
-export { AUCTION_ENDPOINTS, AUTH_ENDPOINTS }
+export * from './auction-endpoints'
+export * from './auctions-slots-endpoints'
+export * from './auth-endpoints'

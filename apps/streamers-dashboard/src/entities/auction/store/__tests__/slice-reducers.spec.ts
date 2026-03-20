@@ -1,6 +1,6 @@
 import type { UnknownAction } from '@reduxjs/toolkit'
 
-import type { Auction } from '~entities/auction/model'
+import { createFakeAuction } from '~entities/auction/model/__tests__/auction.mocks'
 
 import { auctionActions, auctionReducer } from '../auction.slice'
 
@@ -10,31 +10,10 @@ function createState(action: UnknownAction = { type: 'unknown' }) {
 
 describe('auction slice actions', () => {
   it('should set auction info', () => {
-    const newAuctionInfo: Auction = {
-      auctionUUID: 'fdsa',
-      createdAt: new Date().toISOString(),
-      endedAt: new Date().toISOString(),
-      dropoutSlotsIds: [1, 2, 3],
-      id: 10,
-      isBetsClosed: true,
-      isEnded: true,
-      ownerId: 'fdas',
-      processedDonationsIds: [1, 2, 4],
-      slotsIds: [1, 2, 3],
-      wheelMode: 'dropout',
-      winnerSlotId: 1,
-    }
+    const fakeAuction = createFakeAuction()
 
-    const state = createState(auctionActions.setAuction(newAuctionInfo))
+    const state = createState(auctionActions.updateInfo(fakeAuction))
 
-    expect(state.auctionInfo).toEqual(newAuctionInfo)
-  })
-
-  it('should update wheel mode', () => {
-    let state = createState()
-    expect(state.auctionInfo.wheelMode).toEqual('classic')
-
-    state = createState(auctionActions.updateWheelMode('dropout'))
-    expect(state.auctionInfo.wheelMode).toEqual('dropout')
+    expect(state.info).toEqual(fakeAuction)
   })
 })

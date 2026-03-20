@@ -51,8 +51,8 @@ const ShadowVirtualList = <T = unknown>(
           <VirtualList
             width={compWidth}
             height={compHeight}
-            scrollElementRef={scrollMergedRef}
-            contentWrapperRef={contentMergedRef}
+            scrollElementRef={internalScrollRef}
+            contentWrapperRef={internalContentRef}
             {...virtualListProps}
           />
         </ShadowScrollArea>

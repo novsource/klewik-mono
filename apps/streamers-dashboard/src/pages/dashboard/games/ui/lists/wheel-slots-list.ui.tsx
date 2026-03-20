@@ -1,17 +1,12 @@
-import { useEffect, useMemo, useState } from 'react'
-import type { ReactNode } from 'react'
+import { useMemo } from 'react'
 
 import { auctionGamesSelectors } from '~entities/games/store'
 
-import { auctionSelectors } from '~entities/auction/store'
-
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
-import { SkeletonAuctionSlotCard } from '~entities/auction-slot/ui/card'
 
 import type { WheelSlot } from '~entities/wheel/model'
 
-import { StartTransitionContainer } from '~shared/components/start-transition-container'
 import { Text } from '~shared/components/typography'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -19,65 +14,81 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
 import { ShadowVirtualList } from '~shared/ui/shadow-virtual-list'
-import type { ShadowVirtualListProps } from '~shared/ui/shadow-virtual-list'
 import type { VirtualListRenderFunction } from '~shared/ui/virtual-list'
 
-import { cn } from '~shared/utils'
+import { getPercentValue } from '~shared/utils/common'
 
+import { useAuctionGameContext } from '../../context/auction-game-context'
 import { useAuctionWheelGame } from '../../hooks/use-auction-wheel-game'
 import { CardsGameListCard } from '../cards/cards-game-list-card.ui'
 import { WheelSlotCard } from '../cards/wheel-slot-card.ui'
 
 export type AuctionGameSlotsListProps = {
-  className?: string
-  renderCard?: (
-    item: WheelSlot | AuctionSlot,
-    index: number,
-  ) => ReactNode
-} & Omit<ShadowVirtualListProps<WheelSlot | AuctionSlot>, 'children'>
+  data: AuctionSlot[]
+}
 
 export const AuctionGameSlotsList = (props: AuctionGameSlotsListProps) => {
-  const { data, renderCard, className, ...virtualListProps } = props
+  const { data } = props
 
-  const game = useStoreSelector(auctionGamesSelectors.getGame)
-  const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-  const storedPointsSum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
-  const { dropoutSlotsIds } = useStoreSelector(auctionSelectors.getAuctionInfo)
+  const auctionGameType = useStoreSelector(auctionGamesSelectors.getGame)
+
+  return auctionGameType === 'wheel'
+    ? <WheelSlotsList data={data} />
+    : <CardsGameSlotsList data={data} />
+}
+
+type AuctionWheelSlotsListProps = {
+  data: AuctionSlot[]
+}
+
+function WheelSlotsList(props: AuctionWheelSlotsListProps) {
+  const { data } = props
 
   const { state: { wheelSlots } } = useAuctionWheelGame()
 
-  const [listItems, setListItems] = useState(data)
+  const listItems = useMemo(() => {
+    const newListItems = wheelSlots.filter(item => data.findIndex(slot => slot.id === item.id) !== -1)
 
-  const droppedSlotIdsCollection = useMemo<Set<number>>(() => {
-    const result = new Set<number>()
+    return newListItems
+  }, [data, wheelSlots])
 
-    dropoutSlotsIds.forEach((slotId) => {
-      result.add(slotId)
-    })
+  return <BaseGameSlotsList data={listItems} />
+}
 
-    return result
-  }, [dropoutSlotsIds])
+type AuctionCardsGameSlotsListProps = {
+  data: AuctionSlot[]
+}
 
-  useEffect(() => {
-    const newListItems = game === 'wheel' ? wheelSlots.filter(item => data.findIndex(slot => slot.id === item.id) !== -1) : data
-    newListItems.sort((a, b) => b.points - a.points)
+function CardsGameSlotsList(props: AuctionCardsGameSlotsListProps) {
+  const { data } = props
 
-    setListItems(newListItems)
-  }, [game, data, storedAuctionSlots, wheelSlots])
+  return <BaseGameSlotsList data={data} />
+}
+
+type BaseGameSlotsListProps = {
+  data: AuctionSlot[]
+}
+
+function BaseGameSlotsList(props: BaseGameSlotsListProps) {
+  const { data } = props
+
+  const auctionGame = useAuctionGameContext()
+
+  const storedPointsSum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
 
   const winPercentsBounds = useMemo(() => {
-    if (storedAuctionSlots.length === 0)
+    if (auctionGame.state.slots.alived.length === 0)
       return { min: 0, max: 0 }
 
-    const sortedSlots = [...storedAuctionSlots].sort((a, b) => a.points - b.points)
+    const sortedSlots = [...auctionGame.state.slots.alived].sort((a, b) => a.points - b.points)
 
-    const minPercents = (sortedSlots[0].points / storedPointsSum) * 100
+    const minPercents = getPercentValue(storedPointsSum, sortedSlots[0].points) * 100
     const maxPercents = (sortedSlots[sortedSlots.length - 1].points / storedPointsSum) * 100
 
     return { min: minPercents, max: maxPercents }
-  }, [storedPointsSum, storedAuctionSlots])
+  }, [storedPointsSum, auctionGame.state.slots.alived])
 
-  if (listItems.length === 0) {
+  if (data.length === 0) {
     return (
       <Flex
         className="h-full gap-y-2"
@@ -98,43 +109,40 @@ export const AuctionGameSlotsList = (props: AuctionGameSlotsListProps) => {
 
   const renderGameSlotCard: VirtualListRenderFunction<WheelSlot | AuctionSlot> = (slots, virtualizedItem) => {
     const slot = slots[virtualizedItem.index]
-    const isDropped = droppedSlotIdsCollection.has(slot.id)
 
-    switch (game) {
+    const isWinnerExist = auctionGame.state.slots.winner !== null
+    const isDropped = isWinnerExist || slot.isDropped
+
+    const isWinner = auctionGame.state.slots.winner?.id === slot.id
+
+    switch (auctionGame.state.game) {
       case 'wheel': {
         return (
-          <StartTransitionContainer fallback={<SkeletonAuctionSlotCard />}>
-            <WheelSlotCard
-              key={slot.id}
-              wheelSlot={slot as WheelSlot}
-              winPercentsBounds={winPercentsBounds}
-              isDropped={isDropped}
-            />
-          </StartTransitionContainer>
+          <WheelSlotCard
+            wheelSlot={slot as WheelSlot}
+            winPercentsBounds={winPercentsBounds}
+            isDropped={isDropped}
+            isWinner={isWinner}
+          />
         )
       }
       case 'cards': {
         return (
-          <StartTransitionContainer fallback={<SkeletonAuctionSlotCard />}>
-            <CardsGameListCard
-              key={slot.id}
-              auctionSlot={slot as AuctionSlot}
-              isDropped={isDropped}
-              winPercentsBounds={winPercentsBounds}
-            />
-          </StartTransitionContainer>
+          <CardsGameListCard
+            key={slot.title}
+            auctionSlot={slot as AuctionSlot}
+            isDropped={isDropped}
+            isWinner={isWinner}
+            winPercentsBounds={winPercentsBounds}
+          />
         )
       }
     }
   }
 
   return (
-    <div className={cn('h-full w-full', className)} style={{ flex: '1 1 auto' }}>
-      <ShadowVirtualList
-        data={listItems}
-        estimateSize={() => 125}
-        {...virtualListProps}
-      >
+    <div className="h-full w-full" style={{ flex: '1 1 auto' }}>
+      <ShadowVirtualList data={data}>
         {renderGameSlotCard}
       </ShadowVirtualList>
     </div>

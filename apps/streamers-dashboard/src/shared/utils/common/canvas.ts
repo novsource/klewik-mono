@@ -292,8 +292,18 @@ export function getArcLength(angle: number, radius: number) {
   return (angle * Math.PI * radius) / 180
 }
 
-export function getPercentValue(numTarget: number, num: number) {
-  return num / numTarget
+type GetPercentValueOptions = {
+  asPercents?: boolean
+}
+
+export function getPercentValue(numTarget: number, num: number, options?: GetPercentValueOptions) {
+  const basePercent = num / numTarget
+
+  if (options?.asPercents) {
+    return basePercent * 100
+  }
+
+  return basePercent
 }
 
 export function getCoordsOfDotByVectorAngle(

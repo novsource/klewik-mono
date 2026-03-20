@@ -2,9 +2,12 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { AxiosError, isAxiosError } from 'axios'
 
+import type { AuctionSlotsDTO } from '~shared/api/http/auction-slots'
 import { getAuctionSlots } from '~shared/api/http/auction-slots'
 
 import { axiosAuthBaseQuery } from '~shared/lib/redux-toolkit'
+
+import { auctionSlotsActions } from '../store'
 
 export const getAuctionSlotsThunk = createAsyncThunk(
   'auctionSlots/getAuctionSlots',
@@ -30,10 +33,23 @@ export const getAuctionSlotsThunk = createAsyncThunk(
   },
 )
 
+type GetAuctionSlotsArgs = {
+  auctionUUID: string
+}
+
 const splittedAuctionSlotsApi = createApi({
   baseQuery: axiosAuthBaseQuery({ baseUrl: '/auctions' }),
   reducerPath: 'auctionSlotsApi',
-  endpoints: () => ({}),
+  endpoints: builder => ({
+    getAuctionSlots: builder.query<AuctionSlotsDTO[], GetAuctionSlotsArgs>({
+      query: ({ auctionUUID }) => ({ url: `/${auctionUUID}/slots` }),
+      onQueryStarted: async (_, api) => {
+        const response = await api.queryFulfilled
+
+        api.dispatch(auctionSlotsActions.setSlots(response.data))
+      },
+    }),
+  }),
 })
 
 export { splittedAuctionSlotsApi }

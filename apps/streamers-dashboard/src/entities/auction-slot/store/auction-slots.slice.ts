@@ -8,16 +8,15 @@ import type { AuctionSlotsDTO } from '~shared/api/http/auction-slots'
 
 import type { SortingOptions } from '~shared/store/model'
 
+import { getPercentValue } from '~shared/utils/common'
+
 import { getAuctionSlotsThunk } from '../api'
 import { AUCTION_SLOTS_SLICE_INITIAL_STATE as initialState } from '../constants'
+import { transformAuctionSlotDTO } from '../lib'
 
-export type AuctionSlotsSliceState = {
-  slots: AuctionSlot[]
-  alivedSlots: AuctionSlot[]
-  dropoutSlots: AuctionSlot[]
-  sortedSlots: AuctionSlot[]
-  slotsPointsSum: number
-  sortingOptions: SortingOptions<AuctionSlot>
+type UpdateAlivedSlotsActionPayload = {
+  data: number[]
+  mode: 'add' | 'delete'
 }
 
 const slice = createSlice({
@@ -34,7 +33,7 @@ const slice = createSlice({
       const addedPoints = payload.reduce((sum, slot) => sum + slot.points, 0)
 
       const slotsWithWinPercents = payload.map((slot) => {
-        return { ...slot, winPercents: (slot.points / (state.slotsPointsSum + addedPoints)) * 100 }
+        return { ...slot, winPercents: getPercentValue(state.slotsPointsSum + addedPoints, slot.points) * 100 }
       })
 
       state.slots = [...filtredSlots, ...slotsWithWinPercents]
@@ -102,6 +101,111 @@ const slice = createSlice({
             + payload.reduce((a, b) => a + b.points, 0)
       }
     },
+    updateAlivedSlotsIds(state, action: PayloadAction<UpdateAlivedSlotsActionPayload>) {
+      const { mode, data } = action.payload
+
+      if (data.length === 0)
+        return
+
+      switch (mode) {
+        case 'add': {
+          state.alivedSlotsIds = [...state.alivedSlotsIds.filter(id => !data.includes(id)), ...data]
+
+          break
+        }
+        case 'delete': {
+          const deletedSlotsIdsCollection = new Set(data)
+
+          state.alivedSlotsIds = state.alivedSlotsIds.filter(slot => deletedSlotsIdsCollection.has(slot))
+        }
+      }
+    },
+    updateDroppedSlotsIds(state, action: PayloadAction<UpdateAlivedSlotsActionPayload>) {
+      const { mode, data } = action.payload
+
+      if (data.length === 0)
+        return
+
+      switch (mode) {
+        case 'add': {
+          state.droppedSlotsIds = [...state.droppedSlotsIds.filter(id => !data.includes(id)), ...data]
+
+          break
+        }
+        case 'delete': {
+          const deletedSlotsIdsCollection = new Set(data)
+
+          state.droppedSlotsIds = state.droppedSlotsIds.filter(slot => deletedSlotsIdsCollection.has(slot))
+        }
+      }
+    },
+    // updateDroppedSlots(state, action: PayloadAction<UpdateAlivedSlotsActionPayload>) {
+    // const { mode, data } = action.payload
+
+    // if (Array.isArray(data) && data.length === 0)
+    //   return
+
+    // switch (mode) {
+    //   case 'update': {
+    //     const updatedSlotsCollection = new Set(Array.isArray(data) ? data : [data])
+
+    //     const updatedSlots = state.dropoutSlots.filter((slot) => {
+    //       const isShouldBeUpdated = updatedSlotsCollection.has(slot)
+
+    //       if (!isShouldBeUpdated)
+    //         return false
+
+    //       updatedSlotsCollection.delete(slot)
+    //       return true
+    //     })
+
+    //     state.dropoutSlots = [...state.dropoutSlots, ...updatedSlots, ...updatedSlotsCollection.values()]
+
+    //     break
+    //   }
+    //   case 'delete': {
+    //     const deletedSlotsCollection = new Set(Array.isArray(data) ? data : [data])
+
+    //     state.dropoutSlots = state.dropoutSlots.filter(slot => deletedSlotsCollection.has(slot))
+    //   }
+    // }
+    // },
+    // updateAlivedSlots(state, action: PayloadAction<UpdateAlivedSlotsActionPayload>) {
+    //   const { mode, data } = action.payload
+
+    //   if (Array.isArray(data) && data.length === 0)
+    //     return
+
+    //   switch (mode) {
+    //     case 'update': {
+    //       const updatedSlotsCollection = new Set(Array.isArray(data) ? data : [data])
+
+    //       const updatedSlots = state.alivedSlots.filter((slot) => {
+    //         const isShouldBeUpdated = updatedSlotsCollection.has(slot)
+
+    //         if (!isShouldBeUpdated)
+    //           return false
+
+    //         updatedSlotsCollection.delete(slot)
+    //         return true
+    //       })
+
+    //       state.alivedSlots = [...state.alivedSlots, ...updatedSlots, ...updatedSlotsCollection.values()]
+
+    //       break
+    //     }
+    //     case 'delete': {
+    //       const deletedSlotsCollection = new Set(Array.isArray(data) ? data : [data])
+
+    //       state.alivedSlots = state.alivedSlots.filter(slot => deletedSlotsCollection.has(slot))
+    //     }
+    //   }
+    // },
+    setSlots(state, action: PayloadAction<AuctionSlotsDTO[]>) {
+      const transformedSlots = action.payload.map(slot => transformAuctionSlotDTO(slot, state.slotsPointsSum))
+
+      state.slots = transformedSlots
+    },
     setSortedSlots(state, action: PayloadAction<AuctionSlot[]>) {
       const payload = action.payload
 
@@ -118,11 +222,11 @@ const slice = createSlice({
     getSlots(state) {
       return state.slots
     },
-    getAlivedSlots(state) {
-      return state.alivedSlots
+    getAlivedSlotsIds(state) {
+      return state.alivedSlotsIds
     },
-    getDropoutSlots(state) {
-      return state.dropoutSlots
+    getDroppedSlotsIds(state) {
+      return state.droppedSlotsIds
     },
     getSlotsPointsSum(state) {
       return state.slotsPointsSum
@@ -138,19 +242,16 @@ const slice = createSlice({
       if (!fetchedSlots)
         return
 
-      const fetchedSlotsPointsSum = fetchedSlots.reduce((sum, slot) => {
-        sum += slot.points
-
-        return sum
-      }, 0)
-
-      const filtredSlots = state.slots.filter(
+      const filteredSlots = state.slots.filter(
         slot => !fetchedSlots.find(item => slot.id === item.id),
       )
 
-      const updatedPointsSum = state.slotsPointsSum + fetchedSlotsPointsSum
-      const updatedAuctionSlots = [...filtredSlots, ...fetchedSlots].map<AuctionSlot>((slot) => {
-        const winPercents = (slot.points / updatedPointsSum) * 100
+      const fetchedSlotsPointsSum = fetchedSlots.reduce((sum, slot) => sum + slot.points, 0)
+      const filteredSlotsPointsSum = filteredSlots.reduce((sum, curr) => sum + curr.points, 0)
+      const updatedPointsSum = filteredSlotsPointsSum + fetchedSlotsPointsSum
+
+      const updatedAuctionSlots = [...filteredSlots, ...fetchedSlots].map<AuctionSlot>((slot) => {
+        const winPercents = getPercentValue(updatedPointsSum, slot.points) * 100
 
         return { ...slot, winPercents }
       })

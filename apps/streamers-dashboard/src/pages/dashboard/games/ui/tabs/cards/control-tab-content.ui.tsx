@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { useAuctionGameContext } from '~pages/dashboard/games/context/auction-game-context'
 import { useAuctionCardsGame } from '~pages/dashboard/games/hooks/use-auction-cards-game'
 import { controlWheelTabStyles } from '~pages/dashboard/games/styles'
 
@@ -12,29 +13,37 @@ import { twSlotsStyles } from '~shared/utils'
 export const CardsGameControllers = () => {
   const tabsContentStyles = useMemo(() => twSlotsStyles(controlWheelTabStyles), [])
 
-  const { state, actions } = useAuctionCardsGame()
+  return (
+    <Flex className={tabsContentStyles.controlsWrapper}>
+      <ShuffleCardsButton />
+    </Flex>
+  )
+}
 
-  const isDisabled = state.cardsUnits.length === 0
+function ShuffleCardsButton() {
+  const auctionGame = useAuctionGameContext()
 
-  const handleOnClick = () => {
+  const cardsGame = useAuctionCardsGame()
+
+  const isDisabled = auctionGame.state.slots.alived.length < 2 || auctionGame.state.slots.winner !== null
+
+  const shuffleCards = () => {
     if (isDisabled)
       return
 
-    actions.shuffleCards()
+    cardsGame.actions.shuffleCards()
   }
 
   return (
-    <Flex className={tabsContentStyles.controlsWrapper}>
-      <Button
-        className="w-full"
-        variant="action"
-        size="lg"
-        startContent={<Icons.Refresh />}
-        disabled={isDisabled}
-        onClick={handleOnClick}
-      >
-        Перетасовать
-      </Button>
-    </Flex>
+    <Button
+      className="w-full"
+      variant="action"
+      size="lg"
+      startContent={<Icons.Refresh />}
+      disabled={isDisabled}
+      onClick={shuffleCards}
+    >
+      Перетасовать
+    </Button>
   )
 }

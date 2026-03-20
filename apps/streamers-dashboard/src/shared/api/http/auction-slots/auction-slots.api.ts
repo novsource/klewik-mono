@@ -1,5 +1,7 @@
 import type { AuctionSlotsDTO } from './auction-slots-api.types'
 
+import { AUCTION_SLOTS_ENDPOINTS } from '~shared/constants/api/http'
+
 import type { HttpClientRequestOptions } from '~shared/lib/axios'
 
 import { authHttpClient } from '../auth-instance'
@@ -10,5 +12,7 @@ export const getAuctionSlots = async (
   auctionUUID: string,
   fetchOptions?: HttpClientRequestOptions,
 ) => {
-  return authHttpClient.get<GetAuctionSlotsResponse>(`/api/v1/auctions/${auctionUUID}/slots`, fetchOptions)
+  const url = AUCTION_SLOTS_ENDPOINTS.GET_SLOTS_BY_UUID(auctionUUID)
+
+  return authHttpClient.get<GetAuctionSlotsResponse>(url, fetchOptions)
 }

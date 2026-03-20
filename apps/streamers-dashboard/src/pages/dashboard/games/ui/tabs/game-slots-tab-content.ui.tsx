@@ -5,11 +5,10 @@ import { useMemo, useState } from 'react'
 
 import { useSortingSlots } from '~pages/dashboard/slots/lib'
 
-import { auctionSelectors } from '~entities/auction/store'
-
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useDebounceCallback } from '~shared/hooks'
+import { useLocalSearchFilter } from '~shared/hooks/use-local-search-filter/use-local-search-filter'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -21,7 +20,7 @@ import type { TabsContentProps } from '~shared/ui/tabs'
 import { TabsContent } from '~shared/ui/tabs'
 import { Toggle, ToggleGroup } from '~shared/ui/toggle'
 
-import { cn, twSlotsStyles } from '~shared/utils'
+import { twSlotsStyles } from '~shared/utils'
 
 import { TABS_CONTENT_NAMES } from '../../constants'
 import { slotsWheelTabStyles } from '../../styles'
@@ -35,40 +34,26 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
   const { slotsClassnames, ...tabsContentProps } = props
 
   const slots = useStoreSelector(auctionSlotsSelectors.getSlots)
-  const { dropoutSlotsIds } = useStoreSelector(auctionSelectors.getAuctionInfo)
-
-  const droppedSlotIdsCollection = useMemo<Set<number>>(() => {
-    const result = new Set<number>()
-
-    dropoutSlotsIds.forEach((slotId) => {
-      result.add(slotId)
-    })
-
-    return result
-  }, [dropoutSlotsIds])
 
   const [slotCategory, setSlotCategory] = useState<'all' | 'active' | 'dropped'>('all')
-  const [searchValue, setSearchValue] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
 
   const sortedSlots = useSortingSlots(slots, { type: 'descending', field: 'points' })
 
-  const searchedSlots = useMemo(() =>
-    sortedSlots.filter((slot) => {
-      const isTitleIncludesSearchQuery = slot.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const localSearchedSlots = useLocalSearchFilter(searchQuery, sortedSlots, (query, slot) => {
+    const isTitleIncludesSearchQuery = slot.title.toLowerCase().includes(query.toLowerCase())
 
-      const isSlotDropped = droppedSlotIdsCollection.has(slot.id)
-      const isSlotIncludeCategory = slotCategory === 'all' ? true : slotCategory === 'active' ? !isSlotDropped : isSlotDropped
+    const isSlotDropped = slot.isDropped
+    const isSlotIncludeCategory = slotCategory === 'all' ? true : slotCategory === 'active' ? !isSlotDropped : isSlotDropped
 
-      return isTitleIncludesSearchQuery && isSlotIncludeCategory
-    }), [searchQuery, sortedSlots, slotCategory, droppedSlotIdsCollection])
+    return isTitleIncludesSearchQuery && isSlotIncludeCategory
+  })
 
-  const debouncedSearch = useDebounceCallback((value: string) => setSearchQuery(value), 250)
+  const debouncedSearch = useDebounceCallback((value: string) => setSearchQuery(value), 200)
 
   const handleSearchInputOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
 
-    setSearchValue(value)
     debouncedSearch(value)
   }
 
@@ -77,14 +62,13 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
 
   return (
     <TabsContent
-      className={cn(tabsContentStyles.content)}
+      className={tabsContentStyles.content}
       value={TABS_CONTENT_NAMES.SLOTS}
       {...tabsContentProps}
     >
       <Flex className="w-full gap-x-2">
         <Input
           slotClassNames={{ base: 'text-gray w-full' }}
-          value={searchValue}
           startContent={<Icons.Magnifier size="sm" />}
           endContent={(
             <Button
@@ -94,7 +78,6 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
               icon={<Icons.Close />}
               size="xs"
               onClick={() => {
-                setSearchValue('')
                 setSearchQuery('')
               }}
             />
@@ -118,7 +101,7 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
           <Toggle value="dropped" className="data-[pressed]:text-gray-accent data-[pressed]:bg-dark-accent h-full hover:bg-dark-light" buttonProps={{ isIconOnly: true, icon: <Icons.BrokenHeart /> }} />
         </ToggleGroup>
       </Flex>
-      <AuctionGameSlotsList data={searchedSlots} gap={8} />
+      <AuctionGameSlotsList data={localSearchedSlots} />
     </TabsContent>
   )
 }

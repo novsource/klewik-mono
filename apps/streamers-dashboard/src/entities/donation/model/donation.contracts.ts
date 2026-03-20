@@ -39,8 +39,8 @@ export const DonationSchema = z.object({
   messageType: z.enum(['audio', 'empty', 'text']),
   amount: z.number(),
   currency: z.string(),
-  createdAt: z.string().date(),
-  updatedAt: z.string().date(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 })
 
 export const ProcessedDonationSchema = DonationSchema.extend({
@@ -64,5 +64,6 @@ export const DonationCodeSchema = z.object({
   title: z.string(),
   code: z.string().length(8),
   slotId: z.number().nullable(),
-  createdAt: z.string(),
+  createdAt: z.iso.datetime(),
+  isUsed: z.boolean(),
 })

@@ -24,6 +24,7 @@ import { default as DonationAlerts } from './DonationAlerts';
 import { default as DonationCode } from './DonationCode';
 import { default as Dots } from './Dots';
 import { default as Eraser } from './Eraser';
+import { default as Export } from './Export';
 import { default as EyeClosed } from './EyeClosed';
 import { default as EyeOpen } from './EyeOpen';
 import { default as Face } from './Face';
@@ -106,6 +107,7 @@ import { default as User } from './User';
 import { default as Warning } from './Warning';
 import { default as Wheel } from './Wheel';
 import { default as YoutubeLogo } from './YoutubeLogo';
+import { default as PointaucLogo } from './PointaucLogo';
 
     export const Icons = {
       Actions,
@@ -134,6 +136,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   DonationCode,
   Dots,
   Eraser,
+  Export,
   EyeClosed,
   EyeOpen,
   Face,
@@ -215,6 +218,7 @@ import { default as YoutubeLogo } from './YoutubeLogo';
   User,
   Warning,
   Wheel,
-  YoutubeLogo
+  YoutubeLogo,
+  PointaucLogo
     };
   

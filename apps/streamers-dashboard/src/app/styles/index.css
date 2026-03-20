@@ -50,6 +50,7 @@
 
     --radius-*: initial;
     --radius-none: 0px;
+    --radius-xs: 4px;
     --radius-small: 8px;
     --radius-medium: 10px;
     --radius-large: 12.5px;
@@ -65,9 +66,6 @@
     --breakpoint-landtop: 1440px;
     --breakpoint-desktop: 1920px;
     --breakpoint-desktop-lg: 2560px;
-
-    --shadow-*: initial;
-    --shadow-table-border: 0px 4x 0px 0px rgba(85, 85, 85, 0.7);
 
     --font-*: initial;
     --font-golos-f: "Golos Text", sans-serif;
@@ -254,7 +252,7 @@
 
 @utility animate-heartbeating {
     animation-name: heartbeating;
-    animation-duration: 1.25s;
+    animation-duration: 1.75s;
     animation-iteration-count: infinite;
 }
 
@@ -418,12 +416,7 @@
         position: relative;
         width: 100%;
         height: 100%;
-        /* max-height: calc(100% - var(--header-height)); */
         overflow: hidden;
-
-        /* @media screen and (max-width: 1024px) {
-            max-height: calc(100% - var(--header-height) - var(--footer-height));
-        } */
     }
 
     .border-divider {

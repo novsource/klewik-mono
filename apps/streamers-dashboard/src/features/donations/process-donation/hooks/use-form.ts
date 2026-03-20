@@ -18,7 +18,7 @@ import { processDonationFormResolver } from '../lib'
 
 export type UseProcessDonationFormArgs = {
   donation: ProcessedDonation
-  auctionUUID: Auction['auctionUUID']
+  auctionUUID: Auction['uuid']
   defaultFormValues?: TransformedProcessDonationFormData
   onSuccess?: () => void
   onError?: (error: AxiosError) => void

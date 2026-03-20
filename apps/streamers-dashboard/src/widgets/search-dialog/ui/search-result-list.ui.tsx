@@ -28,11 +28,12 @@ import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 import { Card, CardContent } from '~shared/ui/card'
 import { Flex } from '~shared/ui/flex'
 import { Icons } from '~shared/ui/icons'
-import type { InfiniteListProps, InfiniteListRenderFunction } from '~shared/ui/infinite-list'
 import { InfiniteList } from '~shared/ui/infinite-list'
+import type { InfiniteListProps, InfiniteListRenderFunction } from '~shared/ui/infinite-list'
 import type { MotionBoxProps } from '~shared/ui/motion-box'
 import { MotionBox } from '~shared/ui/motion-box'
 import { Skeleton } from '~shared/ui/skeleton'
+import { toastErrorNotification } from '~shared/ui/toaster'
 import { Typography } from '~shared/ui/typograghy'
 
 import { cn, isStringEmpty } from '~shared/utils'
@@ -129,8 +130,6 @@ const SearchResultInfinityList = <T = unknown>(props: SearchResultInfinityListPr
     },
     [children],
   )
-
-  const countOfSearchResult = data?.length || 0
   const isSearchValueEmpty = isStringEmpty(searchValue)
 
   if (isSearchValueEmpty) {
@@ -141,13 +140,15 @@ const SearchResultInfinityList = <T = unknown>(props: SearchResultInfinityListPr
     )
   }
 
+  const listItemsCount = data?.length || 0
+
   return (
     <Flex className="w-full tablet:px-4 gap-y-2" direction="column">
       <Flex className="gap-x-2" align="center">
         <Typography className="text-gray-light" tag="span">Найдено: </Typography>
-        <SearchListItemsCounter value={countOfSearchResult} showPlaceholder={showPlaceholders} />
+        <SearchListItemsCounter value={listItemsCount} showPlaceholder={showPlaceholders} />
       </Flex>
-      <Flex className="w-full h-full">
+      <div className="h-full w-full" style={{ flex: '1 1 auto' }}>
         <InfiniteList
           data={data}
           slotsClassNames={{ container: 'pb-4' }}
@@ -160,7 +161,7 @@ const SearchResultInfinityList = <T = unknown>(props: SearchResultInfinityListPr
         >
           {renderListItem}
         </InfiniteList>
-      </Flex>
+      </div>
     </Flex>
   )
 }
@@ -177,53 +178,53 @@ export const SearchAuctionSlots = (props: SearchAuctionSlotsProps) => {
 
   const { setDialogState } = useActionCreators(globalDialogsActions)
 
-  const {
-    state: { isLoading },
-    dispatch: { setIsLoading },
-    functions: { closeDialog },
-  } = useSearchDialogContext()
+  const searchDialogContext = useSearchDialogContext()
 
   const infiniteList = useSearchInfiniteList(searchValue, 'slots', storedAuctionSlots, {
     debounceTime: 2000,
     limit: 30,
     distance: 30,
+    onError: () => {
+      toastErrorNotification('Не удалось выполнить поисковый запрос')
+    },
   })
 
-  if (infiniteList.isPending !== isLoading) {
-    setIsLoading(infiniteList.isPending)
+  if (infiniteList.state.isPending !== searchDialogContext.state.isLoading) {
+    searchDialogContext.dispatch.setIsLoading(infiniteList.state.isPending)
   }
 
   const renderAuctionSlotListItem = useCallback<InfiniteListRenderFunction<AuctionSlot>>(
     (slot, virtualizedItem) => {
       return (
         <SearchResultItemContainer
-          key={virtualizedItem.id}
+          key={slot.title}
           style={{ marginTop: virtualizedItem.index === 0 ? 0 : 6 }}
           onClick={() => {
             setDialogState({ dialog: 'editSlot', data: { initialData: slot, isOpen: true } })
-            closeDialog()
+
+            searchDialogContext.functions.closeDialog()
           }}
         >
           <Flex className="gap-x-2 max-tablet:items-start items-center max-tablet:flex-col max-tablet:justify-start max-tablet:gap-y-1.5">
-            <Typography
+            <Text
               className="w-fit px-1 py-0 tablet:px-1.5 tablet:py-0.25 bg-dark border-1 border-dark-light font-golos-f text-gray-light rounded-sm text-[10px] tablet:text-sm text-nowrap"
-              tag="span"
+              asSpan
             >
               { `ID: ${slot.id}`}
-            </Typography>
-            <Typography className="max-tablet:px-0.75" tag="span">{slot.title}</Typography>
+            </Text>
+            <Text className="max-tablet:px-0.75" asSpan>{slot.title}</Text>
           </Flex>
         </SearchResultItemContainer>
       )
     },
-    [closeDialog, setDialogState],
+    [searchDialogContext.functions.closeDialog, setDialogState],
   )
 
   return (
     <SearchResultInfinityList
       searchValue={searchValue}
-      data={infiniteList.filtredData}
-      listRef={infiniteList.listRef}
+      data={infiniteList.state.filteredData}
+      listRef={infiniteList.meta.listRef}
       state={infiniteList.state}
       placeholder={(
         <Card className="py-0 px-1">
@@ -233,7 +234,7 @@ export const SearchAuctionSlots = (props: SearchAuctionSlotsProps) => {
           </CardContent>
         </Card>
       )}
-      showPlaceholders={infiniteList.isPending}
+      showPlaceholders={infiniteList.state.isPending}
     >
       { renderAuctionSlotListItem }
     </SearchResultInfinityList>
@@ -247,20 +248,19 @@ export const SearchDonations = (props: SearchAuctionSlotsProps) => {
 
   const storedDonations = useStoreSelector(donationsSelectors.getAllDonations)
 
-  const {
-    state: { isLoading },
-    dispatch: { setIsLoading },
-    functions: { closeDialog },
-  } = useSearchDialogContext()
+  const searchDialogContext = useSearchDialogContext()
 
   const infiniteList = useSearchInfiniteList(searchValue, 'donations', storedDonations, {
     debounceTime: 2000,
     limit: 15,
     distance: 30,
+    onError: () => {
+      toastErrorNotification('Не удалось выполнить поисковый запрос')
+    },
   })
 
-  if (infiniteList.isPending !== isLoading) {
-    setIsLoading(infiniteList.isPending)
+  if (infiniteList.state.isPending !== searchDialogContext.state.isLoading) {
+    searchDialogContext.dispatch.setIsLoading(infiniteList.state.isPending)
   }
 
   const renderDonationListItem = useCallback<InfiniteListRenderFunction<ProcessedDonation>>(
@@ -271,7 +271,7 @@ export const SearchDonations = (props: SearchAuctionSlotsProps) => {
           style={{ marginTop: virtualizedItem.index === 0 ? 0 : 6 }}
           onClick={() => {
             setDialogState({ dialog: 'processDonation', data: { initialData: donation, isOpen: true } })
-            closeDialog()
+            searchDialogContext.functions.closeDialog()
           }}
         >
           <BaseDonationCard className="border-0 bg-transparent py-0 pb-1">
@@ -297,17 +297,17 @@ export const SearchDonations = (props: SearchAuctionSlotsProps) => {
         </SearchResultItemContainer>
       )
     },
-    [closeDialog, setDialogState],
+    [searchDialogContext.functions.closeDialog, setDialogState],
   )
 
   return (
     <SearchResultInfinityList
       searchValue={searchValue}
-      data={infiniteList.filtredData}
-      listRef={infiniteList.listRef}
+      data={infiniteList.state.filteredData}
+      listRef={infiniteList.meta.listRef}
       state={infiniteList.state}
       placeholder={<SkeletonDonationCard />}
-      showPlaceholders={infiniteList.isPending}
+      showPlaceholders={infiniteList.state.isPending}
     >
       { renderDonationListItem }
     </SearchResultInfinityList>

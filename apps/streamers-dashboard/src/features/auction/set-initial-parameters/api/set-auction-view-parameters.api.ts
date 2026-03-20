@@ -4,7 +4,7 @@ import { splittedAuctionApi } from '~entities/auction/api'
 import type { Auction } from '~entities/auction/model'
 
 type SetAuctionViewParametersQueryArgs = {
-  auctionUUID: Auction['auctionUUID']
+  auctionUUID: Auction['uuid']
   details: SetAuctionViewParametersFormData
 }
 

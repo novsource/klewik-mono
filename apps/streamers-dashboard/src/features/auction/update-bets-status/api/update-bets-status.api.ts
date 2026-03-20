@@ -3,7 +3,7 @@ import type { Auction } from '~entities/auction/model'
 import { auctionActions } from '~entities/auction/store'
 
 type UpdateBetsStatusQueryArgs = {
-  auctionUUID: Auction['auctionUUID']
+  auctionUUID: Auction['uuid']
   status: Auction['isBetsClosed']
 }
 
@@ -15,7 +15,7 @@ const updateBetsStatusApi = splittedAuctionApi.injectEndpoints({
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         await queryFulfilled
 
-        dispatch(auctionActions.setAuction({ isBetsClosed: true }))
+        dispatch(auctionActions.updateInfo({ isBetsClosed: true }))
       },
     }),
     closeBets: builder.mutation<void, UpdateBetsStatusQueryArgs>({
@@ -24,7 +24,7 @@ const updateBetsStatusApi = splittedAuctionApi.injectEndpoints({
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         await queryFulfilled
 
-        dispatch(auctionActions.setAuction({ isBetsClosed: true }))
+        dispatch(auctionActions.updateInfo({ isBetsClosed: true }))
       },
     }),
     openBets: builder.mutation<void, UpdateBetsStatusQueryArgs>({
@@ -32,7 +32,7 @@ const updateBetsStatusApi = splittedAuctionApi.injectEndpoints({
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         await queryFulfilled
 
-        dispatch(auctionActions.setAuction({ isBetsClosed: false }))
+        dispatch(auctionActions.updateInfo({ isBetsClosed: false }))
       },
     }),
   }),

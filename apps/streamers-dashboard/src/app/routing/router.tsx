@@ -12,10 +12,10 @@ import { errorPageRoute } from '../../pages/error/routing'
 import { prepareDashboardRoute } from './prepate-dashboard.route'
 
 const WelcomePageRouteObject = welcomePageRoute()
-const AuctionSlotsRouteObject = auctionSlotsPageRoute({ disableTransition: true })
-const AuctionGamesRouteObject = auctionWheelPageRoute({ disableTransition: true })
+const AuctionSlotsRouteObject = auctionSlotsPageRoute()
+const AuctionGamesRouteObject = auctionWheelPageRoute()
 
-const AuctionDonationsRouteObject = auctionDonationsPageRoute({ disableTransition: true })
+const AuctionDonationsRouteObject = auctionDonationsPageRoute()
 const RedirectRouteObject = redirectPageRoute()
 const ErrorPageRouteObject = errorPageRoute()
 

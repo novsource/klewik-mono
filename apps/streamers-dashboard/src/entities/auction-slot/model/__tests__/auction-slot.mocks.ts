@@ -16,6 +16,8 @@ export const createSingleFakeAuctionSlot = (options?: CreateSingleFakeAuctionSlo
   auctionSlotOrder: options?.id ?? 1,
   points: faker.number.int({ min: options?.pointsRange?.min ?? 200, max: options?.pointsRange?.max ?? 205000 }),
   winPercents: 100,
+  isAlived: true,
+  isDropped: false,
 })
 
 type CreateFakeAuctionSlotsArrayOptions = {

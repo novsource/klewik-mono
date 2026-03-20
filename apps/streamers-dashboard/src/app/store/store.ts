@@ -1,8 +1,8 @@
-import { combineReducers, configureStore, isAction } from '@reduxjs/toolkit'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import { splittedAuctionGamesApi as auctionGamesApi } from '~entities/games/api'
 import { auctionGamesReducer } from '~entities/games/store'
-import { createStateSyncMiddleware, initStateWithPrevTab, withReduxStateSync } from 'redux-state-sync'
 
-import { globalDialogsActions, globalDialogsReducer } from '~app/components/global-dialogs/store/global-dialogs.slice'
+import { globalDialogsReducer } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
 import { splittedAuctionApi as auctionApi } from '~entities/auction/api'
 import { auctionReducer } from '~entities/auction/store'
@@ -25,11 +25,12 @@ import { wheelReducer } from '~entities/wheel/store'
 
 import { auctionSlotsSSEApi, splittedAuthApi as authApi, donationsSSEApi, integrationsSSEApi } from '~shared/store/api'
 import { sseConnectionsListenerMiddlewares } from '~shared/store/middlewares'
-import { appReducer, sseActions, sseReducer } from '~shared/store/slices'
+import { appReducer, authSliceReducer, sseReducer } from '~shared/store/slices'
 
 const rootReducer = combineReducers({
   app: appReducer,
   auction: auctionReducer,
+  auth: authSliceReducer,
   auctionSlots: auctionSlotsReducer,
   auctionGames: auctionGamesReducer,
   donations: donationsReducer,
@@ -41,6 +42,7 @@ const rootReducer = combineReducers({
   [auctionApi.reducerPath]: auctionApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [auctionSlotsApi.reducerPath]: auctionSlotsApi.reducer,
+  [auctionGamesApi.reducerPath]: auctionGamesApi.reducer,
   [integrationsApi.reducerPath]: integrationsApi.reducer,
   [donationsApi.reducerPath]: donationsApi.reducer,
   [donationsSSEApi.reducerPath]: donationsSSEApi.reducer,
@@ -48,31 +50,45 @@ const rootReducer = combineReducers({
   [integrationsSSEApi.reducerPath]: integrationsSSEApi.reducer,
 })
 
-const actionsBlacklist = [
-  globalDialogsActions.setDialogOpenStatus.type,
-  globalDialogsActions.setDialogState.type,
-  sseActions.resetState.type,
-  sseActions.setAllConnected.type,
-] as const
+// const actionsBlacklist = [
+//   globalDialogsActions.setDialogOpenStatus.type,
+//   globalDialogsActions.setDialogState.type,
+//   sseActions.resetState.type,
+//   sseActions.setAllConnected.type,
+// ] as const
 
-const syncMiddleware = createStateSyncMiddleware({
-  predicate: (action) => {
-    if (isAction(action) && Array.isArray(actionsBlacklist)) {
-      return !actionsBlacklist.includes(action.type)
-    }
+// const syncMiddleware = createStateSyncMiddleware({
+//   predicate: (action) => {
+//     const isUserNotInsideDashboard = !window.location.pathname.split('/').includes('dashboard')
 
-    return false
-  },
-})
-const syncReducer = withReduxStateSync(rootReducer)
+//     if (isUserNotInsideDashboard)
+//       return false
+
+//     if (isAction(action) && Array.isArray(actionsBlacklist)) {
+//       return !actionsBlacklist.includes(action.type)
+//     }
+
+//     return false
+//   },
+//   receiveState: (currentState: ReducerState<typeof rootReducer>, updatedState: ReducerState<typeof rootReducer>) => {
+//     const isUserNotInsideDashboard = !window.location.pathname.split('/').includes('dashboard')
+
+//     console.log(isUserNotInsideDashboard)
+
+//     if (isUserNotInsideDashboard)
+//       return currentState
+
+//     return updatedState
+//   },
+// })
+// const syncReducer = withReduxStateSync(rootReducer)
 
 export const createStore = () => configureStore({
-  reducer: syncReducer,
-  // @ts-expect-error redux-state-sync middleware next function have incorrect type
+  reducer: rootReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
       .prepend(
-        syncMiddleware,
+        // syncMiddleware,
         ...auctionSlotsListenerMiddlewares,
         ...donationsListenerMiddlewares,
         ...sseConnectionsListenerMiddlewares,
@@ -81,6 +97,7 @@ export const createStore = () => configureStore({
         auctionApi.middleware,
         authApi.middleware,
         auctionSlotsApi.middleware,
+        auctionGamesApi.middleware,
         donationsApi.middleware,
         wheelApi.middleware,
         integrationsApi.middleware,
@@ -92,7 +109,7 @@ export const createStore = () => configureStore({
 
 export const rootStore = createStore()
 
-initStateWithPrevTab(rootStore)
+// initStateWithPrevTab(rootStore)
 
 export type RootState = ReturnType<typeof rootStore.getState>
 export type StoreDispatch = typeof rootStore.dispatch

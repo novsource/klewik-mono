@@ -1,10 +1,12 @@
+import type { AuctionGameMode } from '~entities/games/model'
+
 import type { Auction } from '~entities/auction/model'
 
 import { splittedWheelApi } from '~entities/wheel/api'
 
 type SpinWheelMutationArgs = {
-  auctionUUID: Auction['auctionUUID']
-  mode: Auction['wheelMode']
+  auctionUUID: Auction['uuid']
+  mode: AuctionGameMode
   slotId: number
 }
 

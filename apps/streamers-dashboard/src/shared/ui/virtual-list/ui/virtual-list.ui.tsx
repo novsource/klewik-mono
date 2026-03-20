@@ -7,12 +7,10 @@ import type {
 
 import type { VirtualizedItem } from '../hooks'
 
-import { forwardRef, useRef } from 'react'
+import { forwardRef } from 'react'
 import type { ComponentProps, MutableRefObject, ReactNode, Ref } from 'react'
 
 import { Virtualizer } from 'virtua'
-
-import { useMergedRefs } from '~shared/hooks'
 
 import { isFunction } from '~shared/utils'
 
@@ -72,22 +70,16 @@ export const VirtualList = <T = unknown>(props: VirtualListProps<T>) => {
     ...virtualizerOptions
   } = props
 
-  const internalContentWrapperRef = useRef<HTMLDivElement>(null)
-  const internalScrollRef = useRef<HTMLDivElement>(null)
-
   const virtualizedItems = useVirtualizedItems(data)
-
-  const scrollMergedRef = useMergedRefs(scrollElementRef, internalScrollRef)
-  const contentWrapperMergedRef = useMergedRefs(contentWrapperRef, internalContentWrapperRef)
 
   return (
     <div
-      ref={contentWrapperMergedRef}
+      ref={contentWrapperRef}
       data-slot="virtual-list-container"
       style={{ position: 'relative' }}
     >
       <div
-        ref={scrollMergedRef}
+        ref={scrollElementRef}
         className={slotsClassNames?.container}
         data-slot="virtual-list-wrapper"
         style={{

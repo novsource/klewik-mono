@@ -17,7 +17,7 @@ export type LoadMoreDonationsSearchParams = {
 }
 
 export type LoadMoreDonationsQueryArgs = LoadMoreDonationsSearchParams & {
-  auctionUUID: Auction['auctionUUID']
+  auctionUUID: Auction['uuid']
 }
 
 type LoadMoreDonationsQueryReturnValue = ProcessedDonation[]

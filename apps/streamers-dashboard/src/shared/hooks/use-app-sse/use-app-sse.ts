@@ -1,6 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
-
-import { isAxiosError } from 'axios'
+import { useEffect, useRef } from 'react'
 
 import { auctionSlotsSSEClient } from '~shared/api/sse/clients/auction-slots'
 import type { AuctionSlotsEventsCallbacks } from '~shared/api/sse/clients/auction-slots'
@@ -9,189 +7,251 @@ import type { DonationsSSEChannelEventsMap } from '~shared/api/sse/clients/donat
 import type { IntegrationsSSEEventsCallbacksMap } from '~shared/api/sse/clients/integrations/client.types'
 import { integrationsSSEClient } from '~shared/api/sse/clients/integrations/integrations-client'
 
+import { SSE_CHANNELS_CONNECT_ENDPOINTS } from '~shared/constants/api'
 import type { SSE_CHANNELS } from '~shared/constants/api'
 
 import type { SSEClient } from '~shared/lib/fetch-event-source'
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { useLazyConnectAuctionSlotsSSEQuery, useLazyConnectDonationsSSEQuery, useLazyConnectIntegrationsSSEQuery } from '~shared/store/api'
 import { sseActions, sseSelectors } from '~shared/store/slices'
 
 import { chain } from '~shared/utils/common'
 
+import { useLocalStorage } from '../use-local-storage'
 import { useTabLeader } from '../use-tab-leader/use-tab-leader'
+
+type GetConnectionUrl = (auctionUUID: string) => string
+
+export type SSEDataLocalStorage = {
+  isConnected: boolean
+}
 
 type UseAppSSEOptions = {
   onTabBecomesLeader?: () => void
   onNewTabLeader?: () => void
 }
 
-// const appSSEBroadcastChannel = new BroadcastLeaderChannel('appSSEChannel')
-
 export const useAppSSE = (options?: UseAppSSEOptions) => {
+  const optionsRef = useRef(options)
+
   const isAllEventsConnected = useStoreSelector(sseSelectors.getIsAllEventsConnected)
 
-  const { resetState } = useActionCreators(sseActions)
+  const { resetState, setAllConnected } = useActionCreators(sseActions)
 
-  const [isPending, setIsPending] = useState(false)
-  const internalIsPendingRef = useRef(false)
+  const auctionSlotsSSE = useAuctionSlotsSSE()
+  const donationsSSE = useDonationsSSE()
+  const integrationsSSE = useIntegrationsSSE()
 
-  const { connect: connectAuctionSlotsSSEQuery, queryState: { reset: resetSlotsQuery } } = useAuctionSlotsSSE()
-  const { connect: connectDonationsSSEQuery, queryState: { reset: resetDonationsQuery } } = useDonationsSSE()
-  const { connect: connectIntegrationsSSEQuery, queryState: { reset: resetIntegrationsQuery } } = useIntegrationsSSE()
+  const { channel: tabChannel, recreateChannel } = useTabLeader()
 
-  const { channel: tabLeaderChannel } = useTabLeader()
-
-  const resetConnectionQueries = () => {
-    [resetDonationsQuery, resetSlotsQuery, resetIntegrationsQuery].forEach(resetFn => resetFn())
-  }
-
-  const connectToSSEEvents = async (auctionUUID: string) => {
-    const isShouldSkipConnection = internalIsPendingRef.current
-
-    if (isShouldSkipConnection)
-      return
-
-    resetConnectionQueries()
-
-    internalIsPendingRef.current = true
-    setIsPending(true)
-
-    const eventsConnectionsQueryArr
-      = [
-        connectAuctionSlotsSSEQuery,
-        connectDonationsSSEQuery,
-        connectIntegrationsSSEQuery,
-      ].map(query => query({ auctionUUID }).unwrap())
-
-    try {
-      await Promise.all(eventsConnectionsQueryArr)
-    }
-    catch (error) {
-      if (error instanceof Error || isAxiosError(error))
-        throw error
-    }
-    finally {
-      internalIsPendingRef.current = false
-
-      setIsPending(false)
-    }
-  }
+  const sseDataLocalStorage = useLocalStorage<SSEDataLocalStorage>('sseData')
 
   useEffect(() => {
-    const onNewLeaderHandler
-      = options?.onNewTabLeader
-        ? chain<void>(options.onNewTabLeader, resetState)
-        : resetState
+    if (tabChannel.isClosed) {
+      recreateChannel()
+    }
+  }, [tabChannel.isClosed, recreateChannel])
 
-    tabLeaderChannel.onNewLeader(onNewLeaderHandler)
+  useEffect(() => {
+    const storedSSEConnectionStatus = sseDataLocalStorage.value?.isConnected
+
+    const actualConnectionStatus
+      = tabChannel.isLeader
+        ? [auctionSlotsSSE, donationsSSE, integrationsSSE].every(client => Boolean(client.isConnected))
+        : storedSSEConnectionStatus ?? false
+
+    const isStorageEmpty = typeof storedSSEConnectionStatus !== 'boolean'
+    const isStorageOutdated
+      = storedSSEConnectionStatus !== undefined
+        && typeof storedSSEConnectionStatus === 'boolean'
+        && storedSSEConnectionStatus !== actualConnectionStatus
+
+    if (tabChannel.isLeader && (isStorageEmpty || isStorageOutdated)) {
+      sseDataLocalStorage.set({ isConnected: actualConnectionStatus })
+    }
+
+    const isStoredDifferentConnectionStatus = actualConnectionStatus !== isAllEventsConnected
+
+    if (isStoredDifferentConnectionStatus) {
+      setAllConnected(actualConnectionStatus)
+    }
+  }, [
+    tabChannel.isLeader,
+    auctionSlotsSSE.isConnected,
+    donationsSSE.isConnected,
+    integrationsSSE.isConnected,
+    sseDataLocalStorage.value?.isConnected,
+    isAllEventsConnected,
+    setAllConnected,
+  ])
+
+  const onNewLeaderHandlerRef = useRef(() => {
+    const resetConnect = () => {
+      sseDataLocalStorage.set({ isConnected: false })
+      resetState()
+    }
+
+    const onNewLeaderHandler
+      = optionsRef.current?.onNewTabLeader
+        ? chain<void>(resetConnect, optionsRef.current.onNewTabLeader)
+        : resetConnect
+
+    return onNewLeaderHandler()
+  })
+
+  useEffect(() => {
+    const handler = onNewLeaderHandlerRef.current
+
+    tabChannel.onNewLeader(handler)
 
     return () => {
-      tabLeaderChannel.off('new-leader', onNewLeaderHandler)
+      tabChannel.off('new-leader', handler)
     }
-  }, [resetState, options?.onNewTabLeader, tabLeaderChannel])
+  }, [tabChannel])
 
-  return { isAllEventsConnected, isPending, connectToSSEEvents }
+  useEffect(() => {
+    if (!tabChannel.isLeader) {
+      return
+    }
+
+    const handleUnload = () => {
+      sseDataLocalStorage.set({ isConnected: false })
+    }
+
+    window.addEventListener('beforeunload', handleUnload)
+
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload)
+    }
+  }, [tabChannel, sseDataLocalStorage])
+
+  const connectAll = (auctionUUID: string) => {
+    if (!tabChannel.isLeader || isAllEventsConnected)
+      return
+
+    auctionSlotsSSE.connectToSSE(auctionUUID)
+    donationsSSE.connectToSSE(auctionUUID)
+    integrationsSSE.connectToSSE(auctionUUID)
+  }
+
+  const disconnectAll = () => {
+    if (!tabChannel.isLeader)
+      return
+
+    auctionSlotsSSE.disconnect()
+    donationsSSE.disconnect()
+    integrationsSSE.disconnect()
+  }
+
+  return { isAllEventsConnected, isPending: !isAllEventsConnected, connectAll, disconnectAll }
+}
+
+export function useDonationsSSE(listeners?: Partial<DonationsSSEChannelEventsMap>) {
+  const client = useBaseSSEClient(donationsSSEClient, {
+    name: 'donations',
+    eventListeners: listeners,
+    getConnectionUrl: SSE_CHANNELS_CONNECT_ENDPOINTS.donations,
+  })
+
+  return client
+}
+
+export function useAuctionSlotsSSE(listeners?: Partial<AuctionSlotsEventsCallbacks>) {
+  const client = useBaseSSEClient(auctionSlotsSSEClient, {
+    name: 'auctionSlots',
+    eventListeners: listeners,
+    getConnectionUrl: SSE_CHANNELS_CONNECT_ENDPOINTS.auctionSlots,
+  })
+
+  return client
+}
+
+export function useIntegrationsSSE(listeners?: Partial<IntegrationsSSEEventsCallbacksMap>) {
+  const client = useBaseSSEClient(integrationsSSEClient, {
+    name: 'integrations',
+    eventListeners: listeners,
+    getConnectionUrl: SSE_CHANNELS_CONNECT_ENDPOINTS.integrations,
+  })
+
+  return client
 }
 
 type UseBaseChannelSSEOptions<EventsCallbacksMap extends Record<string, (data: any) => void>> = {
   name: typeof SSE_CHANNELS[number]
+  getConnectionUrl: GetConnectionUrl
   eventListeners?: Partial<EventsCallbacksMap>
 }
 
-const useBaseSSEClient
-  = <EventsMap extends Record<string, any>>(client: SSEClient<EventsMap>, options: UseBaseChannelSSEOptions<EventsMap>) => {
-    const nameRef = useRef(options.name)
-    const eventListenersRef = useRef(options.eventListeners)
+function useBaseSSEClient<EventsMap extends Record<string, any>>(client: SSEClient<EventsMap>, options: UseBaseChannelSSEOptions<EventsMap>) {
+  const nameRef = useRef(options.name)
 
-    const { isConnected } = useStoreSelector(state => sseSelectors.getEventStatus(state, nameRef.current))
+  const { isConnected } = useStoreSelector(state => sseSelectors.getEventStatus(state, nameRef.current))
 
-    const { updateConnectStatus } = useActionCreators(sseActions)
+  const { updateConnectStatus } = useActionCreators(sseActions)
 
-    useEffect(() => {
-      const unsubcribe = client.onSSEEvent('onopen', () => {
-        updateConnectStatus({ eventType: nameRef.current, isConnected: true })
-      })
-
-      return () => {
-        unsubcribe()
-      }
+  useEffect(() => {
+    const onOpenUnsub = client.onSSEEvent('onopen', () => {
+      updateConnectStatus({ eventType: nameRef.current, isConnected: true })
     })
 
-    useEffect(() => {
-      const unsubcribe = client.onSSEEvent('onclose', () => {
-        updateConnectStatus({ eventType: nameRef.current, isConnected: false })
-      })
-
-      return () => {
-        unsubcribe()
-      }
+    const onCloseUnsub = client.onSSEEvent('onclose', () => {
+      updateConnectStatus({ eventType: nameRef.current, isConnected: false })
     })
 
-    useEffect(() => {
-      const eventListeners = eventListenersRef.current
-
-      if (!eventListeners)
-        return
-
-      const unsubcribeCbArr = (Object.keys(eventListeners) as Array<keyof EventsMap>)
-        .reduce<Array<() => void>>((acc, event) => {
-          const listener = eventListeners[event]
-
-          if (!listener)
-            return acc
-
-          const unsubscribe = client.onEvent(event, listener)
-
-          acc.push(unsubscribe)
-
-          return acc
-        }, [])
-
-      return () => {
-        unsubcribeCbArr.forEach(unsubscribe => unsubscribe())
-      }
-    })
-
-    return {
-      isConnected,
-      subscribeOnEvent: client.onEvent,
-      subscribeOnBaseSSEEvent: client.onSSEEvent,
+    return () => {
+      onOpenUnsub()
+      onCloseUnsub()
     }
+  }, [client, updateConnectStatus])
+
+  useEffect(() => {
+    const eventListeners = options.eventListeners
+
+    if (!eventListeners)
+      return
+
+    const unsubscribeCbArr = (Object.keys(eventListeners) as Array<keyof EventsMap>)
+      .reduce<Array<() => void>>((acc, event) => {
+        const listener = eventListeners[event]
+
+        if (!listener)
+          return acc
+
+        const unsubscribe = client.onEvent(event, listener)
+
+        acc.push(unsubscribe)
+
+        return acc
+      }, [])
+
+    return () => {
+      unsubscribeCbArr.forEach(cb => cb())
+    }
+  }, [client, options.eventListeners])
+
+  useEffect(() => {
+    const handleUnload = () => {
+      client.disconnect()
+    }
+
+    window.addEventListener('beforeunload', handleUnload)
+
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload)
+    }
+  }, [client])
+
+  const connectToSSE = (auctionUUID: string) => {
+    const url = options.getConnectionUrl(auctionUUID)
+
+    return client.connectToServer(url)
   }
 
-export function useDonationsSSE(listeners?: Partial<DonationsSSEChannelEventsMap>) {
-  const client = useBaseSSEClient(donationsSSEClient, { name: 'donations', eventListeners: listeners })
-
-  const [connectQuery, queryState] = useLazyConnectDonationsSSEQuery()
-
   return {
-    connect: connectQuery,
-    queryState,
-    ...client,
-  }
-}
-
-export function useAuctionSlotsSSE(listeners?: Partial<AuctionSlotsEventsCallbacks>) {
-  const client = useBaseSSEClient(auctionSlotsSSEClient, { name: 'auctionSlots', eventListeners: listeners })
-
-  const [connectQuery, queryState] = useLazyConnectAuctionSlotsSSEQuery()
-
-  return {
-    connect: connectQuery,
-    queryState,
-    ...client,
-  }
-}
-
-export function useIntegrationsSSE(listeners?: Partial<IntegrationsSSEEventsCallbacksMap>) {
-  const client = useBaseSSEClient(integrationsSSEClient, { name: 'integrations', eventListeners: listeners })
-
-  const [connectQuery, queryState] = useLazyConnectIntegrationsSSEQuery()
-
-  return {
-    connect: connectQuery,
-    queryState,
-    ...client,
+    connectToSSE,
+    disconnect: client.disconnect,
+    isConnected,
+    subscribeOnEvent: client.onEvent,
+    subscribeOnBaseSSEEvent: client.onSSEEvent,
   }
 }

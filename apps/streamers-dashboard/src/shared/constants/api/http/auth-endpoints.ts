@@ -1,4 +1,4 @@
-export enum AUTH_ENDPOINTS {
-  LOGIN = '/api/v1/auth/login',
-  REFRESH = '/api/v1/auth/refresh',
-}
+export const AUTH_ENDPOINTS = {
+  LOGIN: `${import.meta.env.VITE_SERVER_API_PREFIX}/auth/login`,
+  REFRESH: `${import.meta.env.VITE_SERVER_API_PREFIX}/auth/refresh`,
+} as const

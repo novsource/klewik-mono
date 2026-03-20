@@ -7,6 +7,7 @@ import { useDropoutSlotMutation, useSetAuctionWinnerMutation } from '../api'
 
 type GameContextState = {
   state: {
+    droppedSlots: AuctionSlot[]
     activeSlots: AuctionSlot[]
     isLoading: boolean
     isError: boolean
@@ -17,6 +18,7 @@ type GameContextState = {
   }
   dispatch: {
     setActiveSlots: Dispatch<SetStateAction<AuctionSlot[]>>
+    setDroppedSlots: Dispatch<SetStateAction<AuctionSlot[]>>
   }
 }
 
@@ -28,6 +30,7 @@ const GameContext = createContext<GameContextState>({
     sendWinner: () => ({}),
   },
   state: {
+    droppedSlots: [],
     activeSlots: [],
     isLoading: false,
     isError: false,
@@ -45,18 +48,21 @@ export const useGameContext = () => {
 }
 
 type GameContextProviderProps = {
+  activeSlots?: AuctionSlot[]
+  droppedSlots?: AuctionSlot[]
   children: ReactNode
 }
 
 export const GameContextProvider = (props: GameContextProviderProps) => {
-  const { children } = props
+  const [droppedSlots, setDroppedSlots] = useState<AuctionSlot[]>(props.activeSlots ?? [])
+  const [activeSlots, setActiveSlots] = useState<AuctionSlot[]>(props.droppedSlots ?? [])
 
-  const [activeSlots, setActiveSlots] = useState<AuctionSlot[]>([])
   const [dropSlotMutation, dropSlotMutationState] = useDropoutSlotMutation()
   const [sendAuctionWinnerMutation, sendWinnerMutationState] = useSetAuctionWinnerMutation()
 
   const contextValue = useMemo<GameContextState>(() => ({
     state: {
+      droppedSlots,
       activeSlots,
       isLoading: dropSlotMutationState.isLoading || sendWinnerMutationState.isLoading,
       isError: dropSlotMutationState.isError || sendWinnerMutationState.isError,
@@ -67,8 +73,10 @@ export const GameContextProvider = (props: GameContextProviderProps) => {
     },
     dispatch: {
       setActiveSlots,
+      setDroppedSlots,
     },
   }), [
+    droppedSlots,
     activeSlots,
     dropSlotMutation,
     sendAuctionWinnerMutation,
@@ -76,5 +84,5 @@ export const GameContextProvider = (props: GameContextProviderProps) => {
     sendWinnerMutationState,
   ])
 
-  return <GameContext.Provider value={contextValue}>{ children }</GameContext.Provider>
+  return <GameContext.Provider value={contextValue}>{ props.children }</GameContext.Provider>
 }
