@@ -4,7 +4,7 @@ import type {
   TypographyVariantsProps,
 } from '../styles/typography-variants'
 
-import type { HTMLAttributes, ReactNode } from 'react'
+import type { HTMLAttributes, ReactNode, JSX } from 'react'
 import { useMemo } from 'react'
 
 import { cn } from '~utils/index'

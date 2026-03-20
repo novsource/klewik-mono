@@ -5,7 +5,7 @@ import type { RadioProps } from './radio.ui'
 import type { ReactNode } from 'react'
 import { useMemo } from 'react'
 
-import { Radio as RadioPrimitive } from '@base-ui/react'
+import { mergeProps, Radio as RadioPrimitive } from '@base-ui/react'
 
 import type { TextProps } from '~components/ui/typography'
 import { Text } from '~components/ui/typography'
@@ -13,7 +13,7 @@ import { Text } from '~components/ui/typography'
 import { Card, CardContent } from '~components/ui/card'
 import { Flex } from '~components/ui/flex'
 
-import { cn, mergeProps } from '~utils/index'
+import { cn, } from '~utils/index'
 
 import { radioIndicatorVariants, radioLabelVariants, radioVariants } from '../styles'
 import { radioCardVariants } from '../styles/radio-card.variants'

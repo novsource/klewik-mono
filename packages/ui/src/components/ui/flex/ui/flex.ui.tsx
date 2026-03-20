@@ -36,10 +36,10 @@ export const Flex = forwardRef(<T extends ElementType = 'div'>(props: FlexProps<
     <RenderComponent
       ref={(instance) => {
         if (isFunction(forwardRef)) {
-          forwardRef(instance as NullablePossible<T>)
+          forwardRef(instance as unknown as NullablePossible<T>)
         }
         else if (forwardRef !== null) {
-          forwardRef.current = instance as NullablePossible<T>
+          forwardRef.current = instance as unknown as NullablePossible<T>
         }
       }}
       className={styles}

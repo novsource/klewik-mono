@@ -6,7 +6,6 @@ import { Toaster as Sonner } from 'sonner'
 
 import { Icons } from '~components/ui/icons'
 
-import { cn } from '~utils/index'
 
 import {
   actionButtonSonnerVariants,
@@ -54,7 +53,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
       pauseWhenPageIsHidden
       offset={16}
       gap={10}
-      cn={cn}
       icons={ToasterIcons}
       closeButton={true}
       toastOptions={{

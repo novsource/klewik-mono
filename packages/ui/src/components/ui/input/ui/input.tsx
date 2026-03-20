@@ -5,7 +5,7 @@ import type {
   InputVariantsProps,
 } from '../styles/input-variants'
 
-import type { ComponentProps } from 'react'
+import type { ComponentProps, JSX } from 'react'
 import { forwardRef, useMemo, useState } from 'react'
 
 import type { CvaClassValue } from '~lib/cva'
@@ -102,12 +102,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       ref={ref}
       disabled={disabled}
       data-slot="input"
-      onFocus={(e) => {
-        onFocus && onFocus(e)
+      onFocus={(event) => {
+        onFocus?.(event)
         setIsFocus(true)
       }}
-      onBlur={(e) => {
-        onBlur && onBlur(e)
+      onBlur={(event) => {
+        onBlur?.(event)
         setIsFocus(false)
       }}
       {...otherProps}

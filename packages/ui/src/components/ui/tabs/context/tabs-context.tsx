@@ -2,6 +2,7 @@ import type { TabsStylesProps } from '../styles/tabs-variants'
 
 import type {
   Dispatch,
+  JSX,
   SetStateAction,
 } from 'react'
 import {

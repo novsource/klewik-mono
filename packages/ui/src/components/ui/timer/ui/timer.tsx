@@ -13,9 +13,10 @@ import { Button } from '~components/ui/button'
 import { Flex } from '~components/ui/flex'
 import { Icons } from '~components/ui/icons'
 
-import { cn, mergeProps } from '~utils/index'
+import { cn, } from '~utils/index'
 
 import { TimerProvider, useTimerContext } from '../context'
+import { mergeProps } from '@base-ui/react'
 
 export type TimerValueProps = ComponentPropsWithoutRef<'div'> & {
   hoursProps?: NumberFlowProps

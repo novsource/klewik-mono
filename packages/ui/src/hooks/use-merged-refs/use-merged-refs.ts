@@ -1,7 +1,6 @@
 import { useCallback } from 'react'
 import type { LegacyRef, MutableRefObject, Ref } from 'react'
 
-import { isFunction } from '~shared/utils'
 
 export type MaybeRef<T> = Ref<T> | LegacyRef<T> | undefined
 
@@ -17,7 +16,7 @@ function updateRef<T>(ref: MaybeRef<T>, instance: NullablePossible<T>) {
   if (!ref)
     return
 
-  if (isFunction(ref)) {
+  if (typeof ref === 'function') {
     ref(instance)
   }
   else {
