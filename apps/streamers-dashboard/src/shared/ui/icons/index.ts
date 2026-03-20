@@ -1,0 +1,224 @@
+import { default as Actions } from './Actions';
+import { default as AltArrowLeft } from './AltArrowLeft';
+import { default as AltArrowRight } from './AltArrowRight';
+import { default as ArrowRight } from './ArrowRight';
+import { default as Bill } from './Bill';
+import { default as Bin } from './Bin';
+import { default as Bold } from './Bold';
+import { default as BrokenHeart } from './BrokenHeart';
+import { default as BulletList } from './BulletList';
+import { default as CardSend } from './CardSend';
+import { default as Cards } from './Cards';
+import { default as Cat } from './Cat';
+import { default as Check } from './Check';
+import { default as Close } from './Close';
+import { default as CloseSquare } from './CloseSquare';
+import { default as Coin } from './Coin';
+import { default as Copy } from './Copy';
+import { default as Cross } from './Cross';
+import { default as Crown } from './Crown';
+import { default as Decline } from './Decline';
+import { default as DonateMessage } from './DonateMessage';
+import { default as DonatePay } from './DonatePay';
+import { default as DonationAlerts } from './DonationAlerts';
+import { default as DonationCode } from './DonationCode';
+import { default as Dots } from './Dots';
+import { default as Eraser } from './Eraser';
+import { default as Export } from './Export';
+import { default as EyeClosed } from './EyeClosed';
+import { default as EyeOpen } from './EyeOpen';
+import { default as Face } from './Face';
+import { default as Filter } from './Filter';
+import { default as Gamepad } from './Gamepad';
+import { default as Ghost } from './Ghost';
+import { default as Github } from './Github';
+import { default as Hamburger } from './Hamburger';
+import { default as Heading1 } from './Heading1';
+import { default as Heading2 } from './Heading2';
+import { default as HeadingSymbol } from './HeadingSymbol';
+import { default as Heart } from './Heart';
+import { default as Home } from './Home';
+import { default as Hourglass } from './Hourglass';
+import { default as Id } from './Id';
+import { default as Info } from './Info';
+import { default as Integrations } from './Integrations';
+import { default as Italic } from './Italic';
+import { default as Key } from './Key';
+import { default as LargeCross } from './LargeCross';
+import { default as Like } from './Like';
+import { default as LinkArrow } from './LinkArrow';
+import { default as List } from './List';
+import { default as Loading } from './Loading';
+import { default as Lock } from './Lock';
+import { default as Login } from './Login';
+import { default as Logo } from './Logo';
+import { default as MagicStick } from './MagicStick';
+import { default as Magnifier } from './Magnifier';
+import { default as MaskHappy } from './MaskHappy';
+import { default as Message } from './Message';
+import { default as Minus } from './Minus';
+import { default as Money } from './Money';
+import { default as MoneyBag } from './MoneyBag';
+import { default as MoneyHand } from './MoneyHand';
+import { default as MoonStars } from './MoonStars';
+import { default as OpenArrow } from './OpenArrow';
+import { default as OpenBets } from './OpenBets';
+import { default as OrderedList } from './OrderedList';
+import { default as Palette } from './Palette';
+import { default as Pause } from './Pause';
+import { default as Pencil } from './Pencil';
+import { default as Play } from './Play';
+import { default as Plus } from './Plus';
+import { default as PointsSum } from './PointsSum';
+import { default as Preferences } from './Preferences';
+import { default as Programming } from './Programming';
+import { default as Ranking } from './Ranking';
+import { default as Redo } from './Redo';
+import { default as Refresh } from './Refresh';
+import { default as Reset } from './Reset';
+import { default as ReturnArrow } from './ReturnArrow';
+import { default as Rocket } from './Rocket';
+import { default as Satellite } from './Satellite';
+import { default as Save } from './Save';
+import { default as Settings } from './Settings';
+import { default as Share } from './Share';
+import { default as Signpost } from './Signpost';
+import { default as Size } from './Size';
+import { default as Slots } from './Slots';
+import { default as Snowflake } from './Snowflake';
+import { default as Sort } from './Sort';
+import { default as SortAlphabetAsc } from './SortAlphabetAsc';
+import { default as SortAlphabetDes } from './SortAlphabetDes';
+import { default as Sound } from './Sound';
+import { default as Source } from './Source';
+import { default as Status } from './Status';
+import { default as Stop } from './Stop';
+import { default as Success } from './Success';
+import { default as Tag } from './Tag';
+import { default as Telegram } from './Telegram';
+import { default as Text } from './Text';
+import { default as Timer } from './Timer';
+import { default as Tuning } from './Tuning';
+import { default as TwitchLogo } from './TwitchLogo';
+import { default as Ufo } from './Ufo';
+import { default as Underline } from './Underline';
+import { default as Undo } from './Undo';
+import { default as User } from './User';
+import { default as Warning } from './Warning';
+import { default as Wheel } from './Wheel';
+import { default as YoutubeLogo } from './YoutubeLogo';
+import { default as PointaucLogo } from './PointaucLogo';
+
+    export const Icons = {
+      Actions,
+  AltArrowLeft,
+  AltArrowRight,
+  ArrowRight,
+  Bill,
+  Bin,
+  Bold,
+  BrokenHeart,
+  BulletList,
+  CardSend,
+  Cards,
+  Cat,
+  Check,
+  Close,
+  CloseSquare,
+  Coin,
+  Copy,
+  Cross,
+  Crown,
+  Decline,
+  DonateMessage,
+  DonatePay,
+  DonationAlerts,
+  DonationCode,
+  Dots,
+  Eraser,
+  Export,
+  EyeClosed,
+  EyeOpen,
+  Face,
+  Filter,
+  Gamepad,
+  Ghost,
+  Github,
+  Hamburger,
+  Heading1,
+  Heading2,
+  HeadingSymbol,
+  Heart,
+  Home,
+  Hourglass,
+  Id,
+  Info,
+  Integrations,
+  Italic,
+  Key,
+  LargeCross,
+  Like,
+  LinkArrow,
+  List,
+  Loading,
+  Lock,
+  Login,
+  Logo,
+  MagicStick,
+  Magnifier,
+  MaskHappy,
+  Message,
+  Minus,
+  Money,
+  MoneyBag,
+  MoneyHand,
+  MoonStars,
+  OpenArrow,
+  OpenBets,
+  OrderedList,
+  Palette,
+  Pause,
+  Pencil,
+  Play,
+  Plus,
+  PointsSum,
+  Preferences,
+  Programming,
+  Ranking,
+  Redo,
+  Refresh,
+  Reset,
+  ReturnArrow,
+  Rocket,
+  Satellite,
+  Save,
+  Settings,
+  Share,
+  Signpost,
+  Size,
+  Slots,
+  Snowflake,
+  Sort,
+  SortAlphabetAsc,
+  SortAlphabetDes,
+  Sound,
+  Source,
+  Status,
+  Stop,
+  Success,
+  Tag,
+  Telegram,
+  Text,
+  Timer,
+  Tuning,
+  TwitchLogo,
+  Ufo,
+  Underline,
+  Undo,
+  User,
+  Warning,
+  Wheel,
+  YoutubeLogo,
+  PointaucLogo
+    };
+  

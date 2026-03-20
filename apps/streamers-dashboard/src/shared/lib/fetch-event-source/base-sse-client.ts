@@ -1,0 +1,185 @@
+import type {
+  EventSourceMessage,
+  SSEClientConnectOptions,
+  SSEClientListeners,
+} from './models/base-sse-client.types'
+
+import {
+  EventStreamContentType,
+  fetchEventSource,
+} from '@microsoft/fetch-event-source'
+import { Mutex } from 'async-mutex'
+import { AxiosError } from 'axios'
+import z from 'zod'
+
+import { refreshTokens } from '~shared/api/http/auth/auth.api'
+
+import { wait } from '~shared/utils/common'
+
+import { EventSourceMessageSchema } from './models'
+
+const mutex = new Mutex()
+
+type RetrySSEConnectOptions = Omit<SSEClientConnectOptions, 'retry'> & {
+  retry: NonNullable<SSEClientConnectOptions['retry']>
+}
+
+export class BaseSSEClient {
+  private _abortController: Maybe<AbortController>
+
+  async connect(
+    url: string,
+    inputListeners: SSEClientListeners,
+    inputOptions?: SSEClientConnectOptions,
+  ) {
+    const baseUrl = import.meta.env.VITE_SERVER_URL
+
+    const onOpen = async (response: Response) => {
+      const isSuccessResponse = response.ok
+      const isSSE = response.headers.get('content-type') === EventStreamContentType
+
+      if (isSuccessResponse && isSSE) {
+        inputListeners.onopen(response)
+      }
+      else if (
+        response.status >= 400
+        && response.status < 500
+        && response.status !== 429
+      ) {
+        const isAuthError = response.status === 401
+        const isMutexLocked = mutex.isLocked()
+
+        if (isAuthError && isMutexLocked) {
+          await mutex.waitForUnlock()
+          return this.connect(url, inputListeners, inputOptions)
+        }
+
+        /** @todo Refactor auth error */
+        if (isAuthError && !isMutexLocked) {
+          const release = await mutex.acquire()
+          try {
+            await refreshTokens()
+            return this.connect(url, inputListeners, inputOptions)
+          }
+          catch (error) {
+            if (error instanceof AxiosError)
+              throw new Error(error.cause?.message)
+            if (error instanceof Error)
+              throw new Error('Authorization error')
+          }
+          finally {
+            release()
+          }
+        }
+
+        if (!isAuthError) {
+          throw new AxiosError(response.statusText, response.status.toString())
+        }
+      }
+      else {
+        if (response.status === 500) {
+          throw new AxiosError(response.statusText, response.status.toString())
+        }
+
+        throw new Error('Unexpected error when trying to connect SSE')
+      }
+    }
+
+    const onMessage = (message: EventSourceMessage) => {
+      const parsedMessage = EventSourceMessageSchema.safeParse(message)
+
+      if (!parsedMessage.success) {
+        inputListeners.onerror(
+          new Error(
+            `Invalid SSE message: ${z.treeifyError(parsedMessage.error).errors.join('; ')}`,
+          ),
+        )
+        return
+      }
+
+      inputListeners.onmessage(parsedMessage.data)
+    }
+
+    const onClose = () => {
+      inputListeners.onclose()
+    }
+
+    const onError = (err: unknown) => {
+      inputListeners.onerror(err)
+
+      throw err
+    }
+
+    const listeners: SSEClientListeners = {
+      onopen: onOpen,
+      onclose: onClose,
+      onerror: onError,
+      onmessage: onMessage,
+    }
+
+    const options: SSEClientConnectOptions = {
+      ...inputOptions,
+      openWhenHidden: true,
+      credentials: 'include',
+      headers: {
+        'Access-Control-Allow-Origin': baseUrl,
+      },
+    }
+
+    const params = new URLSearchParams()
+
+    params.set('lastMessageId', String(options?.lastMessageId ?? 0))
+
+    const isRetryInOptions = Reflect.has(options, 'retry')
+
+    await mutex.waitForUnlock()
+
+    if (isRetryInOptions) {
+      // @ts-expect-error - reflect checking
+      return this._retryConnect(`/api/v1/auctions/${url}`, listeners, options)
+    }
+
+    return this._internalRequest(`/api/v1/auctions/${url}`, listeners, options)
+  }
+
+  private async _retryConnect(
+    url: string,
+    listeners: SSEClientListeners,
+    options: RetrySSEConnectOptions,
+  ): Promise<void> {
+    const reconnect = async (err: Error): Promise<void> => {
+      options.retry.counts -= 1
+
+      if (options.retry.counts <= 0) {
+        throw err
+      }
+
+      return wait(options.retry.delay).then(() => this._retryConnect(url, listeners, options))
+    }
+
+    return this._internalRequest(url, listeners, options).catch(reconnect)
+  }
+
+  disconnect() {
+    this._abortController?.abort()
+    this._abortController = undefined
+  }
+
+  private _internalRequest(
+    url: string,
+    listeners: SSEClientListeners,
+    options: SSEClientConnectOptions,
+  ) {
+    if (this._abortController) {
+      this._abortController.abort()
+    }
+
+    this._abortController = new AbortController()
+
+    return fetchEventSource(url, {
+      ...listeners,
+      ...options,
+      signal: this._abortController.signal,
+    })
+  }
+}
