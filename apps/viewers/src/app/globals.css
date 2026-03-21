@@ -1,0 +1,294 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --color-*: initial;
+    --color-white-accent: #f8f8ff;
+    --color-white: #f4f4f4;
+    --color-dark-white: #e0e0e0;
+
+    --color-green: #3f9663;
+    --color-green-accent: #74dfa2;
+
+    --color-black: #000;
+
+    --color-dark: #1f1e20;
+    --color-dark-light: #272729;
+    --color-dark-accent: #302f32;
+    --color-dark-foreground-light: #161617;
+    --color-dark-foreground: #141315;
+
+    --color-yellow: #cfc56f;
+
+    --color-red: #fe7968;
+
+    --color-gray: #5a5d61;
+    --color-gray-light: #818386;
+    --color-gray-accent: #babcbe;
+
+    --color-purple: #505285;
+
+    --color-orange: #f58c08;
+
+    --color-transparent: rgba(255, 255, 255, 0);
+
+    --text-*: initial;
+    --text-xs: 0.56rem;
+    --text-sm: 0.75rem;
+    --text-md: 0.875rem;
+    --text-title: 1.05rem;
+    --text-title-lg: 1.3rem;
+    --text-title-xl: 1.5rem;
+
+    --radius-*: initial;
+    --radius-none: 0px;
+    --radius-small: 8px;
+    --radius-medium: 10px;
+    --radius-large: 16px;
+    --radius-pill: 10000px;
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --breakpoint-*: initial;
+    --breakpoint-mobile: 640px;
+    --breakpoint-tablet: 1024px;
+    --breakpoint-landtop: 1440px;
+    --breakpoint-desktop: 1920px;
+    --breakpoint-desktop-lg: 2560px;
+
+    --shadow-*: initial;
+
+    --font-*: initial;
+    --font-golos: "Golos";
+
+    --animate-opacity-in: fadeChange 0.15s ease;
+    --animate-opacity-out: fadeChange 0.15s ease reverse;
+
+    --animate-fade-in: fadeIn 0.4s ease forwards;
+    --animate-fade-out: fadeIn 2s ease reverse;
+    --animate-fade-change: fadeChange 0.3s ease;
+
+    --animate-dialog-in: fadeIn 0.1s ease forwards;
+    --animate-dialog-out: fadeIn 0.1s ease reverse;
+
+    --height-sheet: var(--sheet-height);
+
+    @keyframes fadeChange {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+            transform: translateY(-10px) scale(0.9);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0px) scale(1);
+        }
+    }
+}
+
+@keyframes sheet-open {
+    0% {
+        opacity: var(--sheet-enter-opacity, 0);
+        transform: translate3d(var(--sheet-enter-translate-x, 0),
+                var(--sheet-enter-translate-y, 0),
+                0) scale3d(var(--sheet-enter-scale, 1),
+                var(--sheet-enter-scale, 1),
+                var(--sheet-enter-scale, 1)) rotate(var(--sheet-enter-rotate, 0));
+    }
+}
+
+@keyframes sheet-exit {
+    100% {
+        opacity: var(--sheet-exit-opacity, 1);
+        transform: translate3d(var(--sheet-exit-translate-x, 0),
+                var(--sheet-exit-translate-y, 0),
+                0) scale3d(var(--sheet-exit-scale, 1),
+                var(--sheet-exit-scale, 1),
+                var(--sheet-exit-scale, 1)) rotate(var(--sheet-exit-rotate, 0));
+    }
+}
+
+@utility slide-out-to-top {
+    --sheet-exit-translate-y: -0.25rem;
+}
+
+@utility slide-in-from-top {
+    --sheet-enter-translate-y: -0.25rem;
+}
+
+@utility slide-in-from-bottom {
+    --sheet-enter-translate-y: 100%;
+}
+
+@utility slide-out-to-bottom {
+    --sheet-exit-translate-y: 100%;
+}
+
+@utility slide-out-to-left {
+    --sheet-exit-translate-x: 100%;
+}
+
+@utility slide-in-from-left {
+    --sheet-enter-translate-x: 100%;
+}
+
+@utility slide-out-to-right {
+    --sheet-exit-translate-x: 100%;
+}
+
+@utility slide-in-from-right {
+    --sheet-enter-translate-x: 100%;
+}
+
+@utility animate-enter-sheet {
+    animation-name: sheet-open;
+    animation-duration: 0.25s;
+    --sheet-enter-opacity: initial;
+    --sheet-enter-scale: initial;
+    --sheet-enter-rotate: initial;
+    --sheet-enter-translate-x: initial;
+    --sheet-enter-translate-y: initial;
+}
+
+@utility animate-exit-sheet {
+    animation-name: sheet-exit;
+    animation-duration: 0.2s;
+    --sheet-enter-opacity: initial;
+    --sheet-enter-scale: initial;
+    --sheet-enter-rotate: initial;
+    --sheet-enter-translate-x: initial;
+    --sheet-enter-translate-y: initial;
+}
+
+@utility container {
+    margin-inline: auto;
+    padding-inline: 2rem;
+    @apply max-mobile:px-4;
+}
+
+@layer base {
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+@layer base {
+    @import url("https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+}
+
+:root {
+    --radius: 0.5rem;
+
+    --header-height: 56px;
+    --footer-height: 52px;
+    --sheet-height: calc(100% - 20px);
+
+    --ds-width: 1440px;
+
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+    scroll-padding-top: calc(var(--header-height) + 24px);
+    @apply bg-dark-foreground w-full;
+}
+
+#root {
+    @apply relative h-full w-full;
+}
+
+body {
+    @apply m-0 h-full w-full;
+}
+
+header {
+    height: var(--header-height);
+}
+
+li {
+    list-style-type: none;
+}
+
+.main_auction {
+    @apply w-full tablet:px-0;
+    height: calc(100% - (var(--header-height)));
+}
+
+.container {
+    @apply mx-auto max-w-[var(--ds-width)];
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: #f4f4f4 !important;
+    animation-name: onAutoFillStart;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+input:not(:-webkit-autofill) {
+    animation-name: onAutoFillCancel;
+}
+
+.auction_rules h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.auction_rules h2 {
+    font-size: 21px;
+    font-weight: 600;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.auction_rules ol {
+    @apply pl-6 mb-2 tablet:pl-12 tablet:mb-3;
+}
+
+.auction_rules ol li {
+    list-style-type: decimal;
+}
+
+.auction_rules ul {
+    @apply pl-6 mb-2 tablet:pl-12 tablet:mb-3;
+}
+
+.auction_rules ul li {
+    list-style-type: disc;
+}
+
+.auction_rules {
+    @apply text-white/85;
+}
