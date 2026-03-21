@@ -1,7 +1,8 @@
-import type { ProcessedDonation } from '~entities/donation/model'
+import type { TabsProps } from 'klewik-ui/tabs'
 
-import type { TabsProps } from '~shared/ui/tabs'
-import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
+import { Tabs, TabsList, TabsTrigger } from 'klewik-ui/tabs'
+
+import type { ProcessedDonation } from '~entities/donation/model'
 
 import { cn } from '~shared/utils'
 

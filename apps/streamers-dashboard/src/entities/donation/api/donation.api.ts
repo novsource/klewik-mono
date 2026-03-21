@@ -41,9 +41,16 @@ export const splittedDonationApi = createApi({
     getDonationsStats: builder.query<GetDonationsStatsQueryResultData, GetDonationsStatsQueryArgs>({
       query: ({ auctionUUID }) => ({ url: `/${auctionUUID}/donations/stats` }),
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
-        const response = await queryFulfilled
+        try {
+          const response = await queryFulfilled
 
-        dispatch(donationsActions.setDonationsStatusesCounts(response.data))
+          dispatch(donationsActions.setDonationsStatusesCounts(response.data))
+        }
+        catch (error) {
+          if (error instanceof Error) {
+            throw error
+          }
+        }
       },
     }),
   }),

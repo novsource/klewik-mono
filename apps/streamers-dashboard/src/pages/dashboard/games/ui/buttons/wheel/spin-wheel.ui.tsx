@@ -9,10 +9,10 @@ import { updateSlotsAnglesByRotateValue } from '~entities/wheel/utils'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import type { ButtonProps } from '~shared/ui/button'
-import { Button } from '~shared/ui/button'
-import { Icons } from '~shared/ui/icons'
-import { toastErrorNotification } from '~shared/ui/toaster/lib'
+import type { ButtonProps } from 'klewik-ui/button'
+import { Button } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
+import { toastErrorNotification } from 'klewik-ui/toaster/lib'
 
 export type SpinWheelButtonProps = ButtonProps
 

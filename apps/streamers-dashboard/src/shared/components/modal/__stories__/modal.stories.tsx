@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
 
 import { Modal, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalHeaderTitle, ModalTrigger } from '../ui/modal.ui'
 

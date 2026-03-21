@@ -110,7 +110,7 @@ const perfectionistFSDImportsSharedSlice = [
   },
   {
     groupName: 'shared:ui',
-    elementNamePattern: ['^~shared/ui'],
+    elementNamePattern: ['^klewik-ui'],
   },
   {
     groupName: 'shared:utils',

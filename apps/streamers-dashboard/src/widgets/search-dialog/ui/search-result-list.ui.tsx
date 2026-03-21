@@ -25,16 +25,16 @@ import { useHover, useMediaQuery } from '~shared/hooks'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Card, CardContent } from '~shared/ui/card'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { InfiniteList } from '~shared/ui/infinite-list'
-import type { InfiniteListProps, InfiniteListRenderFunction } from '~shared/ui/infinite-list'
-import type { MotionBoxProps } from '~shared/ui/motion-box'
-import { MotionBox } from '~shared/ui/motion-box'
-import { Skeleton } from '~shared/ui/skeleton'
-import { toastErrorNotification } from '~shared/ui/toaster'
-import { Typography } from '~shared/ui/typograghy'
+import { Card, CardContent } from 'klewik-ui/card'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { InfiniteList } from 'klewik-ui/infinite-list'
+import type { InfiniteListProps, InfiniteListRenderFunction } from 'klewik-ui/infinite-list'
+import type { MotionBoxProps } from 'klewik-ui/motion-box'
+import { MotionBox } from 'klewik-ui/motion-box'
+import { Skeleton } from 'klewik-ui/skeleton'
+import { toastErrorNotification } from 'klewik-ui/toaster'
+import { Typography } from 'klewik-ui/typography'
 
 import { cn, isStringEmpty } from '~shared/utils'
 
@@ -210,7 +210,7 @@ export const SearchAuctionSlots = (props: SearchAuctionSlotsProps) => {
               className="w-fit px-1 py-0 tablet:px-1.5 tablet:py-0.25 bg-dark border-1 border-dark-light font-golos-f text-gray-light rounded-sm text-[10px] tablet:text-sm text-nowrap"
               asSpan
             >
-              { `ID: ${slot.id}`}
+              {`ID: ${slot.id}`}
             </Text>
             <Text className="max-tablet:px-0.75" asSpan>{slot.title}</Text>
           </Flex>
@@ -236,7 +236,7 @@ export const SearchAuctionSlots = (props: SearchAuctionSlotsProps) => {
       )}
       showPlaceholders={infiniteList.state.isPending}
     >
-      { renderAuctionSlotListItem }
+      {renderAuctionSlotListItem}
     </SearchResultInfinityList>
   )
 }
@@ -309,7 +309,7 @@ export const SearchDonations = (props: SearchAuctionSlotsProps) => {
       placeholder={<SkeletonDonationCard />}
       showPlaceholders={infiniteList.state.isPending}
     >
-      { renderDonationListItem }
+      {renderDonationListItem}
     </SearchResultInfinityList>
   )
 }

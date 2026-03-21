@@ -6,6 +6,7 @@ import type { CreateAuctionQueryReturnValue } from '~pages/welcome/api/create-au
 import { useCreateAuctionMutation } from '~pages/welcome/api/create-auction.api'
 import { WELCOME_PAGE_WIZARD_ITEMS_IDS } from '~pages/welcome/constants'
 
+import { transformAuctionDTO } from '~entities/auction/lib'
 import type { Auction } from '~entities/auction/model'
 
 import { loginInAuction } from '~shared/api/http/auth'
@@ -15,15 +16,14 @@ import { Text, Title } from '~shared/components/typography'
 
 import { useAsync } from '~shared/hooks'
 
-import { Button } from '~shared/ui/button'
-import { Card, CardContent, CardHeader } from '~shared/ui/card'
-import { Divider } from '~shared/ui/divider'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { toastErrorNotification } from '~shared/ui/toaster/lib'
-import type { WizardItemProps } from '~shared/ui/wizard'
-import { WizardItem, WizardTrigger } from '~shared/ui/wizard'
-import { useWizardContext } from '~shared/ui/wizard/context'
+import { Button } from 'klewik-ui/button'
+import { Card, CardContent, CardHeader } from 'klewik-ui/card'
+import { Divider } from 'klewik-ui/divider'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { toastErrorNotification } from 'klewik-ui/toaster/lib'
+import type { WizardItemProps } from 'klewik-ui/wizard'
+import { useWizardContext, WizardItem, WizardTrigger } from 'klewik-ui/wizard'
 
 import { cn } from '~shared/utils'
 
@@ -103,13 +103,13 @@ export const WizardCreateNewAuctionItem = (
 
       <Card
         className="flex justify-between items-center gap-x-2 cursor-pointer outline-1 outline-dark-light hover:outline-gray/70 pt-2"
-        onClick={() => goToExistingAuction(getUserAuctions.state.activeAuction!.auctionUUID)}
+        onClick={() => goToExistingAuction(getUserAuctions.state.activeAuction!.uuid)}
       >
         <div className="flex flex-col">
           <CardHeader className="flex flex-col gap-y-2 tablet:gap-y-3">
             <Text className="text-gray-light" asSpan>Перейти в</Text>
             <Text className="text-base leading-5 tablet:text-title font-semibold">
-              {getUserAuctions.state.activeAuction?.auctionUUID}
+              {getUserAuctions.state.activeAuction?.uuid}
             </Text>
           </CardHeader>
           <CardContent>
@@ -175,7 +175,14 @@ function useGetUserAuctions(options?: useGetUserAuctionsOptions) {
       return
     }
 
-    setActiveAuction(getAuctionResponse.data[0] ?? null)
+    if (!getAuctionResponse.data[0]) {
+      setActiveAuction(null)
+    }
+    else {
+      const transformedAuction = transformAuctionDTO(getAuctionResponse.data[0])
+
+      setActiveAuction(transformedAuction)
+    }
   }
 
   const getActiveAuctionsQuery = useAsync(getActiveAuctions, [currentStepId])

@@ -45,12 +45,16 @@ describe('auction slots slice reducers', () => {
       auctionSlotOrder: 1000,
       title: 'Test',
       winPercents: 50,
+      isAlived: true,
+      isDropped: false,
     }, {
       points,
       id: 1001,
       auctionSlotOrder: 1001,
       title: 'Test 2',
       winPercents: 50,
+      isAlived: true,
+      isDropped: false,
     }]
 
     dispatch(auctionSlotsActions.addSlots(addedSlotArr))
@@ -66,12 +70,16 @@ describe('auction slots slice reducers', () => {
       auctionSlotOrder: 1000,
       title: 'Test',
       winPercents: 50,
+      isAlived: true,
+      isDropped: false,
     }, {
       points: 1000,
       id: 1001,
       auctionSlotOrder: 1001,
       title: 'Test 2',
       winPercents: 50,
+      isAlived: true,
+      isDropped: false,
     }]
 
     dispatch(auctionSlotsActions.addSlots(addedSlotArr))
@@ -99,12 +107,16 @@ describe('auction slots slice reducers', () => {
       auctionSlotOrder: 1000,
       title: 'Test',
       winPercents: 50,
+      isAlived: true,
+      isDropped: false,
     }, {
       points: 1000,
       id: 1001,
       auctionSlotOrder: 1001,
       title: 'Test 2',
       winPercents: 50,
+      isAlived: true,
+      isDropped: false,
     }]
 
     dispatch(auctionSlotsActions.addSlots(addedSlotArr))
@@ -116,7 +128,7 @@ describe('auction slots slice reducers', () => {
     expect(state.slots).not.include(targetSlot)
   })
 
-  it ('should set sorted slots', () => {
+  it('should set sorted slots', () => {
     const points = 1000
 
     const addedSlotArr: AuctionSlot[] = [{
@@ -125,12 +137,16 @@ describe('auction slots slice reducers', () => {
       auctionSlotOrder: 1000,
       title: 'Test',
       winPercents: 50,
+      isAlived: true,
+      isDropped: false,
     }, {
       points,
       id: 1001,
       auctionSlotOrder: 1001,
       title: 'Test 2',
       winPercents: 50,
+      isAlived: true,
+      isDropped: false,
     }]
 
     expect(state.sortedSlots).toEqual(initialState.sortedSlots)

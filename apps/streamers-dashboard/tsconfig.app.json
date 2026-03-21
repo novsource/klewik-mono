@@ -10,11 +10,11 @@
     ],
     "module": "ESNext",
     "skipLibCheck": true,
+    /* Bundler mode */
     "types": [
       "vitest/globals",
       "@testing-library/jest-dom"
     ],
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
@@ -28,18 +28,18 @@
     "noFallthroughCasesInSwitch": true,
   },
   "include": [
-    // "tests",
-    "src"
+    "src",
+    "tests"
   ],
   "exclude": [
     "node_modules",
-    // "**/*.test.ts",
-    // "**/*.test.tsx",
-    // "**/*.spec.ts",
-    // "**/*.spec.tsx",
-    // "**/*.mocks.ts",
-    // "**/*.stories.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.mocks.ts",
+    "**/*.stories.tsx",
     "src/shared/api/sse/clients-manager/**.ts",
-    // "__tests__",
+    "__tests__",
   ]
 }

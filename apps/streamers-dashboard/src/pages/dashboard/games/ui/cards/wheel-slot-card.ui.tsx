@@ -1,3 +1,8 @@
+import type { CardProps } from 'klewik-ui/card'
+
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+
 import {
   AuctionSlotCardContentInfoDivider,
   AuctionSlotCardPointsInfo,
@@ -8,10 +13,6 @@ import {
 } from '~entities/auction-slot/ui/card'
 
 import type { WheelSlot } from '~entities/wheel/model'
-
-import type { CardProps } from '~shared/ui/card'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
 
 import { cn } from '~shared/utils'
 

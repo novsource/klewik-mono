@@ -8,12 +8,12 @@ import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import type { FlexProps } from '~shared/ui/flex'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { NumberInput } from '~shared/ui/number-input'
-import type { NumberInputProps } from '~shared/ui/number-input'
-import { Typography } from '~shared/ui/typograghy'
+import type { FlexProps } from 'klewik-ui/flex'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import type { NumberInputProps } from 'klewik-ui/number-input'
+import { NumberInput } from 'klewik-ui/number-input'
+import { Typography } from 'klewik-ui/typography'
 
 import { deleteAllSpacesFromString, isStringEmpty, mergeProps } from '~shared/utils'
 

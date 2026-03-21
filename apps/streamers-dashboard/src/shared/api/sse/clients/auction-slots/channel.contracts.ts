@@ -7,6 +7,8 @@ const AuctionSlotDTOSchema = z.object({
   title: z.string().nonempty().max(200),
   auctionSlotOrder: z.number().nonnegative(),
   points: z.number().nonnegative(),
+  isAlived: z.boolean(),
+  isDropped: z.boolean(),
 })
 
 const AuctionSlotsEvents = ['add', 'update'] as const

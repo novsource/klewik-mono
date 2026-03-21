@@ -10,10 +10,10 @@ import { SlotPointsFormInput, SlotTitleFormInput } from '~entities/auction-slot/
 
 import { getErrorMessageForField } from '~shared/lib/react-hook-form'
 
-import type { ButtonProps } from '~shared/ui/button'
-import { Button } from '~shared/ui/button'
-import { Icons } from '~shared/ui/icons'
-import type { InputProps } from '~shared/ui/input'
+import type { ButtonProps } from 'klewik-ui/button'
+import { Button } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
+import type { InputProps } from 'klewik-ui/input'
 
 export type EditSlotFormComposerProps = ComponentPropsWithoutRef<'form'> & {
   form: UseFormReturn<EditSlotFormData, unknown, TransformedEditSlotFormData>

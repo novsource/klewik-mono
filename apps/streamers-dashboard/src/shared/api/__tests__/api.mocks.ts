@@ -35,7 +35,6 @@ export const auctionApiMocksHandlers = [
         isBetsClosed: false,
         isEnded: false,
         slotsIds: [],
-        url: faker.internet.url(),
         wheelMode: 'classic',
         winnerSlotId: null,
       },
@@ -53,9 +52,12 @@ export const authApiMocksHandlers = [
     if (!validatedRefreshTokenResult.success)
       return new HttpResponse(null, { status: 400 })
 
-    return new HttpResponse(null, { headers: {
-      'set-cookie': `refreshToken=${faker.string.uuid()}; accessToken=${faker.string.uuid()}; deviceId=${faker.string.uuid()}`,
-    }, status: 200 })
+    return new HttpResponse(null, {
+      headers: {
+        'set-cookie': `refreshToken=${faker.string.uuid()}; accessToken=${faker.string.uuid()}; deviceId=${faker.string.uuid()}`,
+      },
+      status: 200,
+    })
   }),
 ]
 

@@ -6,11 +6,10 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { CardsGameContextProvider, useCardsGameContext } from '~entities/games/context/cards-game/cards-game.context'
+import { MotionBox } from 'klewik-ui/motion-box'
 import { transform } from 'motion'
 
 import { useMergedRefs } from '~shared/hooks'
-
-import { MotionBox } from '~shared/ui/motion-box'
 
 import { cn, isFunction, mergeProps } from '~shared/utils'
 

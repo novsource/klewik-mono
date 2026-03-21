@@ -1,9 +1,22 @@
 import type { NumberFlowProps } from '@number-flow/react'
+import type {
+  CardProps,
+} from 'klewik-ui/card'
+import type { FlexProps } from 'klewik-ui/flex'
 
 import type { ComponentProps, ReactNode } from 'react'
 import { forwardRef, useMemo } from 'react'
 
 import NumberFlow from '@number-flow/react'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from 'klewik-ui/card'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Skeleton } from 'klewik-ui/skeleton'
 import { transform } from 'motion'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
@@ -13,20 +26,6 @@ import { greaterThenDeviceWidthMediaQueries, tailwindScreens } from '~shared/con
 import { Text } from '~shared/components/typography'
 
 import { useMediaQuery } from '~shared/hooks'
-
-import type {
-  CardProps,
-} from '~shared/ui/card'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '~shared/ui/card'
-import type { FlexProps } from '~shared/ui/flex'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { Skeleton } from '~shared/ui/skeleton'
 
 import { getRandomNumberInRange } from '~shared/utils/common'
 import { cn } from '~shared/utils/react'

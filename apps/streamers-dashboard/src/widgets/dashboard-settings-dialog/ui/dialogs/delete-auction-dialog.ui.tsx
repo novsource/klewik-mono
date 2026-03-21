@@ -19,10 +19,10 @@ import { Text } from '~shared/components/typography'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { toastErrorNotification, toastSuccessNotification } from 'klewik-ui/toaster/lib'
 
 import { cn } from '~shared/utils'
 

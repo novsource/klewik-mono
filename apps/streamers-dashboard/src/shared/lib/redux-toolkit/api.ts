@@ -67,7 +67,7 @@ export const axiosBaseQuery
         rewriteBaseURL = false,
       } = args
 
-      const isDev = import.meta.env.VITE_DEV
+      const isDev = import.meta.env.DEV
       try {
         const axios = new BaseHttpClient({
           axiosOptions: options.axiosOptions,
@@ -117,7 +117,7 @@ const authMutex = new Mutex()
 export const axiosAuthBaseQuery
   = (options: AxiosBaseQueryOptions): AxiosQueryFn =>
     async (args, api, extraOptions) => {
-      const isDev = import.meta.env.VITE_DEV
+      const isDev = import.meta.env.DEV
 
       const initBaseUrl = import.meta.env.VITE_SERVER_URL
 

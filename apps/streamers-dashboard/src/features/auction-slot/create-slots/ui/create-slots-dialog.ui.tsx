@@ -11,10 +11,10 @@ import { useMediaQuery } from '~shared/hooks'
 
 import { useActionCreators } from '~shared/lib/redux-toolkit'
 
-import { Button } from '~shared/ui/button'
-import { Divider } from '~shared/ui/divider'
-import { Icons } from '~shared/ui/icons'
-import { closeAllToasts, toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
+import { Button } from 'klewik-ui/button'
+import { Divider } from 'klewik-ui/divider'
+import { Icons } from 'klewik-ui/icons'
+import { closeAllToasts, toastErrorNotification, toastSuccessNotification } from 'klewik-ui/toaster/lib'
 
 import { twSlotsStyles } from '~shared/utils'
 
@@ -44,7 +44,7 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
 
   const { form, state: formState, submitForm, isLoading } = useCreateSlotsForm({
     onSuccess: (slots) => {
-      auctionSlotsActions.addSlots(slots)
+      auctionSlotsActions.addSlots(slots.map(slot => ({ ...slot, isAlived: true, isDropped: false })))
 
       setIsSuccessCreated(true)
       setIsDialogOpen(false)
@@ -92,7 +92,7 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
         onOpenChange={setIsDialogOpen}
         disablePointerDismissal={formState.isDirty}
       >
-        <DesktopAppDialog.Trigger>{ trigger }</DesktopAppDialog.Trigger>
+        <DesktopAppDialog.Trigger>{trigger}</DesktopAppDialog.Trigger>
 
         <DesktopAppDialog.Content>
           <DesktopAppDialog.Header>
@@ -154,7 +154,7 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
       onOpenChange={setIsDialogOpen}
       disablePointerDismissal={formState.isDirty}
     >
-      <MobileAppDialog.Trigger className="w-full">{ trigger }</MobileAppDialog.Trigger>
+      <MobileAppDialog.Trigger className="w-full">{trigger}</MobileAppDialog.Trigger>
 
       <MobileAppDialog.Content>
         <MobileAppDialog.Header className="flex-col gap-y-5 items-start px-0">

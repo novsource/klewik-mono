@@ -2,7 +2,7 @@ import type { FORMATTED_INTEGRATIONS_PLATFORMS_NAMES } from './integrations-name
 
 import type { ReactNode, SVGProps } from 'react'
 
-import { Icons } from '~shared/ui/icons'
+import { Icons } from 'klewik-ui/icons'
 
 type IconProps = SVGProps<SVGSVGElement> & {
   size?: 'xs' | 'sm' | 'default' | 'lg'

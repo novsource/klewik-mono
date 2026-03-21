@@ -1,9 +1,8 @@
 import type { RefObject } from 'react'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
+import { auctionGamesSelectors } from '~entities/games/store'
 import { animate, transform, useMotionValue } from 'motion/react'
-
-import { auctionSelectors } from '~entities/auction/store'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
@@ -215,11 +214,13 @@ const useWheelInit = (
     draw()
   }, [wheelCanvasRef, innerWheelCanvasRef, draw])
 
-  useResizeObserver(documentBodyRef, { onChange: () => {
-    drawBackground()
-    resizeWheel()
-    resizeBackground()
-  } })
+  useResizeObserver(documentBodyRef, {
+    onChange: () => {
+      drawBackground()
+      resizeWheel()
+      resizeBackground()
+    },
+  })
 
   useEffect(() => {
     resizeBackground()
@@ -270,10 +271,10 @@ const useWheelControl = (
   const framerMotionAnimationValue = useMotionValue(rotateValue ?? 0)
 
   const [wheelRotateCSSValue, setWheelRotateCSSValue] = useState(() =>
-    ({
-      current: framerMotionAnimationValue.get(),
-      final: framerMotionAnimationValue.get(),
-    }),
+  ({
+    current: framerMotionAnimationValue.get(),
+    final: framerMotionAnimationValue.get(),
+  }),
   )
 
   const rotateWheelAnimation = useCallback(
@@ -284,7 +285,7 @@ const useWheelControl = (
         return
 
       const targetRotateCSSValue
-          = wheelRotateCSSValue.current + calculateRotateWheelCSSValue(target)
+        = wheelRotateCSSValue.current + calculateRotateWheelCSSValue(target)
 
       if (targetRotateCSSValue !== wheelRotateCSSValue.current)
         setWheelRotateCSSValue({ ...wheelRotateCSSValue, final: targetRotateCSSValue })
@@ -360,8 +361,7 @@ export const useWheelCanvas = (slots: AuctionSlot[]): UseWheelCanvasReturn => {
     settings: storedWheelSettings,
   } = useStoreSelector(state => state.wheel)
 
-  // TODO: Put wheel mode into wheel slice
-  const storedWheelMode = useStoreSelector(auctionSelectors.getWheelMode)
+  const storedWheelMode = useStoreSelector(auctionGamesSelectors.getGameMode)
 
   const { setSlots, setRotateValue, setWheelStatus, setSelectorTitleName } = useActionCreators(wheelActions)
 

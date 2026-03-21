@@ -7,8 +7,8 @@ import { Text } from '~shared/components/typography'
 
 import { useMediaQuery } from '~shared/hooks'
 
-import { Button } from '~shared/ui/button'
-import { Icons } from '~shared/ui/icons'
+import { Button } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
 
 type AuthTwitchButtonProps = {
   onSuccess?: () => void

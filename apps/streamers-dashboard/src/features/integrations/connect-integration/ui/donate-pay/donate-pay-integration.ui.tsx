@@ -1,7 +1,7 @@
 import { memo } from 'react'
 
-import { Button } from '~shared/ui/button'
-import { Icons } from '~shared/ui/icons'
+import { Button } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
 
 import { IntegrationCard } from '../connect-integration.ui'
 

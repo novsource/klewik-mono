@@ -40,7 +40,7 @@ export const useAuthDonationAlerts = (options?: UseAuthDonationAlertsOptions) =>
     const url = new URL(DONATION_ALERTS_ENDPOINTS.AUTHORIZE_URL)
     const donalertsUrlParams = new URLSearchParams({
       client_id: import.meta.env.VITE_DONALERTS_APP_ID,
-      redirect_url: `${import.meta.env.VITE_SERVER_URL}/api/integrations/donalerts/callback`,
+      redirect_url: import.meta.env.VITE_DA_REDIRECT_URI,
       response_type: 'code',
       scope: import.meta.env.VITE_DONALERTS_SCOPES,
     })

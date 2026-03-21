@@ -7,8 +7,8 @@ import { CreateSlotsDialog } from '~features/auction-slot/create-slots/ui'
 
 import { DASHBOARD_ROUTES } from '~shared/constants/router'
 
-import { Button } from '~shared/ui/button'
-import { Icons } from '~shared/ui/icons'
+import { Button } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
 
 import { cn } from '~shared/utils'
 

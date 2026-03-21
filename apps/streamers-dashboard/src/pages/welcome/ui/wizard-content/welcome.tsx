@@ -11,12 +11,11 @@ import { Text, Title } from '~shared/components/typography'
 
 import { useMediaQuery } from '~shared/hooks'
 
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import type { WizardItemProps } from '~shared/ui/wizard'
-import { WizardItem, WizardTrigger } from '~shared/ui/wizard'
-import { useWizardContext } from '~shared/ui/wizard/context'
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import type { WizardItemProps } from 'klewik-ui/wizard'
+import { useWizardContext, WizardItem, WizardTrigger } from 'klewik-ui/wizard'
 
 import { cn } from '~shared/utils'
 

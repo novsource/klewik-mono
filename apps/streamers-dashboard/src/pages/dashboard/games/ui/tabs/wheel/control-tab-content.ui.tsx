@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { controlWheelTabStyles } from '~pages/dashboard/games/styles'
 
-import { Flex } from '~shared/ui/flex'
+import { Flex } from 'klewik-ui/flex'
 
 import { twSlotsStyles } from '~shared/utils'
 

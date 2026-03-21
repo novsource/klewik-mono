@@ -1,7 +1,3 @@
-import type { ComponentPropsWithoutRef, ReactNode } from 'react'
-
-import type { IntegrationsPlatforms } from '~entities/integrations/model'
-
 import type {
   CardContentProps,
   CardDescriptionProps,
@@ -9,7 +5,10 @@ import type {
   CardHeaderProps,
   CardProps,
   CardTitleProps,
-} from '~shared/ui/card'
+} from 'klewik-ui/card'
+
+import type { ComponentPropsWithoutRef, ReactNode } from 'react'
+
 import {
   Card,
   CardContent,
@@ -17,8 +16,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '~shared/ui/card'
-import { Icons } from '~shared/ui/icons'
+} from 'klewik-ui/card'
+import { Icons } from 'klewik-ui/icons'
+
+import type { IntegrationsPlatforms } from '~entities/integrations/model'
 
 import { cn } from '~shared/utils'
 
@@ -103,5 +104,5 @@ export type BaseIntegrationCardPlatformIconProps = ComponentPropsWithoutRef<'div
 export const BaseIntegrationCardPlatformIcon = (props: BaseIntegrationCardPlatformIconProps) => {
   const { className, platform, ...restProps } = props
 
-  return <div className={className} {...restProps}>{ integrationsIcons[platform] }</div>
+  return <div className={className} {...restProps}>{integrationsIcons[platform]}</div>
 }

@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
 
-import type { CardProps } from '~shared/ui/card'
-import { Card, CardContent, CardHeader } from '~shared/ui/card'
-import { Flex } from '~shared/ui/flex'
-import { Typography } from '~shared/ui/typograghy'
+import type { CardProps } from 'klewik-ui/card'
+import { Card, CardContent, CardHeader } from 'klewik-ui/card'
+import { Flex } from 'klewik-ui/flex'
+import { Typography } from 'klewik-ui/typography'
 
 import { cn } from '~shared/utils'
 

@@ -5,6 +5,13 @@ import { useLocation } from 'react-router-dom'
 
 import NumberFlow from '@number-flow/react'
 import { CopyToClipboardButton } from '~features/_common/copy-to-clipboard'
+import { Button } from 'klewik-ui/button'
+import { Divider } from 'klewik-ui/divider'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { MotionBox } from 'klewik-ui/motion-box'
+import { Popover, PopoverContent, PopoverTrigger } from 'klewik-ui/popover'
+import { toastSuccessNotification } from 'klewik-ui/toaster/lib'
 
 import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
@@ -24,14 +31,6 @@ import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggl
 import { Text, Title } from '~shared/components/typography'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import { Button } from '~shared/ui/button'
-import { Divider } from '~shared/ui/divider'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { MotionBox } from '~shared/ui/motion-box'
-import { Popover, PopoverContent, PopoverTrigger } from '~shared/ui/popover'
-import { toastSuccessNotification } from '~shared/ui/toaster/lib'
 
 import { cn } from '~shared/utils'
 
@@ -203,7 +202,7 @@ function MobilePageTitle() {
 
   return (
     <MotionBox initial={{ height: 0 }} animate={{ height: 'auto' }}>
-      <Title order={2}>{pageTitle }</Title>
+      <Title order={2}>{pageTitle}</Title>
     </MotionBox>
   )
 }

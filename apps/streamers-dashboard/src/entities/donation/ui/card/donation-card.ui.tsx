@@ -1,9 +1,27 @@
+import type { BadgeProps } from 'klewik-ui/badge'
+import type {
+  CardProps,
+} from 'klewik-ui/card'
+import type { FlexProps } from 'klewik-ui/flex'
+
 import type {
   DonationCardBadgeProps,
 } from './donation-card-badge.ui'
 
 import type { ComponentProps } from 'react'
 import { useMemo } from 'react'
+
+import { Badge } from 'klewik-ui/badge'
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from 'klewik-ui/card'
+import { Divider } from 'klewik-ui/divider'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Skeleton } from 'klewik-ui/skeleton'
 
 import { DONATION_PROCESSED_STATUS } from '~entities/donation/constants'
 import type { ProcessedDonation, ProcessedDonationStatus } from '~entities/donation/model'
@@ -14,23 +32,6 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 import { Text } from '~shared/components/typography'
 
 import { useMediaQuery } from '~shared/hooks'
-
-import type { BadgeProps } from '~shared/ui/badge'
-import { Badge } from '~shared/ui/badge'
-import type {
-  CardProps,
-} from '~shared/ui/card'
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '~shared/ui/card'
-import { Divider } from '~shared/ui/divider'
-import type { FlexProps } from '~shared/ui/flex'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { Skeleton } from '~shared/ui/skeleton'
 
 import { cn, formatNumberToIntlString } from '~shared/utils'
 
@@ -159,10 +160,10 @@ export const DonationCardUsernameInfo = (props: DonationCardUsernameInfoProps) =
 
 export type SolidDonationCardContentProps
   = BaseDonationCardContentProps
-    & {
-      donationData: Pick<ProcessedDonation, 'processData' | 'message' | 'messageType'>
-      usernameInfoProps?: Omit<DonationCardUsernameInfoProps, 'donationData'>
-    } & Pick<DonationCardUsernameInfoProps, 'donationData'>
+  & {
+    donationData: Pick<ProcessedDonation, 'processData' | 'message' | 'messageType'>
+    usernameInfoProps?: Omit<DonationCardUsernameInfoProps, 'donationData'>
+  } & Pick<DonationCardUsernameInfoProps, 'donationData'>
 
 export const SolidDonationCardContent = (props: SolidDonationCardContentProps) => {
   const {

@@ -8,10 +8,10 @@ import { Title } from '~shared/components/typography'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { RadioCard, RadioCardDescription, RadioCardTitle, RadioGroup } from '~shared/ui/radio'
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { RadioCard, RadioCardDescription, RadioCardTitle, RadioGroup } from 'klewik-ui/radio'
 
 export const RecolorWheelSlotsSection = () => {
   const { state: { isSpinning }, actions } = useAuctionWheelGame()

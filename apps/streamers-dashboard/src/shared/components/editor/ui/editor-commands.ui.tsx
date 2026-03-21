@@ -12,10 +12,10 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useEditorState } from '@tiptap/react'
 
-import type { ButtonProps } from '~shared/ui/button'
-import { Button } from '~shared/ui/button'
-import { Icons } from '~shared/ui/icons'
-import { Popover, PopoverContent, PopoverTrigger } from '~shared/ui/popover'
+import type { ButtonProps } from 'klewik-ui/button'
+import { Button } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
+import { Popover, PopoverContent, PopoverTrigger } from 'klewik-ui/popover'
 
 import { cn } from '~shared/utils'
 

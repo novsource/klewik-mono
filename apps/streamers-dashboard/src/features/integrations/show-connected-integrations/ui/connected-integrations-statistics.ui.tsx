@@ -6,9 +6,9 @@ import { integrationsSelectors } from '~entities/integrations/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Card, CardContent, CardHeader, CardTitle } from '~shared/ui/card'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
+import { Card, CardContent, CardHeader, CardTitle } from 'klewik-ui/card'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
 
 type IntegrationsStatisticsCardProps = {
   children: ReactNode

@@ -1,13 +1,14 @@
+import type { DialogCloseProps, DialogContentProps, DialogFooterProps, DialogHeaderProps, DialogProps, DialogTriggerProps } from 'klewik-ui/dialog'
+
 import type { ModalStyleVariants } from '../styles/modal.styles'
 
 import { useMemo } from 'react'
 
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from 'klewik-ui/dialog'
+import { Icons } from 'klewik-ui/icons'
+
 import type { TitleProps } from '~shared/components/typography'
 import { Title } from '~shared/components/typography'
-
-import type { DialogCloseProps, DialogContentProps, DialogFooterProps, DialogHeaderProps, DialogProps, DialogTriggerProps } from '~shared/ui/dialog'
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from '~shared/ui/dialog'
-import { Icons } from '~shared/ui/icons'
 
 import { cn } from '~shared/utils'
 

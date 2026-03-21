@@ -1,8 +1,9 @@
+import type { BadgeProps } from 'klewik-ui/badge'
+
 import type { ComponentProps } from 'react'
 
-import type { BadgeProps } from '~shared/ui/badge'
-import { Badge } from '~shared/ui/badge'
-import { Skeleton } from '~shared/ui/skeleton'
+import { Badge } from 'klewik-ui/badge'
+import { Skeleton } from 'klewik-ui/skeleton'
 
 import { cn } from '~shared/utils'
 

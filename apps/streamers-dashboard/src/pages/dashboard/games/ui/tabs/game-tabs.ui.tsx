@@ -1,16 +1,16 @@
+import type { TabsProps } from 'klewik-ui/tabs'
+
 import type { WheelTabsStylesSlots } from '../../styles'
 
 import { memo, useMemo } from 'react'
 
 import { auctionGamesSelectors } from '~entities/games/store'
+import { Icons } from 'klewik-ui/icons'
+import { Tabs, TabsList, TabsTrigger } from 'klewik-ui/tabs'
 
 import { StartTransitionContainer } from '~shared/components/start-transition-container'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import { Icons } from '~shared/ui/icons'
-import type { TabsProps } from '~shared/ui/tabs'
-import { Tabs, TabsList, TabsTrigger } from '~shared/ui/tabs'
 
 import { twSlotsStyles } from '~shared/utils'
 

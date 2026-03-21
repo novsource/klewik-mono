@@ -6,6 +6,7 @@ export const createFakeAuction = (): Auction => ({
   id: faker.number.int({ min: 1 }),
   uuid: faker.string.uuid(),
   ownerId: faker.string.uuid(),
+  winnerSlotId: null,
   isBetsClosed: faker.datatype.boolean(),
   isEnded: faker.datatype.boolean(),
   createdAt: faker.date.recent({ days: 1 }).toISOString(),

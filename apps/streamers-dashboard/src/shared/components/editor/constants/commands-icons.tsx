@@ -2,7 +2,7 @@ import type { WYSIWYG_LIST_COMMANDS, WYSIWYG_TEXT_FORMATTING_COMMANDS, WYSIWYG_T
 
 import type { ReactNode } from 'react'
 
-import { Icons } from '~shared/ui/icons'
+import { Icons } from 'klewik-ui/icons'
 
 export const WYSIWYG_TEXT_STYLES_FORMATTING_COMMANDS_ICONS: Record<typeof WYSIWYG_TEXT_STYLES_FORMATTING_COMMANDS[number], ReactNode> = {
   bold: <Icons.Bold width={14} height={14} />,

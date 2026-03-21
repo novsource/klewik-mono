@@ -1,4 +1,9 @@
+import type { BadgeProps } from 'klewik-ui/badge'
+
 import { useMemo } from 'react'
+
+import { Badge } from 'klewik-ui/badge'
+import { Flex } from 'klewik-ui/flex'
 
 import type { IntegrationsPlatforms } from '~entities/integrations/model'
 
@@ -6,10 +11,6 @@ import {
   FORMATTED_INTEGRATIONS_PLATFORMS_NAMES,
   getIntegrationIcon,
 } from '~shared/constants/integrations'
-
-import type { BadgeProps } from '~shared/ui/badge'
-import { Badge } from '~shared/ui/badge'
-import { Flex } from '~shared/ui/flex'
 
 import { cn } from '~shared/utils'
 

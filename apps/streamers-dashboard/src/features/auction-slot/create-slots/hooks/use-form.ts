@@ -25,10 +25,10 @@ const useCreateSlotsForm = (listeners?: UseCreateSlotsFormListeners) => {
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
   const form = useForm<
-        CreateSlotForm,
-        unknown,
-        TransformedCreateSlotsFormData
-    >({
+    CreateSlotForm,
+    unknown,
+    TransformedCreateSlotsFormData
+  >({
     defaultValues: { slots: [CREATE_SLOT_FORM_DEFAULT_VALUE] },
     resolver: createSlotsFormResolver(auctionSlots),
     reValidateMode: 'onChange',

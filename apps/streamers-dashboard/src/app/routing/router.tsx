@@ -6,7 +6,7 @@ import { auctionSlotsPageRoute } from '~pages/dashboard/slots/routing'
 import { redirectPageRoute } from '~pages/redirect/routing'
 import { welcomePageRoute } from '~pages/welcome/routing'
 
-import { Toaster } from '~shared/ui/toaster'
+import { Toaster } from 'klewik-ui/toaster'
 
 import { errorPageRoute } from '../../pages/error/routing'
 import { prepareDashboardRoute } from './prepate-dashboard.route'

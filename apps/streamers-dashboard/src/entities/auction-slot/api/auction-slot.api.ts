@@ -7,6 +7,8 @@ import { getAuctionSlots } from '~shared/api/http/auction-slots'
 
 import { axiosAuthBaseQuery } from '~shared/lib/redux-toolkit'
 
+import { isError } from '~shared/utils'
+
 import { auctionSlotsActions } from '../store'
 
 export const getAuctionSlotsThunk = createAsyncThunk(
@@ -44,9 +46,15 @@ const splittedAuctionSlotsApi = createApi({
     getAuctionSlots: builder.query<AuctionSlotsDTO[], GetAuctionSlotsArgs>({
       query: ({ auctionUUID }) => ({ url: `/${auctionUUID}/slots` }),
       onQueryStarted: async (_, api) => {
-        const response = await api.queryFulfilled
+        try {
+          const response = await api.queryFulfilled
 
-        api.dispatch(auctionSlotsActions.setSlots(response.data))
+          api.dispatch(auctionSlotsActions.setSlots(response.data))
+        }
+        catch (error) {
+          if (isError(error))
+            throw error
+        }
       },
     }),
   }),

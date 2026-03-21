@@ -12,25 +12,22 @@ import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggl
 import { Modal, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalHeaderTitle, ModalTrigger } from '~shared/components/modal'
 import { Text } from '~shared/components/typography'
 
-import type { ButtonProps } from '~shared/ui/button'
-import { Button } from '~shared/ui/button'
-import type { DialogProps } from '~shared/ui/dialog'
-import { Divider } from '~shared/ui/divider'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import type {
-  SheetProps,
-} from '~shared/ui/sheet'
+import type { ButtonProps } from 'klewik-ui/button'
+import { Button } from 'klewik-ui/button'
+import { Divider } from 'klewik-ui/divider'
+import type { DrawerProps } from 'klewik-ui/drawer'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
 import {
   SheetClose,
-} from '~shared/ui/sheet'
+} from 'klewik-ui/sheet'
 
 import { cn, mergeProps } from '~shared/utils'
 
 import { useEditSlotDialog } from '../../hooks/use-edit-slot-dialog'
 import { EditSlotDialogCard } from '../cards/edit-slot-dialog-card.ui'
 
-export type EditSlotDialogProps = SheetProps & {
+export type EditSlotDialogProps = DrawerProps & {
   slot: AuctionSlot
   trigger?: ReactNode
   closeButtonProps?: ButtonProps
@@ -67,7 +64,7 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
 
   const isDismissible = !formState.isDirty || formQueryState.isLoading
 
-  const mergedSheetProps = mergeProps<DialogProps[]>({
+  const mergedSheetProps = mergeProps<DrawerProps[]>({
     open: dialogState.isOpen,
     onOpenChange: closeDialog,
     disablePointerDismissal: !isDismissible,
@@ -78,7 +75,7 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
 
       <MediaQueryViewToggler.MatchedItem>
         <DesktopAppDialog {...mergedSheetProps}>
-          {trigger && <DesktopAppDialog.Trigger>{ trigger }</DesktopAppDialog.Trigger>}
+          {trigger && <DesktopAppDialog.Trigger>{trigger}</DesktopAppDialog.Trigger>}
           <DesktopAppDialog.Content>
 
             <EditSlotFormComposer form={form}>
@@ -154,7 +151,7 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
 
       <MediaQueryViewToggler.NotMatchedItem>
         <MobileAppDialog {...mergedSheetProps}>
-          <MobileAppDialog.Trigger>{ trigger }</MobileAppDialog.Trigger>
+          <MobileAppDialog.Trigger>{trigger}</MobileAppDialog.Trigger>
 
           <MobileAppDialog.Content>
 
@@ -216,7 +213,7 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
                 <MobileAppDialog.HeaderTitle
                   value="Обзор слота"
                   description="Измените параметры слота"
-                  // icon={<EditSlotDialogsIcon />}
+                // icon={<EditSlotDialogsIcon />}
                 />
               </MobileAppDialog.Header>
 

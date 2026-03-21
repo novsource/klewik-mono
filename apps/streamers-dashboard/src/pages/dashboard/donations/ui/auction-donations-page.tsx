@@ -19,7 +19,7 @@ import { useDocumentTitle, useUrlSearchParam } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Flex } from '~shared/ui/flex'
+import { Flex } from 'klewik-ui/flex'
 
 import { cn } from '~shared/utils'
 

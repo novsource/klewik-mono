@@ -9,8 +9,6 @@ import type { ComponentPropsWithoutRef, KeyboardEvent, MouseEvent, ReactNode } f
 import type { UseFormReturn } from 'react-hook-form'
 import { FormProvider, useController, useFormContext, useFormState } from 'react-hook-form'
 
-import { mergeProps } from '@base-ui/react'
-
 import { auctionSelectors } from '~entities/auction/store'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
@@ -25,13 +23,14 @@ import { getErrorMessageForField } from '~shared/lib/react-hook-form'
 import type { AxiosBaseQueryError } from '~shared/lib/redux-toolkit'
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Autocomplete, AutocompleteContent, AutocompleteInput, AutocompleteItem } from '~shared/ui/autocomplete'
-import type { AutocompleteInputProps, AutocompleteProps, AutocompleteTag } from '~shared/ui/autocomplete'
-import type { ButtonProps } from '~shared/ui/button'
-import { Button } from '~shared/ui/button'
-import { Icons } from '~shared/ui/icons'
-import type { InputProps } from '~shared/ui/input'
-import { toastErrorNotification } from '~shared/ui/toaster/lib'
+import { Autocomplete, AutocompleteContent, AutocompleteInput, AutocompleteItem } from 'klewik-ui/autocomplete'
+import type { AutocompleteInputProps, AutocompleteProps, AutocompleteTag } from 'klewik-ui/autocomplete'
+import type { ButtonProps } from 'klewik-ui/button'
+import { Button } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
+import type { InputProps } from 'klewik-ui/input'
+import { toastErrorNotification } from 'klewik-ui/toaster/lib'
+import { mergeProps } from 'klewik-ui/utils'
 
 import { cn, deleteAllSpacesFromString, isFunction } from '~shared/utils'
 
@@ -116,9 +115,9 @@ function ApproveDonationButton(props: ApproveDonationButtonProps) {
 
   const isButtonDisabled
     = mutationState.isLoading
-      || state.isDirty
-      || isBlockedActions
-      || donation.processData.status === 'added'
+    || state.isDirty
+    || isBlockedActions
+    || donation.processData.status === 'added'
 
   const handleOnClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -203,8 +202,8 @@ function DeclineDonationButton(props: DeclineDonationButtonProps) {
 
   const isButtonDisabled
     = formState.isDirty
-      || isBlockedActions
-      || donation.processData.status === 'rejected'
+    || isBlockedActions
+    || donation.processData.status === 'rejected'
 
   const mergedProps = mergeProps(restProps, {
     className: 'size-8',
@@ -319,7 +318,7 @@ function ProcessedDonationSlotTitleFormInput(props: ProcessedDonationSlotTitleFo
   const [isFocused, setIsFocused] = useState(false)
   const [boundAnimationStatus, setBoundAnimationStatus] = useState<
     'inactive' | 'active'
-    >('inactive')
+  >('inactive')
 
   const { formState, control, trigger } = useFormContext<ProcessDonationForm>()
 
@@ -375,21 +374,21 @@ function ProcessedDonationSlotTitleFormInput(props: ProcessedDonationSlotTitleFo
         endContent={
           isFocused
             ? (
-                <Text
-                  asSpan
-                  className={cn(
-                    'text-md transition-colors select-none',
-                    boundAnimationStatus === 'active'
-                      ? 'animate-horizontal-shaking text-red'
-                      : 'text-gray-light',
-                  )}
-                  onAnimationEnd={() => {
-                    setBoundAnimationStatus('inactive')
-                  }}
-                >
-                  {`${fieldValue.toString().length}/${maxLength}`}
-                </Text>
-              )
+              <Text
+                asSpan
+                className={cn(
+                  'text-md transition-colors select-none',
+                  boundAnimationStatus === 'active'
+                    ? 'animate-horizontal-shaking text-red'
+                    : 'text-gray-light',
+                )}
+                onAnimationEnd={() => {
+                  setBoundAnimationStatus('inactive')
+                }}
+              >
+                {`${fieldValue.toString().length}/${maxLength}`}
+              </Text>
+            )
             : undefined
         }
         {...field}

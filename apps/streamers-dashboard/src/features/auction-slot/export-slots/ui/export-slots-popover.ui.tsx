@@ -7,12 +7,12 @@ import { Text } from '~shared/components/typography'
 
 import { useUnmount } from '~shared/hooks'
 
-import type { ButtonProps } from '~shared/ui/button'
-import { Button } from '~shared/ui/button'
-import { Checkbox } from '~shared/ui/checkbox'
-import { Icons } from '~shared/ui/icons'
-import { Popover, PopoverContent, PopoverTrigger } from '~shared/ui/popover'
-import { Select, SelectContent, SelectItem, SelectLabel, SelectList, SelectTrigger } from '~shared/ui/select'
+import type { ButtonProps } from 'klewik-ui/button'
+import { Button } from 'klewik-ui/button'
+import { Checkbox } from 'klewik-ui/checkbox'
+import { Icons } from 'klewik-ui/icons'
+import { Popover, PopoverContent, PopoverTrigger } from 'klewik-ui/popover'
+import { Select, SelectContent, SelectItem, SelectLabel, SelectList, SelectTrigger } from 'klewik-ui/select'
 
 import { AUCTION_PLATFORM_SLOTS_EXPORT_SERIALIZER } from '../constants/platforms-serializers'
 import { useExportSlots } from '../hooks/use-export-slots'

@@ -7,6 +7,7 @@ export const AUCTION_SLICE_INITIAL_STATE: AuctionSliceState = {
     ownerId: '',
     createdAt: '',
     endedAt: null,
+    winnerSlotId: null,
     isBetsClosed: false,
     isEnded: false,
   },

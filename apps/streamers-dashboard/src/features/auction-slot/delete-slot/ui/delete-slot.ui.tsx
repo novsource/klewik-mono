@@ -7,10 +7,10 @@ import { auctionSlotsActions } from '~entities/auction-slot/store'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Button } from '~shared/ui/button'
-import type { ButtonProps } from '~shared/ui/button'
-import { Icons } from '~shared/ui/icons'
-import { toastPromiseNotification } from '~shared/ui/toaster/lib'
+import { Button } from 'klewik-ui/button'
+import type { ButtonProps } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
+import { toastPromiseNotification } from 'klewik-ui/toaster/lib'
 
 import { chain } from '~shared/utils/common'
 

@@ -10,11 +10,11 @@ import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggl
 
 import { useDocumentTitle } from '~shared/hooks'
 
-import { Button } from '~shared/ui/button'
-import { Divider } from '~shared/ui/divider'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { Typography } from '~shared/ui/typograghy'
+import { Button } from 'klewik-ui/button'
+import { Divider } from 'klewik-ui/divider'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Typography } from 'klewik-ui/typography'
 
 import { cn, twSlotsStyles } from '~shared/utils'
 

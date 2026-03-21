@@ -5,11 +5,11 @@ import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { FormProvider, useController, useFormContext } from 'react-hook-form'
 
-import type { ButtonProps } from '~shared/ui/button'
-import { Button } from '~shared/ui/button'
-import { Icons } from '~shared/ui/icons'
-import type { InputProps } from '~shared/ui/input'
-import { Input } from '~shared/ui/input'
+import type { ButtonProps } from 'klewik-ui/button'
+import { Button } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
+import type { InputProps } from 'klewik-ui/input'
+import { Input } from 'klewik-ui/input'
 
 type AuctionInitialParametersFormProps = ComponentPropsWithoutRef<'form'> & {
   form: UseFormReturn<SetAuctionViewParametersFormData>

@@ -21,21 +21,18 @@ import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggl
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Button } from '~shared/ui/button'
-import type { DialogProps } from '~shared/ui/dialog'
-import { Divider } from '~shared/ui/divider'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import type {
-  SheetProps,
-} from '~shared/ui/sheet'
+import { Button } from 'klewik-ui/button'
+import { Divider } from 'klewik-ui/divider'
+import type { DrawerProps } from 'klewik-ui/drawer'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
 
 import { formatNumberToIntlString, mergeProps, twSlotsStyles } from '~shared/utils'
 
 import { processDonationDialogStyles } from '../../styles/process-donation-dialog.styles'
 import { ProcessDonationDialogTabs } from '../tabs/process-donation-dialog/process-donation-dialog-tabs.ui'
 
-export type ProcessDonationDialogProps = SheetProps & {
+export type ProcessDonationDialogProps = DrawerProps & {
   donation: ProcessedDonation
   trigger?: ReactNode
 }
@@ -50,7 +47,7 @@ export const ProcessDonationDialog = (props: ProcessDonationDialogProps) => {
   )
 }
 
-type ProcessDonationDialogBaseProps = SheetProps & {
+type ProcessDonationDialogBaseProps = DrawerProps & {
   donation: ProcessedDonation
   trigger?: ReactNode
 }
@@ -125,7 +122,7 @@ function ProcessDonationDialogBase(props: ProcessDonationDialogBaseProps) {
     () => twSlotsStyles(processDonationDialogStyles),
     [],
   )
-  const mergedDialogProps = mergeProps<DialogProps[]>({
+  const mergedDialogProps = mergeProps<DrawerProps[]>({
     open: isDialogOpened,
     onOpenChange: setIsDialogOpened,
     disablePointerDismissal: state.isDirty || state.isLoading,

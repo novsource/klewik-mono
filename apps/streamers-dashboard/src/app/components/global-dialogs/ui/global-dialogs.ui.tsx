@@ -16,35 +16,37 @@ import { globalDialogsActions, globalDialogsSelectors } from '../store/global-di
 const placeholderDonation: ProcessedDonation = import.meta.env.DEV
   ? createSingleFakeDonation()
   : {
-      id: 1,
-      amount: 0,
-      auctionId: 0,
-      createdAt: '',
-      currency: '',
-      message: null,
-      messageType: 'empty',
-      processData: {
-        action: 'noAction',
-        addedPoints: null,
-        donationCode: null,
-        slotsIds: null,
-        status: 'inProgress',
-        title: null,
-      },
-      source: 'userInput',
-      sourceDonationId: null,
-      updatedAt: '',
-      username: '',
-    }
+    id: 1,
+    amount: 0,
+    auctionId: 0,
+    createdAt: '',
+    currency: '',
+    message: null,
+    messageType: 'empty',
+    processData: {
+      action: 'noAction',
+      addedPoints: null,
+      donationCode: null,
+      slotsIds: null,
+      status: 'inProgress',
+      title: null,
+    },
+    source: 'userInput',
+    sourceDonationId: null,
+    updatedAt: '',
+    username: '',
+  }
 const placeholderSlot: AuctionSlot = import.meta.env.DEV
   ? createSingleFakeAuctionSlot()
   : {
-      id: 0,
-      auctionSlotOrder: 1,
-      points: 0,
-      title: '',
-      winPercents: 0,
-    }
+    id: 0,
+    auctionSlotOrder: 1,
+    points: 0,
+    title: '',
+    winPercents: 0,
+    isAlived: true,
+    isDropped: false,
+  }
 
 export const GlobalDialogs = () => {
   const { processDonation, editSlot } = useStoreSelector(globalDialogsSelectors.getAllDialogsStates)

@@ -1,4 +1,4 @@
-import { Flex } from '~shared/ui/flex'
+import { Flex } from 'klewik-ui/flex'
 
 import { cn } from '~shared/utils'
 

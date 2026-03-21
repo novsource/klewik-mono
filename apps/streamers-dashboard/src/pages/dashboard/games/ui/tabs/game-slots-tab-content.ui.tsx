@@ -1,7 +1,16 @@
+import type { TabsContentProps } from 'klewik-ui/tabs'
+
 import type { SlotsWheelTabSlots } from '../../styles'
 
 import type { ChangeEvent } from 'react'
 import { useMemo, useState } from 'react'
+
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Input } from 'klewik-ui/input'
+import { TabsContent } from 'klewik-ui/tabs'
+import { Toggle, ToggleGroup } from 'klewik-ui/toggle'
 
 import { useSortingSlots } from '~pages/dashboard/slots/lib'
 
@@ -11,14 +20,6 @@ import { useDebounceCallback } from '~shared/hooks'
 import { useLocalSearchFilter } from '~shared/hooks/use-local-search-filter/use-local-search-filter'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { Input } from '~shared/ui/input'
-import type { TabsContentProps } from '~shared/ui/tabs'
-import { TabsContent } from '~shared/ui/tabs'
-import { Toggle, ToggleGroup } from '~shared/ui/toggle'
 
 import { twSlotsStyles } from '~shared/utils'
 

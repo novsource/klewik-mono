@@ -16,9 +16,8 @@ import { StartTransitionContainer } from '~shared/components/start-transition-co
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import type { WindowVirtualListProps } from '~shared/ui/virtual-list'
-import { WindowVirtualList } from '~shared/ui/virtual-list'
-import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
+import type { VirtualizedItem, WindowVirtualListProps } from 'klewik-ui/virtual-list'
+import { WindowVirtualList } from 'klewik-ui/virtual-list'
 
 import { useSortingSlots } from '../../lib'
 import { AuctionSlotsListCard } from '../cards/slots-list-card.ui'

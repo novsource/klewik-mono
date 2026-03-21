@@ -2,7 +2,7 @@ import type { WELCOME_PAGE_WIZARD_ITEMS_IDS } from './wizard-items-ids'
 
 import type { ReactNode } from 'react'
 
-import { Icons } from '~shared/ui/icons'
+import { Icons } from 'klewik-ui/icons'
 
 const WELCOME_PAGE_WIZARD_IDS_ICONS: Record<
   (typeof WELCOME_PAGE_WIZARD_ITEMS_IDS)[keyof typeof WELCOME_PAGE_WIZARD_ITEMS_IDS],

@@ -2,10 +2,10 @@ import type { Editor } from '@tiptap/react'
 
 import { useState } from 'react'
 
-import { MobileAppDialog } from '~shared/components/app-dialog'
-import { WysiwygEditor } from '~shared/components/editor/ui'
-import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
-import { Title } from '~shared/components/typography'
+import { Button } from 'klewik-ui/button'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from 'klewik-ui/dialog'
+import { Icons } from 'klewik-ui/icons'
+import { toastErrorNotification } from 'klewik-ui/toaster/lib'
 
 import { auctionSelectors } from '~entities/auction/store'
 
@@ -13,12 +13,12 @@ import { isAuctionTextRules } from '~shared/api/http/auction-settings'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
+import { MobileAppDialog } from '~shared/components/app-dialog'
+import { WysiwygEditor } from '~shared/components/editor/ui'
+import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
+import { Title } from '~shared/components/typography'
 
-import { Button } from '~shared/ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '~shared/ui/dialog'
-import { Icons } from '~shared/ui/icons'
-import { toastErrorNotification } from '~shared/ui/toaster/lib'
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { useUpdateAuctionTextRulesMutation } from '../api/update-text-rules.api'
 

@@ -1,8 +1,8 @@
 import { useCopyToClipboard } from '~shared/hooks/use-copy-to-clipboard'
 
-import { Button } from '~shared/ui/button'
-import type { ButtonProps } from '~shared/ui/button'
-import { Icons } from '~shared/ui/icons'
+import { Button } from 'klewik-ui/button'
+import type { ButtonProps } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
 
 import { cn, mergeProps } from '~shared/utils'
 

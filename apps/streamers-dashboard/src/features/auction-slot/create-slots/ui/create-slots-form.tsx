@@ -10,10 +10,10 @@ import * as m from 'motion/react-m'
 
 import type { AuctionSlotDTO } from '~shared/api/sse/clients/auction-slots'
 
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~shared/ui/tabs'
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from 'klewik-ui/tabs'
 
 import { cn, twSlotsStyles } from '~shared/utils'
 import { chain } from '~shared/utils/common'

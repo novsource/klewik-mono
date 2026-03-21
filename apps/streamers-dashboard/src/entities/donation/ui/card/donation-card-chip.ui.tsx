@@ -2,8 +2,8 @@ import type { ClassValue } from 'clsx'
 
 import type { ComponentProps, ReactNode } from 'react'
 
-import { Flex } from '~shared/ui/flex'
-import { Skeleton } from '~shared/ui/skeleton'
+import { Flex } from 'klewik-ui/flex'
+import { Skeleton } from 'klewik-ui/skeleton'
 
 import { cn } from '~shared/utils'
 

@@ -13,9 +13,9 @@ import { Text } from '~shared/components/typography'
 
 import { useElementSize } from '~shared/hooks'
 
-import type { FlexProps } from '~shared/ui/flex'
-import { Flex } from '~shared/ui/flex'
-import { MotionBox } from '~shared/ui/motion-box'
+import type { FlexProps } from 'klewik-ui/flex'
+import { Flex } from 'klewik-ui/flex'
+import { MotionBox } from 'klewik-ui/motion-box'
 
 import { cn } from '~shared/utils'
 

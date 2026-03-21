@@ -22,12 +22,18 @@ export const splittedIntegrationsApi = createApi({
     getConnectedIntegrations: builder.query<GetConnectedIntegrationsQueryResult, GetConnectedIntegrationsQueryArgs>({
       query: ({ auctionUUID }) => ({ url: `/${auctionUUID}/integrations/stats` }),
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
-        const response = await queryFulfilled;
+        try {
+          const response = await queryFulfilled;
 
-        (Object.keys(response.data) as Array<keyof typeof response.data>).forEach((platform) => {
-          if (response.data[platform])
-            dispatch(integrationsActions.setPlatformStatus({ platform, data: response.data[platform] }))
-        })
+          (Object.keys(response.data) as Array<keyof typeof response.data>).forEach((platform) => {
+            if (response.data[platform])
+              dispatch(integrationsActions.setPlatformStatus({ platform, data: response.data[platform] }))
+          })
+        }
+        catch (error) {
+          if (error instanceof Error)
+            throw error
+        }
       },
     }),
   }),
