@@ -451,54 +451,6 @@
     }
 }
 
-@layer wysiwygEditor {
-    .tiptap p.is-editor-empty:first-child::before {
-        color: var(--color-gray);
-        content: attr(data-placeholder);
-        float: left;
-        height: 0;
-        pointer-events: none;
-    }
-
-    .tiptap:focus-visible {
-        outline: none !important;
-    }
-
-    .tiptap h1 {
-        font-size: 24px;
-        font-weight: 700;
-        margin-top: 12px;
-        margin-bottom: 12px;
-    }
-
-    .tiptap h2 {
-        font-size: 21px;
-        font-weight: 600;
-        margin-top: 8px;
-        margin-bottom: 8px;
-    }
-
-    .tiptap ol {
-        @apply pl-6 mb-2 tablet:pl-12 tablet:mb-3;
-    }
-
-    .tiptap ol li {
-        list-style-type: decimal;
-    }
-
-    .tiptap ul {
-        @apply pl-6 mb-2 tablet:pl-12 tablet:mb-3;
-    }
-
-    .tiptap ul li {
-        list-style-type: disc;
-    }
-
-    .tiptap {
-        @apply text-white/85;
-    }
-}
-
 @layer components {
     .slider {
         container-type: size;

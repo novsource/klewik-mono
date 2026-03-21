@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@source "../../../../../packages/ui/**/*.{ts,tsx,js,jsx}";
+
 @plugin 'tailwindcss-animate';
 
 @variant dark (&:where(.dark, .dark *));
@@ -118,143 +120,8 @@
             transform: translateX(2px);
         }
     }
-
-    @keyframes fadeChange {
-
-        0%,
-        100% {
-            opacity: 1;
-        }
-
-        50% {
-            opacity: 0;
-        }
-    }
-
-    @keyframes fadeIn {
-        0% {
-            opacity: 0;
-        }
-
-        100% {
-            opacity: 1;
-        }
-    }
-
-    @keyframes slideDown {
-        from {
-            height: 0;
-        }
-
-        to {
-            height: var(--radix-accordion-content-height);
-        }
-    }
-
-    @keyframes slideUp {
-        from {
-            height: var(--radix-accordion-content-height);
-        }
-
-        to {
-            height: 0;
-        }
-    }
 }
 
-@keyframes sheet-open {
-    0% {
-        opacity: var(--sheet-enter-opacity, 0);
-        transform: translate3d(var(--sheet-enter-translate-x, 0),
-                var(--sheet-enter-translate-y, 0),
-                0) scale3d(var(--sheet-enter-scale, 1),
-                var(--sheet-enter-scale, 1),
-                var(--sheet-enter-scale, 1)) rotate(var(--sheet-enter-rotate, 0));
-    }
-}
-
-@keyframes sheet-exit {
-    100% {
-        opacity: var(--sheet-exit-opacity, 1);
-        transform: translate3d(var(--sheet-exit-translate-x, 0),
-                var(--sheet-exit-translate-y, 0),
-                0) scale3d(var(--sheet-exit-scale, 1),
-                var(--sheet-exit-scale, 1),
-                var(--sheet-exit-scale, 1)) rotate(var(--sheet-exit-rotate, 0));
-    }
-}
-
-@keyframes heartbeating {
-    0% {
-        scale: 1;
-    }
-
-    50% {
-        scale: 1.15;
-    }
-
-    100% {
-        scale: 1;
-    }
-}
-
-@utility slide-out-to-top {
-    --sheet-exit-translate-y: -0.25rem;
-}
-
-@utility slide-in-from-top {
-    --sheet-enter-translate-y: -0.25rem;
-}
-
-@utility slide-in-from-bottom {
-    --sheet-enter-translate-y: 100%;
-}
-
-@utility slide-out-to-bottom {
-    --sheet-exit-translate-y: 100%;
-}
-
-@utility slide-out-to-left {
-    --sheet-exit-translate-x: 100%;
-}
-
-@utility slide-in-from-left {
-    --sheet-enter-translate-x: 100%;
-}
-
-@utility slide-out-to-right {
-    --sheet-exit-translate-x: 100%;
-}
-
-@utility slide-in-from-right {
-    --sheet-enter-translate-x: 100%;
-}
-
-@utility animate-enter-sheet {
-    animation-name: sheet-open;
-    animation-duration: 0.15s;
-    --sheet-enter-opacity: initial;
-    --sheet-enter-scale: initial;
-    --sheet-enter-rotate: initial;
-    --sheet-enter-translate-x: initial;
-    --sheet-enter-translate-y: initial;
-}
-
-@utility animate-exit-sheet {
-    animation-name: sheet-exit;
-    animation-duration: 0.15s;
-    --sheet-enter-opacity: initial;
-    --sheet-enter-scale: initial;
-    --sheet-enter-rotate: initial;
-    --sheet-enter-translate-x: initial;
-    --sheet-enter-translate-y: initial;
-}
-
-@utility animate-heartbeating {
-    animation-name: heartbeating;
-    animation-duration: 1.75s;
-    animation-iteration-count: infinite;
-}
 
 @layer base {
     :root {
