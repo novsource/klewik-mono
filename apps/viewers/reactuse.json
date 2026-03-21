@@ -1,0 +1,8 @@
+{
+  "ts": true,
+  "case": "kebab",
+  "aliases": {
+    "hooks": "~/hooks",
+    "utils": "~/utils"
+  }
+}
