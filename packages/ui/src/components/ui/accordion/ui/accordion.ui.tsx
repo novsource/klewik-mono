@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
 import { ChevronDown } from 'lucide-react'
 
-// import { cn, toBooleanString } from '~utils'
+// import { cn, toBooleanString } from '../../../../utils'
 
 import {
   accordionItemVariants,
@@ -13,8 +13,8 @@ import {
   accordionTriggerVariants,
   accordionVariants,
 } from '../styles/accordion.variants'
-import { cn } from '~utils/cn'
-import { toBooleanString } from '~utils/to-boolean-string'
+import { cn } from '../../../../utils/cn'
+import { toBooleanString } from '../../../../utils/to-boolean-string'
 
 export type AccordionProps = AccordionPrimitive.Root.Props
 

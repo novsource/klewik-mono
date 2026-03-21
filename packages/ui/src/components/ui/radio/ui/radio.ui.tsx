@@ -7,7 +7,7 @@ import type { ComponentProps } from 'react'
 
 import { RadioGroup as RadioGroupPrimitive, Radio as RadioPrimitive } from '@base-ui/react'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import { radioIndicatorVariants, radioLabelVariants, radioVariants } from '../styles'
 

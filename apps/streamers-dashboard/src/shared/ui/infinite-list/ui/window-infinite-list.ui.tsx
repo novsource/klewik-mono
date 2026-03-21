@@ -10,7 +10,7 @@ import { Flex } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
 import type { MotionBoxProps } from 'klewik-ui/motion-box'
 import { MotionBox } from 'klewik-ui/motion-box'
-import { Typography } from 'klewik-ui/typograghy'
+import { Typography } from 'klewik-ui/typography'
 import type { WindowVirtualListProps } from 'klewik-ui/virtual-list'
 import { WindowVirtualList } from 'klewik-ui/virtual-list'
 import { useVirtualizedItems } from 'klewik-ui/virtual-list/hooks'
@@ -103,9 +103,9 @@ export const WindowInfiniteList = <DataItem = unknown>(props: WindowInfiniteList
 
   const isShouldShowEmptyContent
     = !showedItems.length
-      && !listState.isCanLoadMore
-      && !listState.isPending
-      && showEmptyContent
+    && !listState.isCanLoadMore
+    && !listState.isPending
+    && showEmptyContent
 
   const isShouldShowLoader = listState.isPending && preparedItems.length >= limit
 

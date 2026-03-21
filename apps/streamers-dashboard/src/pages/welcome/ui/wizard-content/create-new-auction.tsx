@@ -1,17 +1,6 @@
-import type { WizardItemProps } from 'klewik-ui/wizard'
-
 import { useState } from 'react'
 
 import { useNavigate } from 'react-router-dom'
-
-import { Button } from 'klewik-ui/button'
-import { Card, CardContent, CardHeader } from 'klewik-ui/card'
-import { Divider } from 'klewik-ui/divider'
-import { Flex } from 'klewik-ui/flex'
-import { Icons } from 'klewik-ui/icons'
-import { toastErrorNotification } from 'klewik-ui/toaster/lib'
-import { WizardItem, WizardTrigger } from 'klewik-ui/wizard'
-import { useWizardContext } from 'klewik-ui/wizard/context'
 
 import type { CreateAuctionQueryReturnValue } from '~pages/welcome/api/create-auction.api'
 import { useCreateAuctionMutation } from '~pages/welcome/api/create-auction.api'
@@ -25,6 +14,15 @@ import { getAuthUser, getUserAuctions } from '~shared/api/http/users/users.api'
 import { Text, Title } from '~shared/components/typography'
 
 import { useAsync } from '~shared/hooks'
+
+import { Button } from 'klewik-ui/button'
+import { Card, CardContent, CardHeader } from 'klewik-ui/card'
+import { Divider } from 'klewik-ui/divider'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { toastErrorNotification } from 'klewik-ui/toaster/lib'
+import type { WizardItemProps } from 'klewik-ui/wizard'
+import { useWizardContext, WizardItem, WizardTrigger } from 'klewik-ui/wizard'
 
 import { cn } from '~shared/utils'
 

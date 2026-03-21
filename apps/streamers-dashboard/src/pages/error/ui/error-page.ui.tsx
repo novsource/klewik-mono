@@ -15,7 +15,7 @@ import { useMediaQuery } from '~shared/hooks'
 import { Button } from 'klewik-ui/button'
 import { Flex } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
-import { Typography } from 'klewik-ui/typograghy'
+import { Typography } from 'klewik-ui/typography'
 
 export const ErrorPage = () => {
   const error = useRouteError()

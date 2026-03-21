@@ -8,8 +8,8 @@ import { useIsFirstRender } from '~shared/hooks'
 
 import { Input } from 'klewik-ui/input'
 import type { InputProps } from 'klewik-ui/input'
-import type { TypographyProps } from 'klewik-ui/typograghy'
-import { Typography } from 'klewik-ui/typograghy'
+import type { TypographyProps } from 'klewik-ui/typography'
+import { Typography } from 'klewik-ui/typography'
 
 import { cn, mergeProps } from '~shared/utils'
 

@@ -1,8 +1,8 @@
 import { ExternalToast, toast } from 'sonner'
 
-import { Flex } from '~components/ui/flex'
-import { Icons } from '~components/ui/icons'
-import { Typography } from '~components/ui/typography'
+import { Flex } from '../../flex'
+import { Icons } from '../../icons'
+import { Typography } from '../../typography'
 
 export const toastBaseNotification = (
   description: string,

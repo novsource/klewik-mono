@@ -12,7 +12,7 @@ import {
   useState,
 } from 'react'
 
-import { isStringEmpty } from '~utils/index'
+import { isStringEmpty } from '../../../../utils/index'
 
 type TabsContextState = {
   state: {

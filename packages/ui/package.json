@@ -47,6 +47,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./accordion": "./src/components/ui/accordion/index.ts",
+    "./autocomplete": "./src/components/ui/autocomplete/index.ts",
     "./badge": "./src/components/ui/badge/index.ts",
     "./button": "./src/components/ui/button/index.ts",
     "./caption": "./src/components/ui/caption/index.ts",
@@ -75,6 +76,7 @@
     "./text-area": "./src/components/ui/text-area/index.ts",
     "./timer": "./src/components/ui/timer/index.ts",
     "./toaster": "./src/components/ui/toaster/index.ts",
+    "./toaster/lib": "./src/components/ui/toaster/lib/index.ts",
     "./toggle": "./src/components/ui/toggle/index.ts",
     "./tooltip": "./src/components/ui/tooltip/index.ts",
     "./typography": "./src/components/ui/typography/index.ts",

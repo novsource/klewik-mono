@@ -7,10 +7,10 @@ import { useMemo } from 'react'
 
 import { mergeProps } from '@base-ui/react'
 
-import type { TextProps } from '~components/ui/typography'
-import { Text } from '~components/ui/typography'
+import type { TextProps } from '../../typography'
+import { Text } from '../../typography'
 
-import { cn } from '~utils/cn'
+import { cn } from '../../../../utils/cn'
 
 import { captionTitleVariants, captionVariants } from '../styles/caption-variants'
 

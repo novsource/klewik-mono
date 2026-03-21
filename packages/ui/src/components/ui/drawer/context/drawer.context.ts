@@ -1,6 +1,6 @@
 import type { DrawerSide, DrawerSize } from '../styles/drawer.variants'
 
-import { createReactContext } from '~utils/index'
+import { createReactContext } from '../../../../utils/index'
 
 type DrawerContextValue = {
   styles: {

@@ -3,9 +3,9 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { forwardRef, useMemo } from 'react'
 
-import { Icons } from '~components/ui/icons'
+import { Icons } from '../../icons'
 
-import { cn, toBooleanString } from '~utils/index'
+import { cn, toBooleanString } from '../../../../utils/index'
 
 import { buttonVariants, ButtonVariantsProps } from '../styles/button-variants'
 

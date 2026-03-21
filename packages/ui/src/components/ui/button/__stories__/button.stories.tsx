@@ -5,7 +5,7 @@ import type { BaseButtonStory } from './button.meta'
 
 import type { ReactNode } from 'react'
 
-import { Icons } from '~components/ui/icons'
+import { Icons } from '../../icons'
 
 import { Button } from '../ui/button'
 import { baseButtonStorybookMeta } from './button.meta'

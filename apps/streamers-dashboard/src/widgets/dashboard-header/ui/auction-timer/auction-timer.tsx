@@ -13,7 +13,7 @@ import {
   TimerValue,
   useTimer,
 } from 'klewik-ui/timer'
-import { Typography } from 'klewik-ui/typograghy'
+import { Typography } from 'klewik-ui/typography'
 
 import { cn } from '~shared/utils'
 

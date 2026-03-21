@@ -28,7 +28,7 @@ import { Icons } from 'klewik-ui/icons'
 import { Skeleton } from 'klewik-ui/skeleton'
 import type { TabsContentProps } from 'klewik-ui/tabs'
 import { TabsContent } from 'klewik-ui/tabs'
-import { Typography } from 'klewik-ui/typograghy'
+import { Typography } from 'klewik-ui/typography'
 
 import { cn, formatNumberToIntlString } from '~shared/utils'
 
@@ -77,8 +77,8 @@ export const ProcessDonationTabContent = (
           {isDonationCodeLoading
             ? <Skeleton className="w-full h-9" />
             : (
-                <ProcessDonationFormComposer.SlotTitleInput auctionSlots={auctionSlots} />
-              )}
+              <ProcessDonationFormComposer.SlotTitleInput auctionSlots={auctionSlots} />
+            )}
         </ProcessDonationCard>
         <ProcessDonationCard
           className="py-2"
@@ -89,8 +89,8 @@ export const ProcessDonationTabContent = (
           {isDonationCodeLoading
             ? <Skeleton className="w-20 h-9" />
             : (
-                <ProcessDonationFormComposer.SlotPointsInput />
-              )}
+              <ProcessDonationFormComposer.SlotPointsInput />
+            )}
         </ProcessDonationCard>
       </Flex>
     </TabsContent>
@@ -365,11 +365,11 @@ export function ProcessDonationInfoTabContent(props: ProcessDonationInfoTabConte
           titleIcon={
             donation.messageType === 'audio'
               ? (
-                  <Icons.Sound className="text-gray" size="sm" />
-                )
+                <Icons.Sound className="text-gray" size="sm" />
+              )
               : (
-                  <Icons.Message className="text-gray" size="sm" />
-                )
+                <Icons.Message className="text-gray" size="sm" />
+              )
           }
         >
           {donation.messageType === 'audio'

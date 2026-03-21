@@ -7,7 +7,7 @@ import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 import { Icons } from 'klewik-ui/icons'
 import type { NumberInputProps } from 'klewik-ui/number-input'
 import { NumberInput } from 'klewik-ui/number-input'
-import { Typography } from 'klewik-ui/typograghy'
+import { Typography } from 'klewik-ui/typography'
 
 type SpinTimeInputProps = NumberInputProps
 

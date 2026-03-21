@@ -1,18 +1,18 @@
 import { useCurrentEditor } from '@tiptap/react'
 import { AuctionTextRulesWysiwygEditorDialog } from '~features/settings/set-text-rules/ui'
-import { Text, Title } from '~shared/components/typography'
 
 import { WELCOME_PAGE_WIZARD_ITEMS_IDS } from '~pages/welcome/constants'
 
 import { AuctionInitialParametersForm } from '~features/auction/set-initial-parameters/ui'
+
+import { Text, Title } from '~shared/components/typography'
 
 import { Button } from 'klewik-ui/button'
 import { Flex } from 'klewik-ui/flex'
 import { Skeleton } from 'klewik-ui/skeleton'
 import { toastErrorNotification, toastSuccessNotification } from 'klewik-ui/toaster/lib'
 import type { WizardItemProps } from 'klewik-ui/wizard'
-import { WizardItem, WizardTrigger } from 'klewik-ui/wizard'
-import { useWizardContext } from 'klewik-ui/wizard/context'
+import { useWizardContext, WizardItem, WizardTrigger } from 'klewik-ui/wizard'
 
 import { cn } from '~shared/utils'
 

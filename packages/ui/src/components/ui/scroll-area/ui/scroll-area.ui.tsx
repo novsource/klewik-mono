@@ -5,7 +5,7 @@ import { forwardRef } from 'react'
 
 import { ScrollArea as ScrollAreaPrimitive } from '@base-ui/react'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import {
   scrollAreaRootVariants,

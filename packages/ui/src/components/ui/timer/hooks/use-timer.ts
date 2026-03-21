@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import type { UseTimerOptions, UseTimerReturn } from '~hooks/index'
-import { useTimer as useReactUseTimer } from '~hooks/index'
+import type { UseTimerOptions, UseTimerReturn } from '../../../../hooks/index'
+import { useTimer as useReactUseTimer } from '../../../../hooks/index'
 
-import { chain } from '~utils/index'
+import { chain } from '../../../../utils/index'
 
 export type UseAuctionTimerOptions = UseTimerOptions & {
   initTime?: number

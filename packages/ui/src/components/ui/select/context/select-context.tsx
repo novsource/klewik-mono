@@ -3,7 +3,7 @@ import type { SelectPositions, SelectSizes } from '../styles'
 import type { ReactNode } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
-import { objectToDeps } from '~utils/index'
+import { objectToDeps } from '../../../../utils/index'
 
 export type SelectContextState = Partial<
   Record<'size', keyof SelectSizes['size']>

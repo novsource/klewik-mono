@@ -2,7 +2,7 @@
 
 import { Popover as PopoverPrimitive } from '@base-ui/react/popover'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import { popoverVariants } from '../styles/popover.styles'
 

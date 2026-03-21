@@ -1,6 +1,6 @@
 import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import { tooltipContentVariants } from '../styles/tooltip-variants'
 

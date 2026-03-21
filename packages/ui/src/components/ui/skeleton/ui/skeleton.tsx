@@ -2,7 +2,7 @@
 
 import { ComponentProps, useMemo } from 'react'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import { skeletonVariants } from '../styles/skeletonVariants'
 

@@ -15,8 +15,7 @@ import { Button } from 'klewik-ui/button'
 import { Flex } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
 import type { WizardItemProps } from 'klewik-ui/wizard'
-import { WizardItem, WizardTrigger } from 'klewik-ui/wizard'
-import { useWizardContext } from 'klewik-ui/wizard/context'
+import { useWizardContext, WizardItem, WizardTrigger } from 'klewik-ui/wizard'
 
 import { cn } from '~shared/utils'
 

@@ -7,7 +7,7 @@ import type {
 import type { HTMLAttributes, ReactNode, JSX } from 'react'
 import { useMemo } from 'react'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import {
   typographyVariants,

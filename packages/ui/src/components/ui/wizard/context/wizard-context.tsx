@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useContext } from 'react'
 
-import { useWizard } from '~hooks/index'
+import { useWizard } from '../../../../hooks/index'
 
 type WizardContextState = ReturnType<typeof useWizard>
 

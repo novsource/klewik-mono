@@ -6,9 +6,9 @@ import type {
 import type { ComponentProps } from 'react'
 import { forwardRef, useMemo, useState } from 'react'
 
-import { Typography } from 'klewik-ui/typograghy'
-
 import type { CvaClassValue } from '~shared/lib/cva'
+
+import { Typography } from 'klewik-ui/typography'
 
 import { cn } from '~shared/utils'
 

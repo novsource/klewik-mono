@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 
 import { Toaster as Sonner } from 'sonner'
 
-import { Icons } from '~components/ui/icons'
+import { Icons } from '../../icons'
 
 
 import {

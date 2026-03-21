@@ -10,10 +10,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '~components/ui/dialog'
-import { Icons } from '~components/ui/icons'
+} from '../../dialog'
+import { Icons } from '../../icons'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import {
   commandGroupVariants,

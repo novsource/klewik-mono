@@ -14,7 +14,7 @@ import type { ComponentProps, MutableRefObject, ReactNode, Ref } from 'react'
 
 import { Virtualizer } from 'virtua'
 
-import { isFunction } from '~utils/index'
+import { isFunction } from '../../../../utils/index'
 
 import { useVirtualizedItems } from '../hooks'
 

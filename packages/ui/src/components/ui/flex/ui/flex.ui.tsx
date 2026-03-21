@@ -5,7 +5,7 @@ import type { FlexVariantsProps } from '../styles/flex-variants'
 import type { ComponentPropsWithoutRef, ElementType, ForwardedRef } from 'react'
 import { forwardRef, useMemo } from 'react'
 
-import { cn, isFunction } from '~utils/index'
+import { cn, isFunction } from '../../../../utils/index'
 
 import { flexVariants } from '../styles/flex-variants'
 

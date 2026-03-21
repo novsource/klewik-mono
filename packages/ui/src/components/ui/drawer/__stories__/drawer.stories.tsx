@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Button } from '~components/ui/button'
+import { Button } from '../../button'
 
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerTitle, DrawerTrigger } from '../ui/drawer.ui'
 

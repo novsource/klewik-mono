@@ -1,6 +1,6 @@
 import type { ComponentPropsWithRef } from 'react'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 type DividerProps = ComponentPropsWithRef<'hr'> & {
   orientation?: 'horizontal' | 'vertical'

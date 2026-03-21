@@ -4,14 +4,14 @@ import { useRef } from 'react'
 
 import { AutoSizer } from 'react-virtualized-auto-sizer'
 
-import { useMergedRefs } from '~hooks/index'
+import { useMergedRefs } from '../../../../hooks/index'
 
 import {
   ShadowScrollArea,
-} from '~components/ui/shadow-scroll-area'
-import type { ShadowScrollAreaProps } from '~components/ui/shadow-scroll-area'
-import type { VirtualListProps } from '~components/ui/virtual-list'
-import { VirtualList } from '~components/ui/virtual-list'
+} from '../../shadow-scroll-area'
+import type { ShadowScrollAreaProps } from '../../shadow-scroll-area'
+import type { VirtualListProps } from '../../virtual-list'
+import { VirtualList } from '../../virtual-list'
 
 export type ShadowVirtualListProps<T> = VirtualListProps<T> & {
   width?: number

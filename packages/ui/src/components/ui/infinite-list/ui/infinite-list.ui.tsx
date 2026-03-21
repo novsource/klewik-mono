@@ -3,20 +3,20 @@
 import { useMemo } from 'react'
 import type { ReactNode, RefObject, SVGProps } from 'react'
 
-import type { UseInfiniteListReturn } from '~hooks/index'
+import type { UseInfiniteListReturn } from '../../../../hooks/index'
 
-import type { FlexProps } from '~components/ui/flex'
-import { Flex } from '~components/ui/flex'
-import { Icons } from '~components/ui/icons'
-import type { MotionBoxProps } from '~components/ui/motion-box'
-import { MotionBox } from '~components/ui/motion-box'
-import type { ShadowVirtualListProps } from '~components/ui/shadow-virtual-list'
-import { ShadowVirtualList } from '~components/ui/shadow-virtual-list'
-import { Typography } from '~components/ui/typography'
-import { useVirtualizedItems } from '~components/ui/virtual-list/hooks'
-import type { VirtualizedItem } from '~components/ui/virtual-list/hooks'
+import type { FlexProps } from '../../flex'
+import { Flex } from '../../flex'
+import { Icons } from '../../icons'
+import type { MotionBoxProps } from '../../motion-box'
+import { MotionBox } from '../../motion-box'
+import type { ShadowVirtualListProps } from '../../shadow-virtual-list'
+import { ShadowVirtualList } from '../../shadow-virtual-list'
+import { Typography } from '../../typography'
+import { useVirtualizedItems } from '../../virtual-list/hooks'
+import type { VirtualizedItem } from '../../virtual-list/hooks'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import { infiniteListEmptyContentStyles, infiniteListLoaderStyles } from '../styles'
 

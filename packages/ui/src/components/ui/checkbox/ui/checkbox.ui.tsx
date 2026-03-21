@@ -6,7 +6,7 @@ import { useMemo } from 'react'
 import { Checkbox as PrimitiveCheckbox } from '@base-ui/react/checkbox'
 import { CheckIcon } from 'lucide-react'
 
-import { cn } from '~utils/cn'
+import { cn } from '../../../../utils/cn'
 
 import { checkboxIndicatorVariants, checkboxRootVariants } from '../styles/checkbox.variants'
 

@@ -24,5 +24,4 @@
     "**/*.meta.ts",
     "**/*.spec.ts"
   ],
-  "extends": "./tsconfig.paths.json",
 }

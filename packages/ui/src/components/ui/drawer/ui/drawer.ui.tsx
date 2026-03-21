@@ -6,7 +6,7 @@ import { useMemo } from 'react'
 
 import { Drawer as DrawerPrimitive } from '@base-ui/react/drawer'
 
-import { cn } from '~utils/cn'
+import { cn } from '../../../../utils/cn'
 
 import { DrawerContextProvider, useDrawerContext } from '../context/drawer.context'
 import { drawerBackdropVariants, drawerContentVariants, drawerPopupVariants, drawerViewportVariants } from '../styles/drawer.variants'

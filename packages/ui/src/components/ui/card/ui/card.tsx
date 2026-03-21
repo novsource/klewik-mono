@@ -7,7 +7,7 @@ import type {
 import type { ComponentProps } from 'react'
 import { forwardRef, useMemo } from 'react'
 
-import { cn, objectToDeps } from '~utils/index'
+import { cn, objectToDeps } from '../../../../utils/index'
 
 import { CardProvider, useCardContext } from '../context/card-context'
 import {

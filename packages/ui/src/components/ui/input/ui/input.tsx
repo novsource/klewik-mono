@@ -10,9 +10,9 @@ import { forwardRef, useMemo, useState } from 'react'
 
 import type { ClassValue } from 'class-variance-authority/dist/types'
 
-import { Typography } from '~components/ui/typography'
+import { Typography } from '../../typography'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import {
   contentVariants,

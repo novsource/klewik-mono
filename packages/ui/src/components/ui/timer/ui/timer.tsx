@@ -8,12 +8,12 @@ import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 
 import NumberFlow, { NumberFlowGroup } from '@number-flow/react'
 
-import type { ButtonProps } from '~components/ui/button'
-import { Button } from '~components/ui/button'
-import { Flex } from '~components/ui/flex'
-import { Icons } from '~components/ui/icons'
+import type { ButtonProps } from '../../button'
+import { Button } from '../../button'
+import { Flex } from '../../flex'
+import { Icons } from '../../icons'
 
-import { cn, } from '~utils/index'
+import { cn, } from '../../../../utils/index'
 
 import { TimerProvider, useTimerContext } from '../context'
 import { mergeProps } from '@base-ui/react'

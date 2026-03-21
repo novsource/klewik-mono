@@ -7,7 +7,7 @@ import { forwardRef } from 'react'
 
 import * as SwitchPrimitive from '@base-ui/react/switch'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import { switchThumbVariants, switchVariants } from '../styles/switch-variants'
 

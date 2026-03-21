@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../utils/index'
 
 type Sizes = 'xs' | 'sm' | 'default' | 'lg'
 type IconsProps = SVGProps<SVGSVGElement> & {

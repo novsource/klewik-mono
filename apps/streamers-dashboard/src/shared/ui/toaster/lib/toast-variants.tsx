@@ -1,9 +1,10 @@
 import type { ExternalToast } from 'sonner'
 
+import { toast } from 'sonner'
+
 import { Flex } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
-import { Typography } from 'klewik-ui/typograghy'
-import { toast } from 'sonner'
+import { Typography } from 'klewik-ui/typography'
 
 export const toastBaseNotification = (
   description: string,
@@ -12,7 +13,7 @@ export const toastBaseNotification = (
   return toast('Уведомление', { description, ...toastOptions })
 }
 
-export const toastPromiseNotification = <T extends unknown = unknown>(
+export const toastPromiseNotification = (
   promise: Promise<T>,
   operationName: string,
   toastOptions?: ExternalToast & {

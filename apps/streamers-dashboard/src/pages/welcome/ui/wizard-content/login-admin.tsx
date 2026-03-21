@@ -8,7 +8,7 @@ import { Button } from 'klewik-ui/button'
 import { Flex } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
 import { toastErrorNotification } from 'klewik-ui/toaster/lib'
-import { Typography } from 'klewik-ui/typograghy'
+import { Typography } from 'klewik-ui/typography'
 import type { WizardItemProps } from 'klewik-ui/wizard'
 import { WizardItem, WizardTrigger } from 'klewik-ui/wizard'
 

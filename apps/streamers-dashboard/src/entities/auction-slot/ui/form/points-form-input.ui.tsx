@@ -1,20 +1,19 @@
-import type { FlexProps } from 'klewik-ui/flex'
-import type { NumberInputProps } from 'klewik-ui/number-input'
-
 import type { ChangeEvent, KeyboardEvent } from 'react'
 import { useState } from 'react'
 
 import type { FieldPath, FieldValues, UseControllerProps } from 'react-hook-form'
 import { useController } from 'react-hook-form'
 
-import { Flex } from 'klewik-ui/flex'
-import { Icons } from 'klewik-ui/icons'
-import { NumberInput } from 'klewik-ui/number-input'
-import { Typography } from 'klewik-ui/typograghy'
-
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import type { FlexProps } from 'klewik-ui/flex'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import type { NumberInputProps } from 'klewik-ui/number-input'
+import { NumberInput } from 'klewik-ui/number-input'
+import { Typography } from 'klewik-ui/typography'
 
 import { deleteAllSpacesFromString, isStringEmpty, mergeProps } from '~shared/utils'
 

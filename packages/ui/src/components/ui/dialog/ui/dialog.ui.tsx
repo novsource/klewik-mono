@@ -7,7 +7,7 @@ import { forwardRef, useMemo } from 'react'
 
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import { dialogContentVariants, dialogFooterVariants, dialogHeaderVariants, dialogOverlayVariants, dialogTitleVariants } from '../styles'
 

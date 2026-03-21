@@ -3,12 +3,6 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
 import NumberFlow from '@number-flow/react'
-import { Button } from 'klewik-ui/button'
-import { Flex } from 'klewik-ui/flex'
-import { Icons } from 'klewik-ui/icons'
-import { Sheet, SheetContent, SheetHeader, SheetTrigger } from 'klewik-ui/sheet'
-import { Switch } from 'klewik-ui/switch'
-import { Typography } from 'klewik-ui/typograghy'
 
 import { useUpdateBetsStatusMutation } from '~features/auction/update-bets-status/api'
 
@@ -25,6 +19,13 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 import { useMediaQuery } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Sheet, SheetContent, SheetHeader, SheetTrigger } from 'klewik-ui/sheet'
+import { Switch } from 'klewik-ui/switch'
+import { Typography } from 'klewik-ui/typography'
 
 import { cn } from '~shared/utils'
 

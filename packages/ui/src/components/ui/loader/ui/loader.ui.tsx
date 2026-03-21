@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { AnimatePresence, TargetAndTransition } from 'motion/react'
 import * as m from 'motion/react-m'
 
-import { Icons } from '~components/ui/icons'
+import { Icons } from '../../icons'
 
 type LoaderAnimationsConditions = 'appear' | 'visible' | 'loopVisible'
 

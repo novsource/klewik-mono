@@ -5,10 +5,10 @@ import { forwardRef } from 'react'
 import type { NumberFormatValues, NumericFormatProps } from 'react-number-format'
 import { NumericFormat } from 'react-number-format'
 
-import type { InputProps } from '~components/ui/input'
-import { Input } from '~components/ui/input'
+import type { InputProps } from '../../input'
+import { Input } from '../../input'
 
-import { isStringEmpty } from '~utils/index'
+import { isStringEmpty } from '../../../../utils/index'
 
 import { isNumberInputValueInsideBounds } from '../utils/number-bounds'
 

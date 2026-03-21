@@ -1,5 +1,5 @@
-import type { TypographyProps } from 'klewik-ui/typograghy'
-import { Typography } from 'klewik-ui/typograghy'
+import type { TypographyProps } from 'klewik-ui/typography'
+import { Typography } from 'klewik-ui/typography'
 
 export type TitleProps = Omit<TypographyProps<'h1'>, 'tag'> & {
   order?: 1 | 2 | 3

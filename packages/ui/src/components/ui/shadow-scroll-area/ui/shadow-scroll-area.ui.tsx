@@ -18,13 +18,13 @@ import {
   useScroll,
 } from 'motion/react'
 
-import { useDebounceCallback, useDidUpdate, useResizeObserver } from '~hooks/index'
+import { useDebounceCallback, useDidUpdate, useResizeObserver } from '../../../../hooks/index'
 
-import { MotionBox } from '~components/ui/motion-box'
-import type { ScrollAreaProps } from '~components/ui/scroll-area'
-import { ScrollArea } from '~components/ui/scroll-area'
+import { MotionBox } from '../../motion-box'
+import type { ScrollAreaProps } from '../../scroll-area'
+import { ScrollArea } from '../../scroll-area'
 
-import { cn, } from '~utils/index'
+import { cn, } from '../../../../utils/index'
 import { mergeProps } from '@base-ui/react'
 
 const animatedSides = ['top', 'bottom'] as const

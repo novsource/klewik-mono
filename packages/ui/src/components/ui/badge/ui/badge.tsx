@@ -5,7 +5,7 @@ import type { BadgeStylesProps } from '../styles/badge-variants'
 import type { HTMLAttributes } from 'react'
 import { useMemo } from 'react'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import { badgeVariants } from '../styles/badge-variants'
 

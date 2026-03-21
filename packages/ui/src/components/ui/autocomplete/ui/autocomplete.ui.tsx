@@ -6,10 +6,10 @@ import { useMemo } from 'react'
 import { mergeProps } from '@base-ui/react'
 import { Autocomplete as PrimitiveAutocomplete } from '@base-ui/react/autocomplete'
 
-import type { InputProps } from '~components/ui/input'
-import { Input } from '~components/ui/input'
+import type { InputProps } from '../../input'
+import { Input } from '../../input'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import { AutocompleteContextProvider, useAutocompleteContext } from '../context/autocomplete-context'
 import {

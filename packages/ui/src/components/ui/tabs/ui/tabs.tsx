@@ -16,10 +16,10 @@ import {
 
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs'
 
-import { useMergedRefs, useResizeObserver } from '~hooks/index'
+import { useMergedRefs, useResizeObserver } from '../../../../hooks/index'
 
 import { mergeProps } from '@base-ui/react/merge-props'
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import { TabsContextProvider, useTabContext } from '../context/tabs-context'
 import {

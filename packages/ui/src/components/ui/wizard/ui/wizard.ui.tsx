@@ -6,8 +6,8 @@ import type {
 
 import type { ComponentPropsWithRef, ReactNode } from 'react'
 
-import { cn } from '~utils/index'
-import { chain } from '~utils/index'
+import { cn } from '../../../../utils/index'
+import { chain } from '../../../../utils/index'
 
 import {
   useWizardContext,

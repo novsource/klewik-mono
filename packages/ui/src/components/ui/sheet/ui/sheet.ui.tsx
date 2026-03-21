@@ -12,10 +12,10 @@ import type {
   DialogProps,
   DialogTitleProps,
   DialogTriggerProps,
-} from '~components/ui/dialog'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '~components/ui/dialog'
+} from '../../dialog'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../../dialog'
 
-import { cn } from '~utils/index'
+import { cn } from '../../../../utils/index'
 
 import { sheetBackdropVariants, sheetCloseButtonVariants, sheetDescriptionVariants, sheetHeaderVariants, sheetTitleVariants, sheetVariants } from '../styles'
 
