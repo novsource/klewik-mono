@@ -12,3 +12,7 @@ type ExtractComponentClassnameToSlot<InputProps extends Record<string, any>, Slo
   : SlotClassname<SlotName> & {
     [key in PropsName]?: Omit<InputProps, 'className'>
   }
+
+type VariantPropsFixed<VariantsProps> = {
+  [K in keyof VariantsProps]: VariantsProps[K]
+}

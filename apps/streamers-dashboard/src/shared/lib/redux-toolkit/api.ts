@@ -117,7 +117,7 @@ const authMutex = new Mutex()
 export const axiosAuthBaseQuery
   = (options: AxiosBaseQueryOptions): AxiosQueryFn =>
     async (args, api, extraOptions) => {
-      const isDev = import.meta.env.VITE_DEV
+      const isDev = import.meta.env.DEV
 
       const initBaseUrl = import.meta.env.VITE_SERVER_URL
 

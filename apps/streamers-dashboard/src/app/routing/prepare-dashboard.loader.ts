@@ -92,6 +92,7 @@ export const prepareDashboardRouteLoader: NonIndexRouteObject['loader'] = async 
     return null
   }
   catch (error) {
+    console.log(error)
     if (isAxiosError(error)) {
       const isRejectHaveReason = error.status !== undefined && Reflect.has(errorStatusReasons, error.status.toString())
       const reason = isRejectHaveReason
@@ -126,9 +127,14 @@ export const prepareDashboardRouteLoader: NonIndexRouteObject['loader'] = async 
       }
     }
 
+    const reason = typeof error === 'object' && error !== null
+      ? 'message' in error
+        ? error.message
+        : 'Неизвестная ошибка. Если есть возможность напишите об этом в issues на Github проекта'
+      : 'Неизвестная ошибка. Если есть возможность напишите об этом в issues на Github проекта'
+
     throw json({
-      reason: typeof error === 'object' && error !== null ? 'message' in error ? error.message : '' : '',
-      hint: 'Неизвестная ошибка. Если есть возможность напишите об этом на Github проекта в issues',
+      reason,
     }, {
       status: 400,
     })

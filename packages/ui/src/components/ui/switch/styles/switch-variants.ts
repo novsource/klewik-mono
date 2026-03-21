@@ -2,13 +2,13 @@ import type { VariantProps } from 'class-variance-authority'
 
 import { cva } from 'class-variance-authority'
 
-import type { CvaClassValue } from '~lib/cva'
+import type { ClassValue } from 'class-variance-authority/dist/types'
 
 type SwitchSize = 'sm' | 'default' | 'lg'
 
 type SwitchStyleVariants = {
   size: {
-    [Size in SwitchSize]: CvaClassValue
+    [Size in SwitchSize]: ClassValue
   }
 }
 

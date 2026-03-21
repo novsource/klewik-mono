@@ -8,7 +8,7 @@ import type {
 import type { ComponentProps, JSX } from 'react'
 import { forwardRef, useMemo, useState } from 'react'
 
-import type { CvaClassValue } from '~lib/cva'
+import type { ClassValue } from 'class-variance-authority/dist/types'
 
 import { Typography } from '~components/ui/typography'
 
@@ -24,7 +24,7 @@ import {
 } from '../styles/input-variants'
 
 export type InputSlotsClassnames = {
-  [Slot in InputSlots]?: CvaClassValue
+  [Slot in InputSlots]?: ClassValue
 }
 
 export type InputProps = Omit<ComponentProps<'input'>, 'size' | 'className'>

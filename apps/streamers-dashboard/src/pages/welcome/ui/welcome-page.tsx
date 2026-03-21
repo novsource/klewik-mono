@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom'
 
+import { Icons } from 'klewik-ui/icons'
+
 import { HeroCloverAnimation } from '~widgets/hero-clover-animation/ui/hero-clover.ui'
 
 import { Text } from '~shared/components/typography'
 
 import { Button } from '~shared/ui/button'
 import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
 import { Wizard } from '~shared/ui/wizard'
 
 import { cn } from '~shared/utils'

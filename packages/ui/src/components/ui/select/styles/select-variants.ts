@@ -1,22 +1,22 @@
 import { cva } from 'class-variance-authority'
 
-import type { CvaClassValue } from '~lib/cva'
+import type { ClassValue } from 'class-variance-authority/dist/types'
 
 export type SelectSizes = {
   variant: {
-    default: CvaClassValue
-    ghost: CvaClassValue
+    default: ClassValue
+    ghost: ClassValue
   }
   size: {
-    sm: CvaClassValue
-    default: CvaClassValue
+    sm: ClassValue
+    default: ClassValue
   }
 }
 
 export type SelectPositions = {
   position: {
-    'item-aligned': CvaClassValue
-    'popper': CvaClassValue
+    'item-aligned': ClassValue
+    'popper': ClassValue
   }
 }
 

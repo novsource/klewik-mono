@@ -1,7 +1,5 @@
 'use client'
 
-import type { ButtonVariantsProps } from '../styles/button-variants'
-
 import type { ComponentProps, ReactNode } from 'react'
 import { forwardRef, useMemo } from 'react'
 
@@ -9,14 +7,14 @@ import { Icons } from '~components/ui/icons'
 
 import { cn, toBooleanString } from '~utils/index'
 
-import { buttonVariants } from '../styles/button-variants'
+import { buttonVariants, ButtonVariantsProps } from '../styles/button-variants'
 
 export type ButtonProps = {
   loading?: boolean
   startContent?: ReactNode
   endContent?: ReactNode
   icon?: ReactNode
-} & ComponentProps<'button'> & Omit<ButtonVariantsProps, 'startContent' | 'endContent'>
+} & ComponentProps<'button'> & VariantPropsFixed<ButtonVariantsProps>
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (

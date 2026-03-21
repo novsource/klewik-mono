@@ -2,7 +2,7 @@ import type { VariantProps } from 'class-variance-authority'
 
 import { cva } from 'class-variance-authority'
 
-import type { CvaClassValue } from '~lib/cva'
+import type { ClassValue } from 'class-variance-authority/dist/types'
 
 type TabsVariant = 'default' | 'bottomLine' | 'underline'
 
@@ -10,13 +10,13 @@ type TabsOrientation = 'vertical' | 'horizontal'
 
 type TabsVariantCva = {
   variant: {
-    [Variant in TabsVariant]: CvaClassValue
+    [Variant in TabsVariant]: ClassValue
   }
 }
 
 type TabsOrientationCva = {
   orientation: {
-    [Orientation in TabsOrientation]: CvaClassValue
+    [Orientation in TabsOrientation]: ClassValue
   }
 }
 

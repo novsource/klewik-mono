@@ -2,17 +2,17 @@ import type { VariantProps } from 'class-variance-authority'
 
 import { cva } from 'class-variance-authority'
 
-import type { CvaClassValue } from '~lib/cva'
+import type { ClassValue } from 'class-variance-authority/dist/types'
 
 export type DrawerSide = 'bottom' | 'right'
 export type DrawerSize = 'full' | 'default'
 
 type DrawerSideVariants = {
-  side: Record<DrawerSide, CvaClassValue>
+  side: Record<DrawerSide, ClassValue>
 }
 
 type DrawerSizeVariants = {
-  size: Record<DrawerSize, CvaClassValue>
+  size: Record<DrawerSize, ClassValue>
 }
 
 export const drawerBackdropVariants = cva([

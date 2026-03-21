@@ -2,17 +2,17 @@ import type { VariantProps } from 'class-variance-authority'
 
 import { cva } from 'class-variance-authority'
 
-import type { CvaClassValue } from '~lib/cva'
+import type { ClassValue } from 'class-variance-authority/dist/types'
 
 type CardVariants = {
   variant: {
-    default: CvaClassValue
-    slots: CvaClassValue
+    default: ClassValue
+    slots: ClassValue
   }
   size: {
-    default: CvaClassValue
-    sm: CvaClassValue
-    lg: CvaClassValue
+    default: ClassValue
+    sm: ClassValue
+    lg: ClassValue
   }
 }
 

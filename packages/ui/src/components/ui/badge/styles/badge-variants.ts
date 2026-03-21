@@ -2,19 +2,19 @@ import type { VariantProps } from 'class-variance-authority'
 
 import { cva } from 'class-variance-authority'
 
-import type { CvaClassValue } from '~lib/cva'
+import type { ClassValue } from 'class-variance-authority/dist/types'
 
 type BadgeSizes = {
-  size: Record<'sm' | 'default' | 'lg', CvaClassValue>
+  size: Record<'sm' | 'default' | 'lg', ClassValue>
 }
 
 type BadgeVariants = {
   variant: {
-    success: CvaClassValue
-    error: CvaClassValue
-    info: CvaClassValue
-    default: CvaClassValue
-    warning: CvaClassValue
+    success: ClassValue
+    error: ClassValue
+    info: ClassValue
+    default: ClassValue
+    warning: ClassValue
   }
 }
 

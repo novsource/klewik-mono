@@ -1,8 +1,8 @@
 import type { VariantProps } from 'class-variance-authority'
 
 import { cva } from 'class-variance-authority'
+import { ClassValue } from 'class-variance-authority/dist/types'
 
-import type { CvaClassValue } from '~lib/cva'
 
 type ButtonVariant
   = | 'default'
@@ -15,19 +15,19 @@ type ButtonSize = 'sm' | 'default' | 'lg' | 'xs'
 
 type ButtonVariants = {
   variant: {
-    [Variant in ButtonVariant]: CvaClassValue
+    [Variant in ButtonVariant]: ClassValue
   }
   size: {
-    [Size in ButtonSize]: CvaClassValue
+    [Size in ButtonSize]: ClassValue
   }
   isIconOnly: {
-    [Bool in 'true' | 'false']: CvaClassValue
+    [Bool in 'true' | 'false']: ClassValue
   }
   startContent: {
-    [Bool in 'true' | 'false']: CvaClassValue
+    [Bool in 'true' | 'false']: ClassValue
   }
   endContent: {
-    [Bool in 'true' | 'false']: CvaClassValue
+    [Bool in 'true' | 'false']: ClassValue
   }
 }
 

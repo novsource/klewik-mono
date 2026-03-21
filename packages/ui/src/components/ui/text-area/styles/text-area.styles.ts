@@ -1,12 +1,12 @@
 import { cva } from 'class-variance-authority'
 
-import type { CvaClassValue } from '~lib/cva'
+import type { ClassValue } from 'class-variance-authority/dist/types'
 
 export type TextAreaSize = 'sm' | 'md' | 'lg'
 
 export type TextAreaStylesVariants = {
   size: {
-    [Size in TextAreaSize]: CvaClassValue
+    [Size in TextAreaSize]: ClassValue
   }
 }
 
@@ -31,7 +31,7 @@ export const textAreaWrapperVariants = cva('relative flex flex-col text-white w-
 
 export type TextAreaContentStylesVariants = {
   isError: {
-    [Bool in 'true' | 'false']: CvaClassValue
+    [Bool in 'true' | 'false']: ClassValue
   }
 }
 

@@ -2,7 +2,7 @@ import type { VariantProps } from 'class-variance-authority'
 
 import { cva } from 'class-variance-authority'
 
-import type { CvaClassValue } from '~lib/cva'
+import type { ClassValue } from 'class-variance-authority/dist/types'
 
 export type InputSlots
   = | 'base'
@@ -16,43 +16,43 @@ export type InputSlots
 
 type ErrorCvaVariants = {
   isError: {
-    [Bool in 'true' | 'false']: CvaClassValue
+    [Bool in 'true' | 'false']: ClassValue
   }
 }
 
 type SizesCvaVariants = {
   size: {
-    default: CvaClassValue
-    sm: CvaClassValue
-    lg: CvaClassValue
+    default: ClassValue
+    sm: ClassValue
+    lg: ClassValue
   }
 }
 
 type LabelVariants = SizesCvaVariants & ErrorCvaVariants
 type DescriptionVariants = SizesCvaVariants & ErrorCvaVariants
 
-type ContentBaseVariants = CvaClassValue
+type ContentBaseVariants = ClassValue
 type ContentWrapperVariants = SizesCvaVariants
   & ErrorCvaVariants & {
     variant: {
-      default: CvaClassValue
-      ghost: CvaClassValue
+      default: ClassValue
+      ghost: ClassValue
     }
     isDisabled: {
-      [Bool in 'true' | 'false']: CvaClassValue
+      [Bool in 'true' | 'false']: ClassValue
     }
   }
 
 type InputVariants = SizesCvaVariants
   & ErrorCvaVariants & {
     withLabel: {
-      true: CvaClassValue
+      true: ClassValue
     }
     startContent: {
-      true: CvaClassValue
+      true: ClassValue
     }
     endContent: {
-      true: CvaClassValue
+      true: ClassValue
     }
   }
 
