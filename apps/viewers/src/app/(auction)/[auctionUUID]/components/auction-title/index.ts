@@ -1,3 +1,3 @@
-import { AuctionTitle } from "./auction-title";
+import { AuctionTitle } from './auction-title'
 
-export { AuctionTitle };
+export { AuctionTitle }

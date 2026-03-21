@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from 'react'
+import type { HTMLAttributes, ReactNode, RefObject } from 'react'
 import type { JSX } from 'react/jsx-runtime'
 
 import type {
@@ -11,6 +11,17 @@ import {
 	typographyVariants,
 } from '../styles/typography-variants'
 
+export type TitleProps = HTMLAttributes<HTMLHeadingElement> & {
+	ref?: RefObject<HTMLHeadingElement>
+	level?: 1 | 2 | 3
+}
+
+export const Title = (props: TitleProps) => {
+	const { level = 1, ...restProps } = props
+
+	return <Typography tag={`h${level}`} {...restProps} />
+}
+
 export type TypographyTags = 'h1' | 'h2' | 'h3' | 'h4' | 'span' | 'p'
 
 type TypographyHTMLElements = Pick<HTMLElementTagNameMap, TypographyTags>
@@ -22,13 +33,13 @@ export type TypographyProps<T extends keyof TypographyHTMLElements> = {
 } & Omit<TypographyVariantsProps, 'tag'>
 & HTMLAttributes<TypographyHTMLElements[T]>
 
-export const Typography = <T extends keyof TypographyHTMLElements>({
+export function Typography<T extends keyof TypographyHTMLElements>({
 	children,
 	tag,
 	className,
 	value,
 	...props
-}: TypographyProps<T>) => {
+}: TypographyProps<T>) {
 	const Comp = tag as keyof Pick<JSX.IntrinsicElements, TypographyTags>
 
 	const styles = useMemo(

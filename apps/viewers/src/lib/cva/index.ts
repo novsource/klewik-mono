@@ -1,3 +1,3 @@
-import { CvaClassValue } from "./cva.types";
+import type { CvaClassValue } from './cva.types'
 
-export type { CvaClassValue };
+export type { CvaClassValue }

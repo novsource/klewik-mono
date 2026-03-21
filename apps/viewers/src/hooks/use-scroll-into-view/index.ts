@@ -1,3 +1,3 @@
-import { useScrollIntoView } from "./use-scroll-into-view";
+import { useScrollIntoView } from './use-scroll-into-view'
 
-export { useScrollIntoView };
+export { useScrollIntoView }

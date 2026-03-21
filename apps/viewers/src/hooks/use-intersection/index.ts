@@ -1,3 +1,3 @@
-import { useIntersection } from "./use-intersection";
+import { useIntersection } from './use-intersection'
 
-export { useIntersection };
+export { useIntersection }

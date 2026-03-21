@@ -33,7 +33,7 @@ export type UseElementSize = {
  * @description - Hook that observes and returns the width and height of element
  * @category Elements
  * @usage low
- 
+
  * @overload
  * @param {HookTarget} target The target element to observe
  * @returns {UseElementSizeReturn} An object containing the current width and height of the element

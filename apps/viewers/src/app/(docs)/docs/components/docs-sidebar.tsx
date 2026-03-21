@@ -128,7 +128,7 @@ type DocsOrderItem<T extends DocsRoutes> = {
 
 export type DocsSidebarProps<T extends DocsRoutes> = ComponentProps<'aside'> & {
 	routes: T
-	order: DocsOrderItem<T>[]
+	order?: DocsOrderItem<T>[]
 }
 
 function getHashPath(routes: DocsRoutes, windowHash: string) {

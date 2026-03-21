@@ -1,3 +1,3 @@
-import { useScrollTo } from "./use-scroll-to";
+import { useScrollTo } from './use-scroll-to'
 
-export { useScrollTo };
+export { useScrollTo }

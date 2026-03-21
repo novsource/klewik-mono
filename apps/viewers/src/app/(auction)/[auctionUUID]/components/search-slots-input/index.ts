@@ -1,3 +1,3 @@
-import { SearchSlotsInput } from "./search-slots-input.ui";
+import { SearchSlotsInput } from './search-slots-input.ui'
 
-export { SearchSlotsInput };
+export { SearchSlotsInput }

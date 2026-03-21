@@ -1,53 +1,52 @@
-import { useEffect, useRef, useState } from 'react';
+import type { StateRef } from '../use-ref-state/use-ref-state'
 
-import { getElement, isTarget } from '~/utils';
+import type { HookTarget } from '~/utils'
 
-import type { StateRef } from '../use-ref-state/use-ref-state';
+import { useEffect, useRef, useState } from 'react'
+import { getElement, isTarget } from '~/utils'
 
-import { useRefState } from '../use-ref-state/use-ref-state';
-
-import { HookTarget } from '~/utils';
+import { useRefState } from '../use-ref-state/use-ref-state'
 
 /** The intersection observer callback type */
 export type UseIntersectionObserverCallback = (
-  entry: IntersectionObserverEntry,
-  observer: IntersectionObserver
-) => void;
+	entry: IntersectionObserverEntry,
+	observer: IntersectionObserver
+) => void
 
 /** The intersection observer options type */
-export interface UseIntersectionObserverOptions extends Omit<IntersectionObserverInit, 'root'> {
-  /** The enabled state of the intersection observer */
-  enabled?: boolean;
-  /** The callback to execute when intersection is detected */
-  onChange?: UseIntersectionObserverCallback;
-  /** The root element to observe */
-  root?: HookTarget;
-}
+export type UseIntersectionObserverOptions = {
+	/** The enabled state of the intersection observer */
+	enabled?: boolean
+	/** The callback to execute when intersection is detected */
+	onChange?: UseIntersectionObserverCallback
+	/** The root element to observe */
+	root?: HookTarget
+} & Omit<IntersectionObserverInit, 'root'>
 
 /** The intersection observer return type */
-export interface UseIntersectionObserverReturn {
-  /** The intersection observer entry */
-  entry?: IntersectionObserverEntry;
-  /** The in view state of the intersection observer */
-  inView: boolean;
-  /** The intersection observer instance */
-  observer?: IntersectionObserver;
+export type UseIntersectionObserverReturn = {
+	/** The intersection observer entry */
+	entry?: IntersectionObserverEntry
+	/** The in view state of the intersection observer */
+	inView: boolean
+	/** The intersection observer instance */
+	observer?: IntersectionObserver
 }
 
-export interface UseIntersectionObserver {
-  <Target extends Element>(
-    options?: UseIntersectionObserverOptions,
-    target?: never
-  ): UseIntersectionObserverReturn & { ref: StateRef<Target> };
+export type UseIntersectionObserver = {
+	<Target extends Element>(
+		options?: UseIntersectionObserverOptions,
+		target?: never
+	): UseIntersectionObserverReturn & { ref: StateRef<Target> }
 
-  (target: HookTarget, options?: UseIntersectionObserverOptions): UseIntersectionObserverReturn;
+	(target: HookTarget, options?: UseIntersectionObserverOptions): UseIntersectionObserverReturn
 
-  <Target extends Element>(
-    callback: UseIntersectionObserverCallback,
-    target?: never
-  ): UseIntersectionObserverReturn & { ref: StateRef<Target> };
+	<Target extends Element>(
+		callback: UseIntersectionObserverCallback,
+		target?: never
+	): UseIntersectionObserverReturn & { ref: StateRef<Target> }
 
-  (target: HookTarget, callback: UseIntersectionObserverCallback): UseIntersectionObserverReturn;
+	(target: HookTarget, callback: UseIntersectionObserverCallback): UseIntersectionObserverReturn
 }
 
 /**
@@ -60,9 +59,9 @@ export interface UseIntersectionObserver {
  *
  * @overload
  * @param {HookTarget} target The target element to detect intersection
- * @param {boolean} [options.enabled=true] The IntersectionObserver options
+ * @param {boolean} [options.enabled] The IntersectionObserver options
  * @param {((entries: IntersectionObserverEntry[], observer: IntersectionObserver) => void) | undefined} [options.onChange] The callback to execute when intersection is detected
- * @param {HookTarget} [options.root=document] The root element to observe
+ * @param {HookTarget} [options.root] The root element to observe
  * @returns {UseIntersectionObserverReturn} An object containing the state
  *
  * @example
@@ -70,9 +69,9 @@ export interface UseIntersectionObserver {
  *
  * @overload
  * @template Target The target element
- * @param {boolean} [options.enabled=true] The IntersectionObserver options
+ * @param {boolean} [options.enabled] The IntersectionObserver options
  * @param {((entries: IntersectionObserverEntry[], observer: IntersectionObserver) => void) | undefined} [options.onChange] The callback to execute when intersection is detected
- * @param {HookTarget} [options.root=document] The root element to observe
+ * @param {HookTarget} [options.root] The root element to observe
  * @returns {UseIntersectionObserverReturn & { ref: StateRef<Target> }} A React ref to attach to the target element
  *
  * @example
@@ -95,58 +94,61 @@ export interface UseIntersectionObserver {
  * const { entry, inView, observer } = useIntersectionObserver(() => console.log('callback'), ref);
  */
 export const useIntersectionObserver = ((...params: any[]) => {
-  const target = (isTarget(params[0]) ? params[0] : undefined) as HookTarget | undefined;
+	const target = (isTarget(params[0]) ? params[0] : undefined) as HookTarget | undefined
 
-  const options = (
-    target
-      ? typeof params[1] === 'object'
-        ? params[1]
-        : { onChange: params[1] }
-      : typeof params[0] === 'object'
-        ? params[0]
-        : { onChange: params[0] }
-  ) as UseIntersectionObserverOptions | undefined;
+	const options = (
+		target
+			? typeof params[1] === 'object'
+				? params[1]
+				: { onChange: params[1] }
+			: typeof params[0] === 'object'
+				? params[0]
+				: { onChange: params[0] }
+	) as UseIntersectionObserverOptions | undefined
 
-  const callback = options?.onChange;
-  const enabled = options?.enabled ?? true;
+	const callback = options?.onChange
+	const enabled = options?.enabled ?? true
 
-  const [observer, setObserver] = useState<IntersectionObserver>();
-  const [entry, setEntry] = useState<IntersectionObserverEntry>();
+	const [observer, setObserver] = useState<IntersectionObserver>()
+	const [entry, setEntry] = useState<IntersectionObserverEntry>()
 
-  const internalRef = useRefState<Element>();
-  const internalCallbackRef = useRef(callback);
-  internalCallbackRef.current = callback;
+	const internalRef = useRefState<Element>()
+	const internalCallbackRef = useRef(callback)
+	internalCallbackRef.current = callback
 
-  useEffect(() => {
-    if (!enabled || (!target && !internalRef.state)) return;
+	useEffect(() => {
+		if (!enabled || (!target && !internalRef.state))
+			return
 
-    const element = target ? getElement(target) : internalRef.current;
-    if (!element) return;
+		const element = target ? getElement(target) : internalRef.current
+		if (!element)
+			return
 
-    const observer = new IntersectionObserver(
-      ([entry], observer) => {
-        setEntry(entry);
-        internalCallbackRef.current?.(entry, observer);
-      },
-      {
-        ...options,
-        root: options?.root ? (getElement(options.root) as Document | Element) : document
-      }
-    );
+		const observer = new IntersectionObserver(
+			([entry], observer) => {
+				setEntry(entry)
+				internalCallbackRef.current?.(entry, observer)
+			},
+			{
+				...options,
+				root: options?.root ? (getElement(options.root) as Document | Element) : document,
+			},
+		)
 
-    setObserver(observer);
-    observer.observe(element as Element);
+		setObserver(observer)
+		observer.observe(element as Element)
 
-    return () => {
-      observer.disconnect();
-    };
-  }, [target, internalRef.state, options?.rootMargin, options?.threshold, options?.root, enabled]);
+		return () => {
+			observer.disconnect()
+		}
+	}, [target, internalRef.state, options?.rootMargin, options?.threshold, options?.root, enabled])
 
-  if (target) return { observer, entry, inView: !!entry?.isIntersecting };
-  return {
-    observer,
-    ref: internalRef,
-    entry,
-    inView: !!entry?.isIntersecting
-  };
-}) as UseIntersectionObserver;
+	if (target)
+		return { observer, entry, inView: !!entry?.isIntersecting }
+	return {
+		observer,
+		ref: internalRef,
+		entry,
+		inView: !!entry?.isIntersecting,
+	}
+}) as UseIntersectionObserver

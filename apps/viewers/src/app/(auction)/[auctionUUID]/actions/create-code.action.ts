@@ -27,15 +27,19 @@ export async function createDonationCodeAction(payload: CreateCodeActionPayload)
 		const headers = new Headers()
 		headers.set('Content-Type', 'application/json')
 
+		const requestBody = JSON.stringify({
+			...rawFormData,
+			secret: process.env.REVALIDATE_SECRET_KEY,
+		})
+
+		console.log(requestBody)
+
 		const createCodeResponse = await fetch(
 			`${process.env.SERVER_API_URL}/auctions/${auctionUUID}/donations/code`,
 			{
 				headers,
 				method: 'POST',
-				body: JSON.stringify({
-					...rawFormData,
-					secret: process.env.REVALIDATE_SECRET_KEY,
-				}),
+				body: requestBody,
 			},
 		)
 

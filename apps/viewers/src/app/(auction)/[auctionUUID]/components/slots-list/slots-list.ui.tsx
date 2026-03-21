@@ -27,7 +27,7 @@ const AuctionSlotCard = memo((props: AuctionSlotCardProps) => {
 
 	return (
 		<BaseAuctionSlotCard className={cn('flex-row items-end', className)} {...restProps}>
-			<Flex className="pr-4 gap-y-2" direction="column">
+			<Flex className="w-full pr-4 gap-y-2" direction="column">
 				<SolidAuctionSlotHeader
 					slotColor="#FFF"
 					slotTitle={auctionSlot.title}

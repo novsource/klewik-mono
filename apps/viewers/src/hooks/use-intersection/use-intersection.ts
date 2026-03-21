@@ -1,68 +1,69 @@
-"use client";
+'use client'
 
-import { RefObject, useCallback, useEffect, useRef, useState } from "react";
+import type { RefObject } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 type IntersectionReturn = {
-  entry: IntersectionObserverEntry;
-  inView: boolean;
-};
+	entry: IntersectionObserverEntry
+	inView: boolean
+}
 
 const useIntersection = (
-  targetRef: RefObject<HTMLElement | null>,
-  options: Partial<IntersectionObserverInit>,
+	targetRef: RefObject<HTMLElement | null>,
+	options: Partial<IntersectionObserverInit>,
 ) => {
-  const [inView, setInView] = useState<IntersectionReturn["inView"]>(false);
-  const [entry, setEntry] = useState<IntersectionReturn["entry"] | null>(null);
+	const [inView, setInView] = useState<IntersectionReturn['inView']>(false)
+	const [entry, setEntry] = useState<IntersectionReturn['entry'] | null>(null)
 
-  const observer = useRef<IntersectionObserver | null>(null);
+	const observer = useRef<IntersectionObserver | null>(null)
 
-  const intersectionCallback = useCallback<IntersectionObserverCallback>(
-    (entries) => {
-      entries.forEach((entry) => {
-        const thresholds = Array.isArray(options.threshold)
-          ? options.threshold
-          : [options.threshold ?? 0];
+	const intersectionCallback = useCallback<IntersectionObserverCallback>(
+		(entries) => {
+			entries.forEach((entry) => {
+				const thresholds = Array.isArray(options.threshold)
+					? options.threshold
+					: [options.threshold ?? 0]
 
-        const inView =
-          entry.isIntersecting &&
-          thresholds.some((threshold) => threshold <= entry.intersectionRatio);
+				const inView
+					= entry.isIntersecting
+						&& thresholds.some(threshold => threshold <= entry.intersectionRatio)
 
-        setInView(inView);
-        setEntry(entry);
-      });
-    },
-    [options.threshold],
-  );
+				setInView(inView)
+				setEntry(entry)
+			})
+		},
+		[options.threshold],
+	)
 
-  useEffect(() => {
-    const target = targetRef.current;
+	useEffect(() => {
+		const target = targetRef.current
 
-    if (target === null) {
-      setInView(false);
-      setEntry(null);
+		if (target === null) {
+			setInView(false)
+			setEntry(null)
 
-      return;
-    }
+			return
+		}
 
-    if (observer.current === null) {
-      const targetObserver = new IntersectionObserver(
-        intersectionCallback,
-        options,
-      );
+		if (observer.current === null) {
+			const targetObserver = new IntersectionObserver(
+				intersectionCallback,
+				options,
+			)
 
-      observer.current = targetObserver;
-      observer.current.observe(target);
-    }
+			observer.current = targetObserver
+			observer.current.observe(target)
+		}
 
-    return () => {
-      if (observer.current) {
-        observer.current.disconnect();
-        observer.current = null;
-      }
-    };
-  }, [targetRef, intersectionCallback, options]);
+		return () => {
+			if (observer.current) {
+				observer.current.disconnect()
+				observer.current = null
+			}
+		}
+	}, [targetRef, intersectionCallback, options])
 
-  return { inView, entry };
-};
+	return { inView, entry }
+}
 
-export { useIntersection };
+export { useIntersection }

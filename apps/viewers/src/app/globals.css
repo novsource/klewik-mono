@@ -154,7 +154,7 @@
 
 @utility animate-enter-sheet {
     animation-name: sheet-open;
-    animation-duration: 0.15s;
+    animation-duration: 0.25s;
     --sheet-enter-opacity: initial;
     --sheet-enter-scale: initial;
     --sheet-enter-rotate: initial;
@@ -164,7 +164,7 @@
 
 @utility animate-exit-sheet {
     animation-name: sheet-exit;
-    animation-duration: 0.15s;
+    animation-duration: 0.2s;
     --sheet-enter-opacity: initial;
     --sheet-enter-scale: initial;
     --sheet-enter-rotate: initial;

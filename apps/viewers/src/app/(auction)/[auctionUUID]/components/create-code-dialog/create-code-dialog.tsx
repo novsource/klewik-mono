@@ -34,6 +34,7 @@ import { useCreateCodeContext } from '../../context'
 export type CreateCodeDialogProps = {
 	auctionUUID: string
 	slots: AuctionSlot[]
+	disabled?: boolean
 }
 
 const convertSlotsToTags = (slots: AuctionSlot[]) => {
@@ -41,7 +42,7 @@ const convertSlotsToTags = (slots: AuctionSlot[]) => {
 }
 
 export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
-	const { slots, auctionUUID } = props
+	const { slots, disabled, auctionUUID } = props
 
 	const {
 		state: { isDialogOpen, isPending, code, selectedSlot },
@@ -63,51 +64,37 @@ export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
 		)
 	}, [auctionUUID, selectedSlot, slots])
 
-	const closeDialog = () => {
-		setIsDialogOpen(false)
-		setCode('')
-	}
-
 	const isCodeCreated = code.length !== 0
 
 	const dialogFooter = useMemo(() => {
-		if (isCodeCreated) {
-			return (
-				<Flex
-					className={cn('gap-x-2.5 max-tablet:flex-col-reverse max-tablet:gap-y-2.5')}
-					direction={isLargeThenTablet ? 'row' : 'column'}
-				>
-					<Button onClick={closeDialog}>
-						Закрыть
-					</Button>
-					<Button
-						startContent={<Icons.Copy size="sm" />}
-						variant="action"
-						onClick={() => copy(`[#${code}]`)}
-					>
-						{copied ? 'Код успешно скопирован!' : 'Скопировать код для вставки'}
-					</Button>
-				</Flex>
-			)
-		}
 		return (
 			<Flex
-				className={cn('gap-x-2.5 max-tablet:flex-col-reverse max-tablet:gap-y-2.5')}
+				className={cn('pt-5 pb-2 gap-x-2.5 max-tablet:flex-col-reverse max-tablet:gap-y-2.5')}
 				direction={isLargeThenTablet ? 'row' : 'column'}
 			>
-				<Button onClick={closeDialog}>
-					Отмена
-				</Button>
-				<Button
-					type="submit"
-					form="createCodeForm"
-					variant="action"
-				>
-					Создать донат-код
-				</Button>
+				{isCodeCreated
+					? (
+							<Button
+								startContent={<Icons.Copy />}
+								variant="action"
+								onClick={() => copy(`[#${code}]`)}
+							>
+								{copied ? 'Код успешно скопирован!' : 'Скопировать код для вставки'}
+							</Button>
+						)
+					: (
+							<Button
+								type="submit"
+								form="createCodeForm"
+								variant="action"
+							>
+								Создать
+							</Button>
+						)}
+
 			</Flex>
 		)
-	}, [isLargeThenTablet, isCodeCreated, copied])
+	}, [isLargeThenTablet, code, isCodeCreated, copied])
 
 	const handleOnOpenChange = (open: boolean) => {
 		const isClosedManually = !open
@@ -129,7 +116,7 @@ export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
 	if (isLargeThenTablet) {
 		return (
 			<Dialog open={isDialogOpen} onOpenChange={handleOnOpenChange} dismissible={isDialogDismissible}>
-				<DialogTrigger render={(<CreateCodeDialogTrigger onClick={() => setIsDialogOpen(true)} />)} />
+				<DialogTrigger disabled={disabled} render={(<CreateCodeDialogTrigger disabled={disabled} onClick={() => setIsDialogOpen(true)} />)} />
 				<DialogContent className="w-2/5 desktop:max-w-[450px] h-fit min-h-60 border-dark-light rounded-[24px] bg-dark-foreground-light px-4 py-0 overflow-clip transition-[height]">
 					{isPending && (
 						<Flex className="absolute w-full h-full text-dark z-10 bg-inherit" align="center" justify="center">
@@ -146,6 +133,7 @@ export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
 								{isCodeCreated ? 'Не забудьте скопировать код для вставки в сообщение' : 'Заполните поле снизу для создание донат-кода'}
 							</DialogDescription>
 						</Flex>
+
 						<DialogClose
 							className="text-gray-light hover:text-gray-accent cursor-pointer"
 							onClick={() => {
@@ -155,9 +143,11 @@ export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
 							<Icons.LargeCross size="lg" />
 						</DialogClose>
 					</DialogHeader>
+
 					<Flex className="h-full grow">
 						{dialogContent}
 					</Flex>
+
 					<DialogFooter className="flex-row h-fit py-4 gap-x-4 justify-end">
 						{dialogFooter}
 					</DialogFooter>
@@ -168,9 +158,17 @@ export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
 
 	return (
 		<Sheet open={isDialogOpen} onOpenChange={handleOnOpenChange} dismissible={isDialogDismissible}>
-			<SheetTrigger render={(<CreateCodeDialogTrigger onClick={() => setIsDialogOpen(true)} />)} />
+			<SheetTrigger
+				disabled={disabled}
+				render={(
+					<CreateCodeDialogTrigger
+						disabled={disabled}
+						onClick={() => setIsDialogOpen(true)}
+					/>
+				)}
+			/>
 			<SheetContent
-				className="w-full h-fit min-h-60 top-auto rounded-t-large border-t-1 border-t-dark-light gap-y-1.5"
+				className="w-[calc(100%-16px)] h-fit top-auto rounded-lg border-1 border-dark-light gap-y-1.5 left-1/2 !-translate-x-1/2 bottom-2"
 				side="bottom"
 				isFullPageSize
 			>
@@ -179,7 +177,8 @@ export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
 						<Icons.Loading width={34} height={34} />
 					</Flex>
 				)}
-				<SheetHeader className="w-full h-fit flex flex-row justify-between shrink pt-2 items-start mb-2.5">
+
+				<SheetHeader className="w-full h-fit flex flex-row justify-between shrink items-start mb-2.5">
 					<Flex className="justify-start" direction="column">
 						<SheetTitle className="text-title font-semibold text-start">
 							{isCodeCreated ? 'Донат-код успешно создан!' : 'Создание донат-кода'}
@@ -188,8 +187,9 @@ export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
 							{isCodeCreated ? 'Не забудьте скопировать код для вставки в сообщение' : 'Заполните поле снизу для создание донат-кода'}
 						</SheetDescription>
 					</Flex>
+
 					<SheetClose
-						className="text-gray-light hover:text-gray-accent"
+						className="text-gray-light hover:text-gray-accent relative h-fit right-0 top-0"
 						onClick={() => {
 							setCode('')
 						}}
@@ -197,8 +197,10 @@ export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
 						<Icons.LargeCross />
 					</SheetClose>
 				</SheetHeader>
+
 				{dialogContent}
-				<Flex className="gap-y-2 mt-4" direction="column">
+
+				<Flex className="gap-y-2" direction="column">
 					{dialogFooter}
 				</Flex>
 			</SheetContent>
@@ -227,7 +229,12 @@ function CreateCodeForm(props: CreateCodeFormProps) {
 
 	const [state, formAction, isPending] = useActionState<CreateCodeFormState, FormData>(
 		(state, formData) => {
-			formData.set('slotId', String(selectedSlot?.id ?? null))
+			const slotTitle = formData.get('title')
+
+			const isSameSlot = slotTitle === selectedSlot?.title
+			const slotId = isSameSlot ? selectedSlot.id : null
+
+			formData.set('slotId', String(slotId))
 
 			return createDonationCodeAction({ auctionUUID, formData, formState: state })
 		},
@@ -268,7 +275,7 @@ function CreateCodeForm(props: CreateCodeFormProps) {
 		}
 	}
 
-	const isCodeCreated = state.code
+	const isCodeCreated = !!state.code
 
 	return (
 		<form id="createCodeForm" action={formAction} {...restProps}>

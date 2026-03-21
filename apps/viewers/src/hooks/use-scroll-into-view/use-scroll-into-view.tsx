@@ -1,38 +1,40 @@
-import { RefObject, useCallback, useLayoutEffect, useRef } from "react";
+import type { RefObject } from 'react'
+import { useCallback, useLayoutEffect, useRef } from 'react'
 
 type UseScrollIntoViewOptions = ScrollIntoViewOptions & {
-  scrollOnInit: boolean;
-  scrollMargin?: number;
-};
+	scrollOnInit: boolean
+	scrollMargin?: number
+}
 
 const useScrollIntoView = (
-  target: RefObject<HTMLElement | null>,
-  options: UseScrollIntoViewOptions,
+	target: RefObject<HTMLElement | null>,
+	options: UseScrollIntoViewOptions,
 ) => {
-  const { scrollOnInit, scrollMargin, ...scrollIntoViewOptions } = options;
+	const { scrollOnInit, scrollMargin, ...scrollIntoViewOptions } = options
 
-  const isScrolledOnInit = useRef(false);
+	const isScrolledOnInit = useRef(false)
 
-  const scrollIntoView = useCallback(
-    (options?: ScrollIntoViewOptions) => {
-      const element = target.current;
+	const scrollIntoView = useCallback(
+		(options?: ScrollIntoViewOptions) => {
+			const element = target.current
 
-      if (!element) return;
+			if (!element)
+				return
 
-      element.style.scrollMargin = `${scrollMargin}px`;
-      element.scrollIntoView(options ?? scrollIntoViewOptions);
-    },
-    [target, scrollIntoViewOptions, scrollMargin],
-  );
+			element.style.scrollMargin = `${scrollMargin}px`
+			element.scrollIntoView(options ?? scrollIntoViewOptions)
+		},
+		[target, scrollIntoViewOptions, scrollMargin],
+	)
 
-  useLayoutEffect(() => {
-    if (scrollOnInit && !isScrolledOnInit.current) {
-      scrollIntoView(options);
-      isScrolledOnInit.current = true;
-    }
-  }, [scrollIntoView, scrollOnInit, options]);
+	useLayoutEffect(() => {
+		if (scrollOnInit && !isScrolledOnInit.current) {
+			scrollIntoView(options)
+			isScrolledOnInit.current = true
+		}
+	}, [scrollIntoView, scrollOnInit, options])
 
-  return scrollIntoView;
-};
+	return scrollIntoView
+}
 
-export { useScrollIntoView };
+export { useScrollIntoView }

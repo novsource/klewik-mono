@@ -1,5 +1,6 @@
-import process from 'node:process'
+import type { Metadata } from 'next'
 
+import process from 'node:process'
 import { notFound } from 'next/navigation'
 import { Flex } from '~ui/flex'
 import { AuctionCaptions } from './components/auction-captions'
@@ -60,6 +61,10 @@ async function getAuctionRules(slug: string) {
 		body: JSON.stringify({ secret: process.env.REVALIDATE_SECRET_KEY }),
 	})
 
+	if (!response.ok) {
+		return ''
+	}
+
 	const rules = (await response.json()) ?? '' as string
 
 	return rules
@@ -71,7 +76,7 @@ type AuctionPageGenMetaArgs = {
 	params: Promise<{ auctionUUID: string }>
 }
 
-export async function generateMetadata(args: AuctionPageGenMetaArgs) {
+export async function generateMetadata(args: AuctionPageGenMetaArgs): Promise<Metadata> {
 	const { params } = args
 
 	const { auctionUUID } = await params
@@ -116,12 +121,12 @@ export default async function AuctionPage(props: AuctionPageProps) {
 						className="gap-y-4.5 tablet:gap-y-5"
 						direction="column"
 					>
-						<Flex className="gap-x-6 tablet:gap-x-8" justify="between" align="start">
-							<AuctionTitle title={auctionInfo.id} date={date} />
+						<Flex className="gap-y-4 mobile:gap-x-6 flex-col mobile:flex-row tablet:gap-x-8" justify="between" align="start">
+							<AuctionTitle title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" date={date} />
 
 							<Flex className="gap-x-2">
 								<AuctionRulesDialog rules={rules} />
-								<CreateCodeDialog slots={slots} auctionUUID={auctionUUID} />
+								<CreateCodeDialog slots={slots} auctionUUID={auctionUUID} disabled={auctionInfo.isEnded || auctionInfo.isBetsClosed} />
 							</Flex>
 						</Flex>
 						<AuctionCaptions

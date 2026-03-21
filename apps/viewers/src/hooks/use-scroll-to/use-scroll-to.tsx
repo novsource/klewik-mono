@@ -1,23 +1,25 @@
-import { RefObject, useCallback } from "react";
+import type { RefObject } from 'react'
+import { useCallback } from 'react'
 
-type UseScrollToOptions = ScrollToOptions;
+type UseScrollToOptions = ScrollToOptions
 
 const useScrollTo = (
-  target: RefObject<HTMLElement | null>,
-  options?: UseScrollToOptions,
+	target: RefObject<HTMLElement | null>,
+	options?: UseScrollToOptions,
 ) => {
-  const scrollTo = useCallback(
-    (scrollToOptions?: ScrollToOptions) => {
-      const element = target.current;
+	const scrollTo = useCallback(
+		(scrollToOptions?: ScrollToOptions) => {
+			const element = target.current
 
-      if (!element) return;
+			if (!element)
+				return
 
-      element.scrollTo(scrollToOptions ?? options);
-    },
-    [target, options],
-  );
+			element.scrollTo(scrollToOptions ?? options)
+		},
+		[target, options],
+	)
 
-  return scrollTo;
-};
+	return scrollTo
+}
 
-export { useScrollTo };
+export { useScrollTo }

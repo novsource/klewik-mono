@@ -47,7 +47,7 @@ export const BaseAuctionSlotCardHeader = (props: BaseAuctionSlotCardHeaderProps)
 	return (
 		<CardHeader
 			className={cn([
-				'flex gap-y-1 tablet:gap-y-2.5 items-center justify-between leading-4',
+				'flex w-full gap-y-1 tablet:gap-y-2.5 items-center justify-between leading-4',
 				'tablet:flex-col tablet:leading-6',
 			], className)}
 			data-slot="header"
@@ -66,7 +66,7 @@ export const AuctionSlotCardTitleInfo = (props: AuctionSlotCardTitleInfoProps) =
 
 	return (
 		<Typography
-			className={cn('text-md font-bold tablet:text-title', className)}
+			className={cn('w-full text-md font-bold tablet:text-title break-words', className)}
 			tag="span"
 		>
 			{slotTitle}
@@ -240,8 +240,8 @@ export const SolidAuctionSlotContent = (props: SolidAuctionSlotContentProps) => 
 				direction="row"
 				align="center"
 			>
-				<AuctionSlotCardIdInfo slotId={auctionSlot.auctionSlotOrder} />
-				<AuctionSlotCardContentInfoDivider />
+				{/* <AuctionSlotCardIdInfo slotId={auctionSlot.auctionSlotOrder} />
+				<AuctionSlotCardContentInfoDivider /> */}
 				<AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
 				{winPercents
 					&& (
