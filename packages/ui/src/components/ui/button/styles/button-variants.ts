@@ -1,7 +1,7 @@
 import type { VariantProps } from 'class-variance-authority'
 
 import { cva } from 'class-variance-authority'
-import { ClassValue } from 'class-variance-authority/dist/types'
+import { ClassValue } from 'class-variance-authority/types'
 
 
 type ButtonVariant

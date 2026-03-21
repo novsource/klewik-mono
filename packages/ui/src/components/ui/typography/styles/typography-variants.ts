@@ -4,7 +4,7 @@ import type { TypographyTags } from '../ui/typography.ui'
 
 import { cva } from 'class-variance-authority'
 
-import type { ClassValue } from 'class-variance-authority/dist/types'
+import type { ClassValue } from 'class-variance-authority/types'
 
 type TypographyVariants = {
   tag: {

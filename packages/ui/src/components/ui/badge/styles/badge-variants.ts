@@ -2,7 +2,7 @@ import type { VariantProps } from 'class-variance-authority'
 
 import { cva } from 'class-variance-authority'
 
-import type { ClassValue } from 'class-variance-authority/dist/types'
+import type { ClassValue } from 'class-variance-authority/types'
 
 type BadgeSizes = {
   size: Record<'sm' | 'default' | 'lg', ClassValue>

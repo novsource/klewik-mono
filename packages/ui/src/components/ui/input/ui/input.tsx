@@ -8,7 +8,7 @@ import type {
 import type { ComponentProps, JSX } from 'react'
 import { forwardRef, useMemo, useState } from 'react'
 
-import type { ClassValue } from 'class-variance-authority/dist/types'
+import type { ClassValue } from 'class-variance-authority/types'
 
 import { Typography } from '../../typography'
 
