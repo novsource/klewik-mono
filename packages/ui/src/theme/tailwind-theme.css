@@ -1,0 +1,119 @@
+@plugin 'tailwindcss-animate';
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --color-*: initial;
+    --color-white-accent: #f8f8ff;
+    --color-white: #f2f2f2;
+
+    --color-green-dark: #1f2422;
+    --color-green: #519c71;
+    --color-green-light: #2c3b33;
+    --color-green-accent: #74dfa2;
+
+    --color-black: #000;
+
+    --color-dark: #1f1e20;
+    --color-dark-light: #272729;
+    --color-dark-accent: #302f32;
+    --color-dark-foreground-light: #161617;
+    --color-dark-foreground: #141315;
+    --color-yellow: #cfc56f;
+
+    --color-red: #f76b63;
+
+    --color-gray: #555451;
+    --color-gray-light: #7a7874;
+    --color-gray-accent: #9E9C96;
+
+    --color-purple: #505285;
+
+    --color-blue: #3481ED;
+    --color-orange: #f58c08;
+
+    --color-transparent: rgba(255, 255, 255, 0);
+
+    --text-*: initial;
+    --text-xs: 0.5625rem;
+    --text-sm: 0.75rem;
+    --text-md: 0.875rem;
+    --text-base: 0.925rem;
+    --text-lg: 0.975rem;
+    --text-title: 1.0625rem;
+    --text-title-lg: 1.1875rem;
+    --text-title-xl: 1.3125rem;
+    --text-title-2xl: 1.5rem;
+    --text-title-3xl: 1.75rem;
+
+    --radius-*: initial;
+    --radius-none: 0px;
+    --radius-xs: 4px;
+    --radius-small: 8px;
+    --radius-medium: 10px;
+    --radius-large: 12.5px;
+    --radius-pill: 10000px;
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --breakpoint-*: initial;
+    --breakpoint-small-mobile: 320px;
+    --breakpoint-mobile: 640px;
+    --breakpoint-tablet: 1024px;
+    --breakpoint-landtop: 1440px;
+    --breakpoint-desktop: 1920px;
+    --breakpoint-desktop-lg: 2560px;
+
+    --font-*: initial;
+    --font-golos-f: "Golos Text", sans-serif;
+    --font-azeret-mono: "Azeret Mono";
+
+    --animate-fade-in: fadeIn 2s ease;
+    --animate-fade-out: fadeIn 2s ease reverse;
+    --animate-fade-change: fadeChange 2s ease;
+    --animate-horizontal-shaking: horizontal-shaking 0.4s ease;
+    --animate-accordion-up: slideUp 0.4s ease;
+    --animate-accordion-down: slideDown 0.4s ease;
+
+    --height-sheet: var(--sheet-height);
+    --height-footer: var(--footer-height);
+    --height-header: var(--header-height);
+    --mobile-menu-bottom: calc(var(--mobile-menu-bottom)+var(--footer-height));
+
+    --height-search-dialog-header: var(--height-search-dialog-header);
+    --height-search-dialog-content: var(--height-search-dialog-content);
+    --height-search-dialog-footer: var(--height-search-dialog-footer);
+
+    --grid-template-rows-dashboard-mobile: max-content 1fr;
+    --grid-template-rows-dashboard-desktop: max-content 1fr;
+
+    --grid-template-rows-slots-desktop: max-content max-content 1fr;
+    --grid-template-rows-slots-table: max-content 1fr;
+    --grid-template-rows-slider: max-content 1fr max-content;
+    --spacing-4xl: 1.5rem;
+
+    --border-width-1: 1px;
+
+    --dialog-width-desktop: var(--dialog-width-desktop);
+    --dialog-width-laptop: var(--dialog-width-laptop);
+
+    --tabs-inner-padding: var(--tabs-inner-padding);
+
+    @keyframes horizontal-shaking {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        50% {
+            transform: translateX(-2px);
+        }
+
+        25%,
+        75% {
+            transform: translateX(2px);
+        }
+    }
+}

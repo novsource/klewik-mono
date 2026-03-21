@@ -1,3 +1,5 @@
+'use client'
+
 import type { Context, Provider } from 'react'
 import { createContext, useContext as useReactContext } from 'react'
 
