@@ -12,10 +12,10 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 
 import { useMediaQuery } from '~shared/hooks'
 
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { Typography } from '~shared/ui/typograghy'
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Typography } from 'klewik-ui/typograghy'
 
 export const ErrorPage = () => {
   const error = useRouteError()

@@ -1,13 +1,14 @@
+import type { ButtonProps } from 'klewik-ui/button'
+
 import { useEffect } from 'react'
+
+import { Button } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
 
 import { wheelActions, wheelSelectors } from '~entities/wheel/store'
 import { generateWinner } from '~entities/wheel/utils'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import type { ButtonProps } from '~shared/ui/button'
-import { Button } from '~shared/ui/button'
-import { Icons } from '~shared/ui/icons'
 
 const SpinWheelButton = (props: ButtonProps) => {
   const { className, ...restProps } = props

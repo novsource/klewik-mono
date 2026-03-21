@@ -14,10 +14,10 @@ import { useDebounceCallback, useQuery } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Button } from '~shared/ui/button'
-import { Drawer, DrawerContent, DrawerTrigger } from '~shared/ui/drawer'
-import { Icons } from '~shared/ui/icons'
-import { Input } from '~shared/ui/input'
+import { Button } from 'klewik-ui/button'
+import { Drawer, DrawerContent, DrawerTrigger } from 'klewik-ui/drawer'
+import { Icons } from 'klewik-ui/icons'
+import { Input } from 'klewik-ui/input'
 
 export const DonationCodeInfoDrawer = () => {
   const auctionUUID = useStoreSelector(auctionSelectors.getAuctionUUID)

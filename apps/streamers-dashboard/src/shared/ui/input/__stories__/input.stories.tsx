@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import type { InputProps } from '../ui/input'
 
-import { Example as ButtonExample } from '~shared/ui/button/__stories__/button.stories'
+import { Example as ButtonExample } from 'klewik-ui/button/__stories__/button.stories'
 
 import { Input } from '../ui/input'
 

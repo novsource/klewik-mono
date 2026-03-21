@@ -4,10 +4,10 @@ import { wheelActions, wheelSelectors } from '~entities/wheel/store'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Icons } from '~shared/ui/icons'
-import type { NumberInputProps } from '~shared/ui/number-input'
-import { NumberInput } from '~shared/ui/number-input'
-import { Typography } from '~shared/ui/typograghy'
+import { Icons } from 'klewik-ui/icons'
+import type { NumberInputProps } from 'klewik-ui/number-input'
+import { NumberInput } from 'klewik-ui/number-input'
+import { Typography } from 'klewik-ui/typograghy'
 
 type SpinTimeInputProps = NumberInputProps
 

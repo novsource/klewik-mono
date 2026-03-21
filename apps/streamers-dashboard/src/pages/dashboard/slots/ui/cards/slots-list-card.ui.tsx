@@ -1,3 +1,10 @@
+import type { ButtonProps } from 'klewik-ui/button'
+import type { CardProps } from 'klewik-ui/card'
+
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import {
   AuctionSlotCardContentInfoDivider,
@@ -11,12 +18,6 @@ import {
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { useMediaQuery } from '~shared/hooks'
-
-import type { ButtonProps } from '~shared/ui/button'
-import { Button } from '~shared/ui/button'
-import type { CardProps } from '~shared/ui/card'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
 
 import { cn } from '~shared/utils'
 

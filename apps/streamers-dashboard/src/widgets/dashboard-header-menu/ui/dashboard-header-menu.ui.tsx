@@ -9,11 +9,11 @@ import { auctionSelectors } from '~entities/auction/store'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Button } from '~shared/ui/button'
-import type { CommandItemProps } from '~shared/ui/command'
-import { Command, CommandGroup, CommandItem, CommandList, CommandSeparator } from '~shared/ui/command'
-import { Icons } from '~shared/ui/icons'
-import { Popover, PopoverContent, PopoverTrigger } from '~shared/ui/popover'
+import { Button } from 'klewik-ui/button'
+import type { CommandItemProps } from 'klewik-ui/command'
+import { Command, CommandGroup, CommandItem, CommandList, CommandSeparator } from 'klewik-ui/command'
+import { Icons } from 'klewik-ui/icons'
+import { Popover, PopoverContent, PopoverTrigger } from 'klewik-ui/popover'
 
 import { cn, mergeProps } from '~shared/utils'
 

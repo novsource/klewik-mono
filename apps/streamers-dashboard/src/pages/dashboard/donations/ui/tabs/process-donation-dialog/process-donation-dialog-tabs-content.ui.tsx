@@ -21,14 +21,14 @@ import { Text } from '~shared/components/typography'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Button } from '~shared/ui/button'
-import { Caption } from '~shared/ui/caption'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { Skeleton } from '~shared/ui/skeleton'
-import type { TabsContentProps } from '~shared/ui/tabs'
-import { TabsContent } from '~shared/ui/tabs'
-import { Typography } from '~shared/ui/typograghy'
+import { Button } from 'klewik-ui/button'
+import { Caption } from 'klewik-ui/caption'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Skeleton } from 'klewik-ui/skeleton'
+import type { TabsContentProps } from 'klewik-ui/tabs'
+import { TabsContent } from 'klewik-ui/tabs'
+import { Typography } from 'klewik-ui/typograghy'
 
 import { cn, formatNumberToIntlString } from '~shared/utils'
 

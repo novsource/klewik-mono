@@ -1,9 +1,10 @@
+import type { TargetAndTransition } from 'motion/react'
+
 import { useState } from 'react'
 
-import { AnimatePresence, TargetAndTransition } from 'motion/react'
+import { Icons } from 'klewik-ui/icons'
+import { AnimatePresence } from 'motion/react'
 import * as m from 'motion/react-m'
-
-import { Icons } from '~shared/ui/icons'
 
 type LoaderAnimationsConditions = 'appear' | 'visible' | 'loopVisible'
 
@@ -44,11 +45,12 @@ const Loader = () => {
     <AnimatePresence>
       <m.div
         variants={loaderAnimationsVariants}
-        initial={'appear'}
+        initial="appear"
         animate={isInitialAnimationDone ? 'visible' : 'loopVisible'}
         onAnimationComplete={(definition) => {
           console.log(definition)
-          if (!isInitialAnimationDone) setIsInitialAnimationDone(true)
+          if (!isInitialAnimationDone)
+            setIsInitialAnimationDone(true)
         }}
       >
         <Icons.Logo className="text-gray-accent" width={32} height={32} />

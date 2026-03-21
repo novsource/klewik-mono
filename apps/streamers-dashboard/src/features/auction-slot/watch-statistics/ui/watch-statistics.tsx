@@ -10,9 +10,9 @@ import { useMediaQuery } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import type { FlexProps } from '~shared/ui/flex'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
+import type { FlexProps } from 'klewik-ui/flex'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
 
 import { cn } from '~shared/utils'
 

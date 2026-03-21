@@ -1,9 +1,9 @@
-import { Button } from '~shared/ui/button'
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '~shared/ui/dialog'
-import { Divider } from '~shared/ui/divider'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { MotionBox } from '~shared/ui/motion-box'
+import { Button } from 'klewik-ui/button'
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from 'klewik-ui/dialog'
+import { Divider } from 'klewik-ui/divider'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { MotionBox } from 'klewik-ui/motion-box'
 import {
   Timer,
   TimerDecreaseButton,
@@ -12,8 +12,8 @@ import {
   TimerStopButton,
   TimerValue,
   useTimer,
-} from '~shared/ui/timer'
-import { Typography } from '~shared/ui/typograghy'
+} from 'klewik-ui/timer'
+import { Typography } from 'klewik-ui/typograghy'
 
 import { cn } from '~shared/utils'
 

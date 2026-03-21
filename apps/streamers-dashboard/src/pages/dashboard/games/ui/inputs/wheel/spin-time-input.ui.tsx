@@ -8,9 +8,9 @@ import { Text } from '~shared/components/typography'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Icons } from '~shared/ui/icons'
-import type { NumberInputProps } from '~shared/ui/number-input'
-import { NumberInput } from '~shared/ui/number-input'
+import { Icons } from 'klewik-ui/icons'
+import type { NumberInputProps } from 'klewik-ui/number-input'
+import { NumberInput } from 'klewik-ui/number-input'
 
 export type SpinTimeInputProps = NumberInputProps
 

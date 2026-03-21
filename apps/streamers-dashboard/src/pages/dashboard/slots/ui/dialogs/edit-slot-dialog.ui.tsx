@@ -12,18 +12,18 @@ import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggl
 import { Modal, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalHeaderTitle, ModalTrigger } from '~shared/components/modal'
 import { Text } from '~shared/components/typography'
 
-import type { ButtonProps } from '~shared/ui/button'
-import { Button } from '~shared/ui/button'
-import type { DialogProps } from '~shared/ui/dialog'
-import { Divider } from '~shared/ui/divider'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
+import type { ButtonProps } from 'klewik-ui/button'
+import { Button } from 'klewik-ui/button'
+import type { DialogProps } from 'klewik-ui/dialog'
+import { Divider } from 'klewik-ui/divider'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
 import type {
   SheetProps,
-} from '~shared/ui/sheet'
+} from 'klewik-ui/sheet'
 import {
   SheetClose,
-} from '~shared/ui/sheet'
+} from 'klewik-ui/sheet'
 
 import { cn, mergeProps } from '~shared/utils'
 

@@ -4,9 +4,9 @@ import { useAuctionGameContext } from '~pages/dashboard/games/context/auction-ga
 import { useAuctionCardsGame } from '~pages/dashboard/games/hooks/use-auction-cards-game'
 import { controlWheelTabStyles } from '~pages/dashboard/games/styles'
 
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
 
 import { twSlotsStyles } from '~shared/utils'
 

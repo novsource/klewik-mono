@@ -11,10 +11,10 @@ import { useMediaQuery } from '~shared/hooks'
 
 import { useActionCreators } from '~shared/lib/redux-toolkit'
 
-import { Button } from '~shared/ui/button'
-import { Divider } from '~shared/ui/divider'
-import { Icons } from '~shared/ui/icons'
-import { closeAllToasts, toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
+import { Button } from 'klewik-ui/button'
+import { Divider } from 'klewik-ui/divider'
+import { Icons } from 'klewik-ui/icons'
+import { closeAllToasts, toastErrorNotification, toastSuccessNotification } from 'klewik-ui/toaster/lib'
 
 import { twSlotsStyles } from '~shared/utils'
 

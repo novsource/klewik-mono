@@ -4,12 +4,11 @@ import type { ReactNode } from 'react'
 import { useMemo } from 'react'
 
 import { Radio as RadioPrimitive } from '@base-ui/react'
+import { Card, CardContent } from 'klewik-ui/card'
+import { Flex } from 'klewik-ui/flex'
 
 import type { TextProps } from '~shared/components/typography'
 import { Text } from '~shared/components/typography'
-
-import { Card, CardContent } from '~shared/ui/card'
-import { Flex } from '~shared/ui/flex'
 
 import { cn, mergeProps } from '~shared/utils'
 

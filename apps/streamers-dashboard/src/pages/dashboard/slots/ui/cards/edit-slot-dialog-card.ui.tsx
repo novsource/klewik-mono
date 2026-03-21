@@ -1,10 +1,11 @@
+import type { CardProps } from 'klewik-ui/card'
+
 import type { ReactNode } from 'react'
 
-import { Text } from '~shared/components/typography'
+import { Card, CardContent, CardHeader } from 'klewik-ui/card'
+import { Flex } from 'klewik-ui/flex'
 
-import type { CardProps } from '~shared/ui/card'
-import { Card, CardContent, CardHeader } from '~shared/ui/card'
-import { Flex } from '~shared/ui/flex'
+import { Text } from '~shared/components/typography'
 
 import { cn } from '~shared/utils'
 

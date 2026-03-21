@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Button } from '~shared/ui/button'
+import { Button } from 'klewik-ui/button'
 
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerTitle, DrawerTrigger } from '../ui/drawer.ui'
 

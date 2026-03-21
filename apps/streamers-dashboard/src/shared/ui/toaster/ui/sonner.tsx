@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { Toaster as Sonner } from 'sonner'
 
-import { Icons } from '~shared/ui/icons'
+import { Icons } from 'klewik-ui/icons'
 
 import { cn } from '~shared/utils'
 

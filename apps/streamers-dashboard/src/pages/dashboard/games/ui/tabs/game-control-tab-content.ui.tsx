@@ -10,13 +10,13 @@ import { Title } from '~shared/components/typography'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Badge } from '~shared/ui/badge'
-import { Divider } from '~shared/ui/divider'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { RadioCard, RadioCardDescription, RadioCardTitle, RadioGroup } from '~shared/ui/radio'
-import type { TabsContentProps } from '~shared/ui/tabs'
-import { TabsContent } from '~shared/ui/tabs'
+import { Badge } from 'klewik-ui/badge'
+import { Divider } from 'klewik-ui/divider'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { RadioCard, RadioCardDescription, RadioCardTitle, RadioGroup } from 'klewik-ui/radio'
+import type { TabsContentProps } from 'klewik-ui/tabs'
+import { TabsContent } from 'klewik-ui/tabs'
 
 import { twSlotsStyles } from '~shared/utils'
 

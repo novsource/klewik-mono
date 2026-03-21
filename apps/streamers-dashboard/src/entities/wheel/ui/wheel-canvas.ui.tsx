@@ -2,7 +2,7 @@ import type { ComponentPropsWithoutRef, CSSProperties } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
-import { Flex } from '~shared/ui/flex'
+import { Flex } from 'klewik-ui/flex'
 
 import { cn } from '~shared/utils'
 

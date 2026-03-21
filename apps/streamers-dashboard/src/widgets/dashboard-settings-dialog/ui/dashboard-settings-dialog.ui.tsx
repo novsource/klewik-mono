@@ -23,14 +23,14 @@ import { useMediaQuery } from '~shared/hooks'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Button } from '~shared/ui/button'
-import { Divider } from '~shared/ui/divider'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { Input } from '~shared/ui/input'
-import { ScrollArea } from '~shared/ui/scroll-area'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '~shared/ui/sheet'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~shared/ui/tabs'
+import { Button } from 'klewik-ui/button'
+import { Divider } from 'klewik-ui/divider'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Input } from 'klewik-ui/input'
+import { ScrollArea } from 'klewik-ui/scroll-area'
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from 'klewik-ui/sheet'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from 'klewik-ui/tabs'
 
 import { cn } from '~shared/utils'
 

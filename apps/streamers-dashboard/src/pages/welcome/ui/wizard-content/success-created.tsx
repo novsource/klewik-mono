@@ -1,23 +1,23 @@
+import type { WizardItemProps } from 'klewik-ui/wizard'
+
 import { useRef } from 'react'
 
 import { Link } from 'react-router-dom'
 
 import { CopyToClipboardButton } from '~features/_common/copy-to-clipboard'
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Input } from 'klewik-ui/input'
+import { toastSuccessNotification } from 'klewik-ui/toaster/lib'
+import { Typography } from 'klewik-ui/typograghy'
+import { WizardItem } from 'klewik-ui/wizard'
 
 import { WELCOME_PAGE_WIZARD_ITEMS_IDS } from '~pages/welcome/constants'
 
 import { auctionSelectors } from '~entities/auction/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { Input } from '~shared/ui/input'
-import { toastSuccessNotification } from '~shared/ui/toaster/lib'
-import { Typography } from '~shared/ui/typograghy'
-import type { WizardItemProps } from '~shared/ui/wizard'
-import { WizardItem } from '~shared/ui/wizard'
 
 import { cn } from '~shared/utils'
 

@@ -3,8 +3,8 @@ import { forwardRef } from 'react'
 import type { NumberFormatValues, NumericFormatProps } from 'react-number-format'
 import { NumericFormat } from 'react-number-format'
 
-import type { InputProps } from '~shared/ui/input'
-import { Input } from '~shared/ui/input'
+import type { InputProps } from 'klewik-ui/input'
+import { Input } from 'klewik-ui/input'
 
 import { isStringEmpty } from '~shared/utils'
 

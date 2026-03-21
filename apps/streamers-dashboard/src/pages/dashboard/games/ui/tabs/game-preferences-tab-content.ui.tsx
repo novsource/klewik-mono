@@ -2,9 +2,9 @@ import type { PreferencesWheelTabSlots } from '../../styles'
 
 import { useMemo } from 'react'
 
-import { Divider } from '~shared/ui/divider'
-import { TabsContent } from '~shared/ui/tabs'
-import type { TabsContentProps } from '~shared/ui/tabs'
+import { Divider } from 'klewik-ui/divider'
+import { TabsContent } from 'klewik-ui/tabs'
+import type { TabsContentProps } from 'klewik-ui/tabs'
 
 import { cn, twSlotsStyles } from '~shared/utils'
 

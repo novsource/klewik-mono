@@ -1,18 +1,19 @@
+import type { FlexProps } from 'klewik-ui/flex'
+import type { MotionBoxProps } from 'klewik-ui/motion-box'
+import type { ShadowVirtualListProps } from 'klewik-ui/shadow-virtual-list'
+import type { VirtualizedItem } from 'klewik-ui/virtual-list/hooks'
+
 import { useMemo } from 'react'
 import type { ReactNode, RefObject, SVGProps } from 'react'
 
-import type { UseInfiniteListReturn } from '~shared/hooks'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { MotionBox } from 'klewik-ui/motion-box'
+import { ShadowVirtualList } from 'klewik-ui/shadow-virtual-list'
+import { Typography } from 'klewik-ui/typograghy'
+import { useVirtualizedItems } from 'klewik-ui/virtual-list/hooks'
 
-import type { FlexProps } from '~shared/ui/flex'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import type { MotionBoxProps } from '~shared/ui/motion-box'
-import { MotionBox } from '~shared/ui/motion-box'
-import type { ShadowVirtualListProps } from '~shared/ui/shadow-virtual-list'
-import { ShadowVirtualList } from '~shared/ui/shadow-virtual-list'
-import { Typography } from '~shared/ui/typograghy'
-import { useVirtualizedItems } from '~shared/ui/virtual-list/hooks'
-import type { VirtualizedItem } from '~shared/ui/virtual-list/hooks'
+import type { UseInfiniteListReturn } from '~shared/hooks'
 
 import { cn } from '~shared/utils'
 
@@ -113,9 +114,9 @@ export const InfiniteList = <DataItem = unknown>(props: InfiniteListProps<DataIt
 
   const isShouldShowEmptyContent
     = !showedItems.length
-      && !listState.isCanLoadMore
-      && !listState.isPending
-      && showEmptyContent
+    && !listState.isCanLoadMore
+    && !listState.isPending
+    && showEmptyContent
 
   const isShouldShowLoader = listState.isPending && preparedItems.length >= limit
 

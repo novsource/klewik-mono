@@ -1,4 +1,16 @@
 import type { SelectRootChangeEventDetails } from '@base-ui/react'
+import type {
+  SelectProps,
+} from 'klewik-ui/select'
+
+import { Icons } from 'klewik-ui/icons'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectList,
+  SelectTrigger,
+} from 'klewik-ui/select'
 
 import type { ProcessedDonationStatus } from '~entities/donation/model'
 
@@ -6,18 +18,6 @@ import { DONATION_STATUS_NAME } from '~shared/constants/donations'
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { useMediaQuery, useUrlSearchParam } from '~shared/hooks'
-
-import { Icons } from '~shared/ui/icons'
-import type {
-  SelectProps,
-} from '~shared/ui/select'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectList,
-  SelectTrigger,
-} from '~shared/ui/select'
 
 import { cn } from '~shared/utils'
 

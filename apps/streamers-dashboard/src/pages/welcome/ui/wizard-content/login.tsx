@@ -1,3 +1,12 @@
+import type { WizardItemProps } from 'klewik-ui/wizard'
+
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { toastErrorNotification } from 'klewik-ui/toaster/lib'
+import { WizardItem, WizardTrigger } from 'klewik-ui/wizard'
+import { useWizardContext } from 'klewik-ui/wizard/context'
+
 import { WELCOME_PAGE_WIZARD_ITEMS_IDS } from '~pages/welcome/constants'
 
 import { refreshTokens } from '~shared/api/http/auth/auth.api'
@@ -9,14 +18,6 @@ import { useAsync } from '~shared/hooks'
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { authSliceActions, authSliceSelectors } from '~shared/store/slices'
-
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { toastErrorNotification } from '~shared/ui/toaster/lib'
-import type { WizardItemProps } from '~shared/ui/wizard'
-import { WizardItem, WizardTrigger } from '~shared/ui/wizard'
-import { useWizardContext } from '~shared/ui/wizard/context'
 
 import { cn } from '~shared/utils'
 import { isTokenExpires } from '~shared/utils/validation'

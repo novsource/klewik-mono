@@ -2,10 +2,10 @@ import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import { Text } from '~shared/components/typography'
 
-import { Divider } from '~shared/ui/divider'
-import type { FlexProps } from '~shared/ui/flex'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
+import { Divider } from 'klewik-ui/divider'
+import type { FlexProps } from 'klewik-ui/flex'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
 
 import { cn, formatNumberToIntlString } from '~shared/utils'
 

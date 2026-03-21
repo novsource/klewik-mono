@@ -1,10 +1,10 @@
 import type { ProcessedDonation } from '~entities/donation/model'
 import { SkeletonDonationCard, SolidDonationCard } from '~entities/donation/ui/card'
 
-import type { FlexProps } from '~shared/ui/flex'
-import { WindowInfiniteList } from '~shared/ui/infinite-list'
-import type { InfiniteListRenderFunction, WindowInfiniteListProps } from '~shared/ui/infinite-list'
-import { MotionBox } from '~shared/ui/motion-box'
+import type { FlexProps } from 'klewik-ui/flex'
+import { WindowInfiniteList } from 'klewik-ui/infinite-list'
+import type { InfiniteListRenderFunction, WindowInfiniteListProps } from 'klewik-ui/infinite-list'
+import { MotionBox } from 'klewik-ui/motion-box'
 
 import { isFunction } from '~shared/utils'
 

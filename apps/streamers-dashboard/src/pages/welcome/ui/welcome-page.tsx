@@ -6,9 +6,9 @@ import { HeroCloverAnimation } from '~widgets/hero-clover-animation/ui/hero-clov
 
 import { Text } from '~shared/components/typography'
 
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Wizard } from '~shared/ui/wizard'
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Wizard } from 'klewik-ui/wizard'
 
 import { cn } from '~shared/utils'
 

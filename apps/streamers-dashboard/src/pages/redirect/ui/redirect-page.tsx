@@ -7,7 +7,7 @@ import { RedirectDisplay } from '~features/integrations/connect-integration/ui'
 import { INTEGRATIONS_PLATFORM_NAMES } from '~entities/integrations/constants'
 import type { IntegrationsPlatforms } from '~entities/integrations/model'
 
-import { Flex } from '~shared/ui/flex'
+import { Flex } from 'klewik-ui/flex'
 
 export const RedirectPage = () => {
   const params = useSearchParams()

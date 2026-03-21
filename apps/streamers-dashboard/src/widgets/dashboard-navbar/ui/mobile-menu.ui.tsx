@@ -3,6 +3,12 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
 import NumberFlow from '@number-flow/react'
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Sheet, SheetContent, SheetHeader, SheetTrigger } from 'klewik-ui/sheet'
+import { Switch } from 'klewik-ui/switch'
+import { Typography } from 'klewik-ui/typograghy'
 
 import { useUpdateBetsStatusMutation } from '~features/auction/update-bets-status/api'
 
@@ -19,13 +25,6 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 import { useMediaQuery } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { Sheet, SheetContent, SheetHeader, SheetTrigger } from '~shared/ui/sheet'
-import { Switch } from '~shared/ui/switch'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn } from '~shared/utils'
 
@@ -178,7 +177,7 @@ function StatisticCard(props: {
       justify="center"
       direction={title ? 'column' : 'row'}
     >
-      {title && <Typography className="text-sm font-semibold text-gray-light tracking-tight" tag="span">{ title }</Typography>}
+      {title && <Typography className="text-sm font-semibold text-gray-light tracking-tight" tag="span">{title}</Typography>}
       {children}
     </Flex>
   )

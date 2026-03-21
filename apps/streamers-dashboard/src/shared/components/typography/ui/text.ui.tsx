@@ -1,5 +1,5 @@
-import { Typography } from '~shared/ui/typograghy'
-import type { TypographyProps } from '~shared/ui/typograghy'
+import { Typography } from 'klewik-ui/typograghy'
+import type { TypographyProps } from 'klewik-ui/typograghy'
 
 export type TextProps = Omit<TypographyProps<'p'>, 'tag'> & {
   asSpan?: boolean

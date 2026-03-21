@@ -1,8 +1,8 @@
 import { Toggle as TogglePrimitive } from '@base-ui/react/toggle'
 import { ToggleGroup as ToggleGroupPrimitive } from '@base-ui/react/toggle-group'
 
-import type { ButtonProps } from '~shared/ui/button'
-import { Button } from '~shared/ui/button'
+import type { ButtonProps } from 'klewik-ui/button'
+import { Button } from 'klewik-ui/button'
 
 export type ToggleProps = Omit<TogglePrimitive.Props, 'render'> & {
   buttonProps?: ButtonProps

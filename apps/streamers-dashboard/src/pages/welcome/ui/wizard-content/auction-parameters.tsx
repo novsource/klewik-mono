@@ -6,13 +6,13 @@ import { WELCOME_PAGE_WIZARD_ITEMS_IDS } from '~pages/welcome/constants'
 
 import { AuctionInitialParametersForm } from '~features/auction/set-initial-parameters/ui'
 
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Skeleton } from '~shared/ui/skeleton'
-import { toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
-import type { WizardItemProps } from '~shared/ui/wizard'
-import { WizardItem, WizardTrigger } from '~shared/ui/wizard'
-import { useWizardContext } from '~shared/ui/wizard/context'
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Skeleton } from 'klewik-ui/skeleton'
+import { toastErrorNotification, toastSuccessNotification } from 'klewik-ui/toaster/lib'
+import type { WizardItemProps } from 'klewik-ui/wizard'
+import { WizardItem, WizardTrigger } from 'klewik-ui/wizard'
+import { useWizardContext } from 'klewik-ui/wizard/context'
 
 import { cn } from '~shared/utils'
 

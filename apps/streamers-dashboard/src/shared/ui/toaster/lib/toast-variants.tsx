@@ -1,12 +1,13 @@
-import { ExternalToast, toast } from 'sonner'
+import type { ExternalToast } from 'sonner'
 
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { Typography } from '~shared/ui/typograghy'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Typography } from 'klewik-ui/typograghy'
+import { toast } from 'sonner'
 
 export const toastBaseNotification = (
   description: string,
-  toastOptions?: ExternalToast
+  toastOptions?: ExternalToast,
 ) => {
   return toast('Уведомление', { description, ...toastOptions })
 }
@@ -19,7 +20,7 @@ export const toastPromiseNotification = <T extends unknown = unknown>(
     errorText: string
     onSuccess?: (value: T) => void
     onError?: () => void
-  }
+  },
 ) => {
   const successDescription = (
     <div className="w-full flex flex-col items-start gap-y-2">
@@ -78,7 +79,7 @@ export const toastPromiseNotification = <T extends unknown = unknown>(
 
 export const toastSuccessNotification = (
   operationName: string,
-  toastOptions?: ExternalToast
+  toastOptions?: ExternalToast,
 ) => {
   const successDescription = (
     <Flex className="w-full gap-x-1" align="center">
@@ -102,13 +103,15 @@ export const toastSuccessNotification = (
 export const toastErrorNotification = (
   operationName: string,
   reason?: string,
-  toastOptions?: ExternalToast
+  toastOptions?: ExternalToast,
 ) => {
   const errorDescription = (
     <div className="w-full flex flex-col gap-y-2">
       {reason && (
         <Typography className="text-sm" tag="p">
-          Причина: {reason}
+          Причина:
+          {' '}
+          {reason}
         </Typography>
       )}
       <div className="w-full flex items-center gap-x-1">

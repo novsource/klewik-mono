@@ -7,7 +7,7 @@ import { auctionSlotsActions } from '~entities/auction-slot/store'
 
 import { useActionCreators } from '~shared/lib/redux-toolkit'
 
-import { closeAllToasts, toastErrorNotification, toastSuccessNotification } from '~shared/ui/toaster/lib'
+import { closeAllToasts, toastErrorNotification, toastSuccessNotification } from 'klewik-ui/toaster/lib'
 
 export const useEditSlotDialog = (target: AuctionSlot) => {
   const [isOpen, setIsOpen] = useState(false)

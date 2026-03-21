@@ -5,9 +5,9 @@ import { AnimatePresence } from 'motion/react'
 
 import { Text } from '~shared/components/typography'
 
-import type { AccordionTriggerProps } from '~shared/ui/accordion'
-import { Accordion, AccordionItem, AccordionPanel, AccordionTrigger } from '~shared/ui/accordion'
-import { MotionBox } from '~shared/ui/motion-box'
+import type { AccordionTriggerProps } from 'klewik-ui/accordion'
+import { Accordion, AccordionItem, AccordionPanel, AccordionTrigger } from 'klewik-ui/accordion'
+import { MotionBox } from 'klewik-ui/motion-box'
 
 import { cn } from '~shared/utils'
 

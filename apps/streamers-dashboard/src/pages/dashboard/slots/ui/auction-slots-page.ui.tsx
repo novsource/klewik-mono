@@ -1,5 +1,11 @@
 import { useMemo } from 'react'
 
+import { Button } from 'klewik-ui/button'
+import { Divider } from 'klewik-ui/divider'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Typography } from 'klewik-ui/typograghy'
+
 import { CreateSlotsDialog } from '~features/auction-slot/create-slots/ui'
 import { ExportSlotsPopover } from '~features/auction-slot/export-slots/ui'
 import { SlotsCountStatisticCard, SlotsPointsSumStatisticCard } from '~features/auction-slot/watch-statistics/ui'
@@ -9,12 +15,6 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
 
 import { useDocumentTitle } from '~shared/hooks'
-
-import { Button } from '~shared/ui/button'
-import { Divider } from '~shared/ui/divider'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { Typography } from '~shared/ui/typograghy'
 
 import { cn, twSlotsStyles } from '~shared/utils'
 

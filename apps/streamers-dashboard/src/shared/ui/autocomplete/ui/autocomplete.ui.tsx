@@ -4,8 +4,8 @@ import { useMemo } from 'react'
 import { mergeProps } from '@base-ui/react'
 import { Autocomplete as PrimitiveAutocomplete } from '@base-ui/react/autocomplete'
 
-import type { InputProps } from '~shared/ui/input'
-import { Input } from '~shared/ui/input'
+import type { InputProps } from 'klewik-ui/input'
+import { Input } from 'klewik-ui/input'
 
 import { cn } from '~shared/utils'
 

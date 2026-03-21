@@ -8,10 +8,10 @@ import { useMemo, useState } from 'react'
 import type { Control, UseFormReturn } from 'react-hook-form'
 import { useController } from 'react-hook-form'
 
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { Input } from '~shared/ui/input'
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Input } from 'klewik-ui/input'
 
 import { twSlotsStyles } from '~shared/utils'
 
@@ -101,19 +101,19 @@ function LoginAdminFormFields({ control, slotsClassnames }: LoginAdminFormFields
         endContent={
           isPasswordHidden
             ? (
-                <Icons.EyeClosed
-                  size="default"
-                  className={classesSlots.closedEyeIcon}
-                  onClick={() => setIsPasswordHidden(false)}
-                />
-              )
+              <Icons.EyeClosed
+                size="default"
+                className={classesSlots.closedEyeIcon}
+                onClick={() => setIsPasswordHidden(false)}
+              />
+            )
             : (
-                <Icons.EyeOpen
-                  size="default"
-                  className={classesSlots.openEyeIcon}
-                  onClick={() => setIsPasswordHidden(true)}
-                />
-              )
+              <Icons.EyeOpen
+                size="default"
+                className={classesSlots.openEyeIcon}
+                onClick={() => setIsPasswordHidden(true)}
+              />
+            )
         }
         {...passwordController.field}
       />

@@ -5,9 +5,9 @@ import { useState } from 'react'
 
 import { Controller } from 'react-hook-form'
 
-import { Button } from '~shared/ui/button'
-import { Icons } from '~shared/ui/icons'
-import { Input } from '~shared/ui/input'
+import { Button } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
+import { Input } from 'klewik-ui/input'
 
 import { cn } from '~shared/utils'
 

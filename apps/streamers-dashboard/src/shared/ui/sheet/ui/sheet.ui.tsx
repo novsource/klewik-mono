@@ -10,8 +10,8 @@ import type {
   DialogProps,
   DialogTitleProps,
   DialogTriggerProps,
-} from '~shared/ui/dialog'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '~shared/ui/dialog'
+} from 'klewik-ui/dialog'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from 'klewik-ui/dialog'
 
 import { cn } from '~shared/utils'
 

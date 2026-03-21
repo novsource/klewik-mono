@@ -10,7 +10,7 @@ import {
   BaseIntegrationCardTitle,
 } from '~entities/integrations/ui/card'
 
-import { Flex } from '~shared/ui/flex'
+import { Flex } from 'klewik-ui/flex'
 
 import { DonatePayIntegrationButton } from './donate-pay'
 import {

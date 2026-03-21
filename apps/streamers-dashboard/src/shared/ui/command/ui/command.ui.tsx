@@ -8,8 +8,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '~shared/ui/dialog'
-import { Icons } from '~shared/ui/icons'
+} from 'klewik-ui/dialog'
+import { Icons } from 'klewik-ui/icons'
 
 import { cn } from '~shared/utils'
 

@@ -7,6 +7,9 @@ import NumberFlow from '@number-flow/react'
 import { WinnerGameSlotInfo } from '~entities/games/ui'
 import { CardsGame } from '~entities/games/ui/card-game/cards-game.ui'
 import { getCardFieldPositionByIndex } from '~entities/games/utils/cards'
+import { Button } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
+import { MotionBox } from 'klewik-ui/motion-box'
 import { AnimatePresence } from 'motion/react'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -16,10 +19,6 @@ import { Text, Title } from '~shared/components/typography'
 import { useCssVar } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import { Button } from '~shared/ui/button'
-import { Icons } from '~shared/ui/icons'
-import { MotionBox } from '~shared/ui/motion-box'
 
 import { cn, getHEXColor, hexToRgba } from '~shared/utils'
 

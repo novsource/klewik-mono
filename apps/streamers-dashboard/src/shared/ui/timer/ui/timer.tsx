@@ -1,15 +1,14 @@
 import type { NumberFlowProps } from '@number-flow/react'
+import type { ButtonProps } from 'klewik-ui/button'
 
 import type { UseActionTimerReturn } from '../hooks'
 
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 
 import NumberFlow, { NumberFlowGroup } from '@number-flow/react'
-
-import type { ButtonProps } from '~shared/ui/button'
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
 
 import { cn, mergeProps } from '~shared/utils'
 
@@ -96,11 +95,11 @@ export const TimerStartButton = (props: TimerStartButtonProps) => {
       icon={
         auctionTimer.status === 'ticking'
           ? (
-              <Icons.Pause width={14} height={14} />
-            )
+            <Icons.Pause width={14} height={14} />
+          )
           : (
-              <Icons.Play width={14} height={14} />
-            )
+            <Icons.Play width={14} height={14} />
+          )
       }
       {...mergedProps}
     />

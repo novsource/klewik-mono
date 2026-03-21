@@ -3,10 +3,10 @@ import { useMemo } from 'react'
 
 import { NavLink } from 'react-router-dom'
 
-import { DASHBOARD_ROUTES, ROUTES_TITLES } from '~shared/constants/router'
+import { Icons } from 'klewik-ui/icons'
+import { Sheet, SheetContent, SheetTrigger } from 'klewik-ui/sheet'
 
-import { Icons } from '~shared/ui/icons'
-import { Sheet, SheetContent, SheetTrigger } from '~shared/ui/sheet'
+import { DASHBOARD_ROUTES, ROUTES_TITLES } from '~shared/constants/router'
 
 import { cn } from '~shared/utils'
 

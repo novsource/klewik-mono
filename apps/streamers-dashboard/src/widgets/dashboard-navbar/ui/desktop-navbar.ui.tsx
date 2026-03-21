@@ -8,9 +8,9 @@ import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcs
 
 import { useMediaQuery } from '~shared/hooks'
 
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { MotionBox } from '~shared/ui/motion-box'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { MotionBox } from 'klewik-ui/motion-box'
 
 import { cn } from '~shared/utils'
 

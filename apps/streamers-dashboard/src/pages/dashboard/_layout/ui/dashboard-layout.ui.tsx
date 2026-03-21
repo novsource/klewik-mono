@@ -14,8 +14,8 @@ import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggl
 
 import { useMediaQuery } from '~shared/hooks'
 
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
 
 import { useDashboardLayout } from '../hooks/use-dashboard-layout'
 

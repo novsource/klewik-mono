@@ -1,3 +1,10 @@
+import type { ButtonProps } from 'klewik-ui/button'
+
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { MotionBox } from 'klewik-ui/motion-box'
+
 import type { ProcessedDonation } from '~entities/donation/model'
 import type { BaseDonationCardProps } from '~entities/donation/ui/card'
 import {
@@ -14,12 +21,6 @@ import { IntegrationBadge } from '~entities/integrations/ui/badge'
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { useMediaQuery } from '~shared/hooks'
-
-import type { ButtonProps } from '~shared/ui/button'
-import { Button } from '~shared/ui/button'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { MotionBox } from '~shared/ui/motion-box'
 
 export type InfiniteDonationsListCardProps = BaseDonationCardProps & {
   donation: ProcessedDonation

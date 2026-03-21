@@ -21,23 +21,23 @@ import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import type { SortingOptions } from '~shared/store/model'
 
-import { Button } from '~shared/ui/button'
-import type { CommandProps } from '~shared/ui/command'
-import { Command, CommandItem, CommandList } from '~shared/ui/command'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
+import { Button } from 'klewik-ui/button'
+import type { CommandProps } from 'klewik-ui/command'
+import { Command, CommandItem, CommandList } from 'klewik-ui/command'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
 import type {
   SelectProps,
-} from '~shared/ui/select'
+} from 'klewik-ui/select'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectList,
   SelectTrigger,
-} from '~shared/ui/select'
-import type { SheetProps } from '~shared/ui/sheet'
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~shared/ui/sheet'
+} from 'klewik-ui/select'
+import type { SheetProps } from 'klewik-ui/sheet'
+import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from 'klewik-ui/sheet'
 
 import { cn, twSlotsStyles } from '~shared/utils'
 

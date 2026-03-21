@@ -1,5 +1,6 @@
 import type { Editor as TiptapEditor } from '@tiptap/react'
 import type { BubbleMenuProps } from '@tiptap/react/menus'
+import type { SelectTriggerProps } from 'klewik-ui/select'
 
 import type { WysiwygEditorPossibleCommands } from '../constants/editor-commands'
 
@@ -8,15 +9,13 @@ import { useMemo, useState } from 'react'
 
 import { EditorContent, useEditorState } from '@tiptap/react'
 import { BubbleMenu } from '@tiptap/react/menus'
+import { Button } from 'klewik-ui/button'
+import { Divider } from 'klewik-ui/divider'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Select, SelectContent, SelectItem, SelectList, SelectTrigger } from 'klewik-ui/select'
 
 import { useResizeObserver } from '~shared/hooks'
-
-import { Button } from '~shared/ui/button'
-import { Divider } from '~shared/ui/divider'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import type { SelectTriggerProps } from '~shared/ui/select'
-import { Select, SelectContent, SelectItem, SelectList, SelectTrigger } from '~shared/ui/select'
 
 import { cn } from '~shared/utils'
 
@@ -341,13 +340,15 @@ type WysiwygEditorCharactersCounterProps = {
 function WysiwygEditorCharactersCounter(props: WysiwygEditorCharactersCounterProps) {
   const { editor } = props
 
-  const state = useEditorState({ editor, selector: (context) => {
-    return { charactersCount: context.editor.storage.characterCount.characters() }
-  } })
+  const state = useEditorState({
+    editor, selector: (context) => {
+      return { charactersCount: context.editor.storage.characterCount.characters() }
+    }
+  })
 
   return (
     <span className="text-gray-light text-md">
-      { `${state.charactersCount} / 800` }
+      {`${state.charactersCount} / 800`}
     </span>
   )
 }

@@ -3,7 +3,7 @@ import type { ButtonVariantsProps } from '../styles/button-variants'
 import type { ComponentProps, ReactNode } from 'react'
 import { forwardRef, useMemo } from 'react'
 
-import { Icons } from '~shared/ui/icons'
+import { Icons } from 'klewik-ui/icons'
 
 import { cn, toBooleanString } from '~shared/utils'
 

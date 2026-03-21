@@ -1,15 +1,16 @@
+import type { ShadowScrollAreaProps } from 'klewik-ui/shadow-scroll-area'
+import type { VirtualListProps } from 'klewik-ui/virtual-list'
+
 import { useRef } from 'react'
 
 import { AutoSizer } from 'react-virtualized-auto-sizer'
 
-import { useMergedRefs } from '~shared/hooks'
-
 import {
   ShadowScrollArea,
-} from '~shared/ui/shadow-scroll-area'
-import type { ShadowScrollAreaProps } from '~shared/ui/shadow-scroll-area'
-import type { VirtualListProps } from '~shared/ui/virtual-list'
-import { VirtualList } from '~shared/ui/virtual-list'
+} from 'klewik-ui/shadow-scroll-area'
+import { VirtualList } from 'klewik-ui/virtual-list'
+
+import { useMergedRefs } from '~shared/hooks'
 
 export type ShadowVirtualListProps<T> = VirtualListProps<T> & {
   width?: number

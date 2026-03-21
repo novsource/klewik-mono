@@ -6,10 +6,10 @@ import type { FieldPath, FieldValues, UseControllerProps } from 'react-hook-form
 
 import { useIsFirstRender } from '~shared/hooks'
 
-import { Input } from '~shared/ui/input'
-import type { InputProps } from '~shared/ui/input'
-import type { TypographyProps } from '~shared/ui/typograghy'
-import { Typography } from '~shared/ui/typograghy'
+import { Input } from 'klewik-ui/input'
+import type { InputProps } from 'klewik-ui/input'
+import type { TypographyProps } from 'klewik-ui/typograghy'
+import { Typography } from 'klewik-ui/typograghy'
 
 import { cn, mergeProps } from '~shared/utils'
 

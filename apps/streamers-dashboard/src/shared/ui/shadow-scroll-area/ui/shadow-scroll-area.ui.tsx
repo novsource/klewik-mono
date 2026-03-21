@@ -18,9 +18,9 @@ import {
 
 import { useDebounceCallback, useDidUpdate, useResizeObserver } from '~shared/hooks'
 
-import { MotionBox } from '~shared/ui/motion-box'
-import type { ScrollAreaProps } from '~shared/ui/scroll-area'
-import { ScrollArea } from '~shared/ui/scroll-area'
+import { MotionBox } from 'klewik-ui/motion-box'
+import type { ScrollAreaProps } from 'klewik-ui/scroll-area'
+import { ScrollArea } from 'klewik-ui/scroll-area'
 
 import { cn, mergeProps } from '~shared/utils'
 

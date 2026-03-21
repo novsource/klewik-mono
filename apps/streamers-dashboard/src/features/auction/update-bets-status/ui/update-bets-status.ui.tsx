@@ -1,10 +1,10 @@
+import { Button } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
+import { toastPromiseNotification } from 'klewik-ui/toaster/lib'
+
 import { auctionSelectors } from '~entities/auction/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import { Button } from '~shared/ui/button'
-import { Icons } from '~shared/ui/icons'
-import { toastPromiseNotification } from '~shared/ui/toaster/lib'
 
 import { cn } from '~shared/utils'
 

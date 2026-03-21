@@ -20,8 +20,8 @@ import { useDidUpdate, useUnmount } from '~shared/hooks'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import type { InfiniteListRenderFunction } from '~shared/ui/infinite-list'
-import { MotionBox } from '~shared/ui/motion-box'
+import type { InfiniteListRenderFunction } from 'klewik-ui/infinite-list'
+import { MotionBox } from 'klewik-ui/motion-box'
 
 import { InfiniteDonationsListCard, InfiniteDonationsListSkeletonCard } from '../cards/donations-infinite-list-card.ui'
 

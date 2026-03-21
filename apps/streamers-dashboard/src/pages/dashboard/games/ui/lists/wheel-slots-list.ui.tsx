@@ -11,10 +11,10 @@ import { Text } from '~shared/components/typography'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { ShadowVirtualList } from '~shared/ui/shadow-virtual-list'
-import type { VirtualListRenderFunction } from '~shared/ui/virtual-list'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { ShadowVirtualList } from 'klewik-ui/shadow-virtual-list'
+import type { VirtualListRenderFunction } from 'klewik-ui/virtual-list'
 
 import { getPercentValue } from '~shared/utils/common'
 

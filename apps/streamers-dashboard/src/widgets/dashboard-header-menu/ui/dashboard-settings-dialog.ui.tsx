@@ -5,14 +5,14 @@ import { DonationAlertsIntegrationCard } from '~features/integrations/connect-in
 
 import { Title } from '~shared/components/typography'
 
-import { Button } from '~shared/ui/button'
-import type { CommandItemProps } from '~shared/ui/command'
-import { CommandItem } from '~shared/ui/command'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '~shared/ui/dialog'
-import { Divider } from '~shared/ui/divider'
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~shared/ui/tabs'
+import { Button } from 'klewik-ui/button'
+import type { CommandItemProps } from 'klewik-ui/command'
+import { CommandItem } from 'klewik-ui/command'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from 'klewik-ui/dialog'
+import { Divider } from 'klewik-ui/divider'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from 'klewik-ui/tabs'
 
 import { cn } from '~shared/utils'
 

@@ -1,4 +1,4 @@
-import { Icons } from '~shared/ui/icons'
+import { Icons } from 'klewik-ui/icons'
 
 export const GAME_CARDS_BG_ICONS = [
   Icons.MoneyBag,

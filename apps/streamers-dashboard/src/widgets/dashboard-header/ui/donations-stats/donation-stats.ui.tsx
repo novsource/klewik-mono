@@ -2,13 +2,12 @@ import type { ReactNode } from 'react'
 import { memo } from 'react'
 
 import NumberFlow from '@number-flow/react'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
 
 import { donationsSelectors } from '~entities/donation/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import { Flex } from '~shared/ui/flex'
-import { Icons } from '~shared/ui/icons'
 
 import { cn } from '~shared/utils'
 
