@@ -1,12 +1,8 @@
-import type { WindowVirtualListProps } from 'klewik-ui/virtual-list'
-import type { VirtualizedItem } from 'klewik-ui/virtual-list/hooks'
 import type { VirtualizerHandle } from 'virtua'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { shallowEqual } from 'react-redux'
-
-import { WindowVirtualList } from 'klewik-ui/virtual-list'
 
 import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
@@ -19,6 +15,9 @@ import { SkeletonAuctionSlotCard } from '~entities/auction-slot/ui/card'
 import { StartTransitionContainer } from '~shared/components/start-transition-container'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import type { VirtualizedItem, WindowVirtualListProps } from 'klewik-ui/virtual-list'
+import { WindowVirtualList } from 'klewik-ui/virtual-list'
 
 import { useSortingSlots } from '../../lib'
 import { AuctionSlotsListCard } from '../cards/slots-list-card.ui'

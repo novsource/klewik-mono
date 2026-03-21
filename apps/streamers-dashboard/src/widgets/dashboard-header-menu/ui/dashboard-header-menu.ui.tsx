@@ -1,5 +1,3 @@
-import type { PopoverRootProps } from '@base-ui/react'
-
 import { useRef, useState } from 'react'
 
 import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
@@ -17,7 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from 'klewik-ui/popover'
 
 import { cn, mergeProps } from '~shared/utils'
 
-export type DashboardHeaderMenuProps = PopoverRootProps & {
+export type DashboardHeaderMenuProps = {
   isTimerVisible?: boolean
   onTimerVisibilityChanges?: () => void
 }

@@ -4,7 +4,7 @@ import { useRef } from 'react'
 
 import { AutoSizer } from 'react-virtualized-auto-sizer'
 
-import { useMergedRefs } from '../../../../hooks/index'
+
 
 import {
   ShadowScrollArea,
@@ -26,16 +26,11 @@ const ShadowVirtualList = <T = unknown>(
     width,
     height,
     shadowScrollProps,
-    scrollElementRef,
-    contentWrapperRef,
     ...virtualListProps
   } = props
 
   const internalScrollRef = useRef<HTMLDivElement>(null)
   const internalContentRef = useRef<HTMLDivElement>(null)
-
-  const contentMergedRef = useMergedRefs(internalContentRef, contentWrapperRef)
-  const scrollMergedRef = useMergedRefs(internalScrollRef, scrollElementRef)
 
   return (
     <AutoSizer ChildComponent={({ width: autoWidth, height: autoHeight }) => {

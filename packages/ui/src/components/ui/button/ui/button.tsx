@@ -14,7 +14,7 @@ export type ButtonProps = {
   startContent?: ReactNode
   endContent?: ReactNode
   icon?: ReactNode
-} & ComponentProps<'button'> & VariantPropsFixed<ButtonVariantsProps>
+} & ComponentProps<'button'> & Omit<ButtonVariantsProps, 'startContent' | 'endContent'>
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (

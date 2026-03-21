@@ -43,12 +43,16 @@ describe('auction slots slice middlewares', () => {
       auctionSlotOrder: 1000,
       title: 'Test',
       winPercents: 50,
+      isAlived: true,
+      isDropped: false,
     }, {
       points,
       id: 1001,
       auctionSlotOrder: 1001,
       title: 'Test 2',
       winPercents: 50,
+      isAlived: true,
+      isDropped: false,
     }]
 
     const addedPointsSum = addedSlotArr.reduce((acc, slot) => acc + slot.points, 0)
@@ -64,12 +68,16 @@ describe('auction slots slice middlewares', () => {
       auctionSlotOrder: 1000,
       title: 'Test',
       winPercents: 50,
+      isAlived: true,
+      isDropped: false,
     }, {
       points: 1000,
       id: 1001,
       auctionSlotOrder: 1001,
       title: 'Test 2',
       winPercents: 50,
+      isAlived: true,
+      isDropped: false,
     }]
 
     dispatch(auctionSlotsActions.addSlots(addedSlotArr))

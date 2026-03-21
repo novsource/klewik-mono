@@ -10,7 +10,10 @@
     "declaration": true,
     "emitDeclarationOnly": false,
     "strict": true,
-    "module": "CommonJS",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "composite": true,
+    "experimentalDecorators": true
   },
   "include": [
     "."
@@ -19,9 +22,12 @@
     "dist",
     "node_modules",
     "**/*.config.js",
-    "**/*.stories.tsx",
-    "**/*.stories.ts",
     "**/*.meta.ts",
     "**/*.spec.ts"
   ],
+  "references": [
+    {
+      "path": "./tsconfig.storybook.json"
+    }
+  ]
 }

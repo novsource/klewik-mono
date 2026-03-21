@@ -1,23 +1,21 @@
-import type { ReactNode } from 'react'
-
-import { mergeProps } from '@base-ui/react'
-
-import { Text } from '~shared/components/typography'
+import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 
 import type { ButtonProps } from 'klewik-ui/button'
 import { Button } from 'klewik-ui/button'
+import type { DrawerContentProps, DrawerProps, DrawerTriggerProps } from 'klewik-ui/drawer'
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerTitle, DrawerTrigger } from 'klewik-ui/drawer'
 import type { FlexProps } from 'klewik-ui/flex'
 import { Flex } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
-import type { SheetContentProps, SheetHeaderProps, SheetProps, SheetTriggerProps } from 'klewik-ui/sheet'
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from 'klewik-ui/sheet'
+import { Text } from 'klewik-ui/typography'
+import { mergeProps } from 'klewik-ui/utils'
 
 import { cn } from '~shared/utils'
 
-export type DesktopAppDialogProps = SheetProps
+export type DesktopAppDialogProps = DrawerProps
 
 export const DesktopAppDialog = (props: DesktopAppDialogProps) => {
-  return <Sheet {...props} />
+  return <Drawer {...props} />
 }
 
 DesktopAppDialog.Content = DesktopAppDialogContent
@@ -28,7 +26,7 @@ DesktopAppDialog.TopPanel = DesktopAppDialogHeaderTopPanel
 DesktopAppDialog.Title = DesktopAppDialogTitle
 DesktopAppDialog.CloseButton = DesktopAppDialogClose
 
-export type DesktopAppDialogContentProps = SheetContentProps & {
+export type DesktopAppDialogContentProps = DrawerContentProps & {
   contentWrapperProps?: Omit<FlexProps<'div'>, 'children'>
 }
 
@@ -42,25 +40,25 @@ function DesktopAppDialogContent(props: DesktopAppDialogContentProps) {
   }, contentWrapperProps)
 
   return (
-    <SheetContent {...restProps}>
+    <DrawerContent {...restProps}>
       <Flex {...mergedContentWrapperProps} />
-    </SheetContent>
+    </DrawerContent>
   )
 }
 
-export type DesktopAppDialogTriggerProps = SheetTriggerProps
+export type DesktopAppDialogTriggerProps = DrawerTriggerProps
 
 function DesktopAppDialogTrigger(props: DesktopAppDialogTriggerProps) {
-  return <SheetTrigger {...props} />
+  return <DrawerTrigger {...props} />
 }
 
-export type DesktopAppDialogHeaderProps = SheetHeaderProps
+export type DesktopAppDialogHeaderProps = ComponentPropsWithoutRef<'div'>
 
-function DesktopAppDialogHeader(props: SheetHeaderProps) {
+function DesktopAppDialogHeader(props: DesktopAppDialogHeaderProps) {
   const { className, ...restProps } = props
 
   return (
-    <SheetHeader className={cn('flex flex-col w-full gap-y-5', className)} {...restProps} />
+    <div className={cn('flex flex-col w-full gap-y-5', className)} {...restProps} />
   )
 }
 
@@ -70,14 +68,19 @@ function DesktopAppDialogClose(props: DesktopAppDialogCloseProps) {
   const { className, ...restProps } = props
 
   return (
-    <SheetClose className="relative right-0 top-0" nativeButton={false} type="button">
-      <Button
-        className={cn('size-8', className)}
-        isIconOnly
-        icon={<Icons.LargeCross width={14} height={14} />}
-        {...restProps}
-      />
-    </SheetClose>
+    <DrawerClose
+      className="relative right-0 top-0"
+      nativeButton={false}
+      type="button"
+      render={(
+        <Button
+          className={cn('size-8', className)}
+          isIconOnly
+          icon={<Icons.LargeCross width={14} height={14} />}
+          {...restProps}
+        />
+      )}
+    />
   )
 }
 
@@ -115,13 +118,13 @@ function DesktopAppDialogTitle(props: DesktopAppDialogTitleProps) {
         align="start"
         justify="start"
       >
-        <SheetTitle className="text-title">{title}</SheetTitle>
+        <DrawerTitle className="text-title">{title}</DrawerTitle>
         {description && (
-          <SheetDescription>
+          <DrawerDescription>
             <Text className="leading-4 font-normal text-gray-accent">
               {description}
             </Text>
-          </SheetDescription>
+          </DrawerDescription>
         )}
       </Flex>
     </Flex>

@@ -67,7 +67,7 @@ export const axiosBaseQuery
         rewriteBaseURL = false,
       } = args
 
-      const isDev = import.meta.env.VITE_DEV
+      const isDev = import.meta.env.DEV
       try {
         const axios = new BaseHttpClient({
           axiosOptions: options.axiosOptions,

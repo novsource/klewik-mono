@@ -1,0 +1,1 @@
+{"root":["./vite.config.ts","./tests/vitest-setup.ts","./tests/utils/mock-server/helpers/check-auth.ts","./tests/utils/mock-server/helpers/check-form-headers.ts","./tests/utils/mock-server/helpers/index.ts"],"version":"5.9.3"}

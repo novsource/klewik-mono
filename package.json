@@ -9,16 +9,25 @@
   "dependencies": {},
   "devDependencies": {
     "@nx/js": "22.6.0",
+    "@nx/storybook": "22.6.0",
+    "@nx/vite": "22.6.0",
+    "@nx/web": "22.6.0",
+    "@storybook/react": "10.3.1",
+    "@storybook/react-vite": "10.3.1",
     "@swc-node/register": "~1.11.1",
     "@swc/core": "~1.15.5",
     "@swc/helpers": "~0.5.18",
     "nx": "22.6.0",
+    "prettier": "~3.6.2",
+    "storybook": "10.3.1",
+    "ts-node": "10.9.1",
     "tslib": "^2.3.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "vite": "^6.0.0"
   },
   "workspaces": [
     "packages/*",
     "apps/streamers-dashboard"
   ],
-  "packageManager": "pnpm@10.20.0"
+  "packageManager": "pnpm@10.29.2"
 }

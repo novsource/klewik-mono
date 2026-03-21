@@ -44,7 +44,7 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
 
   const { form, state: formState, submitForm, isLoading } = useCreateSlotsForm({
     onSuccess: (slots) => {
-      auctionSlotsActions.addSlots(slots)
+      auctionSlotsActions.addSlots(slots.map(slot => ({ ...slot, isAlived: true, isDropped: false })))
 
       setIsSuccessCreated(true)
       setIsDialogOpen(false)
@@ -92,7 +92,7 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
         onOpenChange={setIsDialogOpen}
         disablePointerDismissal={formState.isDirty}
       >
-        <DesktopAppDialog.Trigger>{ trigger }</DesktopAppDialog.Trigger>
+        <DesktopAppDialog.Trigger>{trigger}</DesktopAppDialog.Trigger>
 
         <DesktopAppDialog.Content>
           <DesktopAppDialog.Header>
@@ -154,7 +154,7 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
       onOpenChange={setIsDialogOpen}
       disablePointerDismissal={formState.isDirty}
     >
-      <MobileAppDialog.Trigger className="w-full">{ trigger }</MobileAppDialog.Trigger>
+      <MobileAppDialog.Trigger className="w-full">{trigger}</MobileAppDialog.Trigger>
 
       <MobileAppDialog.Content>
         <MobileAppDialog.Header className="flex-col gap-y-5 items-start px-0">

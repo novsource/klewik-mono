@@ -6,6 +6,7 @@ import type { CreateAuctionQueryReturnValue } from '~pages/welcome/api/create-au
 import { useCreateAuctionMutation } from '~pages/welcome/api/create-auction.api'
 import { WELCOME_PAGE_WIZARD_ITEMS_IDS } from '~pages/welcome/constants'
 
+import { transformAuctionDTO } from '~entities/auction/lib'
 import type { Auction } from '~entities/auction/model'
 
 import { loginInAuction } from '~shared/api/http/auth'
@@ -102,13 +103,13 @@ export const WizardCreateNewAuctionItem = (
 
       <Card
         className="flex justify-between items-center gap-x-2 cursor-pointer outline-1 outline-dark-light hover:outline-gray/70 pt-2"
-        onClick={() => goToExistingAuction(getUserAuctions.state.activeAuction!.auctionUUID)}
+        onClick={() => goToExistingAuction(getUserAuctions.state.activeAuction!.uuid)}
       >
         <div className="flex flex-col">
           <CardHeader className="flex flex-col gap-y-2 tablet:gap-y-3">
             <Text className="text-gray-light" asSpan>Перейти в</Text>
             <Text className="text-base leading-5 tablet:text-title font-semibold">
-              {getUserAuctions.state.activeAuction?.auctionUUID}
+              {getUserAuctions.state.activeAuction?.uuid}
             </Text>
           </CardHeader>
           <CardContent>
@@ -174,7 +175,14 @@ function useGetUserAuctions(options?: useGetUserAuctionsOptions) {
       return
     }
 
-    setActiveAuction(getAuctionResponse.data[0] ?? null)
+    if (!getAuctionResponse.data[0]) {
+      setActiveAuction(null)
+    }
+    else {
+      const transformedAuction = transformAuctionDTO(getAuctionResponse.data[0])
+
+      setActiveAuction(transformedAuction)
+    }
   }
 
   const getActiveAuctionsQuery = useAsync(getActiveAuctions, [currentStepId])

@@ -1,9 +1,14 @@
-import type { SelectRootChangeEventDetails } from '@base-ui/react'
+import type { ProcessedDonationStatus } from '~entities/donation/model'
+
+import { DONATION_STATUS_NAME } from '~shared/constants/donations'
+import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
+
+import { useMediaQuery, useUrlSearchParam } from '~shared/hooks'
+
+import { Icons } from 'klewik-ui/icons'
 import type {
   SelectProps,
 } from 'klewik-ui/select'
-
-import { Icons } from 'klewik-ui/icons'
 import {
   Select,
   SelectContent,
@@ -11,13 +16,6 @@ import {
   SelectList,
   SelectTrigger,
 } from 'klewik-ui/select'
-
-import type { ProcessedDonationStatus } from '~entities/donation/model'
-
-import { DONATION_STATUS_NAME } from '~shared/constants/donations'
-import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
-
-import { useMediaQuery, useUrlSearchParam } from '~shared/hooks'
 
 import { cn } from '~shared/utils'
 
@@ -58,7 +56,7 @@ const selectItems: DisplayedSelectItemData[] = [
 export type DonationsStatusFilterValueProps = Omit<SelectProps<DonationsStatusFilterValue, false>, 'onValueChange'> & {
   className?: string
   status?: DonationsStatusFilterValue
-  onValueChange?: (status: DonationsStatusFilterValue, event: SelectRootChangeEventDetails) => void
+  onValueChange?: (status: DonationsStatusFilterValue) => void
 }
 
 export const DonationsStatusFilterSelect = (
@@ -68,11 +66,11 @@ export const DonationsStatusFilterSelect = (
 
   const { set, value } = useUrlSearchParam<DonationsStatusFilterValue>('status', { initialValue: status ?? 'all' })
 
-  const handleOnValueChange = (status: NullablePossible<DonationsStatusFilterValue>, event: SelectRootChangeEventDetails) => {
+  const handleOnValueChange = (status: NullablePossible<DonationsStatusFilterValue>) => {
     const safeStatus = status || 'all'
 
     set(safeStatus)
-    onValueChange?.(safeStatus, event)
+    onValueChange?.(safeStatus)
   }
 
   const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)

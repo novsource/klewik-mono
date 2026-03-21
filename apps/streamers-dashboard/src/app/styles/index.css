@@ -122,6 +122,25 @@
     }
 }
 
+@keyframes heartbeating {
+    0% {
+        scale: 1;
+    }
+
+    50% {
+        scale: 1.15;
+    }
+
+    100% {
+        scale: 1;
+    }
+}
+
+@utility animate-heartbeating {
+    animation-name: heartbeating;
+    animation-duration: 1.75s;
+    animation-iteration-count: infinite;
+}
 
 @layer base {
     :root {

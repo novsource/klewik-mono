@@ -1,5 +1,8 @@
 {
   "compileOnSave": false,
   "files": [],
-  "references": []
+  "references": [],
+  "compilerOptions": {
+    "skipLibCheck": true
+  }
 }

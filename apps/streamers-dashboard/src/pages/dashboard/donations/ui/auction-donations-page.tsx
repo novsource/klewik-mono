@@ -2,7 +2,6 @@ import type { DonationsStatusFilterValue } from './selects/donations-filter-sele
 
 import { useLayoutEffect, useState } from 'react'
 
-import { Flex } from 'klewik-ui/flex'
 import z from 'zod'
 
 import { DonationsStats } from '~widgets/dashboard-header/ui/donations-stats'
@@ -19,6 +18,8 @@ import { Text, Title } from '~shared/components/typography'
 import { useDocumentTitle, useUrlSearchParam } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import { Flex } from 'klewik-ui/flex'
 
 import { cn } from '~shared/utils'
 

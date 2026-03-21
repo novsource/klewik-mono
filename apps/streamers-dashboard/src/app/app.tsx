@@ -1,5 +1,6 @@
-import { WysiwygEditorProvider } from '~shared/components/editor/context'
 import { domAnimation, LazyMotion } from 'motion/react'
+
+import { WysiwygEditorProvider } from '~shared/components/editor/context'
 
 import { AppRouter } from './routing'
 import { StoreProvider } from './store/store-provider'
