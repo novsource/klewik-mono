@@ -10,19 +10,19 @@ import { splittedAuctionApi } from '~entities/auction/api'
 import { auctionActions } from '~entities/auction/store'
 
 import { splittedAuctionSlotsApi } from '~entities/auction-slot/api'
-import { auctionSlotsActions } from '~entities/auction-slot/store'
 
 import { splittedDonationApi } from '~entities/donation/api'
 
 import { splittedIntegrationsApi } from '~entities/integrations/api'
 
 import type { AuctionDTO } from '~shared/api/http/auction'
-import type { AuctionSlotsDTO } from '~shared/api/http/auction-slots'
 
 import type { ErrorStatusesWithReason } from '~shared/constants/router'
 import { errorStatusReasons } from '~shared/constants/router'
 
 import { isError } from '~shared/utils'
+import { isHttpError } from '~shared/utils/validation'
+import { isStringEmpty } from '~shared/utils/validation/is-string-empty'
 
 export const prepareDashboardRouteLoader: NonIndexRouteObject['loader'] = async ({ params }) => {
   const validatedParams = z
@@ -43,21 +43,22 @@ export const prepareDashboardRouteLoader: NonIndexRouteObject['loader'] = async 
 
   const auctionUUID = validatedParams.data.auctionUUID
 
-  const getAuctionInfoPromise = splittedAuctionApi.endpoints.getAuctionInfo.initiate({ auctionUUID })
-  const getDonationsStatusesStatsPromise = splittedDonationApi.endpoints.getDonationsStats.initiate({ auctionUUID })
-  const getConnectedIntegrationsStatsPromise = splittedIntegrationsApi.endpoints.getConnectedIntegrations.initiate({ auctionUUID })
-  const getAuctionSlotsPromise = splittedAuctionSlotsApi.endpoints.getAuctionSlots.initiate({ auctionUUID })
+  const getAuctionInfoThunkAction = splittedAuctionApi.endpoints.getAuctionInfo.initiate({ auctionUUID })
+  const getDonationsStatusesStatsThunkAction = splittedDonationApi.endpoints.getDonationsStats.initiate({ auctionUUID })
+  const getConnectedIntegrationsStatsThunkAction = splittedIntegrationsApi.endpoints.getConnectedIntegrations.initiate({ auctionUUID })
+  const getAuctionSlotsThunkAction = splittedAuctionSlotsApi.endpoints.getAuctionSlots.initiate({ auctionUUID })
 
-  const requestsArr = [
-    getAuctionInfoPromise,
-    getDonationsStatusesStatsPromise,
-    getConnectedIntegrationsStatsPromise,
-    getAuctionSlotsPromise,
-    // @ts-expect-error unknown action
-  ].map(thunkAction => dispatch(thunkAction))
+  const thunkActions = [
+    getAuctionInfoThunkAction,
+    getDonationsStatusesStatsThunkAction,
+    getConnectedIntegrationsStatsThunkAction,
+    getAuctionSlotsThunkAction,
+  ] as const
+
+  const queryActions = thunkActions.map(thunkAction => thunkAction(dispatch, rootStore.getState, null).unwrap())
 
   try {
-    const responses = await Promise.all(requestsArr)
+    const responses = await Promise.all(queryActions)
 
     responses.forEach((response) => {
       if (isAxiosError(response)) {
@@ -65,8 +66,7 @@ export const prepareDashboardRouteLoader: NonIndexRouteObject['loader'] = async 
       }
     })
 
-    const auctionInfo = responses[0].data as AuctionDTO
-    const auctionSlots = responses[3].data as AuctionSlotsDTO[]
+    const auctionInfo = responses[0] as AuctionDTO
 
     if (!auctionInfo || Object.keys(auctionInfo).length === 0) {
       throw json({
@@ -74,25 +74,11 @@ export const prepareDashboardRouteLoader: NonIndexRouteObject['loader'] = async 
       }, { status: 404 })
     }
 
-    const alivedSlotsIds = auctionSlots.reduce<number[]>((result, slot) => {
-      const isSlotNotDropped = auctionInfo.dropoutSlotsIds.find(id => id === slot.id) === undefined
-
-      if (isSlotNotDropped) {
-        result.push(slot.id)
-      }
-
-      return result
-    }, [])
-
     dispatch(auctionActions.setAuction(auctionInfo))
-
-    dispatch(auctionSlotsActions.updateAlivedSlotsIds({ data: alivedSlotsIds, mode: 'add' }))
-    dispatch(auctionSlotsActions.updateDroppedSlotsIds({ data: auctionInfo.dropoutSlotsIds, mode: 'add' }))
 
     return null
   }
   catch (error) {
-    console.log(error)
     if (isAxiosError(error)) {
       const isRejectHaveReason = error.status !== undefined && Reflect.has(errorStatusReasons, error.status.toString())
       const reason = isRejectHaveReason
@@ -108,6 +94,20 @@ export const prepareDashboardRouteLoader: NonIndexRouteObject['loader'] = async 
           status: error.status,
         },
       )
+    }
+
+    if (isHttpError(error)) {
+      const hint = error.hint ?? 'Если есть возможность напишите об этом в issues на Github проекта'
+      const reason = isStringEmpty(error.reason ?? '')
+        ? errorStatusReasons[error.status?.toString() as unknown as ErrorStatusesWithReason]
+        : 'Неизвестная причина'
+
+      throw json({
+        reason,
+        hint,
+      }, {
+        status: error.status,
+      })
     }
 
     if (isError(error)) {
@@ -138,7 +138,5 @@ export const prepareDashboardRouteLoader: NonIndexRouteObject['loader'] = async 
     }, {
       status: 400,
     })
-
-    return null
   }
 }

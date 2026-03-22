@@ -14,6 +14,7 @@
     "class-variance-authority": "^0.7.1",
     "contentlayer2": "^0.5.8",
     "date-fns": "^4.1.0",
+    "klewik-ui": "workspace:*",
     "next": "^15.5.4",
     "next-contentlayer2": "^0.5.8",
     "react": "^19.0.0",
