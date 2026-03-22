@@ -11,40 +11,78 @@ import { Flex } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
 import { cn } from '~utils/cn'
 import {
+  AuctionSlotCardContentInfoDivider,
+  AuctionSlotCardPointsInfo,
+  AuctionSlotCardWinPercents,
   BaseAuctionSlotCard,
+  BaseAuctionSlotCardContent,
   SolidAuctionSlotContent,
   SolidAuctionSlotHeader,
 } from '../slot-card'
+import { useMediaQuery } from '~hooks/index'
+import { greaterThenDeviceWidthMediaQueries } from '~/constants'
+import { CardProps } from 'klewik-ui/card'
 
-type AuctionSlotCardProps = BaseAuctionSlotCardProps & {
+export type AuctionSlotsListCardProps = CardProps & {
   auctionSlot: AuctionSlot
-  winPercent: number
-  triggerProps?: ButtonProps
+  actionButtonProps?: ButtonProps
+  isWinner?: boolean
+  isDropped?: boolean
 }
 
-const AuctionSlotCard = memo((props: AuctionSlotCardProps) => {
-  const { auctionSlot, triggerProps, className, winPercent, ...restProps } = props
+export const AuctionSlotsListCard = (props: AuctionSlotsListCardProps) => {
+  const {
+    auctionSlot,
+    className,
+    actionButtonProps,
+    isWinner = false,
+    isDropped = false,
+    ...restProps
+  } = props
+
+  const isLargeThenTablet = useMediaQuery(greaterThenDeviceWidthMediaQueries.tablet)
 
   return (
-    <BaseAuctionSlotCard className={cn('flex-row items-end', className)} {...restProps}>
-      <Flex className="w-full pr-4 gap-y-2" direction="column">
-        <SolidAuctionSlotHeader
-          slotColor="#FFF"
-          slotTitle={auctionSlot.title}
-          slotId={auctionSlot.auctionSlotOrder}
-        />
-        <SolidAuctionSlotContent auctionSlot={auctionSlot} winPercents={winPercent} />
+    <BaseAuctionSlotCard
+      className={cn('flex-row items-end pr-2', className)}
+      {...restProps}
+    >
+      <Flex className="gap-y-2 pr-3.5" direction="column">
+        <SolidAuctionSlotHeader slotTitle={auctionSlot.title} />
+
+        <BaseAuctionSlotCardContent {...restProps}>
+          <Flex
+            className="w-fit"
+            direction="row"
+            align="center"
+          >
+            <div className={cn('size-7.5 tablet:size-8 bg-red/10 flex items-center justify-center rounded-small', isDropped && 'bg-dark-light', isWinner && 'bg-orange/10')}>
+              {isWinner
+                ? <Icons.Crown className="text-orange" />
+                : isDropped
+                  ? <Icons.BrokenHeart className="text-gray-light" />
+                  : <Icons.Heart className="  text-red animate-heartbeating" size="xs" />}
+            </div>
+            <AuctionSlotCardContentInfoDivider />
+            <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
+            <AuctionSlotCardContentInfoDivider />
+            <AuctionSlotCardWinPercents winPercents={auctionSlot.winPercents} />
+          </Flex>
+        </BaseAuctionSlotCardContent>
       </Flex>
+
       <Button
-        variant="action"
+        className="bg-dark-light text-gray-light transition-colors hover:text-white"
         isIconOnly
-        icon={<Icons.Plus />}
-        size="xs"
-        {...triggerProps}
+        icon={<Icons.ArrowRight size={isLargeThenTablet ? 'default' : 'sm'} />}
+        size={isLargeThenTablet ? 'sm' : 'xs'}
+        {...actionButtonProps}
       />
+
     </BaseAuctionSlotCard>
   )
-})
+}
+
 
 type SlotsListProps = ComponentProps<'ul'> & {
   slots: AuctionSlot[]
