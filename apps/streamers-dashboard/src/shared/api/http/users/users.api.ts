@@ -24,5 +24,5 @@ export const getAuthUser = (options?: HttpClientRequestOptions) => {
 }
 
 export const getUserAuctions = (args: GetUserAuctionsRequestArgs, options?: HttpClientRequestOptions) => {
-  return authHttpClient.get<AuctionDTO[]>(`/api/v1/users/${args.userUUID}/auctions`, options)
+  return authHttpClient.get<AuctionDTO[]>(`/api/v1/users/${args.userUUID}/auctions?limit=1&sortBy=createdAt&sortOrder=desc`, options)
 }

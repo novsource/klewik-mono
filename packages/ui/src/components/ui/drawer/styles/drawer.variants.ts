@@ -16,13 +16,13 @@ type DrawerSizeVariants = {
 }
 
 export const drawerBackdropVariants = cva([
-  'dark fixed inset-0 min-h-dvh bg-black/60',
+  'dark fixed inset-0 min-h-dvh bg-black/60 z-50',
   '[--backdrop-opacity:0.2] [--bleed:3rem] dark:[--backdrop-opacity:0.7] opacity-[calc(var(--backdrop-opacity)*(1-var(--drawer-swipe-progress)))] transition-opacity duration-[450ms] ease-[cubic-bezier(0.32,0.72,0,1)] supports-[-webkit-touch-callout:none]:absolute',
   'data-[swiping]:duration-0 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0 data-[ending-style]:duration-[calc(var(--drawer-swipe-strength)*400ms)]',
 ])
 
 export const drawerViewportVariants = cva<DrawerSideVariants>([
-  'fixed inset-0 flex',
+  'fixed inset-0 flex z-50',
 ], {
   variants: {
     side: {
@@ -51,7 +51,7 @@ export const drawerPopupVariants = cva<DrawerSideVariants & DrawerSizeVariants>(
     },
     side: {
       right: [
-        'bg-dark-foreground p-6 rounded-small',
+        'bg-dark-foreground px-5 py-4 rounded-small',
         'landtop:max-w-[500px] desktop:max-w-[550px] tablet:max-w-[450px]',
         '[transform:translateX(var(--drawer-swipe-movement-x))] data-[ending-style]:[transform:translateX(calc(100%-var(--bleed)+var(--viewport-padding)))] data-[starting-style]:[transform:translateX(calc(100%-var(--bleed)+var(--viewport-padding)))]',
         '[--bleed:3rem] supports-[-webkit-touch-callout:none]:[--bleed:0px]',
