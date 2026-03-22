@@ -18,10 +18,14 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "preserveSymlinks": true,
     "plugins": [
       {
         "name": "next"
       }
+    ],
+    "types": [
+      "react"
     ],
     "paths": {
       "~public/*": [

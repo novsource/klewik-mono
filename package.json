@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev:dashboard": "nx dev apps/streamers-dashboard"
+    "dev:dashboard": "nx dev klewik",
+    "dev:viewers": "nx dev klewik-viewers",
+    "build:dashboard": "nx build klewik",
+    "build:viewers": "nx build klewik-viewers",
+    "build:ui": "nx build klewik-ui"
   },
   "private": true,
   "dependencies": {},
