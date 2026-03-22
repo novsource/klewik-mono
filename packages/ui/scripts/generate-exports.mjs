@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-const distPath = path.resolve('dist/components/ui')
+const distPath = path.resolve('src/components/ui')
 const packageJsonPath = path.resolve('package.json')
 
 function getAllComponents(dir) {
@@ -13,10 +13,9 @@ function getAllComponents(dir) {
       const name = entry.name
       const fullPath = path.join(dir, name)
 
-      const indexJs = path.join(fullPath, 'index.js')
-      const indexDts = path.join(fullPath, 'index.d.ts')
+      const barrelIndexTs = path.join(fullPath, 'index.ts')
 
-      if (fs.existsSync(indexJs) && fs.existsSync(indexDts)) {
+      if (fs.existsSync(barrelIndexTs)) {
         return name
       }
 
@@ -29,15 +28,13 @@ const components = getAllComponents(distPath)
 
 const exportsMap = {
   '.': {
-    types: './dist/index.d.ts',
-    import: './dist/index.js'
+    import: './index.ts'
   }
 }
 
 for (const name of components) {
   exportsMap[`./${name}`] = {
-    types: `./dist/components/ui/${name}/index.d.ts`,
-    import: `./dist/components/ui/${name}/index.js`
+    import: `./src/components/ui/${name}/index.ts`
   }
 }
 

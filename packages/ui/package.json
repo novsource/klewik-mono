@@ -8,8 +8,7 @@
   "types": "./dist/index.d.ts",
   "description": "Klewik shared UI components",
   "scripts": {
-    "build": "tsc -b",
-    "postbuild": "node scripts/generate-exports.mjs",
+    "generate-exports": "node scripts/generate-exports.mjs",
     "lint": "eslint .",
     "storybook": "storybook dev -p 6005"
   },
@@ -29,18 +28,18 @@
   "devDependencies": {
     "@eslint/js": "^9.39.4",
     "@types/node": "^24.12.0",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^6.0.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "clsx": "^2.1.1",
     "eslint": "^9.39.4",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
-    "react": "catalog:",
-    "react-dom": "catalog:",
     "tailwindcss": "catalog:",
     "tailwind-merge": "^2.6.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "typescript": "catalog:",
     "typescript-eslint": "^8.57.0",
     "vite": "catalog:"
@@ -48,156 +47,120 @@
   "peerDependencies": {
     "react": "^18 || ^19",
     "react-dom": "^18 || ^19",
+    "@types/react": "^18 || ^19",
     "tailwindcss": "^4.0.0"
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./index.ts"
     },
     "./accordion": {
-      "types": "./dist/components/ui/accordion/index.d.ts",
-      "import": "./dist/components/ui/accordion/index.js"
+      "import": "./src/components/ui/accordion/index.ts"
     },
     "./autocomplete": {
-      "types": "./dist/components/ui/autocomplete/index.d.ts",
-      "import": "./dist/components/ui/autocomplete/index.js"
+      "import": "./src/components/ui/autocomplete/index.ts"
     },
     "./badge": {
-      "types": "./dist/components/ui/badge/index.d.ts",
-      "import": "./dist/components/ui/badge/index.js"
+      "import": "./src/components/ui/badge/index.ts"
     },
     "./button": {
-      "types": "./dist/components/ui/button/index.d.ts",
-      "import": "./dist/components/ui/button/index.js"
+      "import": "./src/components/ui/button/index.ts"
     },
     "./caption": {
-      "types": "./dist/components/ui/caption/index.d.ts",
-      "import": "./dist/components/ui/caption/index.js"
+      "import": "./src/components/ui/caption/index.ts"
     },
     "./card": {
-      "types": "./dist/components/ui/card/index.d.ts",
-      "import": "./dist/components/ui/card/index.js"
+      "import": "./src/components/ui/card/index.ts"
     },
     "./checkbox": {
-      "types": "./dist/components/ui/checkbox/index.d.ts",
-      "import": "./dist/components/ui/checkbox/index.js"
+      "import": "./src/components/ui/checkbox/index.ts"
     },
     "./command": {
-      "types": "./dist/components/ui/command/index.d.ts",
-      "import": "./dist/components/ui/command/index.js"
+      "import": "./src/components/ui/command/index.ts"
     },
     "./dialog": {
-      "types": "./dist/components/ui/dialog/index.d.ts",
-      "import": "./dist/components/ui/dialog/index.js"
+      "import": "./src/components/ui/dialog/index.ts"
     },
     "./divider": {
-      "types": "./dist/components/ui/divider/index.d.ts",
-      "import": "./dist/components/ui/divider/index.js"
+      "import": "./src/components/ui/divider/index.ts"
     },
     "./drawer": {
-      "types": "./dist/components/ui/drawer/index.d.ts",
-      "import": "./dist/components/ui/drawer/index.js"
+      "import": "./src/components/ui/drawer/index.ts"
     },
     "./flex": {
-      "types": "./dist/components/ui/flex/index.d.ts",
-      "import": "./dist/components/ui/flex/index.js"
+      "import": "./src/components/ui/flex/index.ts"
     },
     "./icons": {
-      "types": "./dist/components/ui/icons/index.d.ts",
-      "import": "./dist/components/ui/icons/index.js"
+      "import": "./src/components/ui/icons/index.ts"
     },
     "./infinite-list": {
-      "types": "./dist/components/ui/infinite-list/index.d.ts",
-      "import": "./dist/components/ui/infinite-list/index.js"
+      "import": "./src/components/ui/infinite-list/index.ts"
     },
     "./input": {
-      "types": "./dist/components/ui/input/index.d.ts",
-      "import": "./dist/components/ui/input/index.js"
+      "import": "./src/components/ui/input/index.ts"
     },
     "./loader": {
-      "types": "./dist/components/ui/loader/index.d.ts",
-      "import": "./dist/components/ui/loader/index.js"
+      "import": "./src/components/ui/loader/index.ts"
     },
     "./motion-box": {
-      "types": "./dist/components/ui/motion-box/index.d.ts",
-      "import": "./dist/components/ui/motion-box/index.js"
+      "import": "./src/components/ui/motion-box/index.ts"
     },
     "./number-input": {
-      "types": "./dist/components/ui/number-input/index.d.ts",
-      "import": "./dist/components/ui/number-input/index.js"
+      "import": "./src/components/ui/number-input/index.ts"
     },
     "./popover": {
-      "types": "./dist/components/ui/popover/index.d.ts",
-      "import": "./dist/components/ui/popover/index.js"
+      "import": "./src/components/ui/popover/index.ts"
     },
     "./radio": {
-      "types": "./dist/components/ui/radio/index.d.ts",
-      "import": "./dist/components/ui/radio/index.js"
+      "import": "./src/components/ui/radio/index.ts"
     },
     "./scroll-area": {
-      "types": "./dist/components/ui/scroll-area/index.d.ts",
-      "import": "./dist/components/ui/scroll-area/index.js"
+      "import": "./src/components/ui/scroll-area/index.ts"
     },
     "./select": {
-      "types": "./dist/components/ui/select/index.d.ts",
-      "import": "./dist/components/ui/select/index.js"
+      "import": "./src/components/ui/select/index.ts"
     },
     "./shadow-scroll-area": {
-      "types": "./dist/components/ui/shadow-scroll-area/index.d.ts",
-      "import": "./dist/components/ui/shadow-scroll-area/index.js"
+      "import": "./src/components/ui/shadow-scroll-area/index.ts"
     },
     "./shadow-virtual-list": {
-      "types": "./dist/components/ui/shadow-virtual-list/index.d.ts",
-      "import": "./dist/components/ui/shadow-virtual-list/index.js"
+      "import": "./src/components/ui/shadow-virtual-list/index.ts"
     },
     "./sheet": {
-      "types": "./dist/components/ui/sheet/index.d.ts",
-      "import": "./dist/components/ui/sheet/index.js"
+      "import": "./src/components/ui/sheet/index.ts"
     },
     "./skeleton": {
-      "types": "./dist/components/ui/skeleton/index.d.ts",
-      "import": "./dist/components/ui/skeleton/index.js"
+      "import": "./src/components/ui/skeleton/index.ts"
     },
     "./switch": {
-      "types": "./dist/components/ui/switch/index.d.ts",
-      "import": "./dist/components/ui/switch/index.js"
+      "import": "./src/components/ui/switch/index.ts"
     },
     "./tabs": {
-      "types": "./dist/components/ui/tabs/index.d.ts",
-      "import": "./dist/components/ui/tabs/index.js"
+      "import": "./src/components/ui/tabs/index.ts"
     },
     "./text-area": {
-      "types": "./dist/components/ui/text-area/index.d.ts",
-      "import": "./dist/components/ui/text-area/index.js"
+      "import": "./src/components/ui/text-area/index.ts"
     },
     "./timer": {
-      "types": "./dist/components/ui/timer/index.d.ts",
-      "import": "./dist/components/ui/timer/index.js"
+      "import": "./src/components/ui/timer/index.ts"
     },
     "./toaster": {
-      "types": "./dist/components/ui/toaster/index.d.ts",
-      "import": "./dist/components/ui/toaster/index.js"
+      "import": "./src/components/ui/toaster/index.ts"
     },
     "./toggle": {
-      "types": "./dist/components/ui/toggle/index.d.ts",
-      "import": "./dist/components/ui/toggle/index.js"
+      "import": "./src/components/ui/toggle/index.ts"
     },
     "./tooltip": {
-      "types": "./dist/components/ui/tooltip/index.d.ts",
-      "import": "./dist/components/ui/tooltip/index.js"
+      "import": "./src/components/ui/tooltip/index.ts"
     },
     "./typography": {
-      "types": "./dist/components/ui/typography/index.d.ts",
-      "import": "./dist/components/ui/typography/index.js"
+      "import": "./src/components/ui/typography/index.ts"
     },
     "./virtual-list": {
-      "types": "./dist/components/ui/virtual-list/index.d.ts",
-      "import": "./dist/components/ui/virtual-list/index.js"
+      "import": "./src/components/ui/virtual-list/index.ts"
     },
     "./wizard": {
-      "types": "./dist/components/ui/wizard/index.d.ts",
-      "import": "./dist/components/ui/wizard/index.js"
+      "import": "./src/components/ui/wizard/index.ts"
     }
   }
 }
