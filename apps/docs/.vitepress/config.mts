@@ -9,46 +9,50 @@ export default defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/markdown-examples' }
+      { text: 'Главная', link: '/' },
+      { text: 'Стримерам', link: '/streamers/index.md' },
+      { text: 'Зрителям', link: '/watchers/index.md' }
     ],
 
     sidebar: [
+      { text: 'Перед тем как начать', link: '/before-start.md' },
       {
         text: 'Для стримеров',
         items: [
-          { text: 'Предисловие', link: '/markdown-examples' },
           {
-            text: 'Создание аукциона', link: ''
+            text: 'Получение доступа', link: '/streamers/index.md'
           },
           {
-            text: 'Игры в аукционе', collapsed: false, items: [
+            text: 'Создание аукциона', link: '/streamers/create-auction.md'
+          },
+          {
+            text: 'Игры в аукционе', collapsed: true, items: [
               {
-                text: "Виды", link: ''
+                text: "Виды", link: '/streamers/game/game-types.md'
               },
-              { text: "Режимы", link: '' },
-              { text: "Форматы" },
+              { text: "Режимы", link: '/streamers/game/game-mods.md' },
+              { text: "Форматы", link: '/streamers/game/game-formats.md' },
             ]
           },
           {
-            text: 'О лотах в аукционе', link: ''
+            text: 'О лотах в аукционе', link: '/streamers/about-lots.md'
           },
           {
-            text: 'Пожертвования от зрителей', link: ''
+            text: 'Пожертвования от зрителей', link: '/streamers/viewers-donations.md'
           },
           {
-            text: 'Настройка аукциона', link: ''
+            text: 'Настройка аукциона', link: '/streamers/auction-settings.md'
           },
           {
-            text: 'FAQ', link: ''
+            text: 'FAQ', link: '/streamers/faq.md'
           }
         ]
       },
       {
         text: 'Для зрителей',
         items: [
-          { text: 'Донат на лот', link: '/markdown-examples' },
-          { text: "FAQ", link: '' }
+          { text: 'Донат на лот', link: '/watchers/index.md' },
+          { text: "FAQ", link: '/watchers/donation.md' }
         ]
       },
     ],
