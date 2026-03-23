@@ -30,13 +30,13 @@ export const Typography = <T extends keyof TypographyHTMLElements>({
 }: TypographyProps<T>) => {
   const Comp = tag as keyof Pick<JSX.IntrinsicElements, TypographyTags>
 
-  const styles = useMemo(
-    () => cn(typographyVariants({ tag }), className),
+  const classes = useMemo(
+    () => cn(typographyVariants({ tag, className }),),
     [className, tag],
   )
 
   return (
-    <Comp className={styles} {...props}>
+    <Comp className={classes} {...props}>
       {children}
     </Comp>
   )

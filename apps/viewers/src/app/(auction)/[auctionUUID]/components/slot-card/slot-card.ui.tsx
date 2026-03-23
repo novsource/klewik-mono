@@ -15,6 +15,8 @@ import { Flex, FlexProps } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
 import { Text, } from 'klewik-ui/typography'
 import { cn } from '~utils/cn'
+import { AuctionSlot } from '~/models/auction-slot'
+import { formatNumberToIntlString } from '~utils/format-number'
 
 export type BaseAuctionSlotCardProps = CardProps
 
@@ -61,7 +63,7 @@ export const AuctionSlotCardTitleInfo = (props: AuctionSlotCardTitleInfoProps) =
   return (
     <Text
       className={cn([
-        'text-base font-semibold font-golos-f mobile:text-title tablet:text-title-lg text-white/85 break-words',
+        'text-base font-semibold font-golos-f tablet:text-title-lg text-white/85 break-words',
         className,
       ])}
       asSpan
@@ -136,7 +138,7 @@ export const AuctionSlotCardWinPercents = (props: AuctionSlotCardWinPercentsProp
 
   return (
     <AuctionSlotCardContentInfoWrapper icon={<Icons.Crown />} {...restProps}>
-      <Text className={cn('font-golos-f font-semibold text-sm tablet:text-md tablet:leading-4 text-green')}>
+      <Text className={cn('font-golos-f font-semibold text-md tablet:leading-4 text-green')}>
         {`${winPercents}%`}
       </Text>
     </AuctionSlotCardContentInfoWrapper>
@@ -152,8 +154,8 @@ export const AuctionSlotCardPointsInfo = (props: AuctionSlotCardPointsInfoProps)
 
   return (
     <AuctionSlotCardContentInfoWrapper icon={<Icons.Coin />} {...restProps}>
-      <Text className={cn('font-golos-f font-semibold text-gray-accent text-sm tablet:text-md tablet:leading-4', className)}>
-        {slotPoints}
+      <Text className={cn('font-golos-f font-semibold text-gray-accent text-md tablet:leading-4', className)}>
+        {formatNumberToIntlString(slotPoints)}
       </Text>
     </AuctionSlotCardContentInfoWrapper>
   )

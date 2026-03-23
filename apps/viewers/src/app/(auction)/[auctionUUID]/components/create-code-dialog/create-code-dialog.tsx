@@ -22,11 +22,14 @@ import { Button } from 'klewik-ui/button'
 import { Flex } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from 'klewik-ui/sheet'
-import { Typography } from 'klewik-ui/typography'
+import { Text, Title, Typography } from 'klewik-ui/typography'
 import { cn } from '~utils/cn'
 import { greaterThenDeviceWidthMediaQueries } from '~/constants'
 import { createDonationCodeAction } from '../../actions'
 import { useCreateCodeContext } from '../../context'
+import { AuctionSlot } from '~/models/auction-slot'
+
+import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from 'klewik-ui/drawer'
 
 export type CreateCodeDialogProps = {
   auctionUUID: string
@@ -154,8 +157,8 @@ export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
   }
 
   return (
-    <Sheet open={isDialogOpen} onOpenChange={handleOnOpenChange} disablePointerDismissal={!isDialogDismissible}>
-      <SheetTrigger
+    <Drawer open={isDialogOpen} onOpenChange={handleOnOpenChange} disablePointerDismissal={!isDialogDismissible} side='bottom'>
+      <DrawerTrigger
         disabled={disabled}
         render={(
           <CreateCodeDialogTrigger
@@ -164,44 +167,43 @@ export const CreateCodeDialog = (props: CreateCodeDialogProps) => {
           />
         )}
       />
-      <SheetContent
-        className="w-[calc(100%-16px)] h-fit top-auto rounded-lg border-1 border-dark-light gap-y-1.5 left-1/2 !-translate-x-1/2 bottom-2"
-        side="bottom"
-        isFullPageSize
-      >
+      <DrawerContent className={'relative pt-2'}>
         {isPending && (
-          <Flex className="absolute w-full h-full text-dark z-10 bg-inherit" align="center" justify="center">
-            <Icons.Loading width={34} height={34} />
+          <Flex className="absolute w-full h-full text-dark  z-10 bg-dark-foreground" align="center" justify="center">
+            <Icons.Loading width={28} height={28} />
           </Flex>
         )}
 
-        <SheetHeader className="w-full h-fit flex flex-row justify-between shrink items-start mb-2.5">
-          <Flex className="justify-start" direction="column">
-            <SheetTitle className="text-title font-semibold text-start">
+        <div className="w-full h-fit flex flex-row justify-between shrink items-start mb-2.5">
+          <Flex className="justify-start gap-y-1.5" direction="column">
+            <Text className="text-title font-semibold text-start" asSpan>
               {isCodeCreated ? 'Донат-код успешно создан!' : 'Создание донат-кода'}
-            </SheetTitle>
-            <SheetDescription className="text-sm text-gray-light">
+            </Text>
+            <Text className="text-sm text-gray-light" asSpan>
               {isCodeCreated ? 'Не забудьте скопировать код для вставки в сообщение' : 'Заполните поле снизу для создание донат-кода'}
-            </SheetDescription>
+            </Text>
           </Flex>
 
-          <SheetClose
+          <DrawerClose
             className="text-gray-light hover:text-gray-accent relative h-fit right-0 top-0"
             onClick={() => {
               setCode('')
             }}
           >
             <Icons.LargeCross />
-          </SheetClose>
-        </SheetHeader>
+          </DrawerClose>
+        </div>
 
-        {dialogContent}
+
+        <div className="mt-4">
+          {dialogContent}
+        </div>
 
         <Flex className="gap-y-2" direction="column">
           {dialogFooter}
         </Flex>
-      </SheetContent>
-    </Sheet>
+      </DrawerContent>
+    </Drawer>
   )
 }
 

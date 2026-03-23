@@ -7,7 +7,7 @@ import type {
 } from '../slot-card'
 import { memo, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { Button } from 'klewik-ui/button'
-import { Flex } from 'klewik-ui/flex'
+import { Flex, FlexProps } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
 import { cn } from '~utils/cn'
 import {
@@ -22,6 +22,7 @@ import {
 import { useMediaQuery } from '~hooks/index'
 import { greaterThenDeviceWidthMediaQueries } from '~/constants'
 import { CardProps } from 'klewik-ui/card'
+import { AuctionSlot } from '~/models/auction-slot'
 
 export type AuctionSlotsListCardProps = CardProps & {
   auctionSlot: AuctionSlot
@@ -84,7 +85,7 @@ export const AuctionSlotsListCard = (props: AuctionSlotsListCardProps) => {
 }
 
 
-type SlotsListProps = ComponentProps<'ul'> & {
+type SlotsListProps = FlexProps<'ul'> & {
   slots: AuctionSlot[]
   setSlot: (slot: AuctionSlot) => void
   filterTitle?: string | null
@@ -99,7 +100,7 @@ export const SlotsList = memo((props: SlotsListProps) => {
     ...restProps
   } = props
 
-  const [showedSlots, setShowedSlots] = useState(() => {
+  const [listItems, setListItems] = useState(() => {
     const sortedSlots = slots.sort((a, b) => b.points - a.points)
 
     if (!filterTitle)
@@ -111,8 +112,8 @@ export const SlotsList = memo((props: SlotsListProps) => {
   })
 
   const pointsSum = useMemo(() => {
-    return showedSlots.reduce((sum, slot) => sum + slot.points, 0)
-  }, [showedSlots])
+    return listItems.reduce((sum, slot) => sum + slot.points, 0)
+  }, [listItems])
 
   const [isPending, startTransition] = useTransition()
 
@@ -124,20 +125,20 @@ export const SlotsList = memo((props: SlotsListProps) => {
 
     if (!filterTitle) {
       prevFilterTitleRef.current = filterTitle
-      return setShowedSlots(slots)
+      return setListItems(slots)
     }
 
     startTransition(() => {
-      const filtredByTitleSlots = showedSlots.filter(
+      const filtredByTitleSlots = listItems.filter(
         slot => slot.title
           .toLocaleLowerCase()
           .includes(filterTitle.toLocaleLowerCase()),
       )
 
       prevFilterTitleRef.current = filterTitle
-      setShowedSlots(filtredByTitleSlots)
+      setListItems(filtredByTitleSlots)
     })
-  }, [filterTitle, showedSlots, slots])
+  }, [filterTitle, listItems, slots])
 
   return (
     <Flex
@@ -150,14 +151,13 @@ export const SlotsList = memo((props: SlotsListProps) => {
       )}
       {...restProps}
     >
-      {showedSlots.map((slot) => {
+      {listItems.map((slot) => {
         const winPercent = (slot.points / pointsSum) * 100
         return (
           <li key={slot.title}>
-            <AuctionSlotCard
+            <AuctionSlotsListCard
               auctionSlot={slot}
-              winPercent={winPercent}
-              triggerProps={{
+              actionButtonProps={{
                 onClick: () => setSlot(slot),
               }}
             />

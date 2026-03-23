@@ -5,25 +5,35 @@
 
 @variant dark (&:where(.dark, .dark *));
 
+@layer base {
+    @import url("https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+}
+
+
 @utility container {
     margin-inline: auto;
     padding-inline: 2rem;
     @apply max-mobile:px-4;
 }
 
-@layer base {
+@keyframes heartbeating {
+    0% {
+        scale: 1;
+    }
 
-    *,
-    ::after,
-    ::before,
-    ::backdrop,
-    ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+    50% {
+        scale: 1.15;
+    }
+
+    100% {
+        scale: 1;
     }
 }
 
-@layer base {
-    @import url("https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@utility animate-heartbeating {
+    animation-name: heartbeating;
+    animation-duration: 1.75s;
+    animation-iteration-count: infinite;
 }
 
 :root {

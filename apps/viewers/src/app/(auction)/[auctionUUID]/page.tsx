@@ -8,11 +8,13 @@ import { AuctionRulesDialog } from './components/auction-rules-dialog/auction-ru
 import { AuctionTitle } from './components/auction-title'
 import { CreateCodeDialog } from './components/create-code-dialog'
 import { FiltredSlotsList } from './components/slots-list/filtred-slots-list.ui'
+import { AuctionSlot, AuctionSlotDTO, transformAuctionSlotDTO } from '~/models/auction-slot'
+import { AuctionDTO } from '~/models/auction'
 
-export const revalidate = 120
+export const revalidate = 5
 export const dynamicParams = true
 
-async function getSlots(slug: string) {
+async function getSlots(slug: string): Promise<AuctionSlot[]> {
   const headers = new Headers()
   headers.append('Content-type', 'application/json')
 
@@ -30,11 +32,12 @@ async function getSlots(slug: string) {
     return []
   }
 
-  const slots = (await response.json()) as AuctionSlot[]
+  const slots = (await response.json()) as AuctionSlotDTO[]
 
-  console.log(response)
+  const pointsSum = slots.reduce((sum, slot) => sum + slot.points, 0)
+  const transformedSlots = slots.map(slot => transformAuctionSlotDTO(slot, pointsSum))
 
-  return slots
+  return transformedSlots
 }
 
 async function getAuctionInfo(slug: string) {
@@ -50,7 +53,7 @@ async function getAuctionInfo(slug: string) {
   if (response.status === 404 || response.status === 400)
     notFound()
 
-  const auction = (await response.json()) as Auction
+  const auction = (await response.json()) as AuctionDTO
   return auction
 }
 
@@ -105,18 +108,11 @@ export default async function AuctionPage(props: AuctionPageProps) {
     getAuctionRules(auctionUUID),
   ])
 
-  const date = new Intl.DateTimeFormat('ru-RU', {
-    minute: 'numeric',
-    month: 'numeric',
-    hour: 'numeric',
-    day: 'numeric',
-  }).format(Date.now())
-
   return (
     <main className="main_auction">
       <div className="container w-full h-full mx-auto">
         <Flex
-          className="w-full h-full gap-y-6 tablet:gap-y-8 pt-4 px-2 tablet:px-4"
+          className="w-full h-full gap-y-6 pt-5.5 tablet:gap-y-8 tablet:pt-4 px-2 tablet:px-4"
           direction="column"
         >
           <Flex
@@ -124,17 +120,13 @@ export default async function AuctionPage(props: AuctionPageProps) {
             direction="column"
           >
             <Flex className="gap-y-4 mobile:gap-x-6 flex-col mobile:flex-row tablet:gap-x-8" justify="between" align="start">
-              <AuctionTitle title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" date={date} />
+              <AuctionTitle title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" date={Date.now()} />
 
               <Flex className="gap-x-2">
                 <AuctionRulesDialog rules={rules} />
                 <CreateCodeDialog slots={slots} auctionUUID={auctionUUID} disabled={auctionInfo.isEnded || auctionInfo.isBetsClosed} />
               </Flex>
             </Flex>
-            <AuctionCaptions
-              createAt={date}
-              revalidateDate={Date.now()}
-            />
           </Flex>
           <FiltredSlotsList slots={slots} />
         </Flex>
