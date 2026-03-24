@@ -3,6 +3,7 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   srcDir: "content",
+  vite: { envDir: '../' },
 
   title: "Klewik Docs",
   description: "Документация к поинтовому аукциону Klewik",

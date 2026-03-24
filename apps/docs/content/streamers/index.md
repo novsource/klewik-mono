@@ -14,9 +14,39 @@ outline: deep
 ## Список стримеров с доступом
 
 <script setup>
+import StreamerBadge from '../../src/components/streamer-badge.vue'
+
 import {data as streamersList} from '../../data-loaders/streamers-list.data.ts'
 </script>
 
-<ul>
-    <li v-for="streamer in streamersList">{{ streamer.name }}</li>
-</ul>
+<div class="streamers-badges_list-wrapper">
+    <div class="streamers-badges_list">
+        <StreamerBadge 
+        v-for="streamer in streamersList" 
+        :name="streamer.name" 
+        :link="streamer.link" 
+        :avatarUrl="streamer.avatarUrl">
+            {{ streamer.name }}
+        </StreamerBadge>
+    </div>
+</div>
+
+<style lang="css" scoped>
+.streamers-badges_list-wrapper {
+    overflow: clip;
+    
+    width: 100%;
+    position: relative;
+}
+
+    .streamers-badges_list {
+    width: 100%;
+    
+    display: flex;
+    flex-wrap: wrap;
+    
+    margin-left: -24px;
+    
+    row-gap: 8px;
+    }
+</style>
