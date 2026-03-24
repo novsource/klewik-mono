@@ -11,8 +11,6 @@ const avatarClassesObj = computed(() => {
   }
 })
 
-console.log(props.avatarUrl)
-
 </script>
 
 <template>
@@ -71,7 +69,7 @@ console.log(props.avatarUrl)
         width: 4px;
         height: 4px;
 
-        margin: 0 4px;
+        margin: 0 2px;
 
         border-radius: 1000px;
         background-color: var(--color-gray);

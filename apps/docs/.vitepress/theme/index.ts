@@ -11,11 +11,5 @@ export default {
       // https://vitepress.dev/guide/extending-default-theme#layout-slots
     })
   },
-  enhanceApp({ app, router, siteData }) {
-    app.config.globalProperties.$serverUrl = import.meta.env.VITE_SERVER_URL
-    app.config.globalProperties.$login = import.meta.env.VITE_LOGIN
-    app.config.globalProperties.$password = import.meta.env.PASSWORD
-
-    app.provide('$serverUrl', import.meta.env.VITE_SERVER_URL)
-  }
+  enhanceApp({ app, router, siteData }) { }
 } satisfies Theme
