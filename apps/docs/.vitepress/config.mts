@@ -27,13 +27,7 @@ export default defineConfig({
             text: 'Создание аукциона', link: '/streamers/create-auction.md'
           },
           {
-            text: 'Игры в аукционе', collapsed: true, items: [
-              {
-                text: "Виды", link: '/streamers/game/game-types.md'
-              },
-              { text: "Режимы", link: '/streamers/game/game-mods.md' },
-              { text: "Форматы", link: '/streamers/game/game-formats.md' },
-            ]
+            text: 'Игры в аукционе', link: '/streamers/game.md'
           },
           {
             text: 'О лотах в аукционе', link: '/streamers/about-lots.md'
@@ -43,17 +37,13 @@ export default defineConfig({
           },
           {
             text: 'Настройка аукциона', link: '/streamers/auction-settings.md'
-          },
-          {
-            text: 'FAQ', link: '/streamers/faq.md'
           }
         ]
       },
       {
         text: 'Для зрителей',
         items: [
-          { text: 'Донат на лот', link: '/watchers/index.md' },
-          { text: "FAQ", link: '/watchers/donation.md' }
+          { text: 'Донат на лот', link: '/watchers/index.md' }
         ]
       },
     ],

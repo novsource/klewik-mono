@@ -14,22 +14,31 @@ outline: deep
 ## Список стримеров с доступом
 
 <script setup>
+import {ref} from 'vue'
+
+import SearchInput from '../../src/components/search-input.vue'
 import StreamerBadge from '../../src/components/streamer-badge.vue'
 
 import {data as streamersList} from '../../data-loaders/streamers-list.data.ts'
+
+const inputValue = ref('');
 </script>
 
+
 <div class="streamers-badges_list-wrapper">
+    <SearchInput class="streamers-badges_search-input" :value="inputValue" />
     <div class="streamers-badges_list">
         <StreamerBadge 
-        v-for="streamer in streamersList" 
-        :name="streamer.name" 
-        :link="streamer.link" 
-        :avatarUrl="streamer.avatarUrl">
+            v-for="streamer in streamersList" 
+            :name="streamer.name" 
+            :link="streamer.link" 
+            :avatarUrl="streamer.avatarUrl"
+        >
             {{ streamer.name }}
         </StreamerBadge>
     </div>
 </div>
+
 
 <style lang="css" scoped>
 .streamers-badges_list-wrapper {
@@ -39,7 +48,11 @@ import {data as streamersList} from '../../data-loaders/streamers-list.data.ts'
     position: relative;
 }
 
-    .streamers-badges_list {
+.streamers-badges_search-input {
+    margin-bottom: 20px;
+}
+
+.streamers-badges_list {
     width: 100%;
     
     display: flex;
