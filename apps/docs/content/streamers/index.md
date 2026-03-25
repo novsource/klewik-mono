@@ -16,17 +16,13 @@ outline: deep
 <script setup>
 import {ref} from 'vue'
 
-import SearchInput from '../../src/components/search-input.vue'
 import StreamerBadge from '../../src/components/streamer-badge.vue'
 
 import {data as streamersList} from '../../data-loaders/streamers-list.data.ts'
-
-const inputValue = ref('');
 </script>
 
 
 <div class="streamers-badges_list-wrapper">
-    <SearchInput class="streamers-badges_search-input" :value="inputValue" />
     <div class="streamers-badges_list">
         <StreamerBadge 
             v-for="streamer in streamersList" 

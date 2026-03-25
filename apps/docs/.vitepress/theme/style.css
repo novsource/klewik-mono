@@ -59,7 +59,9 @@
     --color-dark-accent: #302f32;
     --color-dark-foreground-light: #161617;
     --color-dark-foreground: #141315;
+
     --color-yellow: #cfc56f;
+    --color-yellow-dark: #211F1B;
 
     --color-red: #f76b63;
 
@@ -69,7 +71,9 @@
 
     --color-purple: #505285;
 
+    --color-blue-dark: #171E2B;
     --color-blue: #3481ED;
+
     --color-orange: #f58c08;
 
     --vp-c-default-1: var(--vp-c-gray-1);

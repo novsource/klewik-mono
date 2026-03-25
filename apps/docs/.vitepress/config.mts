@@ -43,7 +43,8 @@ export default defineConfig({
       {
         text: 'Для зрителей',
         items: [
-          { text: 'Донат на лот', link: '/watchers/index.md' }
+          { text: 'Донат на лот', link: '/watchers/index.md' },
+          { text: 'Ограничения страницы просмотра лотов', link: '/watchers/restrictions.md' }
         ]
       },
     ],
