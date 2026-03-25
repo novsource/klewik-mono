@@ -59,7 +59,9 @@
     --color-dark-accent: #302f32;
     --color-dark-foreground-light: #161617;
     --color-dark-foreground: #141315;
+
     --color-yellow: #cfc56f;
+    --color-yellow-dark: #211F1B;
 
     --color-red: #f76b63;
 
@@ -69,7 +71,9 @@
 
     --color-purple: #505285;
 
+    --color-blue-dark: #171E2B;
     --color-blue: #3481ED;
+
     --color-orange: #f58c08;
 
     --vp-c-default-1: var(--vp-c-gray-1);
@@ -77,7 +81,7 @@
     --vp-c-default-3: var(--vp-c-gray-3);
     --vp-c-default-soft: var(--vp-c-gray-soft);
 
-    --vp-c-brand-1: var(--vp-c-indigo-1);
+    --vp-c-brand-1: var(--color-green-accent);
     --vp-c-brand-2: var(--vp-c-indigo-2);
     --vp-c-brand-3: var(--vp-c-indigo-3);
     --vp-c-brand-soft: var(--vp-c-indigo-soft);
@@ -104,7 +108,7 @@
 
 :root {
     --vp-button-brand-border: transparent;
-    --vp-button-brand-text: var(--vp-c-white);
+    --vp-button-brand-text: var(--color-white);
     --vp-button-brand-bg: var(--vp-c-brand-3);
     --vp-button-brand-hover-border: transparent;
     --vp-button-brand-hover-text: var(--vp-c-white);
@@ -151,4 +155,34 @@
     --vp-custom-block-tip-text: var(--vp-c-text-1);
     --vp-custom-block-tip-bg: var(--vp-c-brand-soft);
     --vp-custom-block-tip-code-bg: var(--vp-c-brand-soft);
+}
+
+/**
+ * Component: Custom Block
+ * -------------------------------------------------------------------------- */
+
+:root {
+    --vp-custom-block-tip-border: transparent;
+    --vp-custom-block-tip-text: var(--vp-c-text-1);
+    --vp-custom-block-tip-bg: var(--vp-c-brand-soft);
+    --vp-custom-block-tip-code-bg: var(--vp-c-brand-soft);
+}
+
+body {
+    --vp-c-bg: var(--color-dark-foreground);
+    --vp-nav-bg-color: var(--color-dark-foreground-light);
+    --vp-local-nav-bg-color: var(--color-dark-foreground-light);
+    --vp-sidebar-bg-color: var(--color-dark-foreground);
+}
+
+.VPLocalNavOutlineDropdown {
+    --vp-c-border: var(--color-dark-light);
+}
+
+.VPLocalNavOutlineDropdown .header {
+    --vp-c-bg-soft: var(--color-dark-foreground);
+}
+
+.VPLocalNavOutlineDropdown .outline {
+    --vp-c-bg-soft: var(--color-dark-foreground);
 }
