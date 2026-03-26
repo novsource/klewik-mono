@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { BroadcastLeaderChannel } from '~shared/lib/broadcast-channel'
 import type { EventSourceMessage } from '~shared/lib/fetch-event-source'
@@ -21,18 +21,32 @@ export type UseTabLeaderOptions = {
 export const useTabLeader = (options?: UseTabLeaderOptions) => {
   const channel = getTabChannel()
 
-  const [isTabLeader, setIsTabLeader] = useState(() => {
-    channel.onChannelLeadership(() => {
+  const [isTabLeader, setIsTabLeader] = useState(channel.isLeader)
+
+  const attachListenersToChannel = useCallback((incomingChannel: NonNullable<typeof tabChannel>) => {
+    const unsubLeadership = incomingChannel.onChannelLeadership(() => {
       options?.onCurrentTabBecomesLeader?.()
 
       setIsTabLeader(true)
     })
-    channel.onNewLeader(() => {
+
+    const unsubNewLeader = incomingChannel.onNewLeader(() => {
       options?.onAnyTabBecomesLeader?.()
     })
 
-    return channel.isLeader
-  })
+    return [unsubLeadership, unsubNewLeader]
+  }, [setIsTabLeader, options])
+
+  const recreateChannel = async () => {
+    await channel.close()
+
+    tabChannel = new BroadcastLeaderChannel('tab-leader')
+    attachListenersToChannel(tabChannel)
+  }
+
+  useEffect(() => {
+    attachListenersToChannel(channel)
+  }, [channel, attachListenersToChannel])
 
   useEffect(() => {
     const handleUnload = () => {
@@ -47,21 +61,6 @@ export const useTabLeader = (options?: UseTabLeaderOptions) => {
       window.removeEventListener('beforeunload', handleUnload)
     }
   }, [channel])
-
-  const recreateChannel = async () => {
-    channel.close()
-
-    tabChannel = new BroadcastLeaderChannel('tab-leader')
-
-    tabChannel.onChannelLeadership(() => {
-      options?.onCurrentTabBecomesLeader?.()
-
-      setIsTabLeader(true)
-    })
-    tabChannel.onNewLeader(() => {
-      options?.onAnyTabBecomesLeader?.()
-    })
-  }
 
   return { channel, isTabLeader, recreateChannel }
 }

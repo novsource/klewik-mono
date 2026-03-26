@@ -22,7 +22,11 @@ import { useDashboardLayout } from '../hooks/use-dashboard-layout'
 export const DashboardLayout = () => {
   const { auctionUUID } = useParams() as { auctionUUID: Auction['uuid'] }
 
-  const { isSSEConnected } = useDashboardLayout(auctionUUID)
+  const { isSSEConnected, isDisconnectWithError } = useDashboardLayout(auctionUUID)
+
+  // if (isDisconnectWithError) {
+  //   throw new Error('Problem with connect to sse')
+  // }
 
   if (!isSSEConnected) {
     return <DashboardLayoutLoader />
