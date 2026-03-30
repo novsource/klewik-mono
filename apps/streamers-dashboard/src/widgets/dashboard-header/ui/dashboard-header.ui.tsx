@@ -1,17 +1,9 @@
 import type { ComponentProps, ComponentPropsWithoutRef, ReactNode } from 'react'
 import { memo, useMemo } from 'react'
 
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 import NumberFlow from '@number-flow/react'
-import { CopyToClipboardButton } from '~features/_common/copy-to-clipboard'
-import { Button } from 'klewik-ui/button'
-import { Divider } from 'klewik-ui/divider'
-import { Flex } from 'klewik-ui/flex'
-import { Icons } from 'klewik-ui/icons'
-import { MotionBox } from 'klewik-ui/motion-box'
-import { Popover, PopoverContent, PopoverTrigger } from 'klewik-ui/popover'
-import { toastSuccessNotification } from 'klewik-ui/toaster/lib'
 
 import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
@@ -28,9 +20,15 @@ import { ROUTES_TITLES } from '~shared/constants/router'
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
-import { Text, Title } from '~shared/components/typography'
+import { Title } from '~shared/components/typography'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import { Button } from 'klewik-ui/button'
+import { Divider } from 'klewik-ui/divider'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { MotionBox } from 'klewik-ui/motion-box'
 
 import { cn } from '~shared/utils'
 
@@ -123,28 +121,17 @@ function DesktopDashboardHeader() {
         )}
         />
 
-        <Button size="sm" startContent={<Icons.List />}>
-          Правила
-        </Button>
+        <Link to={`https://auction.klewik.ru/${uuid}`} target="_blank">
+          <Button
+            className="pointer-events-auto"
+            startContent={<Icons.EyeOpen />}
+            endContent={<Icons.LinkArrow />}
+            size="sm"
+          >
+            Зрителям
+          </Button>
+        </Link>
 
-        <Popover>
-          <PopoverTrigger render={<Button isIconOnly icon={<Icons.Share />} size="sm" />} />
-          <PopoverContent className="w-fit px-5 py-2" positionerProps={{ align: 'end', sideOffset: 8 }}>
-            <Text className="text-gray-accent mb-2">
-              Ссылка на аукцион для зрителей
-            </Text>
-            <div className="flex w-full text-white/80 text-md pl-2 py-0.25 bg-dark-accent rounded-small font-semibold items-center justify-between">
-              {`https://auction.klewik.ru/${uuid}`}
-              <CopyToClipboardButton
-                className="pointer-events-auto"
-                value={`https://auction.klewik.ru/${uuid}`}
-                onClick={() => {
-                  toastSuccessNotification('Ссылка успешно скопирована!')
-                }}
-              />
-            </div>
-          </PopoverContent>
-        </Popover>
         <Button isIconOnly icon={<Icons.Settings />} size="sm" onClick={openSettingsDialog} />
       </Flex>
     </Flex>

@@ -25,11 +25,12 @@ import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from 'klewik-ui/button'
 import { Divider } from 'klewik-ui/divider'
+import { Drawer, DrawerContent } from 'klewik-ui/drawer'
 import { Flex } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
 import { Input } from 'klewik-ui/input'
 import { ScrollArea } from 'klewik-ui/scroll-area'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from 'klewik-ui/sheet'
+import { SheetHeader } from 'klewik-ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'klewik-ui/tabs'
 
 import { cn } from '~shared/utils'
@@ -96,13 +97,13 @@ function MobileSettingsDialog(props: MobileSettingsDialogProps) {
   const closeDialog = () => setDialogOpenStatus({ dialog: 'settings', status: false })
 
   return (
-    <Sheet open={isOpen} onOpenChange={handleOnOpenChange}>
-      <SheetContent className={className} side="bottom" isFullPageSize {...restProps}>
+    <Drawer side="bottom" size="full" open={isOpen} onOpenChange={handleOnOpenChange}>
+      <DrawerContent slotClassnames={{ content: 'max-w-none m-0' }} {...restProps}>
         <Flex className="h-full" direction="column">
           <SheetHeader className="flex flex-row w-full justify-between h-fit items-center">
-            <SheetTitle className="mb-0">
+            <Title className="mb-0">
               Настройки
-            </SheetTitle>
+            </Title>
             <Button
               className="text-gray hover:text-gray-accent"
               variant="ghost"
@@ -116,8 +117,8 @@ function MobileSettingsDialog(props: MobileSettingsDialogProps) {
           <SettingsTabs />
         </Flex>
 
-      </SheetContent>
-    </Sheet>
+      </DrawerContent>
+    </Drawer>
   )
 }
 

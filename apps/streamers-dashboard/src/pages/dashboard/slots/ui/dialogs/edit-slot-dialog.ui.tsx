@@ -153,7 +153,7 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
         <MobileAppDialog {...mergedSheetProps}>
           <MobileAppDialog.Trigger>{trigger}</MobileAppDialog.Trigger>
 
-          <MobileAppDialog.Content>
+          <MobileAppDialog.Content slotClassnames={{ content: 'max-w-none m-0 h-full' }}>
 
             <EditSlotFormComposer form={form} className="flex flex-col h-full justify-between">
 
@@ -187,12 +187,12 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
                       </Flex>
 
                       <ModalFooter>
-                        <Button onClick={closeDialog}>Отмена</Button>
                         <Button
                           className="text-red hover:text-red hover:border-red/60"
                         >
                           Подтвердить
                         </Button>
+                        <Button onClick={closeDialog}>Отмена</Button>
                       </ModalFooter>
                     </ModalContent>
                   </Modal>
@@ -238,11 +238,16 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
               </Flex>
 
               <MobileAppDialog.Footer className="gap-x-3" direction="row">
+                <EditSlotFormComposer.SubmitButton
+                  className="w-full h-full"
+                  startContent={<Icons.Save width={14} height={14} />}
+                  onClick={handleSubmit}
+                />
                 <SheetClose
                   className="relative top-0 right-0"
                   render={(
                     <Button
-                      className="w-fit"
+                      className="w-full"
                       icon={<Icons.LargeCross width={14} height={14} />}
                       onClick={closeDialog}
                       {...closeButtonProps}
@@ -250,11 +255,6 @@ export const EditSlotDialog = (props: EditSlotDialogProps) => {
                       Отмена
                     </Button>
                   )}
-                />
-                <EditSlotFormComposer.SubmitButton
-                  className="w-full h-full"
-                  startContent={<Icons.Save width={14} height={14} />}
-                  onClick={handleSubmit}
                 />
               </MobileAppDialog.Footer>
 

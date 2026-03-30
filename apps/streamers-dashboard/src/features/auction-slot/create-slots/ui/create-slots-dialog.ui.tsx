@@ -156,11 +156,8 @@ export const CreateSlotsDialog = (props: CreateSlotsDialogProps) => {
     >
       <MobileAppDialog.Trigger className="w-full">{trigger}</MobileAppDialog.Trigger>
 
-      <MobileAppDialog.Content>
+      <MobileAppDialog.Content slotClassnames={{ content: 'h-full m-0 max-w-none' }}>
         <MobileAppDialog.Header className="flex-col gap-y-5 items-start px-0">
-          <MobileAppDialog.ExtraActionsDialog>
-            <Button>Here</Button>
-          </MobileAppDialog.ExtraActionsDialog>
 
           <MobileAppDialog.HeaderTitle
             // icon={<CreateSlotDialogIcon />}

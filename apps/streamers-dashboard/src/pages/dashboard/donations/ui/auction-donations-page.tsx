@@ -67,7 +67,7 @@ export const AuctionDonationsPage = () => {
         <MediaQueryViewToggler.MatchedItem>
           <PageHeader />
 
-          <Flex className="gap-x-3 justify-self-end">
+          <Flex className="w-full gap-x-3 justify-between">
             <DonationsStatusFilterSelect
               status={donationsFilterValue}
               onValueChange={setDonationsFilterValue}

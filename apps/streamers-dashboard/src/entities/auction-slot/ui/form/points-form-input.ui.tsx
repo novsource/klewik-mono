@@ -155,7 +155,7 @@ export const SlotPointsFormInput = <
   }
 
   return (
-    <Flex align="start" {...containerProps}>
+    <Flex className="gap-3" align="start" {...containerProps}>
       <NumberInput
         slotClassNames={{
           base: 'w-full grow',

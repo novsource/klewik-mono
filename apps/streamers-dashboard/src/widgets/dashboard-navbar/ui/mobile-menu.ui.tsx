@@ -21,9 +21,10 @@ import { useMediaQuery } from '~shared/hooks'
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from 'klewik-ui/button'
+import { Drawer, DrawerContent, DrawerTrigger } from 'klewik-ui/drawer'
 import { Flex } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
-import { Sheet, SheetContent, SheetHeader, SheetTrigger } from 'klewik-ui/sheet'
+import { SheetHeader } from 'klewik-ui/sheet'
 import { Switch } from 'klewik-ui/switch'
 import { Typography } from 'klewik-ui/typography'
 
@@ -31,8 +32,8 @@ import { cn } from '~shared/utils'
 
 export const MobileMenu = () => {
   return (
-    <Sheet>
-      <SheetTrigger
+    <Drawer>
+      <DrawerTrigger
         nativeButton={false}
         render={(
           <Button
@@ -48,7 +49,7 @@ export const MobileMenu = () => {
           </Button>
         )}
       />
-      <SheetContent className="w-2/3 left-auto overflow-scroll" isFullPageSize>
+      <DrawerContent slotClassnames={{ content: 'm-0 h-full max-w-none', popup: 'max-w-[65%]' }}>
         <Flex className="h-full" direction="column">
 
           <SheetHeader className="space-y-0">
@@ -82,8 +83,8 @@ export const MobileMenu = () => {
           </Flex>
         </Flex>
 
-      </SheetContent>
-    </Sheet>
+      </DrawerContent>
+    </Drawer>
   )
 }
 
