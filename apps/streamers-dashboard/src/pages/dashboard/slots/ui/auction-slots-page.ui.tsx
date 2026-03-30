@@ -60,20 +60,37 @@ function PageTitle() {
   const classes = useMemo(() => cn(auctionSlotsPageStyles.actionPanel), [])
 
   return (
-    <Flex className={classes} align="start" direction="column">
-      <Typography
-        className="tablet:text-title-xl desktop:text-title-2xl overflow-clip"
-        tag="h1"
-      >
-        Слоты
-      </Typography>
-      <Typography
-        className="text-gray/80 max-tablet:text-sm"
-        tag="span"
-      >
-        Просмотр, добавление и изменение слотов в аукционе
-      </Typography>
-    </Flex>
+    <div className="w-full flex gap-x-6 items-center">
+      <div className="h-fit w-fit rounded-small bg-green-accent/50 p-0.5 outline-4 outline-green-accent/15">
+        <Flex
+          className="relative size-10 tablet:size-11.5 rounded-small p-1.25"
+          align="center"
+          justify="center"
+        >
+          <Icons.Slots
+            className="text-white-accent"
+            width={32}
+            height={32}
+            gradient
+          />
+        </Flex>
+      </div>
+
+      <Flex className={classes} align="start" direction="column">
+        <Typography
+          className="tablet:text-title-xl desktop:text-title-2xl overflow-clip"
+          tag="h1"
+        >
+          Слоты
+        </Typography>
+        <Typography
+          className="text-gray/80 max-tablet:text-sm"
+          tag="span"
+        >
+          Просмотр, добавление и изменение слотов в аукционе
+        </Typography>
+      </Flex>
+    </div>
   )
 }
 

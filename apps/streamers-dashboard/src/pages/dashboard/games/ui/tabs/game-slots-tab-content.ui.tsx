@@ -1,18 +1,7 @@
-import type { TabsContentProps } from 'klewik-ui/tabs'
-
 import type { SlotsWheelTabSlots } from '../../styles'
 
 import type { ChangeEvent } from 'react'
 import { useMemo, useState } from 'react'
-
-import { Button } from 'klewik-ui/button'
-import { Flex } from 'klewik-ui/flex'
-import { Icons } from 'klewik-ui/icons'
-import { Input } from 'klewik-ui/input'
-import { TabsContent } from 'klewik-ui/tabs'
-import { Toggle, ToggleGroup } from 'klewik-ui/toggle'
-
-import { useSortingSlots } from '~pages/dashboard/slots/lib'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
@@ -20,6 +9,14 @@ import { useDebounceCallback } from '~shared/hooks'
 import { useLocalSearchFilter } from '~shared/hooks/use-local-search-filter/use-local-search-filter'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import { Button } from 'klewik-ui/button'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+import { Input } from 'klewik-ui/input'
+import type { TabsContentProps } from 'klewik-ui/tabs'
+import { TabsContent } from 'klewik-ui/tabs'
+import { Toggle, ToggleGroup } from 'klewik-ui/toggle'
 
 import { twSlotsStyles } from '~shared/utils'
 
@@ -39,13 +36,17 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
   const [slotCategory, setSlotCategory] = useState<'all' | 'active' | 'dropped'>('all')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const sortedSlots = useSortingSlots(slots, { type: 'descending', field: 'points' })
+  const localSortedSlots = useMemo(() => [...slots].sort((a, b) => b.points - a.points), [slots])
 
-  const localSearchedSlots = useLocalSearchFilter(searchQuery, sortedSlots, (query, slot) => {
+  const localSearchedSlots = useLocalSearchFilter(searchQuery, localSortedSlots, (query, slot) => {
     const isTitleIncludesSearchQuery = slot.title.toLowerCase().includes(query.toLowerCase())
 
-    const isSlotDropped = slot.isDropped
-    const isSlotIncludeCategory = slotCategory === 'all' ? true : slotCategory === 'active' ? !isSlotDropped : isSlotDropped
+    const isSlotIncludeCategory
+      = slotCategory === 'all'
+        ? true
+        : slotCategory === 'active'
+          ? !slot.isDropped
+          : slot.isDropped
 
     return isTitleIncludesSearchQuery && isSlotIncludeCategory
   })
@@ -58,12 +59,12 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
     debouncedSearch(value)
   }
 
-  const tabsContentStyles = useMemo(() =>
+  const tabsContentClasses = useMemo(() =>
     twSlotsStyles(slotsWheelTabStyles, slotsClassnames), [slotsClassnames])
 
   return (
     <TabsContent
-      className={tabsContentStyles.content}
+      className={tabsContentClasses.content}
       value={TABS_CONTENT_NAMES.SLOTS}
       {...tabsContentProps}
     >
