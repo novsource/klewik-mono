@@ -6,8 +6,6 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import type { AuctionSlotsDTO } from '~shared/api/http/auction-slots'
 
-import type { SortingOptions } from '~shared/store/model'
-
 import { getPercentValue } from '~shared/utils/common'
 
 import { getAuctionSlotsThunk } from '../api'
@@ -98,7 +96,7 @@ const slice = createSlice({
       else {
         state.slotsPointsSum
           = filtredSlots.reduce((a, b) => a + b.points, 0)
-            + payload.reduce((a, b) => a + b.points, 0)
+          + payload.reduce((a, b) => a + b.points, 0)
       }
     },
     updateAlivedSlotsIds(state, action: PayloadAction<UpdateAlivedSlotsActionPayload>) {
@@ -211,9 +209,6 @@ const slice = createSlice({
 
       state.sortedSlots = payload
     },
-    setSlotsSortOptions(state, action: PayloadAction<SortingOptions<AuctionSlot>>) {
-      state.sortingOptions = action.payload
-    },
     setPointsSum(state, action: PayloadAction<number>) {
       state.slotsPointsSum = action.payload
     },
@@ -230,9 +225,6 @@ const slice = createSlice({
     },
     getSlotsPointsSum(state) {
       return state.slotsPointsSum
-    },
-    getSlotsSortOptions: (state) => {
-      return state.sortingOptions
     },
   },
   extraReducers: (builder) => {

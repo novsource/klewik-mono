@@ -43,9 +43,9 @@ export const buttonVariants = cva<ButtonVariants>(
     variants: {
       variant: {
         default:
-          'border-1 border-gray/20 bg-dark text-gray-accent hover:border-gray/40 hover:bg-dark-accent/40 hover:text-white active:bg-dark/80',
+          'border-1 border-gray/20 bg-dark text-gray-accent shadow-[box-shadow:0px_2px_8px_2px_rgba(0,0,0,0.1)] hover:border-gray/40 hover:bg-dark-accent/40 hover:text-white active:bg-dark/80',
         action:
-          'bg-green-dark text-green-accent/80 hover:bg-green/10 hover:text-green-accent',
+          'bg-green-dark text-green-accent/80 hover:bg-green/10 shadow-[0px_0.25px_0.25px_0px_rgba(255,255,255,0.1)_inset,0px_1px_2px_0px_rgba(255,255,255,0.025)_inset] hover:text-green-accent',
         error: 'border-1 border-red/20 bg-red/5 text-red hover:bg-red/15 hover:border-red/30',
         ghost: 'border-transparent bg-transparent',
         borderless: 'border-transparent bg-dark text-gray-accent hover:border-gray/40 hover:bg-dark-accent/40 hover:text-white active:bg-dark/80',

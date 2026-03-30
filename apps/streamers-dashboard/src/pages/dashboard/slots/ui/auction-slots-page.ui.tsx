@@ -4,11 +4,15 @@ import { CreateSlotsDialog } from '~features/auction-slot/create-slots/ui'
 import { ExportSlotsPopover } from '~features/auction-slot/export-slots/ui'
 import { SlotsCountStatisticCard, SlotsPointsSumStatisticCard } from '~features/auction-slot/watch-statistics/ui'
 
+import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
 
 import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggler'
 
 import { useDocumentTitle } from '~shared/hooks'
+
+import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from 'klewik-ui/button'
 import { Divider } from 'klewik-ui/divider'
@@ -18,7 +22,10 @@ import { Typography } from 'klewik-ui/typography'
 
 import { cn, twSlotsStyles } from '~shared/utils'
 
+import { SlotsPageContextProvider, useSlotsPageContext } from '../context/slots-page.context'
+import { useLocalFilterSlots } from '../hooks/use-local-filter-slots'
 import { auctionSlotsPageStyles } from '../styles'
+import { FilterSlotsStatusSelect } from './combobox/filter-status-select.ui'
 import { SortingSlotsCombobox } from './combobox/sorting-slots-combobox.ui'
 import { AuctionSlotsVirtualList } from './virtual-lists/slots-virtual-list.ui'
 
@@ -28,24 +35,23 @@ export const AuctionSlotsPage = () => {
   const classes = useMemo(() => twSlotsStyles(auctionSlotsPageStyles), [])
 
   return (
-    <div
-      className={classes.base}
-    >
-      <MediaQueryViewToggler query={greaterThenDeviceWidthMediaQueries.tablet}>
-        <MediaQueryViewToggler.MatchedItem>
-          <Flex
-            className={classes.contentWrapper}
-            wrap="nowrap"
-            align="center"
-            justify="end"
-          >
-            <PageTitle />
-          </Flex>
-        </MediaQueryViewToggler.MatchedItem>
-      </MediaQueryViewToggler>
+    <div className={classes.base}>
+      <SlotsPageContextProvider>
+        <MediaQueryViewToggler query={greaterThenDeviceWidthMediaQueries.tablet}>
+          <MediaQueryViewToggler.MatchedItem>
+            <Flex
+              className={classes.contentWrapper}
+              wrap="nowrap"
+              align="center"
+              justify="end"
+            >
+              <PageTitle />
+            </Flex>
+          </MediaQueryViewToggler.MatchedItem>
+        </MediaQueryViewToggler>
 
-      <ListActionsPanel />
-      <AuctionSlotsVirtualList />
+        <PageContent />
+      </SlotsPageContextProvider>
     </div>
   )
 }
@@ -71,18 +77,36 @@ function PageTitle() {
   )
 }
 
+function PageContent() {
+  const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+
+  const { state: { filterSlotsOptions } } = useSlotsPageContext()
+
+  const localFilteredSlots = useLocalFilterSlots(storedAuctionSlots, filterSlotsOptions)
+
+  return (
+    <>
+      <SlotsListActionsPanel />
+      <AuctionSlotsVirtualList data={localFilteredSlots} />
+    </>
+  )
+}
+
 type ListActionsPanelProps = {
   disabled?: boolean
 }
 
-function ListActionsPanel(props: ListActionsPanelProps) {
+function SlotsListActionsPanel(props: ListActionsPanelProps) {
   const { disabled } = props
 
   return (
     <MediaQueryViewToggler query={greaterThenDeviceWidthMediaQueries.tablet}>
       <MediaQueryViewToggler.MatchedItem>
         <div className="w-full h-10 flex justify-between items-center gap-x-1 mb-4">
-          <SortingSlotsCombobox />
+          <div className="flex gap-x-2 justify-center items-center">
+            <SortingSlotsCombobox />
+            <FilterSlotsStatusSelect />
+          </div>
 
           <Flex className="w-full h-full gap-x-2 items-center" justify="end">
             <ExportSlotsPopover />
@@ -108,11 +132,15 @@ function ListActionsPanel(props: ListActionsPanelProps) {
 
       <MediaQueryViewToggler.NotMatchedItem>
         <Flex className="mt-3.5" justify="between">
+
           <Flex className="gap-x-1.5">
             <SlotsCountStatisticCard />
             <SlotsPointsSumStatisticCard />
           </Flex>
-          <SortingSlotsCombobox />
+
+          <div className="flex gap-x-3.5">
+            <SortingSlotsCombobox />
+          </div>
         </Flex>
       </MediaQueryViewToggler.NotMatchedItem>
     </MediaQueryViewToggler>
