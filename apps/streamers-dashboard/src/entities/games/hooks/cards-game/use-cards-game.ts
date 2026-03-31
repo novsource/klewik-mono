@@ -12,6 +12,7 @@ import { getHEXColor, shuffleArray } from '~shared/utils/common'
 type UseCardsGameOptions = {
   amount?: number
   onCardSelect?: (card: CardsGameUnit) => void
+  onCardConfirm?: (card: CardsGameUnit) => void
 }
 
 export type UseCardsGameReturnValue = CardsGameContextValue
@@ -27,7 +28,7 @@ export const useCardsGame = (auctionSlots: AuctionSlot[], options?: UseCardsGame
     return transformAuctionSlotsToCardUnits(winners)
   })
   const [choosedCardUnit, setChoosedCardUnit] = useState<NullablePossible<CardsGameUnit>>(null)
-  const [preparedCardUnit, setPreparedCardUnit] = useState<NullablePossible<CardsGameUnit>>(null)
+  const [confirmedCard, setConfirmedCard] = useState<NullablePossible<CardsGameUnit>>(null)
 
   useEffect(() => {
     if (auctionSlots.length === 0) {
@@ -46,8 +47,19 @@ export const useCardsGame = (auctionSlots: AuctionSlot[], options?: UseCardsGame
     options?.onCardSelect?.(card)
   }
 
+  const confirmCard = (card: CardsGameUnit) => {
+    setChoosedCardUnit(card)
+    setConfirmedCard(card)
+
+    options?.onCardConfirm?.(card)
+  }
+
   const clearChoosenCard = () => {
     setChoosedCardUnit(null)
+  }
+
+  const clearConfirmedCard = () => {
+    setConfirmedCard(null)
   }
 
   const shuffleCards = () => {
@@ -60,11 +72,12 @@ export const useCardsGame = (auctionSlots: AuctionSlot[], options?: UseCardsGame
     state: {
       cardsUnits,
       choosedCardUnit,
-      preparedCardUnit,
+      confirmedCard,
     },
     actions: {
-      prepareCard: setPreparedCardUnit,
+      confirmCard,
       chooseCard,
+      clearConfirmedCard,
       clearChoosenCard,
       shuffleCards,
     },

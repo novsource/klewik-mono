@@ -35,7 +35,8 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
 
-        --header-height: 60px;
+        --aside-width: 65px;
+        --header-height: 48px;
         --footer-height: 64px;
         --mobile-menu-bottom: 16px;
         --sheet-height: calc(100% - 20px);

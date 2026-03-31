@@ -1,15 +1,12 @@
 import type { CardsGameUnit } from '~entities/games/model/cards-game'
-import type { Variants } from 'motion/react'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import NumberFlow from '@number-flow/react'
+import { useGameConfetti } from '~entities/games/hooks'
+import { useCardsGameAnimations, useCardsGameLayout } from '~entities/games/hooks/cards-game'
 import { WinnerGameSlotInfo } from '~entities/games/ui'
 import { CardsGame } from '~entities/games/ui/card-game/cards-game.ui'
-import { getCardFieldPositionByIndex } from '~entities/games/utils/cards'
-import { Button } from 'klewik-ui/button'
-import { Icons } from 'klewik-ui/icons'
-import { MotionBox } from 'klewik-ui/motion-box'
 import { AnimatePresence } from 'motion/react'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -20,144 +17,92 @@ import { useCssVar } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
+import { Button } from 'klewik-ui/button'
+import { Icons } from 'klewik-ui/icons'
+import { MotionBox } from 'klewik-ui/motion-box'
+
 import { cn, getHEXColor, hexToRgba } from '~shared/utils'
 
 import { GAME_CARDS_BG_ICONS } from '../../constants/game-cards-icons'
 import { useAuctionGameContext } from '../../context/auction-game-context'
 import { useAuctionCardsGame } from '../../hooks/use-auction-cards-game'
-import { startWinnerConfetti } from '../../utils/cards-game-confetti'
-
-type ChoosedAnimationVariantsArgs = {
-  coords: {
-    x: number
-    y: number
-  }
-}
-
-const cardsAnimationVariants: Variants = {
-  initial: { position: 'relative', opacity: 0, scale: 0.75, clipPath: `rect(0% 100% 100% 0%)` },
-  open: { opacity: 1, scale: 1, transition: { duration: 1.25, type: 'spring' }, clipPath: `rect(0% 100% 100% 0%)` },
-  choosed: (args: ChoosedAnimationVariantsArgs) => ({
-    zIndex: 104,
-    opacity: 1,
-    scale: 1.6,
-    x: args.coords.x,
-    y: args.coords.y,
-    transition: { duration: 1.25, type: 'spring' },
-  }),
-  fired: (args: ChoosedAnimationVariantsArgs) => ({
-    zIndex: 104,
-    opacity: 1,
-    scale: 1.6,
-    x: args.coords.x,
-    y: args.coords.y,
-    clipPath: `rect(100% 100% 100% 0%)`,
-    transition: { duration: 4.5 },
-  }),
-}
 
 export const AuctionCardsGame = () => {
-  const [isChoosedCardConfirmed, setIsChoosedCardConfirmed] = useState(false)
-  const [isFireCardAnimationEnded, setIsFireCardAnimationEnded] = useState(true)
-
-  const gameFieldContainerRef = useRef<HTMLDivElement>(null)
-  const fireworksIntervalRef = useRef<NullablePossible<NodeJS.Timeout>>(null)
+  const [isCardRevealAnimationEnded, setIsCardRevealAnimationEnded] = useState(true)
 
   const gameCardWidthCssVar = useCssVar('--game-card-width', '0px')
   const gameCardHeightCssVar = useCssVar('--game-card-height', '0px')
 
+  const auctionGameContext = useAuctionGameContext()
   const { queryState, ...game } = useAuctionCardsGame()
+
+  const cardsGameLayout = useCardsGameLayout(game.state.cardsUnits, { rows: 5, columns: 6 })
+  const cardsAnimations = useCardsGameAnimations(cardsGameLayout.cardsLayoutInfo)
+
+  const gameConfetti = useGameConfetti()
+
+  const isCardConfirmed = game.state.confirmedCard !== null
 
   const reset = () => {
     game.actions.clearChoosenCard()
+    game.actions.clearConfirmedCard()
 
-    setIsChoosedCardConfirmed(false)
-    setIsFireCardAnimationEnded(false)
+    setIsCardRevealAnimationEnded(false)
   }
 
   useEffect(() => {
-    if (!isChoosedCardConfirmed) {
-      if (fireworksIntervalRef.current) {
-        clearInterval(fireworksIntervalRef.current)
-        fireworksIntervalRef.current = null
-      }
-
+    if (!isCardConfirmed) {
+      gameConfetti.stopAllConfetti()
       return
     }
 
-    if (isFireCardAnimationEnded && isChoosedCardConfirmed) {
-      fireworksIntervalRef.current = startWinnerConfetti()
-    }
-
-    return () => {
-      if (fireworksIntervalRef.current) {
-        clearInterval(fireworksIntervalRef.current)
+    if (isCardRevealAnimationEnded && isCardConfirmed) {
+      if (auctionGameContext.state.mode === 'classic') {
+        gameConfetti.startWinnerConfetti()
+      }
+      else {
+        gameConfetti.startDropoutConfetti()
       }
     }
-  }, [isChoosedCardConfirmed, isFireCardAnimationEnded])
+  }, [gameConfetti, isCardConfirmed, isCardRevealAnimationEnded, auctionGameContext.state.mode])
 
-  const renderGameCard = (card: CardsGameUnit, index: number) => {
-    const gameFieldContainer = gameFieldContainerRef.current
+  const renderGameCard = (card: CardsGameUnit) => {
+    const cardLayoutInfo = cardsGameLayout.getCardLayoutInfo(card.id)
+    const currentCardAnimationVariant = cardsAnimations.getCardAnimationVariant(card.id)
 
-    const isCurrentCardChoosed = game.state.choosedCardUnit?.id === card.id
+    if (!cardLayoutInfo)
+      return
 
-    const fieldColumnsCount = 6
-    const fieldRowsCount = 5
-
-    const fieldWidth = gameFieldContainer?.offsetWidth || 0
-    const fieldHeight = gameFieldContainer?.offsetHeight || 0
-
-    const cardWidth = fieldWidth / fieldColumnsCount
-    const cardHeight = fieldHeight / fieldRowsCount
-
-    const cardPosition = getCardFieldPositionByIndex(index, fieldColumnsCount)
-
-    const cardsGap = 1
-    const headerHeight = 48
-    const asideWidth = 65
-
-    const initialX = cardPosition.column * cardWidth + (cardPosition.column * cardsGap) + ((gameFieldContainer?.offsetLeft ?? 0) + asideWidth)
-    const initialY = cardPosition.row * cardHeight + (cardPosition.row * cardsGap) + ((gameFieldContainer?.offsetTop ?? 0) + headerHeight)
-
-    const targetX = (document.body.offsetWidth / 2) - initialX - cardWidth / 2
-    const targetY = (document.body.offsetHeight / 2) - initialY - cardHeight / 2
-
-    const animationVariant = isChoosedCardConfirmed && isCurrentCardChoosed
-      ? 'fired'
-      : isCurrentCardChoosed
-        ? 'choosed'
-        : 'open'
-
-    gameCardWidthCssVar.set(`${cardWidth}px`)
-    gameCardHeightCssVar.set(`${cardHeight}px`)
+    gameCardWidthCssVar.set(`${cardLayoutInfo.width}px`)
+    gameCardHeightCssVar.set(`${cardLayoutInfo.height}px`)
 
     return (
       <MotionBox
-        variants={cardsAnimationVariants}
+        variants={cardsAnimations.animationVariants}
         initial="initial"
-        animate={animationVariant}
+        animate={currentCardAnimationVariant?.animate}
+        custom={currentCardAnimationVariant?.custom}
+        exit={{ opacity: 0, scale: 0 }}
         onAnimationComplete={(definition) => {
-          if (definition !== 'fired') {
-            setIsFireCardAnimationEnded(false)
+          if (definition !== 'reveal') {
+            setIsCardRevealAnimationEnded(false)
           }
           else {
-            setIsFireCardAnimationEnded(true)
+            setIsCardRevealAnimationEnded(true)
           }
         }}
-        custom={{ coords: { x: targetX, y: targetY } }}
-        exit={{ opacity: 0, scale: 0 }}
       >
-        <GameCard card={card} confirmed={isChoosedCardConfirmed} />
+        <GameCard card={card} confirmed={isCardConfirmed} />
       </MotionBox>
     )
   }
 
   const isBackdropShowed = !!game.state.choosedCardUnit
-  const isShouldShowCardInfo = isFireCardAnimationEnded && isChoosedCardConfirmed
-  const isShouldShowControlsPanel = !isChoosedCardConfirmed
+  const isShouldShowCardInfo = isCardRevealAnimationEnded && isCardConfirmed
+  const isShouldShowControlsPanel = !isCardConfirmed
 
   return (
-    <div ref={gameFieldContainerRef} className="flex w-full h-full">
+    <div ref={cardsGameLayout.ref} className="flex w-full h-full">
       <CardsGame.Field>
         {renderGameCard}
       </CardsGame.Field>
@@ -167,15 +112,8 @@ export const AuctionCardsGame = () => {
           <>
             <CardsGame.Backdrop />
 
-            {isShouldShowCardInfo && <GameChoosedCardInfo card={game.state.choosedCardUnit!} onClose={reset} />}
-            {isShouldShowControlsPanel && (
-              <GameCardControlsPanel
-                onConfirm={() => {
-                  setIsChoosedCardConfirmed(true)
-                }}
-                onClose={reset}
-              />
-            )}
+            {isShouldShowCardInfo && <GameConfirmedCardInfo card={game.state.choosedCardUnit!} onClose={reset} />}
+            {isShouldShowControlsPanel && <GameCardControlsPanel onClose={reset} />}
           </>
         )}
       </CardsGame.Portal>
@@ -202,8 +140,7 @@ function GameCard(props: GameCardProps) {
   const color = useMemo(() => getHEXColor(), [])
 
   const isCurrentCardChoosed = game.state.choosedCardUnit?.id === card.id
-
-  const isCardFireAnimationStarted = isCurrentCardChoosed && confirmed
+  const isCardRevealAnimationStarted = isCurrentCardChoosed && confirmed
 
   return (
     <CardsGame.Card
@@ -222,7 +159,7 @@ function GameCard(props: GameCardProps) {
       }}
     >
       <AnimatePresence>
-        {isCardFireAnimationStarted && (
+        {isCardRevealAnimationStarted && (
           <>
             <MotionBox
               className="absolute -top-2.25 h-0.5 bg-red z-[106]"
@@ -288,7 +225,7 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
     if (!cardsGame.state.choosedCardUnit)
       return
 
-    const response = await cardsGame.actions.confirmCardChoice(cardsGame.state.choosedCardUnit.auctionSlotId)
+    const response = await cardsGame.actions.confirmCardChoice(cardsGame.state.choosedCardUnit)
     if (response?.error || !response)
       return
 
@@ -351,7 +288,7 @@ type GameCardSlotInfoProps = {
   onClose?: () => void
 }
 
-function GameChoosedCardInfo(props: GameCardSlotInfoProps) {
+function GameConfirmedCardInfo(props: GameCardSlotInfoProps) {
   const { card, onClose } = props
 
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
