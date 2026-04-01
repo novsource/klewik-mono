@@ -116,12 +116,11 @@ export const AuctionCardsGame = () => {
 
 type GameCardProps = {
   card: CardsGameUnit
-  confirmed?: boolean
   onSelect?: (card: CardsGameUnit) => void
 }
 
 function GameCard(props: GameCardProps) {
-  const { card, confirmed = false, onSelect } = props
+  const { card, onSelect } = props
 
   const game = useAuctionCardsGame()
 
@@ -133,19 +132,20 @@ function GameCard(props: GameCardProps) {
   const color = useMemo(() => getHEXColor(), [])
 
   const isCurrentCardChoosed = game.state.choosedCardUnit?.id === card.id
-  const isCardRevealAnimationStarted = isCurrentCardChoosed && confirmed
+  const isCardConfirmed = game.state.confirmedCard?.id === card.id
+  const isCardRevealAnimationStarted = isCurrentCardChoosed && isCardConfirmed
 
   return (
     <CardsGame.Card
       key={card.title}
       className={cn(
         'relative overflow-y-clip',
-        isCurrentCardChoosed && !confirmed && ' border-dark-accent data-[hovered=true]:border-dark-accent',
-        isCurrentCardChoosed && confirmed && 'data-[hovered=true]:border-none cursor-default',
+        isCurrentCardChoosed && !isCardConfirmed && ' border-dark-accent data-[hovered=true]:border-dark-accent',
+        isCurrentCardChoosed && isCardConfirmed && 'data-[hovered=true]:border-none cursor-default',
       )}
       cardUnit={card}
-      disableRotateAnimation={confirmed}
-      disableGlareAnimation={confirmed || !isCurrentCardChoosed}
+      disableRotateAnimation={isCardConfirmed}
+      disableGlareAnimation={isCardConfirmed || !isCurrentCardChoosed}
       onClick={() => {
         game.actions.chooseCard(card)
 
@@ -181,23 +181,6 @@ function GameCard(props: GameCardProps) {
         </div>
 
       </AnimatePresence>
-
-      {/* <div
-        className="absolute w-[var(--game-card-width)] h-[var(--game-card-height)] p-3"
-      >
-        <div
-          className="w-full h-full bg-dark-foreground/15"
-          style={{
-            backgroundImage: 'radial-gradient(circle, var(--color-dark-foreground), var(--color-yellow))',
-            backgroundSize: 10,
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: `right`,
-            maskImage: 'url("https://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg")',
-            maskRepeat: 'repeat',
-            maskSize: 24,
-          }}
-        />
-      </div> */}
     </CardsGame.Card>
   )
 }

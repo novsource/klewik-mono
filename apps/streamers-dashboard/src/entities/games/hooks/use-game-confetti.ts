@@ -5,6 +5,8 @@ import { transform } from 'motion'
 
 import { useUnmount } from '~shared/hooks'
 
+import { getRandomNumberInRange } from '~shared/utils/common'
+
 export const useGameConfetti = () => {
   const fireworksIntervalRef = useRef<NullablePossible<NodeJS.Timeout>>(null)
 
@@ -33,10 +35,6 @@ function runWinnerConfetti() {
   const animationEnd = Date.now() + duration
   const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 102 }
 
-  function randomInRange(min: number, max: number) {
-    return Math.random() * (max - min) + min
-  }
-
   const interval = setInterval(() => {
     const timeLeft = animationEnd - Date.now()
 
@@ -46,8 +44,8 @@ function runWinnerConfetti() {
 
     const particleCount = 50 * (timeLeft / duration)
 
-    confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } })
-    confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } })
+    confetti({ ...defaults, particleCount, origin: { x: getRandomNumberInRange(0.1, 0.3), y: Math.random() - 0.2 } })
+    confetti({ ...defaults, particleCount, origin: { x: getRandomNumberInRange(0.7, 0.9), y: Math.random() - 0.2 } })
   }, 250)
 
   return interval
@@ -58,13 +56,9 @@ type DropoutConfettiOptions = {
 }
 
 function runDropoutConfetti(options?: DropoutConfettiOptions) {
-  const duration = options?.duration ?? (15 * 1000)
+  const duration = options?.duration ?? (10 * 1000)
   const animationEnd = Date.now() + duration
-  const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 102 }
-
-  function randomInRange(min: number, max: number) {
-    return Math.random() * (max - min) + min
-  }
+  const defaults = { startVelocity: 0, ticks: 60, zIndex: 102 }
 
   const interval = setInterval(() => {
     const timeLeft = animationEnd - Date.now()
@@ -73,10 +67,41 @@ function runDropoutConfetti(options?: DropoutConfettiOptions) {
       return clearInterval(interval)
     }
 
-    const particleCount = 50 * (timeLeft / duration)
+    const particleCount = 100 * (timeLeft / duration)
 
-    confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } })
-    confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } })
+    const verySadEmoji = confetti.shapeFromText({ text: '😭', scalar: 4 })
+    const sadEmoji = confetti.shapeFromText({ text: '🥺', scalar: 4 })
+
+    confetti({
+      ...defaults,
+      flat: true,
+      gravity: getRandomNumberInRange(0.4, 0.6),
+      scalar: getRandomNumberInRange(1, 4),
+      drift: getRandomNumberInRange(-0.4, 0.4),
+      shapes: [verySadEmoji, sadEmoji],
+      particleCount,
+      origin: { x: getRandomNumberInRange(0.1, 0.3), y: 0 },
+    })
+    confetti({
+      ...defaults,
+      flat: true,
+      gravity: getRandomNumberInRange(0.4, 0.6),
+      scalar: getRandomNumberInRange(1, 4),
+      drift: getRandomNumberInRange(-0.4, 0.4),
+      shapes: [verySadEmoji, sadEmoji],
+      particleCount,
+      origin: { x: getRandomNumberInRange(0.4, 0.6), y: 0 },
+    })
+    confetti({
+      ...defaults,
+      flat: true,
+      gravity: getRandomNumberInRange(0.4, 0.6),
+      scalar: getRandomNumberInRange(1, 4),
+      drift: getRandomNumberInRange(-0.4, 0.4),
+      shapes: [verySadEmoji, sadEmoji],
+      particleCount,
+      origin: { x: getRandomNumberInRange(0.7, 1), y: 0 },
+    })
   }, 250)
 
   return interval
@@ -97,10 +122,6 @@ function startFireCardConfetti(options: FireCardConfettiOptions) {
   const animationEnd = Date.now() + duration
   const defaults = { startVelocity: 80, spread: 120, ticks: 120, zIndex: 102 }
 
-  function randomInRange(min: number, max: number) {
-    return Math.random() * (max - min) + min
-  }
-
   const interval = setInterval(() => {
     const timeLeft = animationEnd - Date.now()
 
@@ -114,10 +135,10 @@ function startFireCardConfetti(options: FireCardConfettiOptions) {
     // confetti({ ...defaults, shapes: ['circle'], colors: ['#74dfa2', '#519c71'], particleCount, origin: { x: randomInRange(0.47, 0.515), y }, angle: 90, scalar: 0.75, flat: true, gravity: 3.25 })
     // confetti({ ...defaults, shapes: ['circle'], colors: ['#74dfa2', '#519c71'], particleCount, origin: { x: randomInRange(0.45, 0.545), y }, angle: 90, scalar: 0.75, flat: true, gravity: 3.25 })
     // confetti({ ...defaults, shapes: [cloverConfetti], colors: ['#519c71', '#74dfa2'], particleCount, origin: { x: randomInRange(0.46, 0.535), y }, angle: 90, scalar: 1.25, flat: true, gravity: 3.25 })
-    confetti({ ...defaults, shapes: ['circle'], colors: ['#f76b63', '#cfc56f'], particleCount, origin: { x: randomInRange(0.46, 0.535), y }, angle: 90, scalar: 0.3, flat: true, gravity: 3.25 })
-    confetti({ ...defaults, shapes: ['circle'], colors: ['#f76b63', '#cfc56f'], particleCount, origin: { x: randomInRange(0.46, 0.535), y }, angle: 90, scalar: 0.35, flat: true, gravity: 3.25 })
-    confetti({ ...defaults, shapes: ['circle'], colors: ['#f76b63', '#cfc56f'], particleCount, origin: { x: randomInRange(0.46, 0.535), y }, angle: 90, scalar: 0.35, flat: true, gravity: 3.25 })
-    confetti({ ...defaults, shapes: ['circle'], colors: ['#f76b63', '#cfc56f'], particleCount, origin: { x: randomInRange(0.46, 0.535), y }, angle: 90, scalar: 0.35, flat: true, gravity: 3.25 })
+    confetti({ ...defaults, shapes: ['circle'], colors: ['#f76b63', '#cfc56f'], particleCount, origin: { x: getRandomNumberInRange(0.46, 0.535), y }, angle: 90, scalar: 0.3, flat: true, gravity: 3.25 })
+    confetti({ ...defaults, shapes: ['circle'], colors: ['#f76b63', '#cfc56f'], particleCount, origin: { x: getRandomNumberInRange(0.46, 0.535), y }, angle: 90, scalar: 0.35, flat: true, gravity: 3.25 })
+    confetti({ ...defaults, shapes: ['circle'], colors: ['#f76b63', '#cfc56f'], particleCount, origin: { x: getRandomNumberInRange(0.46, 0.535), y }, angle: 90, scalar: 0.35, flat: true, gravity: 3.25 })
+    confetti({ ...defaults, shapes: ['circle'], colors: ['#f76b63', '#cfc56f'], particleCount, origin: { x: getRandomNumberInRange(0.46, 0.535), y }, angle: 90, scalar: 0.35, flat: true, gravity: 3.25 })
   }, 250)
 
   return interval

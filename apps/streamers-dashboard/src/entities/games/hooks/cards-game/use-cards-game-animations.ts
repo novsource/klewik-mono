@@ -15,11 +15,11 @@ type ChoosedAnimationVariantsArgs = {
   }
 }
 
-type CardsAnimationsVariant = 'choose' | 'initial' | 'open' | 'reveal' | 'swipeToCenter' | 'swipeFromCenter'
+type CardsAnimationsVariant = 'choose' | 'initial' | 'idle' | 'reveal' | 'swipeToCenter' | 'swipeFromCenter'
 
 const cardsAnimationVariants: Record<CardsAnimationsVariant, Variant> = {
   initial: { position: 'relative', opacity: 0, scale: 0.75, clipPath: `rect(0% 100% 100% 0%)` },
-  open: { opacity: 1, scale: 1, x: 0, y: 0, transition: { duration: 1, type: 'spring' }, clipPath: `rect(0% 100% 100% 0%)` },
+  idle: { opacity: 1, scale: 1, x: 0, y: 0, transition: { duration: 1, type: 'spring' }, clipPath: `rect(0% 100% 100% 0%)` },
   choose: (args: ChoosedAnimationVariantsArgs) => ({
     zIndex: 104,
     opacity: 1,
@@ -79,7 +79,7 @@ export const useCardsGameAnimations = (layoutInfo: UseCardsGameLayoutReturnValue
     const cardsVariantsCollection = new Map<number, CardsVariantsCollectionItem>()
 
     cards.forEach((card) => {
-      let variant: CardsAnimationsVariant = !isFirstRender ? 'open' : 'initial'
+      let variant: CardsAnimationsVariant = !isFirstRender ? 'idle' : 'initial'
       let custom: Parameters<TargetResolver>[0] = {}
 
       const cardLayoutInfo = layoutInfo.get(card.id)
