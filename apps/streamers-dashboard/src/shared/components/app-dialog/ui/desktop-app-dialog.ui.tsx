@@ -118,9 +118,9 @@ function DesktopAppDialogTitle(props: DesktopAppDialogTitleProps) {
         align="start"
         justify="start"
       >
-        <DrawerTitle className="text-title">{title}</DrawerTitle>
+        <DrawerTitle className="text-title font-semibold font-golos-f">{title}</DrawerTitle>
         {description && (
-          <DrawerDescription>
+          <DrawerDescription className="font-golos-f">
             <Text className="leading-4 font-normal text-gray-accent">
               {description}
             </Text>

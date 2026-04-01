@@ -4,12 +4,11 @@ import { Text } from '~shared/components/typography'
 
 import { Button } from 'klewik-ui/button'
 import type { DrawerContentProps, DrawerProps } from 'klewik-ui/drawer'
-import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from 'klewik-ui/drawer'
+import { Drawer, DrawerContent, DrawerDescription, DrawerTitle, DrawerTrigger } from 'klewik-ui/drawer'
 import type { FlexProps } from 'klewik-ui/flex'
 import { Flex } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
 import type { SheetHeaderProps, SheetProps, SheetTriggerProps } from 'klewik-ui/sheet'
-import { SheetDescription, SheetTitle } from 'klewik-ui/sheet'
 import { mergeProps } from 'klewik-ui/utils'
 
 import { cn } from '~shared/utils'
@@ -82,13 +81,14 @@ function MobileAppDialogHeaderTitle(props: MobileAppDialogHeaderTitleProps) {
     <Flex className="flex gap-x-4 items-center">
       {icon}
       <div className="w-full">
-        <SheetTitle className="text-title">{value}</SheetTitle>
+        <DrawerTitle className="font-semibold">{value}</DrawerTitle>
         {description && (
-          <SheetDescription>
-            <Text className="leading-4 font-normal text-gray-accent text-sm">
+          <DrawerDescription>
+            <Text className="leading-4 font-normal text-gray-accent text-sm" asSpan>
               {description}
             </Text>
-          </SheetDescription>
+          </DrawerDescription>
+
         )}
       </div>
     </Flex>
