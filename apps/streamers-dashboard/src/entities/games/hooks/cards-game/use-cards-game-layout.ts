@@ -47,6 +47,9 @@ export const useCardsGameLayout = (cards: CardsGameUnit[], options?: UseCardsGam
 
   const gameLayoutRef = useRefState<HTMLDivElement>()
 
+  const gameCardWidthCssVar = useCssVar('--game-card-width', '0px')
+  const gameCardHeightCssVar = useCssVar('--game-card-height', '0px')
+
   useResizeObserver(gameLayoutRef, {
     onChange: (entry) => {
       const [entries] = entry
@@ -105,6 +108,9 @@ export const useCardsGameLayout = (cards: CardsGameUnit[], options?: UseCardsGam
 
       layoutInfoCollection.set(card.id, cardLayoutInfo)
     })
+
+    gameCardWidthCssVar.set(`${cardWidth}px`)
+    gameCardHeightCssVar.set(`${cardHeight}px`)
 
     return layoutInfoCollection
   }, [cards, layoutParameters, headerHeightCssVar.value, asideWidthCssVar.value, cardsLayoutGapCssVar.value])

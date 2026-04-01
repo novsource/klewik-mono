@@ -19,14 +19,14 @@ type CardsAnimationsVariant = 'choose' | 'initial' | 'open' | 'reveal' | 'swipeT
 
 const cardsAnimationVariants: Record<CardsAnimationsVariant, Variant> = {
   initial: { position: 'relative', opacity: 0, scale: 0.75, clipPath: `rect(0% 100% 100% 0%)` },
-  open: { opacity: 1, scale: 1, transition: { duration: 1.25, type: 'spring' }, clipPath: `rect(0% 100% 100% 0%)` },
+  open: { opacity: 1, scale: 1, x: 0, y: 0, transition: { duration: 1, type: 'spring' }, clipPath: `rect(0% 100% 100% 0%)` },
   choose: (args: ChoosedAnimationVariantsArgs) => ({
     zIndex: 104,
     opacity: 1,
     scale: 1.6,
     x: args.coords.x,
     y: args.coords.y,
-    transition: { duration: 1.25, type: 'spring' },
+    transition: { duration: 1, type: 'spring' },
   }),
   reveal: (args: ChoosedAnimationVariantsArgs) => ({
     zIndex: 104,
@@ -41,7 +41,7 @@ const cardsAnimationVariants: Record<CardsAnimationsVariant, Variant> = {
     zIndex: 104,
     opacity: [0, 1],
     scale: [1.6, 1.6],
-    x: [args.direction === 'right' ? args.coords.x - 700 : args.coords.x + 700, args.coords.x],
+    x: [args.direction === 'right' ? args.coords.x - 400 : args.coords.x + 400, args.coords.x],
     y: [args.coords.y, args.coords.y],
     animationDelay: [0, 1],
     transition: { duration: 0.75, type: 'spring' },
@@ -49,8 +49,8 @@ const cardsAnimationVariants: Record<CardsAnimationsVariant, Variant> = {
   swipeFromCenter: (args: ChoosedAnimationVariantsArgs & { direction: 'right' | 'left' }) => ({
     zIndex: [104, 10],
     scale: [1.6, 1.6, 1],
-    opacity: [0, 1, 1],
-    x: [args.coords.x, args.direction === 'right' ? args.coords.x + 700 : args.coords.x - 700, 0],
+    opacity: [1, 0, 1],
+    x: [args.coords.x, args.direction === 'right' ? args.coords.x + 400 : args.coords.x - 400, 0],
     y: [args.coords.y, args.coords.y, 0],
     animationDelay: [0, 1, 0],
     transition: { duration: 0.75 },
@@ -98,14 +98,13 @@ export const useCardsGameAnimations = (layoutInfo: UseCardsGameLayoutReturnValue
 
       if (isCurrentCardChoosed) {
         variant = 'choose'
-
         custom = { coords: { x: chooseX, y: chooseY } }
       }
 
       if (isShouldSwipeFromCenter) {
         const direction = (previousChoosedCard.id - card.id) < 0 ? 'left' : 'right'
-        variant = 'swipeFromCenter'
 
+        variant = 'swipeFromCenter'
         custom = { coords: { x: chooseX, y: chooseY }, direction }
       }
 

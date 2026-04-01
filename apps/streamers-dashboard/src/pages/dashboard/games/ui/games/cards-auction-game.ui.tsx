@@ -13,8 +13,6 @@ import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { Text, Title } from '~shared/components/typography'
 
-import { useCssVar } from '~shared/hooks'
-
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from 'klewik-ui/button'
@@ -29,9 +27,6 @@ import { useAuctionCardsGame } from '../../hooks/use-auction-cards-game'
 
 export const AuctionCardsGame = () => {
   const [isCardRevealAnimationEnded, setIsCardRevealAnimationEnded] = useState(true)
-
-  const gameCardWidthCssVar = useCssVar('--game-card-width', '0px')
-  const gameCardHeightCssVar = useCssVar('--game-card-height', '0px')
 
   const auctionGameContext = useAuctionGameContext()
   const { queryState, ...game } = useAuctionCardsGame()
@@ -73,9 +68,6 @@ export const AuctionCardsGame = () => {
     if (!cardLayoutInfo)
       return
 
-    gameCardWidthCssVar.set(`${cardLayoutInfo.width}px`)
-    gameCardHeightCssVar.set(`${cardLayoutInfo.height}px`)
-
     return (
       <MotionBox
         variants={cardsAnimations.animationVariants}
@@ -84,10 +76,11 @@ export const AuctionCardsGame = () => {
         custom={currentCardAnimationVariant?.custom}
         exit={{ opacity: 0, scale: 0 }}
         onAnimationComplete={(definition) => {
-          if (definition !== 'reveal') {
+          if (definition !== 'reveal' && isCardRevealAnimationEnded) {
             setIsCardRevealAnimationEnded(false)
           }
-          else {
+
+          if (definition === 'reveal' && !isCardRevealAnimationEnded) {
             setIsCardRevealAnimationEnded(true)
           }
         }}
@@ -151,7 +144,8 @@ function GameCard(props: GameCardProps) {
         isCurrentCardChoosed && confirmed && 'data-[hovered=true]:border-none cursor-default',
       )}
       cardUnit={card}
-      disableAnimation={confirmed}
+      disableRotateAnimation={confirmed}
+      disableGlareAnimation={confirmed || !isCurrentCardChoosed}
       onClick={() => {
         game.actions.chooseCard(card)
 
@@ -178,12 +172,32 @@ function GameCard(props: GameCardProps) {
           </>
         )}
 
-        <GameBgIcon
-          width={42}
-          height={42}
-          style={{ color: hexToRgba(color, 0.85), stroke: hexToRgba(color, 1), strokeWidth: 0.15 }}
-        />
+        <div className="z-[106] p-2.5 bg-inherit rounded-large">
+          <GameBgIcon
+            width={42}
+            height={42}
+            style={{ color: hexToRgba(color, 0.85), stroke: hexToRgba(color, 1), strokeWidth: 0.15 }}
+          />
+        </div>
+
       </AnimatePresence>
+
+      {/* <div
+        className="absolute w-[var(--game-card-width)] h-[var(--game-card-height)] p-3"
+      >
+        <div
+          className="w-full h-full bg-dark-foreground/15"
+          style={{
+            backgroundImage: 'radial-gradient(circle, var(--color-dark-foreground), var(--color-yellow))',
+            backgroundSize: 10,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: `right`,
+            maskImage: 'url("https://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg")',
+            maskRepeat: 'repeat',
+            maskSize: 24,
+          }}
+        />
+      </div> */}
     </CardsGame.Card>
   )
 }
@@ -246,14 +260,14 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
       </div>
 
       <Button
-        className="absolute top-1/2 -translate-y-1/2 left-[calc(50%-var(--game-card-width)-1rem)] z-[100]"
+        className="absolute left-1/2 top-1/2 -translate-y-[calc(50%-var(--game-card-height))] -translate-x-[calc(50%+var(--game-card-width)/2)] z-[100] w-20"
         isIconOnly
         icon={<Icons.AltArrowLeft />}
         disabled={!isPossibleToSwapLeft || auctionGame.state.playMutationState.isLoading}
         onClick={swapToLeft}
       />
       <Button
-        className="absolute top-1/2 -translate-y-1/2 right-[calc(50%-var(--game-card-width)-1rem)] z-[100]"
+        className="absolute top-1/2 -translate-y-[calc(50%-var(--game-card-height))] right-[calc(50%-var(--game-card-width))] z-[100]"
         isIconOnly
         icon={<Icons.AltArrowRight />}
         disabled={!isPossibleToSwapRight || auctionGame.state.playMutationState.isLoading}
@@ -273,7 +287,6 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
         variant="action"
         className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-[calc(50%-var(--game-card-height))] animate-pulse hover:animate-none z-[100]"
         icon={<Icons.LargeCross />}
-        size="sm"
         loading={auctionGame.state.playMutationState.isLoading}
         onClick={confirmChoice}
       >

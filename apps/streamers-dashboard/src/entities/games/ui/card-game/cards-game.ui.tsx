@@ -6,12 +6,15 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { CardsGameContextProvider, useCardsGameContext } from '~entities/games/context/cards-game/cards-game.context'
-import { MotionBox } from 'klewik-ui/motion-box'
 import { transform } from 'motion'
 
 import { useMergedRefs } from '~shared/hooks'
 
+import { MotionBox } from 'klewik-ui/motion-box'
+
 import { cn, isFunction, mergeProps } from '~shared/utils'
+
+import logoSvgUrl from '../../../../shared/assets/icons/Logo.svg?url'
 
 export type CardsGameProps = {
   game: UseCardsGameReturnValue
@@ -38,6 +41,8 @@ export type CardsGameFieldProps = Omit<ComponentProps<'div'>, 'children'> & {
 
 function CardsGameField(props: CardsGameFieldProps) {
   const { className, selectedCard, children, ...restProps } = props
+
+  console.log(logoSvgUrl)
 
   const { state, actions } = useCardsGameContext()
 
@@ -152,19 +157,22 @@ function GameBackdrop(props: GameBackdropProps) {
 
 type GameCardProps = ComponentPropsWithoutRef<'div'> & {
   cardUnit: CardsGameUnit
-  disableAnimation?: boolean
+  disableRotateAnimation?: boolean
+  disableGlareAnimation?: boolean
 }
 
 function GameCard(props: GameCardProps) {
   const {
     className,
     cardUnit,
-    disableAnimation = false,
+    disableRotateAnimation = false,
+    disableGlareAnimation = false,
     children,
     ...restProps
   } = props
 
   const [rotateCoords, setRotateCoords] = useState({ x: 0, y: 0, z: 0 })
+  const [glareCoords, setGlareCoords] = useState({ x: -100, y: -100 })
 
   const [isHovered, setIsHovered] = useState(false)
 
@@ -185,20 +193,29 @@ function GameCard(props: GameCardProps) {
     const diffX = event.clientX - left
     const diffY = event.clientY - top
 
-    const targetX = transform(diffY, [0, height], [10, -10])
-    const targetY = transform(diffX, [0, width], [-10, 10])
-    const targetZ = 0
+    const actualRotateX = transform(diffY, [0, height], [10, -10])
+    const actualRotateY = transform(diffX, [0, width], [-10, 10])
+    const actualRotateZ = 0
 
-    const isShouldChangeCoords = targetX !== rotateCoords.x || targetY !== rotateCoords.y || targetZ !== rotateCoords.z
+    const isShouldChangeCoords = actualRotateX !== rotateCoords.x || actualRotateY !== rotateCoords.y || actualRotateZ !== rotateCoords.z
 
     if (isShouldChangeCoords) {
-      setRotateCoords({ x: targetX, y: targetY, z: 0 })
+      setRotateCoords({ x: actualRotateX, y: actualRotateY, z: 0 })
+
+      const actualGlareX = transform(actualRotateY, [10, -10], [0, 100])
+      const actualGlareY = transform(actualRotateX, [-10, 10], [0, 100])
+
+      setGlareCoords({ x: actualGlareX, y: actualGlareY })
     }
 
     if (!isHovered) {
       setRotateCoords({ x: 0, y: 0, z: 0 })
+      setGlareCoords({ x: 0, y: 0 })
     }
   }, [isHovered, rotateCoords])
+
+  const isShouldRotate = isHovered && !disableRotateAnimation
+  const isShouldShowGlare = isHovered && !disableGlareAnimation
 
   const mergedProps = useMemo(() => mergeProps<ComponentPropsWithoutRef<'div'>[]>({
     onMouseMove: handleOnMouseMove,
@@ -220,10 +237,50 @@ function GameCard(props: GameCardProps) {
         data-hovered={isHovered}
         data-choosed={isCurrentCardChoosed}
         style={{
-          transform: isHovered && !disableAnimation ? `rotateX(${rotateCoords.x}deg) rotateY(${rotateCoords.y}deg) rotateZ(${rotateCoords.z})` : 'none',
+          transform: isShouldRotate ? `rotateX(${rotateCoords.x}deg) rotateY(${rotateCoords.y}deg) rotateZ(${rotateCoords.z})` : 'none',
         }}
       >
         {children}
+
+        {/* <div
+          className="absolute inset-0 rounded-large"
+          style={{
+            opacity: isHovered ? 0.02 : 0,
+            transition: 'opacity 0.3s ease',
+            background: `
+                linear-gradient(
+                  120deg,
+                  var(--color-green-accent)
+                )
+              `,
+            mixBlendMode: 'color-dodge',
+          }}
+        /> */}
+
+        {isShouldShowGlare && (
+          <div
+            className="absolute w-[var(--game-card-width)] h-[var(--game-card-height)] p-3 overflow-clip"
+          >
+            <div
+              className="w-full h-full bg-dark-light/10 transition-all"
+              style={{
+                // background: isHovered
+                //   ? `radial-gradient(circle at ${glareCoords.x}% ${glareCoords.y}%,rgba(255,255,255,0.8) 0%, rgba(255,255,200,0.4) 15%,rgba(255,200,0,0.2) 25%, rgba(255,200,0,0.05) 35%,transparent 60%)`
+                //   : 'none',
+                background: isHovered
+                  ? `radial-gradient(circle at ${glareCoords.x}% ${glareCoords.y}%,var(--color-green-accent) 0%, var(--color-green) 15%,var(--color-green-light) 25%, var(--color-green-dark) 35%,transparent 60%)`
+                  : 'none',
+                maskImage: `url("${logoSvgUrl}")`,
+                WebkitMaskImage: `url("${logoSvgUrl}")`,
+                WebkitMaskRepeat: 'repeat',
+                maskRepeat: 'repeat',
+                maskSize: 16,
+                mixBlendMode: 'screen',
+                filter: 'blur(16px)',
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   )
