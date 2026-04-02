@@ -269,11 +269,15 @@ function GameCard(props: GameCardProps) {
               background: isShouldShowGlare
                 ? `radial-gradient(circle at ${glareCoords.x}% ${glareCoords.y}%,var(--color-green-accent) 0%, var(--color-green) 5%,var(--color-green-light) 10%, var(--color-green-dark) 15%,transparent 50%)`
                 : 'none',
+              // background: isShouldShowGlare
+              //   ? `radial-gradient(circle at ${glareCoords.x}% ${glareCoords.y}%,var(--color-white) 2%, var(--color-green-accent) 15%,var(--color-green) 25% ,var(--color-green-light) 35%,transparent 50%)`
+              //   : 'none',
               maskImage: `url("${logoSvgUrl}")`,
               WebkitMaskImage: `url("${logoSvgUrl}")`,
               WebkitMaskRepeat: 'repeat',
               maskRepeat: 'repeat',
               maskSize: 20,
+              // mixBlendMode: 'overlay',
               mixBlendMode: 'screen',
               filter: 'blur(16px)',
             }}

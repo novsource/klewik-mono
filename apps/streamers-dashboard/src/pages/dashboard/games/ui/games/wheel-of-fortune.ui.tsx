@@ -46,12 +46,12 @@ export const WheelGame = (props: WheelProps) => {
   const isShouldShowSlotInfo = !state.isSpinning && !!slotUnderSelector
 
   useEffect(() => {
+    if (!isShouldShowSlotInfo)
+      return
+
     if (state.isSpinning) {
       gameConfetti.stopAllConfetti()
     }
-
-    if (!isShouldShowSlotInfo)
-      return
 
     if (previousSpinStatus) {
       if (auctionGameContext.state.mode === 'classic') {
@@ -60,8 +60,10 @@ export const WheelGame = (props: WheelProps) => {
       else {
         gameConfetti.startDropoutConfetti()
       }
+
+      auctionGameContext.actions.applyResults()
     }
-  }, [isShouldShowSlotInfo, previousSpinStatus, auctionGameContext.state.mode, gameConfetti, state.isSpinning])
+  }, [isShouldShowSlotInfo, previousSpinStatus, auctionGameContext.state.mode, auctionGameContext.actions.applyResults, gameConfetti, state.isSpinning])
 
   return (
     <Flex className="relative h-full w-full shrink-[2] gap-y-6" direction="column" {...props}>

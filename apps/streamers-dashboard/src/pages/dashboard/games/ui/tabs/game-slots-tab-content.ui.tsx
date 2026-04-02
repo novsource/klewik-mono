@@ -3,12 +3,8 @@ import type { SlotsWheelTabSlots } from '../../styles'
 import type { ChangeEvent } from 'react'
 import { useMemo, useState } from 'react'
 
-import { auctionSlotsSelectors } from '~entities/auction-slot/store'
-
 import { useDebounceCallback } from '~shared/hooks'
 import { useLocalSearchFilter } from '~shared/hooks/use-local-search-filter/use-local-search-filter'
-
-import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from 'klewik-ui/button'
 import { Flex } from 'klewik-ui/flex'
@@ -21,6 +17,7 @@ import { Toggle, ToggleGroup } from 'klewik-ui/toggle'
 import { twSlotsStyles } from '~shared/utils'
 
 import { TABS_CONTENT_NAMES } from '../../constants'
+import { useAuctionGameContext } from '../../context/auction-game-context'
 import { slotsWheelTabStyles } from '../../styles'
 import { AuctionGameSlotsList } from '../lists/wheel-slots-list.ui'
 
@@ -31,12 +28,12 @@ type GameSlotsTabContentProps = Omit<TabsContentProps, 'value'> & {
 export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
   const { slotsClassnames, ...tabsContentProps } = props
 
-  const slots = useStoreSelector(auctionSlotsSelectors.getSlots)
+  const auctionGameContext = useAuctionGameContext()
 
   const [slotCategory, setSlotCategory] = useState<'all' | 'active' | 'dropped'>('all')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const localSortedSlots = useMemo(() => [...slots].sort((a, b) => b.points - a.points), [slots])
+  const localSortedSlots = useMemo(() => [...auctionGameContext.state.slots.all].sort((a, b) => b.points - a.points), [auctionGameContext.state.slots.all])
 
   const localSearchedSlots = useLocalSearchFilter(searchQuery, localSortedSlots, (query, slot) => {
     const isTitleIncludesSearchQuery = slot.title.toLowerCase().includes(query.toLowerCase())

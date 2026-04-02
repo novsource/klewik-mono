@@ -39,6 +39,8 @@ export const AuctionCardsGame = () => {
   const isCardConfirmed = game.state.confirmedCard !== null
 
   const reset = () => {
+    auctionGameContext.actions.applyResults()
+
     game.actions.clearChoosenCard()
     game.actions.clearConfirmedCard()
 
@@ -85,7 +87,7 @@ export const AuctionCardsGame = () => {
           }
         }}
       >
-        <GameCard card={card} confirmed={isCardConfirmed} />
+        <GameCard card={card} />
       </MotionBox>
     )
   }
@@ -193,12 +195,14 @@ type GameCardControlsPanelProps = {
 function GameCardControlsPanel(props: GameCardControlsPanelProps) {
   const { onConfirm, onClose } = props
 
-  const auctionGame = useAuctionGameContext()
+  const auctionGameContext = useAuctionGameContext()
   const cardsGame = useAuctionCardsGame()
 
   const currentCardIndex = cardsGame.state.choosedCardUnit?.id ?? -1
   const isPossibleToSwapLeft = currentCardIndex > 1
   const isPossibleToSwapRight = currentCardIndex >= 1 && currentCardIndex < cardsGame.state.cardsUnits.length
+
+  const isConfirmChoiceDisabled = auctionGameContext.state.slots.alived.length === 1
 
   const swapToLeft = () => {
     if (!isPossibleToSwapLeft)
@@ -219,13 +223,14 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
   }
 
   const confirmChoice = async () => {
-    if (!cardsGame.state.choosedCardUnit)
+    if (!cardsGame.state.choosedCardUnit || isConfirmChoiceDisabled)
       return
 
     const response = await cardsGame.actions.confirmCardChoice(cardsGame.state.choosedCardUnit)
     if (response?.error || !response)
       return
 
+    cardsGame.actions.confirmCard(cardsGame.state.choosedCardUnit)
     onConfirm?.()
   }
 
@@ -246,14 +251,14 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
         className="absolute left-1/2 top-1/2 -translate-y-[calc(50%-var(--game-card-height))] -translate-x-[calc(50%+var(--game-card-width)/2)] z-[100] w-20"
         isIconOnly
         icon={<Icons.AltArrowLeft />}
-        disabled={!isPossibleToSwapLeft || auctionGame.state.playMutationState.isLoading}
+        disabled={!isPossibleToSwapLeft || auctionGameContext.state.playMutationState.isLoading}
         onClick={swapToLeft}
       />
       <Button
         className="absolute top-1/2 -translate-y-[calc(50%-var(--game-card-height))] right-[calc(50%-var(--game-card-width))] z-[100]"
         isIconOnly
         icon={<Icons.AltArrowRight />}
-        disabled={!isPossibleToSwapRight || auctionGame.state.playMutationState.isLoading}
+        disabled={!isPossibleToSwapRight || auctionGameContext.state.playMutationState.isLoading}
         onClick={swapToRight}
       />
 
@@ -262,7 +267,7 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
         icon={<Icons.LargeCross />}
         size="sm"
         isIconOnly
-        disabled={auctionGame.state.playMutationState.isLoading}
+        disabled={auctionGameContext.state.playMutationState.isLoading}
         onClick={onClose}
       />
 
@@ -270,7 +275,8 @@ function GameCardControlsPanel(props: GameCardControlsPanelProps) {
         variant="action"
         className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-[calc(50%-var(--game-card-height))] animate-pulse hover:animate-none z-[100]"
         icon={<Icons.LargeCross />}
-        loading={auctionGame.state.playMutationState.isLoading}
+        loading={auctionGameContext.state.playMutationState.isLoading}
+        disabled={isConfirmChoiceDisabled}
         onClick={confirmChoice}
       >
         Подтвердить выбор
