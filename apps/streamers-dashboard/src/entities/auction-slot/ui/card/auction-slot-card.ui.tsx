@@ -216,6 +216,27 @@ export const AuctionSlotCardPointsInfo = (props: AuctionSlotCardPointsInfoProps)
   )
 }
 
+export type AuctionSlotCardStatusInfoProps = Omit<ComponentProps<'div'>, 'children'> & {
+  isDropped: boolean
+  isWinner?: boolean
+}
+
+export const AuctionSlotCardStatusInfo = (props: AuctionSlotCardStatusInfoProps) => {
+  const { isDropped, isWinner = false, ...restProps } = props
+
+  return (
+    <AuctionSlotCardContentInfoWrapper {...restProps}>
+      <div className={cn('size-7.5 tablet:size-8 bg-red/10 flex items-center justify-center rounded-small', isDropped && 'bg-dark-light', isWinner && 'bg-orange/10')}>
+        {isWinner
+          ? <Icons.Crown className="text-orange" />
+          : isDropped
+            ? <Icons.BrokenHeart className="text-gray-light" />
+            : <Icons.Heart className="text-red animate-heartbeating" size="xs" />}
+      </div>
+    </AuctionSlotCardContentInfoWrapper>
+  )
+}
+
 export type AuctionSlotCardIdInfoProps = Omit<ComponentProps<'div'>, 'children'> & {
   slotId: number
   numberFlowProps?: NumberFlowProps
