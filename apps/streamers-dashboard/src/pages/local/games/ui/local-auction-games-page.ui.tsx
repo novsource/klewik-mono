@@ -10,7 +10,7 @@ import { GameTabs } from './tabs/game-tabs.ui'
 export const LocalAuctionGamesPage = () => {
   return (
     <div className={cn(auctionWheelPageStyles.pageWrapper)}>
-      <div className="flex w-full h-full pt-8 px-6 gap-x-6">
+      <div className="flex w-full h-full px-6 gap-x-6">
         <Flex className={cn(auctionWheelPageStyles.wheelWrapper)}>
 
           <AuctionGameContextProvider>

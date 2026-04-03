@@ -199,7 +199,7 @@ function useGameSlotsGroups() {
     if (winnerSlot)
       return [{ ...winnerSlot, winPercents: 100 }]
 
-    return gameSlots.filter(slot => slot.isAlived)
+    return gameSlots.filter(slot => slot.isAlived && slot.points > 0)
   }, [gameSlots, winnerSlot])
 
   const droppedSlots = useMemo(() => gameSlots.filter(slot => slot.isDropped), [gameSlots])

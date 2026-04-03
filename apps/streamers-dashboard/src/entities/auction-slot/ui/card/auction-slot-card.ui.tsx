@@ -147,7 +147,7 @@ export type AuctionSlotCardWinPercentsProps = Omit<ComponentProps<'div'>, 'child
     min: number
     max: number
   }
-  numberFlowProps?: NumberFlowProps
+  numberFlowProps?: Omit<NumberFlowProps, 'value'>
 }
 
 export const AuctionSlotCardWinPercents = (props: AuctionSlotCardWinPercentsProps) => {
@@ -172,7 +172,6 @@ export const AuctionSlotCardWinPercents = (props: AuctionSlotCardWinPercentsProp
       {...restProps}
     >
       <NumberFlow
-        className={cn('font-golos-f font-semibold text-sm tablet:text-md tablet:leading-4')}
         willChange
         trend={0}
         value={winPercents}
@@ -184,6 +183,7 @@ export const AuctionSlotCardWinPercents = (props: AuctionSlotCardWinPercentsProp
         suffix="%"
         style={{ color }}
         {...numberFlowProps}
+        className={cn('font-golos-f font-semibold text-sm tablet:text-md tablet:leading-4', numberFlowProps?.className)}
       />
     </AuctionSlotCardContentInfoWrapper>
   )
@@ -231,7 +231,7 @@ export const AuctionSlotCardStatusInfo = (props: AuctionSlotCardStatusInfoProps)
           ? <Icons.Crown className="text-orange" />
           : isDropped
             ? <Icons.BrokenHeart className="text-gray-light" />
-            : <Icons.Heart className="text-red animate-heartbeating" size="xs" />}
+            : <Icons.Heart className="text-red" size="xs" />}
       </div>
     </AuctionSlotCardContentInfoWrapper>
   )
