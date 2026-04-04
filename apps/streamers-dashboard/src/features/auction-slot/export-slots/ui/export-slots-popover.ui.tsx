@@ -74,7 +74,7 @@ export const ExportSlotsPopover = (props: ButtonProps) => {
 
 type DisplayedSelectItemData = {
   value: AuctionPlatform
-  label: 'Pointauc' | 'Wheel of names'
+  label: string
   icon?: ReactNode
 }
 
@@ -84,7 +84,7 @@ type AuctionPlatformSelectProps = {
 
 const auctionPlatformSelectItems: DisplayedSelectItemData[] = [
   { value: 'pointauc', label: 'Pointauc', icon: <Icons.PointaucLogo size="sm" /> },
-  { value: 'wheelofnames', label: 'Wheel of names' },
+  { value: 'klewikLocal', label: 'Klewik (локальный)', icon: <Icons.Logo className="text-green-accent" size="sm" /> },
 ]
 
 function AuctionPlatformSelect(props: AuctionPlatformSelectProps) {
