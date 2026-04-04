@@ -1,38 +1,62 @@
-import { useMemo } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 
-import { auctionSelectors } from '~entities/auction/store'
+import { shallowEqual } from 'react-redux'
 
-import type { AuctionSlot } from '~entities/auction-slot/model'
+import { VList } from 'virtua'
+
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
-import { ShadowVirtualList } from 'klewik-ui/shadow-virtual-list'
-import type { VirtualListRenderFunction } from 'klewik-ui/virtual-list'
-
 import { LocalAuctionSlotListCard } from '../cards/local-auction-slot-card.ui'
 
-export const LocalAuctionSlotsList = () => {
-  const winnerId = useStoreSelector(auctionSelectors.getWinnerId)
-  const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+// const auctionSlots = createFakeAuctionSlotsArray({ minLength: 100, maxLength: 200 })
 
-  const listData = useMemo(() => [...auctionSlots].sort((a, b) => b.points - a.points), [auctionSlots])
+type MemorizedListProps = {
+  data: number[]
+  onFocusCard?: () => void
+  onBlurCard?: () => void
+}
 
-  const renderGameSlotCard: VirtualListRenderFunction<AuctionSlot> = (slots, vItem) => {
-    const slot = slots[vItem.index]
-    const isWinner = winnerId === slot.id
-
-    return <LocalAuctionSlotListCard isWinner={isWinner} slot={slot} />
-  }
+const MemorizedList = memo((props: MemorizedListProps) => {
+  const { data, onBlurCard, onFocusCard } = props
 
   return (
-    <div className="w-full" style={{ flex: '1 1 auto' }}>
-      {/* <ul>
-        {listData.map((item, index) => renderGameSlotCard(listData, { id: index, index }))}
-      </ul> */}
-      <ShadowVirtualList data={listData} slotsClassNames={{ container: 'pb-4' }}>
-        {renderGameSlotCard}
-      </ShadowVirtualList>
+    <div style={{ flex: '1 1 auto' }}>
+      <VList itemSize={64}>
+        {data.map((id, index) => {
+          return (
+            <LocalAuctionSlotListCard
+              key={`item-${id}`}
+              className={index !== 0 ? 'mt-2' : ''}
+              slotId={id}
+              onFocus={onFocusCard}
+              onBlur={onBlurCard}
+            />
+          )
+        })}
+      </VList>
     </div>
   )
+})
+
+export const LocalAuctionSlotsList = () => {
+  const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+
+  const [slotsIds, setSlotsIds] = useState(() => [...auctionSlots].sort((a, b) => b.points - a.points).map(slot => slot.id))
+
+  const [isListIdsChangesBlocked, setIsListChangesBlocked] = useState(false)
+
+  useEffect(() => {
+    const possibleNewSlotsIds = [...auctionSlots].sort((a, b) => b.points - a.points).map(slot => slot.id)
+
+    if (!shallowEqual(slotsIds, possibleNewSlotsIds) && !isListIdsChangesBlocked) {
+      setSlotsIds(possibleNewSlotsIds)
+    }
+  }, [isListIdsChangesBlocked, auctionSlots, slotsIds])
+
+  const handleOnFocusCard = useCallback(() => setIsListChangesBlocked(true), [])
+  const handleOnBlurCard = useCallback(() => setIsListChangesBlocked(false), [])
+
+  return <MemorizedList data={slotsIds} onFocusCard={handleOnFocusCard} onBlurCard={handleOnBlurCard} />
 }

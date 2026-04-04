@@ -55,6 +55,7 @@ export const NumberInput = forwardRef<
       getInputRef={forwardRef}
       customInput={Input}
       isAllowed={handleAllowedChecking}
+      allowNegative={allowNegative}
       {...restProps}
     />
   )

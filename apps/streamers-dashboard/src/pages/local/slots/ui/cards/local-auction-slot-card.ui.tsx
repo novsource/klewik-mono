@@ -1,42 +1,76 @@
-import { useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
-import { auctionSlotsActions } from '~entities/auction-slot/store'
+import { auctionSlotsActions, auctionSlotsSelectors } from '~entities/auction-slot/store'
 import { AuctionSlotCardStatusInfo, AuctionSlotCardWinPercents } from '~entities/auction-slot/ui/card'
 
-import { useActionCreators } from '~shared/lib/redux-toolkit'
+import { useActiveElement, usePrevious } from '~shared/hooks'
+
+import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from 'klewik-ui/button'
+import type { CardProps } from 'klewik-ui/card'
 import { Card } from 'klewik-ui/card'
 import { Icons } from 'klewik-ui/icons'
+
+import { deleteAllSpacesFromString } from '~shared/utils'
 
 import { SlotPointsInput } from '../inputs/slot-points-input.ui'
 import { SlotTitleInput } from '../inputs/slot-title-input.ui'
 
-export type LocalAuctionSlotListCardProps = {
-  slot: AuctionSlot
+export type LocalAuctionSlotListCardProps = Omit<CardProps, 'slot' | 'onFocus' | 'onBlur'> & {
+  slotId: number
   isWinner?: boolean
-}
+} & UseCardFocusOptions
 
-export const LocalAuctionSlotListCard = (props: LocalAuctionSlotListCardProps) => {
-  const { slot, isWinner = false } = props
+export const LocalAuctionSlotListCard = memo((props: LocalAuctionSlotListCardProps) => {
+  const { slotId, isWinner = false, onFocus, onBlur, ...restProps } = props
 
+  const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
   const { updateSlot } = useActionCreators(auctionSlotsActions)
 
-  const [addedPointsValue, setAddedPointsValue] = useState(0)
+  const slot = useMemo<AuctionSlot>(() => auctionSlots.find(slot => slot.id === slotId)!, [auctionSlots, slotId])
+
+  const [titleInputValue, setTitleInputValue] = useState(slot.title)
+  const [pointsInputValue, setPointsInputValue] = useState<Maybe<number>>(slot.points)
+  const [addedPointsValue, setAddedPointsValue] = useState<string>('')
+
+  const { ref } = useCardFocus({ onFocus, onBlur })
+
+  useEffect(() => {
+    const isDifferentSlotValues = titleInputValue !== slot.title || pointsInputValue !== slot.points
+
+    if (isDifferentSlotValues) {
+      updateSlot({ id: slot.id, data: { title: titleInputValue, points: pointsInputValue } })
+    }
+  }, [
+    titleInputValue,
+    pointsInputValue,
+    slot.title,
+    slot.points,
+    slot.id,
+    updateSlot,
+  ])
 
   const handleTitleChange = (value: string) => {
-    updateSlot({ id: slot.id, data: { title: value } })
+    setTitleInputValue(value)
   }
 
   const handlePointsChange = (value: Maybe<number>) => {
-    if (value) {
-      updateSlot({ id: slot.id, data: { points: value } })
+    setPointsInputValue(value)
+  }
+
+  const handleAddPointsButtonOnClick = () => {
+    if (addedPointsValue.length !== 0) {
+      const addedNum = Number(deleteAllSpacesFromString(addedPointsValue))
+
+      setPointsInputValue(curr => (curr ?? 0) + addedNum)
+      setAddedPointsValue('')
     }
   }
 
   return (
-    <Card className="w-full px-3 py-2 rounded-medium">
+    <Card ref={ref} className="w-full px-3 py-2 rounded-medium" {...restProps}>
       <div className="flex items-center gap-x-2 w-full">
 
         <div className="shrink-0">
@@ -46,10 +80,10 @@ export const LocalAuctionSlotListCard = (props: LocalAuctionSlotListCardProps) =
           />
         </div>
 
-        <div className="flex flex-1 min-w-0 gap-y-2">
+        <div className="flex flex-1 min-w-0 gap-x-2">
 
           <SlotTitleInput
-            value={slot.title}
+            value={titleInputValue}
             onInput={handleTitleChange}
           />
 
@@ -69,27 +103,30 @@ export const LocalAuctionSlotListCard = (props: LocalAuctionSlotListCardProps) =
                 isIconOnly
                 icon={<Icons.Plus />}
                 className="shrink-0"
+                onClick={handleAddPointsButtonOnClick}
               />
 
               <div className="flex-1 min-w-[120px]">
                 <SlotPointsInput
                   value={addedPointsValue}
-                  onInput={setAddedPointsValue}
+                  placeholder="Добавить очки"
+                  valueIsNumericString
+                  onValueChange={values => setAddedPointsValue(values.formattedValue)}
                 />
               </div>
             </div>
 
-            {/* ПРОЦЕНТЫ + МЕНЮ */}
             <div className="flex items-center gap-x-3 flex-none shrink-0">
 
               <AuctionSlotCardWinPercents
                 numberFlowProps={{
-                  className: 'w-[5ch] text-right tabular-nums shrink-0',
+                  className: 'w-[6ch] text-right tabular-nums shrink-0 overflow-clip',
                 }}
-                winPercents={slot.winPercents}
+                winPercents={Number(slot.winPercents.toFixed(2))}
               />
 
               <Button
+                className="hover:bg-dark-light"
                 variant="ghost"
                 isIconOnly
                 icon={<Icons.Dots className="rotate-90" />}
@@ -101,97 +138,65 @@ export const LocalAuctionSlotListCard = (props: LocalAuctionSlotListCardProps) =
       </div>
     </Card>
   )
+})
 
-  // return (
-  //   <Card className="w-full px-3 py-2 rounded-medium">
-  //     <div className="w-full gap-x-2 local-slot-card_wrapper">
-  //       <AuctionSlotCardStatusInfo isDropped={slot.isDropped} isWinner={isWinner} />
-
-  //       <div className="w-full flex gap-x-2">
-  //         <div className="flex gap-x-1 items-center min-w-0 flex-1">
-  //           <SlotTitleInput value={slot.title} onInput={handleTitleChange} />
-
-  //           <div className="flex-1 min-w-0">
-  //             <SlotPointsInput slotClassNames={{ base: 'w-full' }} value={slot.points} onInput={handlePointsChange} />
-  //           </div>
-  //           <div className="shrink-0">
-  //             <Button variant="borderless" isIconOnly icon={<Icons.Plus />} />
-  //           </div>
-  //           <div className="flex-1 min-w-0">
-  //             <SlotPointsInput slotClassNames={{ base: 'w-full' }} value={addedPointsValue} onInput={setAddedPointsValue} />
-  //           </div>
-  //         </div>
-
-  //         <div className="flex justify-between items-center gap-x-4 flex-none">
-  //           <AuctionSlotCardWinPercents
-  //             numberFlowProps={{
-  //               className: 'w-[4ch] text-right tabular-nums',
-  //             }}
-  //             winPercents={slot.winPercents}
-  //           />
-
-  //           <Button variant="ghost" isIconOnly icon={<Icons.Dots className="rotate-90" />} />
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </Card>
-  // )
+type UseCardFocusOptions = {
+  onFocus?: () => void
+  onBlur?: () => void
 }
 
-// type SlotTitleInputProps = {
-//   slot: AuctionSlot
-// }
+function useCardFocus(options?: UseCardFocusOptions) {
+  const optionsRef = useRef(options)
+  optionsRef.current = options
 
-// const SlotTitleInput = memo((props: SlotTitleInputProps) => {
-//   const { slot } = props
+  const { ref, value: activeElement } = useActiveElement<HTMLDivElement>()
 
-//   const { updateSlot } = useActionCreators(auctionSlotsActions)
+  const [isActiveElementInside, setIsActiveElementInside] = useState(() => (ref.current?.contains(activeElement) || ref.current === activeElement) ?? false)
 
-//   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
-//     updateSlot({ id: slot.id, data: { title: event.target.value } })
-//   }
+  const previousWasActive = usePrevious(isActiveElementInside)
 
-//   return (
-//     <Input
-//       variant="ghost"
-//       slotClassNames={{ base: 'w-full', wrapper: 'px-2', input: 'text-base font-semibold text-title' }}
-//       value={slot.title}
-//       size="lg"
-//       onChange={handleOnChange}
-//     />
-//   )
-// })
+  useEffect(() => {
+    const isFocused = ref.current?.contains(activeElement) || ref.current === activeElement
 
-// type SlotPointsInputProps = {
-//   slot: AuctionSlot
-// }
+    if (isFocused !== isActiveElementInside) {
+      setIsActiveElementInside(isFocused)
 
-// function SlotPointsInput(props: SlotPointsInputProps) {
-//   const { slot } = props
+      if (isFocused) {
+        optionsRef.current?.onFocus?.()
+      }
+      else {
+        optionsRef.current?.onBlur?.()
+      }
+    }
+  }, [previousWasActive, isActiveElementInside, activeElement, ref.state])
 
-//   const [value, setValue] = useState(0)
+  // const debouncedUnfocus = useDebounceCallback((isFocused: boolean) => {
+  // if (isFocused !== isActiveElementInside) {
+  //   setIsActiveElementInside(isFocused)
 
-//   const { updateSlot } = useActionCreators(auctionSlotsActions)
+  //   if (isFocused) {
+  //     optionsRef.current?.onFocus?.()
+  //   }
+  //   else {
+  //     optionsRef.current?.onBlur?.()
+  //   }
+  // }
+  // }, 5)
 
-//   const handleOnValueChange: OnValueChange = (values) => {
-//     const { floatValue } = values
+  // useEffect(() => {
+  //   const isActiveElementInsideCard = ref.current?.contains(activeElement) ||
 
-//     if (floatValue)
-//       // setValue(floatValue)
-//       updateSlot({ id: slot.id, data: { points: floatValue } })
-//   }
+  //   if (isActiveElementInsideCard !== isActiveElementInside) {
+  //     debouncedUnfocus(isActiveElementInsideCard)
+  //   }
+  //   else {
+  //     debouncedUnfocus.cancel()
+  //   }
+  // }, [activeElement, isActiveElementInside, debouncedUnfocus, ref.state])
 
-//   return (
-//     <NumberInput
-//       variant="ghost"
-//       value={slot.points}
-//       slotClassNames={{ input: 'font-golos-f text-title' }}
-//       startContent={<Icons.Coin className="text-gray-light" />}
-//       thousandSeparator=" "
-//       decimalScale={0}
-//       allowNegative={false}
-//       onFocus={console.log}
-//       onValueChange={handleOnValueChange}
-//     />
-//   )
-// }
+  // useUnmount(() => {
+  //   debouncedUnfocus.cancel()
+  // })
+
+  return { ref, isFocused: isActiveElementInside }
+}

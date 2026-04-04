@@ -176,7 +176,7 @@ export const AuctionSlotCardWinPercents = (props: AuctionSlotCardWinPercentsProp
         trend={0}
         value={winPercents}
         format={{
-          notation: 'compact',
+          notation: 'standard',
           compactDisplay: 'short',
         }}
         locales="ru-RU"
