@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 
-import { DashboardHeader } from '~widgets/dashboard-header/ui'
+import { LocalDashboardHeader } from '~widgets/dashboard-header/ui'
 import { MobileNavbar, Navbar } from '~widgets/dashboard-navbar/ui'
 
 import { greaterThenDeviceWidthMediaQueries } from '~shared/constants/tailwindcss'
@@ -23,7 +23,7 @@ export const LocalAuctionLayout = () => {
         </MediaQueryViewToggler.MatchedItem>
 
         <Flex className="w-full h-full flex flex-col">
-          <DashboardHeader />
+          <LocalDashboardHeader />
 
           <main className="relative w-full overflow-y-scroll tablet:h-full tablet:overflow-x-hidden tablet:overflow-y-scroll">
             <Flex className="h-full w-full px-4">
