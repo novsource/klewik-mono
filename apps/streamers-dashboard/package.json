@@ -48,6 +48,7 @@
     "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.0",
     "dompurify": "^3.3.1",
+    "idb": "^8.0.3",
     "install": "^0.13.0",
     "klewik-ui": "workspace:*",
     "lucide-react": "^0.453.0",

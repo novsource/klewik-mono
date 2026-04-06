@@ -10,8 +10,13 @@ import { MediaQueryViewToggler } from '~shared/components/media-query-view-toggl
 import { Flex } from 'klewik-ui/flex'
 
 import { LOCAL_NAVBAR_LINKS } from '../constants/local-navbar-links'
+import { useLocalDashboardStateRestore } from '../hooks/use-local-dashboard-state-restore'
+import { useLocalStateAutosave } from '../hooks/use-local-state-autosave'
 
 export const LocalAuctionLayout = () => {
+  useLocalDashboardStateRestore()
+  useLocalStateAutosave()
+
   return (
     <MediaQueryViewToggler query={greaterThenDeviceWidthMediaQueries.tablet}>
       <div className="w-full h-full tablet:inline-flex tablet:h-auto">

@@ -3,6 +3,8 @@ import { useRef, useState } from 'react'
 
 import type { OnValueChange } from 'react-number-format'
 
+import { useAuctionSlotsIDB } from '~entities/auction-slot/hooks'
+import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions, auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useKeyboard } from '~shared/hooks'
@@ -14,8 +16,9 @@ import { Divider } from 'klewik-ui/divider'
 import { Icons } from 'klewik-ui/icons'
 import { Input } from 'klewik-ui/input'
 import { NumberInput } from 'klewik-ui/number-input'
-import { toastSuccessNotification } from 'klewik-ui/toaster'
+import { toastErrorNotification, toastSuccessNotification } from 'klewik-ui/toaster'
 
+import { getPercentValue } from '~shared/utils/common'
 import { isStringEmpty } from '~shared/utils/validation/is-string-empty'
 
 import { LocalAuctionSlotsList } from './lists/local-auction-slots-list.ui'
@@ -60,15 +63,18 @@ export const LocalAuctionSlotsPage = () => {
 
 function AddSlotPanel() {
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+  const pointsSum = useStoreSelector(auctionSlotsSelectors.getSlotsPointsSum)
 
   const { addSlots } = useActionCreators(auctionSlotsActions)
+
+  const auctionSlotsIDB = useAuctionSlotsIDB()
 
   const [titleInputValue, setTitleInputValue] = useState('')
   const [pointsInputValue, setPointsInputValue] = useState('')
 
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const addSlot = () => {
+  const addSlot = async () => {
     const pointsInNum = Number(pointsInputValue)
 
     if (isStringEmpty(titleInputValue) || Number.isNaN(pointsInNum) || pointsInNum < 0)
@@ -76,17 +82,27 @@ function AddSlotPanel() {
 
     const lastSlot = auctionSlots.at(-1)
 
-    addSlots([{
-      id: lastSlot ? lastSlot.id + 1 : 1,
-      auctionSlotOrder: lastSlot ? lastSlot.auctionSlotOrder + 1 : 1,
-      isAlived: true,
-      isDropped: false,
-      points: pointsInNum,
-      title: titleInputValue,
-    }])
+    try {
+      const newSlot: AuctionSlot = {
+        id: lastSlot ? lastSlot.id + 1 : 1,
+        auctionSlotOrder: lastSlot ? lastSlot.auctionSlotOrder + 1 : 1,
+        isAlived: true,
+        isDropped: false,
+        points: pointsInNum,
+        title: titleInputValue,
+        winPercents: getPercentValue(pointsSum, pointsInNum) * 100,
+      }
 
-    setTitleInputValue('')
-    setPointsInputValue('')
+      // await auctionSlotsIDB.add(newSlot)
+
+      addSlots([newSlot])
+
+      setTitleInputValue('')
+      setPointsInputValue('')
+    }
+    catch {
+      toastErrorNotification('Не удалось создать слот', 'Ошибка сохранения')
+    }
   }
 
   useKeyboard(containerRef, {
