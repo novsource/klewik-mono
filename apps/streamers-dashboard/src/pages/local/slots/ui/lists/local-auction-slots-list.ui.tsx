@@ -2,14 +2,12 @@ import { memo, useCallback, useEffect, useState } from 'react'
 
 import { shallowEqual } from 'react-redux'
 
-import { AnimatePresence } from 'motion/react'
+import { Reorder } from 'motion/react'
 import { VList } from 'virtua'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-
-import { MotionBox } from 'klewik-ui/motion-box'
 
 import { LocalAuctionSlotListCard } from '../cards/local-auction-slot-card.ui'
 
@@ -27,12 +25,12 @@ const MemorizedList = memo((props: MemorizedListProps) => {
   return (
     <div style={{ flex: '1 1 auto' }}>
       <VList itemSize={64}>
-        <AnimatePresence>
+        <Reorder.Group values={data} onReorder={() => { }}>
           {data.map((id, index) => {
             return (
-              <MotionBox
+              <Reorder.Item
                 key={`item-${id}`}
-                layout
+                value={id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, type: 'tween' }}
@@ -43,10 +41,10 @@ const MemorizedList = memo((props: MemorizedListProps) => {
                   onFocus={onFocusCard}
                   onBlur={onBlurCard}
                 />
-              </MotionBox>
+              </Reorder.Item>
             )
           })}
-        </AnimatePresence>
+        </Reorder.Group>
       </VList>
     </div>
   )
