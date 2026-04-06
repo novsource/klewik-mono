@@ -65,7 +65,7 @@ function DonationPlatformBadge(props: DonationPlatformBadgeProps) {
 
   return (
     <div className={cn(
-      'w-fit rounded-medium h-full px-2 py-1 font-medium',
+      'size-6.5 rounded-medium h-full px-2 py-1 font-medium',
       platform === 'donationAlerts' && 'bg-orange text-white',
     )}
     >

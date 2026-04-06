@@ -2,11 +2,14 @@ import { memo, useCallback, useEffect, useState } from 'react'
 
 import { shallowEqual } from 'react-redux'
 
+import { AnimatePresence } from 'motion/react'
 import { VList } from 'virtua'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
+
+import { MotionBox } from 'klewik-ui/motion-box'
 
 import { LocalAuctionSlotListCard } from '../cards/local-auction-slot-card.ui'
 
@@ -24,17 +27,26 @@ const MemorizedList = memo((props: MemorizedListProps) => {
   return (
     <div style={{ flex: '1 1 auto' }}>
       <VList itemSize={64}>
-        {data.map((id, index) => {
-          return (
-            <LocalAuctionSlotListCard
-              key={`item-${id}`}
-              className={index !== 0 ? 'mt-2' : ''}
-              slotId={id}
-              onFocus={onFocusCard}
-              onBlur={onBlurCard}
-            />
-          )
-        })}
+        <AnimatePresence>
+          {data.map((id, index) => {
+            return (
+              <MotionBox
+                key={`item-${id}`}
+                layout
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3, type: 'tween' }}
+              >
+                <LocalAuctionSlotListCard
+                  className={index !== 0 ? 'mt-2' : ''}
+                  slotId={id}
+                  onFocus={onFocusCard}
+                  onBlur={onBlurCard}
+                />
+              </MotionBox>
+            )
+          })}
+        </AnimatePresence>
       </VList>
     </div>
   )
@@ -50,7 +62,7 @@ export const LocalAuctionSlotsList = () => {
   useEffect(() => {
     const possibleNewSlotsIds = [...auctionSlots].sort((a, b) => b.points - a.points).map(slot => slot.id)
 
-    if (!shallowEqual(slotsIds, possibleNewSlotsIds) && !isListIdsChangesBlocked) {
+    if ((!shallowEqual(slotsIds, possibleNewSlotsIds) && !isListIdsChangesBlocked) || slotsIds.length !== possibleNewSlotsIds.length) {
       setSlotsIds(possibleNewSlotsIds)
     }
   }, [isListIdsChangesBlocked, auctionSlots, slotsIds])

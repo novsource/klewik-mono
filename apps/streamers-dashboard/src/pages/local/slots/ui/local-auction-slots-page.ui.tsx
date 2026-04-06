@@ -3,8 +3,6 @@ import { useRef, useState } from 'react'
 
 import type { OnValueChange } from 'react-number-format'
 
-import { ExportSlotsPopover } from '~features/auction-slot/export-slots/ui'
-
 import { auctionSlotsActions, auctionSlotsSelectors } from '~entities/auction-slot/store'
 
 import { useKeyboard } from '~shared/hooks'
@@ -24,22 +22,35 @@ import { LocalAuctionSlotsList } from './lists/local-auction-slots-list.ui'
 import { LocalDonationsList } from './lists/local-donations-list.ui'
 
 export const LocalAuctionSlotsPage = () => {
+  const [isDonationsShowed, setIsDonationsShowed] = useState(true)
+
   return (
     <div className="w-full h-full tablet:min-h-[var(--height-page)] tablet:h-auto">
-      <div className="flex w-full h-full pt-6 px-6 gap-x-6 items-center">
-        <div className="flex flex-col w-full h-full gap-y-4 px-2 basis-3/4">
-
-          <div className="flex w-full gap-x-2">
-            <ExportSlotsPopover className="w-fit" size="sm" />
-          </div>
-
+      <div className="flex w-full h-full pt-8 pl-6 gap-x-6 items-center">
+        <div className="flex flex-col w-full h-full gap-y-4 px-2" style={{ flexBasis: isDonationsShowed ? '75%' : '99%' }}>
           <AddSlotPanel />
+
+          {/* <div className="flex w-full gap-x-2">
+             <ImportSlotsPopover cl/>
+             <ExportSlotsPopover className="w-fit" size="sm" />
+          </div> */}
+
           <LocalAuctionSlotsList />
         </div>
 
-        <Divider className="h-1/5" orientation="vertical" />
+        <div className="relative h-full flex items-center">
+          <Divider className="h-1/5" orientation="vertical" />
 
-        <div className="flex w-full h-full basis-1/4">
+          <Button
+            className="absolute top-1/2 -translate-y-1/2 "
+            isIconOnly
+            icon={<Icons.ArrowRight />}
+            size="xs"
+            onClick={() => setIsDonationsShowed(curr => !curr)}
+          />
+        </div>
+
+        <div className="flex w-full h-full" style={{ flexBasis: isDonationsShowed ? '25%' : '1%' }}>
           <LocalDonationsList />
         </div>
       </div>
@@ -52,13 +63,15 @@ function AddSlotPanel() {
 
   const { addSlots } = useActionCreators(auctionSlotsActions)
 
-  const [title, setTitle] = useState('')
-  const [points, setPoints] = useState(0)
+  const [titleInputValue, setTitleInputValue] = useState('')
+  const [pointsInputValue, setPointsInputValue] = useState('')
 
-  const panelRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const addSlot = () => {
-    if (isStringEmpty(title) || points < 0)
+    const pointsInNum = Number(pointsInputValue)
+
+    if (isStringEmpty(titleInputValue) || Number.isNaN(pointsInNum) || pointsInNum < 0)
       return
 
     const lastSlot = auctionSlots.at(-1)
@@ -68,15 +81,15 @@ function AddSlotPanel() {
       auctionSlotOrder: lastSlot ? lastSlot.auctionSlotOrder + 1 : 1,
       isAlived: true,
       isDropped: false,
-      points,
-      title,
+      points: pointsInNum,
+      title: titleInputValue,
     }])
 
-    setTitle('')
-    setPoints(0)
+    setTitleInputValue('')
+    setPointsInputValue('')
   }
 
-  useKeyboard(panelRef, {
+  useKeyboard(containerRef, {
     onKeyUp: (event) => {
       const key = event.key.toLowerCase()
 
@@ -87,14 +100,13 @@ function AddSlotPanel() {
   })
 
   const handleOnTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value)
+    setTitleInputValue(event.target.value)
   }
 
   const handleOnPointsValueChange: OnValueChange = (values) => {
-    const { floatValue } = values
+    const { value } = values
 
-    if (floatValue)
-      setPoints(floatValue)
+    setPointsInputValue(value)
   }
 
   const handleOnClick = () => {
@@ -102,27 +114,38 @@ function AddSlotPanel() {
     toastSuccessNotification('Слот успешно добавлен!')
   }
 
-  const isAddButtonDisabled = isStringEmpty(title) || points < 0
+  const isAddButtonDisabled = isStringEmpty(titleInputValue) || Number(pointsInputValue) < 0
 
   return (
-    <div ref={panelRef} className="flex gap-x-2">
+    <div ref={containerRef} className="flex gap-x-2">
       <Input
-        value={title}
+        value={titleInputValue}
         placeholder="Название слота"
-        slotClassNames={{ base: 'w-full' }}
+        slotClassNames={{ base: 'w-full', wrapper: 'px-4', input: 'text-title' }}
+        size="lg"
         onChange={handleOnTitleChange}
       />
       <NumberInput
-        value={points}
+        value={pointsInputValue}
         placeholder="Очки"
         startContent={<Icons.Coin className="text-gray-light" />}
         thousandSeparator=" "
+        size="lg"
+        slotClassNames={{ input: 'text-title font-golos-f' }}
         decimalScale={0}
+        valueIsNumericString
         allowNegative={false}
         onValueChange={handleOnPointsValueChange}
       />
 
-      <Button variant="action" startContent={<Icons.Plus />} disabled={isAddButtonDisabled} onClick={handleOnClick}>Добавить</Button>
+      <Button
+        variant="action"
+        startContent={<Icons.Plus />}
+        disabled={isAddButtonDisabled}
+        onClick={handleOnClick}
+      >
+        Добавить
+      </Button>
     </div>
   )
 }

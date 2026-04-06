@@ -26,15 +26,22 @@ export const auctionSlotsListenerMiddlewares = [listeningMiddleware.middleware]
 //   },
 // })
 
+// startSlotsActionsListening({
+//   actionCreator: auctionSlotsActions.addSlots,
+//   effect: (action, api) => {
+//     const slots = action.payload
+
+//     api.dispatch(auctionSlotsActions.updateAlivedSlotsIds({
+//       mode: 'add',
+//       data: slots.map(slot => slot.id),
+//     }))
+//   },
+// })
+
 startSlotsActionsListening({
   actionCreator: auctionSlotsActions.addSlots,
   effect: (action, api) => {
     const slots = action.payload
-
-    api.dispatch(auctionSlotsActions.updateAlivedSlotsIds({
-      mode: 'add',
-      data: slots.map(slot => slot.id),
-    }))
   },
 })
 

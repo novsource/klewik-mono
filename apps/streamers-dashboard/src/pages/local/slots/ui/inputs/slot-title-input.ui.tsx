@@ -16,13 +16,16 @@ export const SlotTitleInput = memo((props: SlotTitleInputProps) => {
 
     onChange?.(event)
     onInput?.(value)
-    // updateSlot({ id: slot.id, data: { title: event.target.value } })
   }
 
   return (
     <Input
       variant="ghost"
-      slotClassNames={{ base: 'w-full grow', wrapper: 'px-2', input: 'text-base font-semibold text-title' }}
+      slotClassNames={{
+        base: 'w-full grow',
+        wrapper: 'px-2',
+        input: 'text-base font-semibold text-title overflow-ellipsis text-nowrap overflow-hidden',
+      }}
       size="lg"
       onChange={handleOnChange}
       {...restProps}

@@ -74,10 +74,10 @@ const slice = createSlice({
     deleteSlot(state, action: PayloadAction<{ id: AuctionSlot['id'] }>) {
       const payload = action.payload
 
-      const filtredSlots = state.slots.filter(slot => slot.id !== payload.id)
-      const updatedPointsSum = filtredSlots.reduce((acc, slot) => acc + slot.points, 0)
+      const filteredSlots = state.slots.filter(slot => slot.id !== payload.id)
+      const updatedPointsSum = filteredSlots.reduce((acc, slot) => acc + slot.points, 0)
 
-      state.slots = filtredSlots
+      state.slots = filteredSlots
       state.slotsPointsSum = updatedPointsSum
     },
     updateSlotsPointsSum(
@@ -216,6 +216,9 @@ const slice = createSlice({
   selectors: {
     getSlots(state) {
       return state.slots
+    },
+    getSlotById(state, id: number) {
+      return state.slots.find(slot => slot.id === id)
     },
     getAlivedSlotsIds(state) {
       return state.alivedSlotsIds
