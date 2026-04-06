@@ -55,7 +55,7 @@ export const GameListCard = (props: CardsGameListCardProps) => {
             <AuctionSlotCardContentInfoDivider />
             <AuctionSlotCardPointsInfo slotPoints={auctionSlot.points} />
             <AuctionSlotCardContentInfoDivider />
-            <AuctionSlotCardWinPercents winPercents={auctionSlot.winPercents} />
+            <AuctionSlotCardWinPercents winPercents={Number((auctionSlot.winPercents * 100).toFixed(2))} />
           </Flex>
         </BaseAuctionSlotCardContent>
       </Flex>

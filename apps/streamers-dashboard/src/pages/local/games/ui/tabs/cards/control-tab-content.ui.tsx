@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
 
-import { useAuctionGameContext } from '~pages/dashboard/games/context/auction-game-context'
-import { useAuctionCardsGame } from '~pages/dashboard/games/hooks/use-auction-cards-game'
+import { useCardsGameContext } from '~entities/games/context/cards-game/cards-game.context'
+
 import { controlWheelTabStyles } from '~pages/dashboard/games/styles'
+import { useAuctionGameContext } from '~pages/local/games/context/auction-game-context'
 
 import { Button } from 'klewik-ui/button'
 import { Flex } from 'klewik-ui/flex'
@@ -23,7 +24,7 @@ export const CardsGameControllers = () => {
 function ShuffleCardsButton() {
   const auctionGame = useAuctionGameContext()
 
-  const cardsGame = useAuctionCardsGame()
+  const cardsGame = useCardsGameContext()
 
   const isDisabled = auctionGame.state.slots.alived.length < 2 || auctionGame.state.slots.winner !== null
 

@@ -11,11 +11,15 @@ import { Button } from 'klewik-ui/button'
 import { Icons } from 'klewik-ui/icons'
 import { toastErrorNotification } from 'klewik-ui/toaster'
 
+import { useAuctionGameContext } from '../../context/auction-game-context'
+
 export const SpinWheelButton = () => {
   const { spinTime } = useStoreSelector(auctionGamesSelectors.getWheelGameSettings)
+
+  const auctionGamContext = useAuctionGameContext()
   const wheelGame = useWheelGameContext()
 
-  const isButtonDisabled = wheelGame.state.isSpinning || wheelGame.state.wheelSlots.length < 1
+  const isButtonDisabled = wheelGame.state.isSpinning || wheelGame.state.wheelSlots.length <= 1
 
   const handleOnClick = () => {
     if (isButtonDisabled)
@@ -29,6 +33,8 @@ export const SpinWheelButton = () => {
     }
 
     const target = updateSlotsAnglesByRotateValue(wheelGame.state.wheelSlots, wheelGame.state.rotateValue).filter(slot => slot.id === spinTargetSlot.id)[0]!
+
+    auctionGamContext.actions.play(target.id)
     wheelGame.actions.startWheelSpinAnimation(target, spinTime)
   }
 

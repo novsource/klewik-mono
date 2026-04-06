@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 
 import { useCardsGame } from '~entities/games/hooks/cards-game'
 import { auctionGamesSelectors } from '~entities/games/store'
+import { CardsGame } from '~entities/games/ui/card-game'
 
 import { WheelGameContextProvider } from '~entities/wheel/context'
 import { useWheel } from '~entities/wheel/hooks'
@@ -12,6 +13,7 @@ import { useDocumentTitle } from '~shared/hooks'
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { useAuctionGameContext } from '../../context/auction-game-context'
+import { LocalAuctionCardsGame } from './local-cards-game.ui'
 // import { AuctionCardsGame } from './games/cards-auction-game.ui'
 import { LocalWheelOfFortuneGame } from './wheel-of-fortune.ui'
 
@@ -60,16 +62,16 @@ export const LocalAuctionGame = (props: AuctionGameProps) => {
         </WheelGameContextProvider>
       )}
 
-      {/* {auctionGame === 'cards' && (
+      {auctionGame === 'cards' && (
         <CardsGame game={cardsGame}>
           <div className="w-full h-full flex-[7]">
-            <AuctionCardsGame />
+            <LocalAuctionCardsGame />
           </div>
           <div className="h-full w-full flex-[3] ">
             {children}
           </div>
         </CardsGame>
-      )} */}
+      )}
     </>
   )
 }

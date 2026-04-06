@@ -43,13 +43,15 @@ type AuctionWheelSlotsListProps = {
 function WheelSlotsList(props: AuctionWheelSlotsListProps) {
   const { data } = props
 
-  return <BaseGameSlotsList data={data} />
-}
-
-function CardsGameSlotsList() {
   const { state: { wheelSlots } } = useWheelGameContext()
 
   return <BaseGameSlotsList data={wheelSlots} />
+}
+
+function CardsGameSlotsList(props: AuctionWheelSlotsListProps) {
+  const { data } = props
+
+  return <BaseGameSlotsList data={data} />
 }
 
 type BaseGameSlotsListProps = {
