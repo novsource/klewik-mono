@@ -9,6 +9,8 @@ import { globalDialogsActions } from '~app/components/global-dialogs/store/globa
 
 import { SearchDialog } from '~widgets/search-dialog/ui'
 
+import { ExportSlotsPopover } from '~features/auction-slot/export-slots/ui'
+
 import { auctionSelectors } from '~entities/auction/store'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
@@ -88,6 +90,10 @@ function DesktopLocalDashboardHeader() {
       <SlotsStatisticCard className="ml-1.5" />
       <SlotsStatusesStatisticCard className="ml-1.5" />
       <IntegrationsStatisticCard className="ml-1.5" />
+
+      <Divider className="mx-4" orientation="vertical" />
+
+      <ExportSlotsPopover size="sm" />
     </Flex>
   )
 }
