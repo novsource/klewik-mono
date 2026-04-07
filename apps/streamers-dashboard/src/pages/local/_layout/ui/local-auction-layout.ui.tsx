@@ -1,4 +1,7 @@
-import { Outlet } from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
+
+import { DividedLayout } from '~shared/layouts/divided-layout'
+import { PageSidebarLayout } from '~shared/layouts/page-sidebar-layout'
 
 import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
@@ -33,19 +36,25 @@ export const LocalAuctionLayout = () => {
       <div className="w-full h-full tablet:inline-flex tablet:h-auto">
 
         <MediaQueryViewToggler.MatchedItem>
-          <aside className="sticky top-0 h-screen py-4 border-r-1 border-r-dark bg-dark-foreground-light">
+          <PageSidebarLayout>
             <div className="flex w-full h-full flex-col justify-between items-center">
               <Navbar links={LOCAL_NAVBAR_LINKS} />
 
-              <Button
-                className="text-gray-light hover:bg-dark hover:text-gray-accent"
-                variant="ghost"
-                isIconOnly
-                icon={<Icons.Settings />}
-                onClick={() => setDialogOpenStatus({ dialog: 'settings', status: true })}
-              />
+              <DividedLayout slotClassnames={{ container: 'flex flex-col items-center' }} orientation="horizontal" gap={12}>
+                <Button
+                  className="text-gray-light hover:bg-dark hover:text-gray-accent"
+                  variant="ghost"
+                  isIconOnly
+                  icon={<Icons.Settings />}
+                  onClick={() => setDialogOpenStatus({ dialog: 'settings', status: true })}
+                />
+
+                <NavLink className="text-gray-light hover:text-gray-accent" to="https://github.com/notifications" target="_blank">
+                  <Icons.Github />
+                </NavLink>
+              </DividedLayout>
             </div>
-          </aside>
+          </PageSidebarLayout>
         </MediaQueryViewToggler.MatchedItem>
 
         <Flex className="w-full h-full flex flex-col">

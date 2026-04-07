@@ -53,7 +53,6 @@ export const AddSlotPanel = () => {
     }
 
     addSlots([newSlot])
-
     clearInputs()
   }
 
@@ -63,7 +62,7 @@ export const AddSlotPanel = () => {
 
       if (key === 'enter') {
         addSlot()
-        clearInputs()
+        toastSuccessNotification('Слот успешно добавлен!')
       }
     },
   })
@@ -80,6 +79,7 @@ export const AddSlotPanel = () => {
 
   const handleOnClick = () => {
     addSlot()
+
     toastSuccessNotification('Слот успешно добавлен!')
   }
 
