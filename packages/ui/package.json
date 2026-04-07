@@ -90,6 +90,9 @@
     "./flex": {
       "import": "./src/components/ui/flex/index.ts"
     },
+    "./group": {
+      "import": "./src/components/ui/group/index.ts"
+    },
     "./icons": {
       "import": "./src/components/ui/icons/index.ts"
     },
@@ -132,6 +135,9 @@
     "./skeleton": {
       "import": "./src/components/ui/skeleton/index.ts"
     },
+    "./stack": {
+      "import": "./src/components/ui/stack/index.ts"
+    },
     "./switch": {
       "import": "./src/components/ui/switch/index.ts"
     },
@@ -161,12 +167,6 @@
     },
     "./wizard": {
       "import": "./src/components/ui/wizard/index.ts"
-    },
-    "./utils": {
-      "import": "./src/utils/index.ts"
-    },
-    "./toaster/lib": {
-      "import": "./src/components/ui/toaster/lib/index.ts"
     }
   }
 }
