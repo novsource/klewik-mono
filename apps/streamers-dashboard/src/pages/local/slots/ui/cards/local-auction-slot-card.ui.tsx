@@ -1,5 +1,7 @@
 import { memo, useEffect, useRef, useState } from 'react'
 
+import { auctionSelectors } from '~entities/auction/store'
+
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions, auctionSlotsSelectors } from '~entities/auction-slot/store'
 import { AuctionSlotCardStatusInfo, AuctionSlotCardWinPercents } from '~entities/auction-slot/ui/card'
@@ -26,11 +28,14 @@ export type LocalAuctionSlotListCardProps = Omit<CardProps, 'slot' | 'onFocus' |
 } & UseCardFocusOptions
 
 export const LocalAuctionSlotListCard = memo((props: LocalAuctionSlotListCardProps) => {
-  const { slotId, isWinner = false, className, onFocus, onBlur, ...restProps } = props
+  const { slotId, className, onFocus, onBlur, ...restProps } = props
 
+  const winnerId = useStoreSelector(auctionSelectors.getWinnerId)
   const slot = useStoreSelector(state => auctionSlotsSelectors.getSlotById(state, slotId))
 
   const { ref } = useCardFocus({ onFocus, onBlur })
+
+  const isWinner = slotId === winnerId
 
   // useActiveElement throw error when ref changes to undefined
   if (!slot)
@@ -111,7 +116,7 @@ function SlotCardControls(props: SlotCardControlsProps) {
 
         <div className="flex items-center gap-x-1 flex-1 min-w-0">
 
-          <div className="flex-1 min-w-[100px] tablet:min-w-[120px]">
+          <div className="flex-1 min-w-[115px] tablet:min-w-[135px]">
             <SlotPointsInput
               value={slot.points}
               onInput={handlePointsChange}

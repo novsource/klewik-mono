@@ -18,9 +18,6 @@ export const SlotPointsInput = memo((props: SlotPointsInputProps) => {
 
     onValueChange?.(values, sourceInfo)
     onInput?.(floatValue)
-
-    // setValue(floatValue)
-    // updateSlot({ id: slot.id, data: { points: floatValue } })
   }
 
   return (
