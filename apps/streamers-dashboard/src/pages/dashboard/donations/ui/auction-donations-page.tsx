@@ -20,6 +20,7 @@ import { useDocumentTitle, useUrlSearchParam } from '~shared/hooks'
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
 
 import { cn } from '~shared/utils'
 
@@ -54,7 +55,7 @@ export const AuctionDonationsPage = () => {
   return (
     <div
       className={cn([
-        'mx-auto grid h-full w-full grid-rows-slots-table gap-y-3 pt-3 pb-26 tablet:pt-5 tablet:min-h-[var(--height-page)] tablet:h-auto',
+        'mx-auto grid h-full w-full grid-rows-slots-table gap-y-3 pt-3 pb-26 tablet:pt-10 tablet:min-h-[var(--height-page)] tablet:h-auto',
         'mobile:gap-y-5',
         'max-tablet:max-w-[1100px] tablet:grid-rows-slots-desktop tablet:pb-0 tablet:pl-4',
         'desktop:max-w-[1750px] desktop-lg:max-w-[2100px]',
@@ -66,7 +67,7 @@ export const AuctionDonationsPage = () => {
         <MediaQueryViewToggler.MatchedItem>
           <PageHeader />
 
-          <Flex className="gap-x-3 justify-self-end">
+          <Flex className="w-full gap-x-3 justify-between">
             <DonationsStatusFilterSelect
               status={donationsFilterValue}
               onValueChange={setDonationsFilterValue}
@@ -95,11 +96,23 @@ export const AuctionDonationsPage = () => {
 
 function PageHeader() {
   return (
-    <Flex className="gap-y-0.5 tablet:gap-y-1.25 tablet:mb-12 w-full" direction="column">
-      <Title className="tablet:text-title-xl desktop:text-title-2xl">Пожертвования</Title>
-      <Text className="text-gray/80">
-        Просмотр и модерирование входящих пожертвований
-      </Text>
-    </Flex>
+    <div className="w-full flex gap-x-6 items-center tablet:mb-12">
+      <div className="w-fit h-fit bg-gradient-to-r bg-[#50C9C3]/60 p-0.5 rounded-small outline-4 outline-[#50C9C3]/20">
+        <Flex
+          className="relative size-10 tablet:size-11.5 rounded-small p-1.25"
+          align="center"
+          justify="center"
+        >
+          <Icons.MoneyHand gradient width={38} height={38} />
+        </Flex>
+      </div>
+      <Flex className="gap-y-0.5 tablet:gap-y-1.25 w-full" direction="column">
+        <Title className="tablet:text-title-xl desktop:text-title-2xl">Пожертвования</Title>
+        <Text className="text-gray/80">
+          Просмотр и модерирование входящих пожертвований
+        </Text>
+      </Flex>
+    </div>
+
   )
 }

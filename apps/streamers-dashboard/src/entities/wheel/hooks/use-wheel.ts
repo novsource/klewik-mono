@@ -43,10 +43,10 @@ const useWheelControl = (
 
   const framerMotionAnimationValue = useMotionValue(rotateValue ?? 0)
   const [wheelRotateCSSValue, setWheelRotateCSSValue] = useState(() =>
-    ({
-      current: framerMotionAnimationValue.get(),
-      final: framerMotionAnimationValue.get(),
-    }),
+  ({
+    current: framerMotionAnimationValue.get(),
+    final: framerMotionAnimationValue.get(),
+  }),
   )
 
   const rotateWheelAnimation = useCallback(
@@ -57,7 +57,7 @@ const useWheelControl = (
         return
 
       const targetRotateCSSValue
-          = wheelRotateCSSValue.current + calculateRotateWheelCSSValue(target)
+        = wheelRotateCSSValue.current + calculateRotateWheelCSSValue(target)
 
       if (targetRotateCSSValue !== wheelRotateCSSValue.current)
         setWheelRotateCSSValue({ ...wheelRotateCSSValue, final: targetRotateCSSValue })
@@ -160,13 +160,10 @@ export const useWheel = (auctionSlots: AuctionSlot[], options: UseWheelOptions):
   })
 
   useEffect(() => {
-    if (options.mode === 'dropout') {
-      const dropoutSlots = formatSlotsToDropoutMode(auctionSlots)
-      setWheelSlots(transformSlotsToWheelSlots(dropoutSlots))
-    }
-    else {
-      setWheelSlots(transformSlotsToWheelSlots(auctionSlots, options.sizeMode))
-    }
+    const preparedSlots = options.mode === 'dropout' ? formatSlotsToDropoutMode(auctionSlots) : auctionSlots
+    const transformedSlots = transformSlotsToWheelSlots(preparedSlots, options.sizeMode)
+
+    setWheelSlots(transformSlotsToWheelSlots(transformedSlots, options.sizeMode))
   }, [auctionSlots, options.sizeMode, options.mode])
 
   const updateWheelSlotsColors = () => {

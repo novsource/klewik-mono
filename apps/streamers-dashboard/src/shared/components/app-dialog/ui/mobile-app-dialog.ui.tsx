@@ -3,13 +3,12 @@ import type { ReactNode } from 'react'
 import { Text } from '~shared/components/typography'
 
 import { Button } from 'klewik-ui/button'
-import type { DrawerProps } from 'klewik-ui/drawer'
-import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from 'klewik-ui/drawer'
+import type { DrawerContentProps, DrawerProps } from 'klewik-ui/drawer'
+import { Drawer, DrawerContent, DrawerDescription, DrawerTitle, DrawerTrigger } from 'klewik-ui/drawer'
 import type { FlexProps } from 'klewik-ui/flex'
 import { Flex } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
-import type { SheetContentProps, SheetHeaderProps, SheetProps, SheetTriggerProps } from 'klewik-ui/sheet'
-import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from 'klewik-ui/sheet'
+import type { SheetHeaderProps, SheetProps, SheetTriggerProps } from 'klewik-ui/sheet'
 import { mergeProps } from 'klewik-ui/utils'
 
 import { cn } from '~shared/utils'
@@ -17,7 +16,7 @@ import { cn } from '~shared/utils'
 export type MobileAppDialogProps = SheetProps
 
 export const MobileAppDialog = (props: MobileAppDialogProps) => {
-  return <Sheet {...props} />
+  return <Drawer side="bottom" size="full" {...props} />
 }
 
 MobileAppDialog.Trigger = MobileAppDialogTrigger
@@ -31,15 +30,15 @@ MobileAppDialog.Footer = MobileAppDialogFooter
 export type MobileAppDialogTriggerProps = SheetTriggerProps
 
 function MobileAppDialogTrigger(props: MobileAppDialogTriggerProps) {
-  return <SheetTrigger {...props} />
+  return <DrawerTrigger {...props} />
 }
 
-export type MobileAppDialogContentProps = Omit<SheetContentProps, 'isFullPageSize' | 'side'> & {
+export type MobileAppDialogContentProps = DrawerContentProps & {
   contentWrapperProps?: FlexProps<'div'>
 }
 
 function MobileAppDialogContent(props: MobileAppDialogContentProps) {
-  const { className, contentWrapperProps, children, ...restProps } = props
+  const { contentWrapperProps, children, ...restProps } = props
 
   const mergedContentWrapperProps = mergeProps({
     className: 'h-full w-full',
@@ -47,14 +46,12 @@ function MobileAppDialogContent(props: MobileAppDialogContentProps) {
   }, contentWrapperProps)
 
   return (
-    <SheetContent
-      className={cn('overflow-scroll p-4', className)}
-      isFullPageSize
-      side="bottom"
+    <DrawerContent
+      slotClassnames={{ content: 'overflow-scroll p-4' }}
       {...restProps}
     >
       <Flex {...mergedContentWrapperProps}>{children}</Flex>
-    </SheetContent>
+    </DrawerContent>
   )
 }
 
@@ -84,13 +81,14 @@ function MobileAppDialogHeaderTitle(props: MobileAppDialogHeaderTitleProps) {
     <Flex className="flex gap-x-4 items-center">
       {icon}
       <div className="w-full">
-        <SheetTitle className="text-title">{value}</SheetTitle>
+        <DrawerTitle className="font-semibold">{value}</DrawerTitle>
         {description && (
-          <SheetDescription>
-            <Text className="leading-4 font-normal text-gray-accent text-sm">
+          <DrawerDescription>
+            <Text className="leading-4 font-normal text-gray-accent text-sm" asSpan>
               {description}
             </Text>
-          </SheetDescription>
+          </DrawerDescription>
+
         )}
       </div>
     </Flex>
@@ -105,7 +103,7 @@ function MobileAppDialogExtraActions(props: MobileAppDialogExtraActionsProps) {
   const { children, ...restProps } = props
 
   return (
-    <Drawer {...restProps}>
+    <Drawer side="bottom" {...restProps}>
       <DrawerTrigger render={<Button size="xs" startContent={<Icons.Actions />}>Действия</Button>} />
       <DrawerContent>
         <div className="py-3 px-4">

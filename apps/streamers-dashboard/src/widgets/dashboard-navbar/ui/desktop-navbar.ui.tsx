@@ -44,8 +44,8 @@ export const DesktopNavbar = memo(() => {
             to={routerLink}
             className={({ isActive }) =>
               cn(
-                'flex items-center justify-center transition-all hover:text-gray-accent text-gray/70 p-2 bg-inherit',
-                isActive && 'text-green-accent bg-green-dark rounded-md hover:text-green-accent',
+                'flex items-center justify-center transition-all hover:text-gray-accent text-gray/70 p-2 bg-inherit hover:scale-110',
+                isActive && 'text-green-accent bg-green-dark rounded-md hover:text-green-accent hover:scale-100',
               )}
           >
             {menuIcon}

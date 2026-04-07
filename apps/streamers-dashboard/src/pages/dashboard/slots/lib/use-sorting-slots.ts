@@ -1,13 +1,15 @@
 import { useEffect, useMemo } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
-import { auctionSlotsActions, auctionSlotsSelectors } from '~entities/auction-slot/store'
+import { auctionSlotsActions } from '~entities/auction-slot/store'
 
-import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
+import { useActionCreators } from '~shared/lib/redux-toolkit'
 
 import type { SortingOptions } from '~shared/store/model'
 
 import { deleteAllSpacesFromString } from '~shared/utils/formatting'
+
+import { useSlotsPageContext } from '../context/slots-page.context'
 
 const compareSlotsFields = (
   slotOne: AuctionSlot,
@@ -43,12 +45,12 @@ const compareSlotsFields = (
 }
 
 export const useSortingSlots = (slots: AuctionSlot[], options?: SortingOptions<AuctionSlot>) => {
-  const storeSortingOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
+  const { state: { sortingSlotsOptions } } = useSlotsPageContext()
 
   const { setSortedSlots } = useActionCreators(auctionSlotsActions)
 
   const sortedSlots = useMemo(() => {
-    const sortingOptions = options ?? storeSortingOptions
+    const sortingOptions = options ?? sortingSlotsOptions
 
     if (sortingOptions === null)
       return slots
@@ -56,7 +58,7 @@ export const useSortingSlots = (slots: AuctionSlot[], options?: SortingOptions<A
     return [...slots].sort((slotOne, slotTwo) =>
       compareSlotsFields(slotOne, slotTwo, sortingOptions),
     )
-  }, [slots, options, storeSortingOptions])
+  }, [slots, options, sortingSlotsOptions])
 
   useEffect(() => {
     setSortedSlots(sortedSlots)

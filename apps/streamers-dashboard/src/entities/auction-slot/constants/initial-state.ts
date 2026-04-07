@@ -1,7 +1,5 @@
 import type { AuctionSlot } from '../model'
 
-import type { SortingOptions } from '~shared/store/model'
-
 // const fakeAuctionSlots = createFakeAuctionSlotsArray({ minLength: 50, maxLength: 130 })
 
 // const slotsPointsSum = fakeAuctionSlots.reduce(
@@ -15,7 +13,6 @@ export type AuctionSlotsSliceState = {
   droppedSlotsIds: number[]
   sortedSlots: AuctionSlot[]
   slotsPointsSum: number
-  sortingOptions: SortingOptions<AuctionSlot>
 }
 
 export const AUCTION_SLOTS_SLICE_INITIAL_STATE: AuctionSlotsSliceState = {
@@ -24,8 +21,4 @@ export const AUCTION_SLOTS_SLICE_INITIAL_STATE: AuctionSlotsSliceState = {
   sortedSlots: [],
   droppedSlotsIds: [],
   slotsPointsSum: 0,
-  sortingOptions: {
-    field: 'points',
-    type: 'descending',
-  },
 }

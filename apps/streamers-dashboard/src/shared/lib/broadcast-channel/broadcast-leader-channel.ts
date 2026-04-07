@@ -26,14 +26,14 @@ type BroadcastLeaderChannelMethods<
     EventName extends keyof ChannelEventMap,
   >(
     eventName: EventName,
-    handler: (args: ChannelEventMap[EventName]) => void
+    handler: (args: ChannelEventMap[EventName]) => void,
   ) => void
 
   emit: <
     EventName extends keyof ChannelEventMap,
   >(
     eventName: EventName,
-    args: ChannelEventMap[EventName]
+    args: ChannelEventMap[EventName],
   ) => void
 
   /**
@@ -158,8 +158,11 @@ export class BroadcastLeaderChannel<
   }
 
   async close() {
-    await this._elector.die()
-    return this._channel.close()
+    if (!this._elector.isDead)
+      await this._elector.die()
+
+    if (!this._channel.isClosed)
+      return this._channel.close()
   }
 
   onMessage(handler: (message: SourceMessage) => void) {

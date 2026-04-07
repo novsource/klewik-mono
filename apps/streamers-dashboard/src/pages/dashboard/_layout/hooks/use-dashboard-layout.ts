@@ -1,43 +1,50 @@
+import { useState } from 'react'
+
 import type { Auction } from '~entities/auction/model'
 
 import { auctionSlotsActions } from '~entities/auction-slot/store'
 
 import { donationsActions } from '~entities/donation/store'
 
-import { useAppSSE, useAuctionSlotsSSE, useDonationsSSE } from '~shared/hooks'
+import { useAppSSE, usePrevious } from '~shared/hooks'
 
 import { useActionCreators } from '~shared/lib/redux-toolkit'
 
 export type UseDashboardLayoutReturn = {
   isSSEConnected: boolean
+  isDisconnectWithError: boolean
   isPending: boolean
 }
 
 export const useDashboardLayout = (auctionUUID: Auction['uuid']): UseDashboardLayoutReturn => {
-  const { isAllEventsConnected, connectAll, isPending } = useAppSSE({
-    onNewTabLeader: () => {
-      connectAll(auctionUUID)
-    },
-  })
-
   const { addDonation, updateDonationsStatusesCounts } = useActionCreators(donationsActions)
   const { addSlots, updateSlot } = useActionCreators(auctionSlotsActions)
 
-  useDonationsSSE({
-    'donations/add': (donation) => {
-      addDonation(donation)
-      updateDonationsStatusesCounts({ [donation.processData.status]: 1 })
+  const [isDisconnectWithError, setIsDisconnectWithError] = useState(false)
+
+  const { isConnected, connect, isPending } = useAppSSE({
+    onNewTabLeader: () => {
+      connect(auctionUUID)
+    },
+    listeners: {
+      'donations/add': (donation) => {
+        addDonation(donation)
+        updateDonationsStatusesCounts({ [donation.processData.status]: 1 })
+      },
+      'auction-slots/add': (slots) => {
+        addSlots(slots)
+      },
+      'auction-slots/update': (slot) => {
+        updateSlot({ id: slot.id, data: slot })
+      },
     },
   })
 
-  useAuctionSlotsSSE({
-    'auction-slots/add': (slots) => {
-      addSlots(slots)
-    },
-    'auction-slots/update': (slot) => {
-      updateSlot({ id: slot.id, data: slot })
-    },
-  })
+  const previousConnectStatus = usePrevious(isConnected)
 
-  return { isPending, isSSEConnected: isAllEventsConnected }
+  if (previousConnectStatus && !isConnected && !isDisconnectWithError) {
+    setIsDisconnectWithError(true)
+  }
+
+  return { isPending, isSSEConnected: isConnected, isDisconnectWithError }
 }

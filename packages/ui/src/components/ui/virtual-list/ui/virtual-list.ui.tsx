@@ -9,7 +9,7 @@ import type {
 
 import type { VirtualizedItem } from '../hooks'
 
-import { forwardRef } from 'react'
+import { cloneElement, forwardRef, isValidElement } from 'react'
 import type { ComponentProps, MutableRefObject, ReactNode, Ref } from 'react'
 
 import { Virtualizer } from 'virtua'
@@ -72,7 +72,7 @@ export const VirtualList = <T = unknown>(props: VirtualListProps<T>) => {
     ...virtualizerOptions
   } = props
 
-  const virtualizedItems = useVirtualizedItems(data)
+  // const virtualizedItems = useVirtualizedItems(data)
 
   return (
     <div
@@ -102,15 +102,20 @@ export const VirtualList = <T = unknown>(props: VirtualListProps<T>) => {
           {...virtualizerOptions}
         >
           {isFunction(children)
-            ? virtualizedItems.map((vItem, index) => {
-              return (
-                <div
-                  key={vItem.id}
-                  style={{ marginTop: index === 0 ? 0 : gap }}
-                >
-                  {children(data, vItem)}
-                </div>
-              )
+            ? data.map((_, index) => {
+              const child = children(data, { id: `item-${index}`, index })
+
+              if (!isValidElement(child)) {
+                return
+              }
+
+              return cloneElement(child, {
+                key: child.key ?? `item-${index}`,
+                style: {
+                  marginTop: index === 0 ? 0 : gap,
+                  ...(child.props.style || {}),
+                },
+              })
             })
             : children}
         </Virtualizer>

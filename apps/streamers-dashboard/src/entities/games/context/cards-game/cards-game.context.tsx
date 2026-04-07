@@ -9,10 +9,13 @@ export type CardsGameContextValue = {
     cardsUnits: CardsGameUnit[]
     preparedCardUnit: NullablePossible<CardsGameUnit>
     choosedCardUnit: NullablePossible<CardsGameUnit>
+    confirmedCard: NullablePossible<CardsGameUnit>
   }
   actions: {
     prepareCard: (card: CardsGameUnit) => void
     chooseCard: (card: CardsGameUnit) => void
+    confirmCard: (card: CardsGameUnit) => void
+    clearConfirmedCard: () => void
     clearChoosenCard: () => void
     shuffleCards: () => void
   }
@@ -23,11 +26,14 @@ const CardsGameContext = createContext<CardsGameContextValue>({
     cardsUnits: [],
     choosedCardUnit: null,
     preparedCardUnit: null,
+    confirmedCard: null,
   },
   actions: {
     prepareCard: () => ({}),
+    confirmCard: () => ({}),
     chooseCard: () => ({}),
     clearChoosenCard: () => ({}),
+    clearConfirmedCard: () => ({}),
     shuffleCards: () => ({}),
   },
 })
@@ -52,5 +58,5 @@ export const CardsGameContextProvider = (props: CardsGameContextProviderProps) =
 
   const contextValue = useMemo(() => cardGame, [cardGame])
 
-  return <CardsGameContext.Provider value={contextValue}>{ children }</CardsGameContext.Provider>
+  return <CardsGameContext.Provider value={contextValue}>{children}</CardsGameContext.Provider>
 }

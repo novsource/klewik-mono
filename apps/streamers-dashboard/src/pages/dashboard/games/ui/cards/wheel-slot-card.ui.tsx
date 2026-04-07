@@ -1,8 +1,3 @@
-import type { CardProps } from 'klewik-ui/card'
-
-import { Flex } from 'klewik-ui/flex'
-import { Icons } from 'klewik-ui/icons'
-
 import {
   AuctionSlotCardContentInfoDivider,
   AuctionSlotCardPointsInfo,
@@ -14,10 +9,14 @@ import {
 
 import type { WheelSlot } from '~entities/wheel/model'
 
+import type { CardProps } from 'klewik-ui/card'
+import { Flex } from 'klewik-ui/flex'
+import { Icons } from 'klewik-ui/icons'
+
 import { cn } from '~shared/utils'
 
 export type WheelSlotCardProps = CardProps & {
-  wheelSlot: WheelSlot
+  wheelSlot: Omit<WheelSlot, 'color'> & Partial<Pick<WheelSlot, 'color'>>
   winPercentsBounds: { min: number, max: number }
   isDropped?: boolean
   isWinner?: boolean

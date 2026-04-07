@@ -147,7 +147,7 @@ export type AuctionSlotCardWinPercentsProps = Omit<ComponentProps<'div'>, 'child
     min: number
     max: number
   }
-  numberFlowProps?: NumberFlowProps
+  numberFlowProps?: Omit<NumberFlowProps, 'value'>
 }
 
 export const AuctionSlotCardWinPercents = (props: AuctionSlotCardWinPercentsProps) => {
@@ -172,18 +172,18 @@ export const AuctionSlotCardWinPercents = (props: AuctionSlotCardWinPercentsProp
       {...restProps}
     >
       <NumberFlow
-        className={cn('font-golos-f font-semibold text-sm tablet:text-md tablet:leading-4')}
         willChange
         trend={0}
         value={winPercents}
         format={{
-          notation: 'compact',
+          notation: 'standard',
           compactDisplay: 'short',
         }}
         locales="ru-RU"
         suffix="%"
         style={{ color }}
         {...numberFlowProps}
+        className={cn('font-golos-f font-semibold text-sm tablet:text-md tablet:leading-4', numberFlowProps?.className)}
       />
     </AuctionSlotCardContentInfoWrapper>
   )
@@ -212,6 +212,27 @@ export const AuctionSlotCardPointsInfo = (props: AuctionSlotCardPointsInfoProps)
         locales="ru-RU"
         {...numberFlowProps}
       />
+    </AuctionSlotCardContentInfoWrapper>
+  )
+}
+
+export type AuctionSlotCardStatusInfoProps = Omit<ComponentProps<'div'>, 'children'> & {
+  isDropped: boolean
+  isWinner?: boolean
+}
+
+export const AuctionSlotCardStatusInfo = (props: AuctionSlotCardStatusInfoProps) => {
+  const { isDropped, isWinner = false, ...restProps } = props
+
+  return (
+    <AuctionSlotCardContentInfoWrapper {...restProps}>
+      <div className={cn('size-7.5 tablet:size-8 bg-red/10 flex items-center justify-center rounded-small', isDropped && 'bg-dark-light', isWinner && 'bg-orange/10')}>
+        {isWinner
+          ? <Icons.Crown className="text-orange" />
+          : isDropped
+            ? <Icons.BrokenHeart className="text-gray-light" />
+            : <Icons.Heart className="text-red" size="xs" />}
+      </div>
     </AuctionSlotCardContentInfoWrapper>
   )
 }

@@ -47,7 +47,7 @@ function WheelSlotsList(props: AuctionWheelSlotsListProps) {
   const { state: { wheelSlots } } = useAuctionWheelGame()
 
   const listItems = useMemo(() => {
-    const newListItems = wheelSlots.filter(item => data.findIndex(slot => slot.id === item.id) !== -1)
+    const newListItems = wheelSlots.filter(item => data.find(slot => slot.id === item.id) !== undefined)
 
     return newListItems
   }, [data, wheelSlots])

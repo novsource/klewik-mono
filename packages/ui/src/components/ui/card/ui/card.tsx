@@ -24,12 +24,12 @@ export type CardProps = ComponentProps<'div'> & CardStyleProps
 export const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
   const { className, size, variant, ...restProps } = props
 
-  const style = useMemo(() =>
-    cn(cardBaseVariants({ size, variant }), className), [className, ...objectToDeps(props)])
+  const classes = useMemo(() =>
+    cn(cardBaseVariants({ size, variant, className })), [className, ...objectToDeps(props)])
 
   return (
     <CardProvider variant={variant ?? 'default'} size={size ?? 'default'}>
-      <div ref={ref} className={style} {...restProps} />
+      <div ref={ref} className={classes} {...restProps} />
     </CardProvider>
   )
 })

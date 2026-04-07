@@ -1,4 +1,5 @@
 export * from './wheel-canvas.ui'
 export * from './wheel-item.ui'
+export * from './wheel-of-fortune.ui'
 export * from './wheel-selector.ui'
 export * from './wheel.ui'

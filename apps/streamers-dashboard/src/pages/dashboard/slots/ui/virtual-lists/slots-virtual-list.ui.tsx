@@ -19,6 +19,7 @@ import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 import type { VirtualizedItem, WindowVirtualListProps } from 'klewik-ui/virtual-list'
 import { WindowVirtualList } from 'klewik-ui/virtual-list'
 
+import { useSlotsPageContext } from '../../context/slots-page.context'
 import { useSortingSlots } from '../../lib'
 import { AuctionSlotsListCard } from '../cards/slots-list-card.ui'
 
@@ -36,7 +37,8 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
 
   const winnerId = useStoreSelector(auctionSelectors.getWinnerId)
   const storedAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-  const sortingOptions = useStoreSelector(auctionSlotsSelectors.getSlotsSortOptions)
+
+  const { state: { sortingSlotsOptions } } = useSlotsPageContext()
 
   const [listItems, setListItems] = useState(data ?? storedAuctionSlots)
 
@@ -54,7 +56,7 @@ export const AuctionSlotsVirtualList = (props: AuctionSlotsListProps) => {
 
   const virtualizerRef = useRef<NullablePossible<VirtualizerHandle>>(null)
 
-  const sortedSlots = useSortingSlots(listItems, sortingOptions)
+  const sortedSlots = useSortingSlots(listItems, sortingSlotsOptions)
 
   const renderAuctionSlotCard = useCallback(
     (slot: AuctionSlot) => {

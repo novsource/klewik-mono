@@ -35,7 +35,8 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
 
-        --header-height: 60px;
+        --aside-width: 65px;
+        --header-height: 48px;
         --footer-height: 64px;
         --mobile-menu-bottom: 16px;
         --sheet-height: calc(100% - 20px);
@@ -200,6 +201,16 @@
     .rsw-ce:focus {
         outline: none !important;
     }
+
+    .local-slot-card_wrapper {
+        display: grid;
+        grid-template-columns: min-content 1fr;
+
+        align-items: center;
+        justify-items: start;
+        justify-content: space-between;
+    }
+
 
     @container slider (300px <=height <=768px) {
         .slider-content {

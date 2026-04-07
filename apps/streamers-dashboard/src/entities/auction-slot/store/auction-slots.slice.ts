@@ -6,8 +6,6 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import type { AuctionSlotsDTO } from '~shared/api/http/auction-slots'
 
-import type { SortingOptions } from '~shared/store/model'
-
 import { getPercentValue } from '~shared/utils/common'
 
 import { getAuctionSlotsThunk } from '../api'
@@ -76,10 +74,10 @@ const slice = createSlice({
     deleteSlot(state, action: PayloadAction<{ id: AuctionSlot['id'] }>) {
       const payload = action.payload
 
-      const filtredSlots = state.slots.filter(slot => slot.id !== payload.id)
-      const updatedPointsSum = filtredSlots.reduce((acc, slot) => acc + slot.points, 0)
+      const filteredSlots = state.slots.filter(slot => slot.id !== payload.id)
+      const updatedPointsSum = filteredSlots.reduce((acc, slot) => acc + slot.points, 0)
 
-      state.slots = filtredSlots
+      state.slots = filteredSlots
       state.slotsPointsSum = updatedPointsSum
     },
     updateSlotsPointsSum(
@@ -98,7 +96,7 @@ const slice = createSlice({
       else {
         state.slotsPointsSum
           = filtredSlots.reduce((a, b) => a + b.points, 0)
-            + payload.reduce((a, b) => a + b.points, 0)
+          + payload.reduce((a, b) => a + b.points, 0)
       }
     },
     updateAlivedSlotsIds(state, action: PayloadAction<UpdateAlivedSlotsActionPayload>) {
@@ -211,9 +209,6 @@ const slice = createSlice({
 
       state.sortedSlots = payload
     },
-    setSlotsSortOptions(state, action: PayloadAction<SortingOptions<AuctionSlot>>) {
-      state.sortingOptions = action.payload
-    },
     setPointsSum(state, action: PayloadAction<number>) {
       state.slotsPointsSum = action.payload
     },
@@ -221,6 +216,9 @@ const slice = createSlice({
   selectors: {
     getSlots(state) {
       return state.slots
+    },
+    getSlotById(state, id: number) {
+      return state.slots.find(slot => slot.id === id)
     },
     getAlivedSlotsIds(state) {
       return state.alivedSlotsIds
@@ -230,9 +228,6 @@ const slice = createSlice({
     },
     getSlotsPointsSum(state) {
       return state.slotsPointsSum
-    },
-    getSlotsSortOptions: (state) => {
-      return state.sortingOptions
     },
   },
   extraReducers: (builder) => {

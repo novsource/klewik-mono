@@ -1,8 +1,13 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 
+import { GlobalDialogs } from '~app/components/global-dialogs/ui/global-dialogs.ui'
+
 import { auctionDonationsPageRoute } from '~pages/dashboard/donations/routing'
 import { auctionWheelPageRoute } from '~pages/dashboard/games/routing'
 import { auctionSlotsPageRoute } from '~pages/dashboard/slots/routing'
+import { LocalAuctionLayout } from '~pages/local/_layout'
+import { LocalAuctionGamesPageRoute } from '~pages/local/games/routing/local-auction-games-page.route'
+import { LocalAuctionSlotsPageRoute } from '~pages/local/slots'
 import { redirectPageRoute } from '~pages/redirect/routing'
 import { welcomePageRoute } from '~pages/welcome/routing'
 
@@ -43,6 +48,19 @@ const browserRouter = createBrowserRouter([
                 AuctionDonationsRouteObject,
                 { path: '*', element: <Navigate to="slots" /> },
               ]),
+            ],
+          },
+          {
+            path: 'local',
+            element: <>
+              <LocalAuctionLayout />
+              <GlobalDialogs />
+            </>,
+            children: [
+              { index: true, element: <Navigate to="slots" /> },
+              { path: '*', element: <Navigate to="slots" /> },
+              LocalAuctionSlotsPageRoute,
+              LocalAuctionGamesPageRoute,
             ],
           },
           ErrorPageRouteObject,

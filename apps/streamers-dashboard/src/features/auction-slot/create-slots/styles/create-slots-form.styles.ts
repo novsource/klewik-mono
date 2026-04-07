@@ -1,16 +1,16 @@
 export type CreateSlotsFormStylesSlots
   = 'form'
-    | 'formInputsWrapper'
-    | 'submitButton'
-    | 'tabs'
-    | 'tabsList'
-    | 'tabTrigger'
-    | 'isErrorTabTrigger'
-    | 'addNewTabButton'
+  | 'formInputsWrapper'
+  | 'submitButton'
+  | 'tabs'
+  | 'tabsList'
+  | 'tabTrigger'
+  | 'isErrorTabTrigger'
+  | 'addNewTabButton'
 
 export const createSlotsFormStyles: SlotsStyles<CreateSlotsFormStylesSlots> = {
   form: /* tw */ 'flex h-full w-full flex-col justify-between overflow-x-clip',
-  formInputsWrapper: /* tw */ 'relative flex w-full flex-col gap-y-4 px-0.25',
+  formInputsWrapper: /* tw */ 'relative flex w-full flex-col gap-4 px-0.25',
   submitButton: /* tw */ 'w-full',
   tabs: /* tw */ 'space-y-6',
   tabsList: /* tw */ 'flex w-fit justify-between rounded-large bg-dark',

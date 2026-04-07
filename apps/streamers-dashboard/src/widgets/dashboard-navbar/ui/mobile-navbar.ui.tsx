@@ -3,10 +3,11 @@ import { useMemo } from 'react'
 
 import { NavLink } from 'react-router-dom'
 
-import { Icons } from 'klewik-ui/icons'
-import { Sheet, SheetContent, SheetTrigger } from 'klewik-ui/sheet'
-
 import { DASHBOARD_ROUTES, ROUTES_TITLES } from '~shared/constants/router'
+
+import { Drawer, DrawerContent, DrawerTrigger } from 'klewik-ui/drawer'
+import { Icons } from 'klewik-ui/icons'
+import { Text } from 'klewik-ui/typography'
 
 import { cn } from '~shared/utils'
 
@@ -103,11 +104,13 @@ function DisabledWheelRouteSheet(props: DisabledWheelRouteSheetProps) {
   const { children } = props
 
   return (
-    <Sheet>
-      <SheetTrigger className="flex flex-col items-center justify-start gap-y-0.25 w-full text-[11px] font-regular h-full px-4 text-dark-accent">{children}</SheetTrigger>
-      <SheetContent className="h-fit" side="bottom">
-        Колесо все еще дорабатывается на мобильных устройствах (будет добавлено в будущем).
-      </SheetContent>
-    </Sheet>
+    <Drawer side="bottom">
+      <DrawerTrigger className="flex flex-col items-center justify-start gap-y-0.25 w-full text-[11px] font-regular h-full px-4 text-dark-accent">{children}</DrawerTrigger>
+      <DrawerContent>
+        <Text asSpan>
+          Колесо все еще дорабатывается на мобильных устройствах (будет добавлено в будущем).
+        </Text>
+      </DrawerContent>
+    </Drawer>
   )
 }

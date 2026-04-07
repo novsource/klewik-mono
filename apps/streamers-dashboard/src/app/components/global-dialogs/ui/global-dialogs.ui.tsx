@@ -1,7 +1,9 @@
 import { ProcessDonationDialog } from '~pages/dashboard/donations/ui/dialogs/process-donation-dialog.ui'
 import { EditSlotDialog } from '~pages/dashboard/slots/ui/dialogs/edit-slot-dialog.ui'
 
-import { AuctionSettingsDialog } from '~widgets/dashboard-settings-dialog'
+import { AuctionSettingsDialog, LocalAuctionSettingsDialog } from '~widgets/dashboard-settings-dialog'
+
+import { auctionSelectors } from '~entities/auction/store'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { createSingleFakeAuctionSlot } from '~entities/auction-slot/model/__tests__/auction-slot.mocks'
@@ -49,6 +51,7 @@ const placeholderSlot: AuctionSlot = import.meta.env.DEV
   }
 
 export const GlobalDialogs = () => {
+  const auctionType = useStoreSelector(auctionSelectors.getAuctionType)
   const { processDonation, editSlot } = useStoreSelector(globalDialogsSelectors.getAllDialogsStates)
 
   const { setDialogOpenStatus } = useActionCreators(globalDialogsActions)
@@ -59,6 +62,14 @@ export const GlobalDialogs = () => {
 
   const handleProcessDonationDialogClose = (open: boolean) => {
     setDialogOpenStatus({ dialog: 'processDonation', status: open })
+  }
+
+  if (auctionType === 'local') {
+    return (
+      <>
+        <LocalAuctionSettingsDialog />
+      </>
+    )
   }
 
   return (

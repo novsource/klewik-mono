@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { useGameConfetti } from '~entities/games/hooks'
 import { WinnerGameSlotInfo } from '~entities/games/ui'
 import { AnimatePresence } from 'motion/react'
 import * as m from 'motion/react-m'
@@ -11,7 +12,7 @@ import { BaseWheel, WheelItem, WheelSelector } from '~entities/wheel/ui'
 
 import { Text } from '~shared/components/typography'
 
-import { useElementSize } from '~shared/hooks'
+import { useElementSize, usePrevious } from '~shared/hooks'
 
 import type { FlexProps } from 'klewik-ui/flex'
 import { Flex } from 'klewik-ui/flex'
@@ -30,6 +31,10 @@ export const WheelGame = (props: WheelProps) => {
   const auctionGameContext = useAuctionGameContext()
   const { state } = useAuctionWheelGame()
 
+  const gameConfetti = useGameConfetti()
+
+  const previousSpinStatus = usePrevious(state.isSpinning)
+
   useEffect(() => {
     if (state.isSpinning || !state.selectorCurrentSlot)
       return
@@ -39,6 +44,26 @@ export const WheelGame = (props: WheelProps) => {
   }, [state.isSpinning, state.selectorCurrentSlot, auctionGameContext.state.slots.alived])
 
   const isShouldShowSlotInfo = !state.isSpinning && !!slotUnderSelector
+
+  useEffect(() => {
+    if (!isShouldShowSlotInfo)
+      return
+
+    if (state.isSpinning) {
+      gameConfetti.stopAllConfetti()
+    }
+
+    if (previousSpinStatus) {
+      if (auctionGameContext.state.mode === 'classic') {
+        gameConfetti.startWinnerConfetti()
+      }
+      else {
+        gameConfetti.startDropoutConfetti()
+      }
+
+      auctionGameContext.actions.applyResults()
+    }
+  }, [isShouldShowSlotInfo, previousSpinStatus, auctionGameContext.state.mode, auctionGameContext.actions.applyResults, gameConfetti, state.isSpinning])
 
   return (
     <Flex className="relative h-full w-full shrink-[2] gap-y-6" direction="column" {...props}>
@@ -111,14 +136,16 @@ function WheelFortune(props: WheelFortuneProps) {
     <div ref={containerRef} className="relative flex shrink h-full w-full justify-start items-start" {...props}>
       <div
         className="flex w-full h-1/2 justify-center items-center"
-        style={{ maskImage: `linear-gradient(
+        style={{
+          maskImage: `linear-gradient(
           #000,
           #000,
           transparent 0,
           #000 0px,
           #000 90%,
           transparent
-        )` }}
+        )`,
+        }}
       >
         <div className="relative w-full h-full flex justify-center">
 
