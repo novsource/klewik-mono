@@ -4,6 +4,7 @@ import { memo, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import NumberFlow from '@number-flow/react'
+import { DividedLayout } from '~shared/layouts/divided-layout'
 
 import { globalDialogsActions } from '~app/components/global-dialogs/store/global-dialogs.slice'
 
@@ -85,16 +86,18 @@ function BaseHeader(props: BaseHeaderProps) {
 
 function DesktopLocalDashboardHeader() {
   return (
-    <Flex className="w-full h-8" align="center" justify="end">
-      <SlotsPointsSumStatisticCard />
-      <SlotsStatisticCard className="ml-1.5" />
-      <SlotsStatusesStatisticCard className="ml-1.5" />
-      <IntegrationsStatisticCard className="ml-1.5" />
+    <DividedLayout slotClassnames={{ container: 'w-full flex h-8 items-center justify-end' }} gap={8}>
 
-      <Divider className="mx-4" orientation="vertical" />
+      <div className="flex h-full gap-x-1.5">
+        <SlotsPointsSumStatisticCard />
+        <SlotsStatisticCard />
+        <SlotsStatusesStatisticCard />
+        <IntegrationsStatisticCard />
+      </div>
 
       <ExportSlotsPopover size="sm" />
-    </Flex>
+    </DividedLayout>
+
   )
 }
 

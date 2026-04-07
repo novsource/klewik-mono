@@ -24,15 +24,9 @@ import { useLocalDashboardStateRestore } from '../hooks/use-local-dashboard-stat
 import { useLocalStateAutosave } from '../hooks/use-local-state-autosave'
 
 export const LocalAuctionLayout = () => {
-  useLocalDashboardStateRestore()
-  useLocalStateAutosave()
-
   const { setDialogOpenStatus } = useActionCreators(globalDialogsActions)
-  const { setAuctionType } = useActionCreators(auctionActions)
 
-  useMount(() => {
-    setAuctionType('local')
-  })
+  useLocalAuctionDashboard()
 
   return (
     <MediaQueryViewToggler query={greaterThenDeviceWidthMediaQueries.tablet}>
@@ -71,4 +65,15 @@ export const LocalAuctionLayout = () => {
       </div>
     </MediaQueryViewToggler>
   )
+}
+
+function useLocalAuctionDashboard() {
+  const { setAuctionType } = useActionCreators(auctionActions)
+
+  useLocalDashboardStateRestore()
+  useLocalStateAutosave()
+
+  useMount(() => {
+    setAuctionType('local')
+  })
 }
