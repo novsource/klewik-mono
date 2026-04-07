@@ -167,6 +167,12 @@
     },
     "./wizard": {
       "import": "./src/components/ui/wizard/index.ts"
+    },
+    "./utils": {
+      "import": "./src/utils/index.ts"
+    },
+    "./toaster/lib": {
+      "import": "./src/components/ui/toaster/lib/index.ts"
     }
   }
 }
