@@ -19,8 +19,8 @@ import { useMount } from '~shared/hooks'
 import { useActionCreators } from '~shared/lib/redux-toolkit'
 
 import { Button } from 'klewik-ui/button'
-import { Flex } from 'klewik-ui/flex'
 import { Icons } from 'klewik-ui/icons'
+import { Stack } from 'klewik-ui/stack'
 
 import { LOCAL_NAVBAR_LINKS } from '../constants/local-navbar-links'
 import { useLocalDashboardStateRestore } from '../hooks/use-local-dashboard-state-restore'
@@ -33,11 +33,11 @@ export const LocalAuctionLayout = () => {
 
   return (
     <MediaQueryViewToggler query={greaterThenDeviceWidthMediaQueries.tablet}>
-      <div className="w-full h-full tablet:inline-flex tablet:h-auto">
+      <div className="w-full h-full tablet:inline-flex">
 
         <MediaQueryViewToggler.MatchedItem>
           <PageSidebarLayout>
-            <div className="flex w-full h-full flex-col justify-between items-center">
+            <Stack className="w-full h-full">
               <Navbar links={LOCAL_NAVBAR_LINKS} />
 
               <DividedLayout slotClassnames={{ container: 'flex flex-col items-center' }} orientation="horizontal" gap={12}>
@@ -53,24 +53,24 @@ export const LocalAuctionLayout = () => {
                   <Icons.Github />
                 </NavLink>
               </DividedLayout>
-            </div>
+            </Stack>
           </PageSidebarLayout>
         </MediaQueryViewToggler.MatchedItem>
 
-        <Flex className="w-full h-full flex flex-col">
+        <Stack className="w-full h-full">
           <LocalDashboardHeader />
 
-          <main className="relative w-full overflow-y-scroll tablet:h-full tablet:overflow-x-hidden tablet:overflow-y-scroll">
-            <Flex className="h-full w-full px-4">
+          <main className="relative w-full h-full overflow-y-hidden tablet:overflow-x-hidden">
+            <div className="flex h-full w-full px-4">
               <Outlet />
-            </Flex>
+            </div>
           </main>
 
           <MediaQueryViewToggler.NotMatchedItem>
             <MobileNavbar />
           </MediaQueryViewToggler.NotMatchedItem>
 
-        </Flex>
+        </Stack>
       </div>
     </MediaQueryViewToggler>
   )

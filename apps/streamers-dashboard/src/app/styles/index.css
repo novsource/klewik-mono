@@ -25,6 +25,18 @@
     animation-iteration-count: infinite;
 }
 
+@keyframes highlightCard {
+    50% {
+        box-shadow: 0px 0px 3px 2px var(--color-gray-light);
+    }
+}
+
+
+@utility animate-highlightcard {
+    animation-name: highlightCard;
+    animation-duration: 1.75s;
+}
+
 @layer base {
     :root {
         color-scheme: light dark;
@@ -210,7 +222,6 @@
         justify-items: start;
         justify-content: space-between;
     }
-
 
     @container slider (300px <=height <=768px) {
         .slider-content {

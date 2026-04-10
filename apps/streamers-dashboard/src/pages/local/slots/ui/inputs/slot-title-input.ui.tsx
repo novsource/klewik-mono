@@ -27,6 +27,7 @@ export const SlotTitleInput = memo((props: SlotTitleInputProps) => {
         input: 'text-base font-semibold text-title overflow-ellipsis text-nowrap overflow-hidden',
       }}
       size="lg"
+      spellCheck={false}
       onChange={handleOnChange}
       {...restProps}
     />

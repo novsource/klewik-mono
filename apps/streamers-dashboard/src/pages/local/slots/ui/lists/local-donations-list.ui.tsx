@@ -10,14 +10,15 @@ const fakeDonations = createFakeDonationsArray({ maxLength: 100 })
 
 export const LocalDonationsList = () => {
   const renderGameSlotCard: VirtualListRenderFunction<Donation> = (donations, virtualizedItem) => {
+    const { id, index } = virtualizedItem
     const donation = donations[virtualizedItem.index]
 
-    return <LocalDonationsListCard donation={donation} />
+    return <LocalDonationsListCard key={id} className={index !== 0 ? 'mt-6' : ''} donation={donation} />
   }
 
   return (
-    <div className="w-full" style={{ flex: '1 1 auto' }}>
-      <ShadowVirtualList data={fakeDonations} gap={28} slotsClassNames={{ container: 'py-4' }}>
+    <div style={{ flex: '1 1 auto' }}>
+      <ShadowVirtualList data={fakeDonations} slotsClassNames={{ container: 'py-4' }}>
         {renderGameSlotCard}
       </ShadowVirtualList>
     </div>

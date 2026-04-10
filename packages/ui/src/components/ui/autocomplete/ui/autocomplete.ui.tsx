@@ -84,7 +84,6 @@ export const AutocompleteContent = (props: AutocompleteContentProps) => {
   })
   const mergedPositionerProps = mergeProps<typeof PrimitiveAutocomplete.Positioner>(positionerProps, {
     className: 'outline-none z-50',
-    sideOffset: 4,
   })
 
   if (!isShouldRenderPopup && !showEmpty)
@@ -95,7 +94,7 @@ export const AutocompleteContent = (props: AutocompleteContentProps) => {
       <PrimitiveAutocomplete.Positioner {...mergedPositionerProps}>
         <PrimitiveAutocomplete.Popup {...mergedPopupProps}>
           <PrimitiveAutocomplete.Empty {...mergedEmptyProps}>
-            No data
+            {`No data for "${query}"`}
           </PrimitiveAutocomplete.Empty>
           <PrimitiveAutocomplete.List>
             {children}

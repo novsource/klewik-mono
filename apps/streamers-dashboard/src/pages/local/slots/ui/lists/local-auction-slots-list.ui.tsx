@@ -12,12 +12,13 @@ import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from 'klewik-ui/button'
+import { Group } from 'klewik-ui/group'
 import { Icons } from 'klewik-ui/icons'
+
+import { cn } from '~shared/utils/react'
 
 import { DeleteAllLocalSlotsButton } from '../buttons/delete-all-local-slots.ui'
 import { LocalAuctionSlotListCard } from '../cards/local-auction-slot-card.ui'
-
-// const auctionSlots = createFakeAuctionSlotsArray({ minLength: 100, maxLength: 200 })
 
 type MemorizedListProps = {
   data: number[]
@@ -33,7 +34,7 @@ const MemorizedList = memo((props: MemorizedListProps) => {
 
   const listRef = useRef<VListHandle>(null)
 
-  const checkScrollButtonsAccess = useCallback((offset: number) => {
+  const checkScrollButtonsAccessibility = useCallback((offset: number) => {
     const vListHandle = listRef.current
     if (!vListHandle)
       return
@@ -56,16 +57,16 @@ const MemorizedList = memo((props: MemorizedListProps) => {
     if (!listRef.current)
       return
 
-    checkScrollButtonsAccess(listRef.current.scrollOffset)
-  }, [data, checkScrollButtonsAccess])
+    checkScrollButtonsAccessibility(listRef.current.scrollOffset)
+  }, [data, checkScrollButtonsAccessibility])
 
   return (
     <div className="relative" style={{ flex: '1 1 auto' }}>
       <VList
         ref={listRef}
-        className="pb-16"
+        className="px-0.5 py-1 pb-16"
         itemSize={64}
-        onScroll={checkScrollButtonsAccess}
+        onScroll={checkScrollButtonsAccessibility}
       >
         <Reorder.Group values={data} onReorder={() => { }}>
           {data.map((id, index) => {
@@ -78,7 +79,7 @@ const MemorizedList = memo((props: MemorizedListProps) => {
                 transition={{ duration: 0.3, type: 'tween' }}
               >
                 <LocalAuctionSlotListCard
-                  className={index !== 0 ? 'mt-2' : ''}
+                  className={cn(index !== 0 ? 'mt-2' : '')}
                   slotId={id}
                   onFocus={onFocusCard}
                   onBlur={onBlurCard}
@@ -105,10 +106,15 @@ export const LocalAuctionSlotsList = () => {
 
   const [isListIdsChangesBlocked, setIsListChangesBlocked] = useState(false)
 
+  console.log(auctionSlots)
+
   useEffect(() => {
     const possibleNewSlotsIds = [...auctionSlots].sort((a, b) => b.points - a.points).map(slot => slot.id)
 
-    if ((!shallowEqual(slotsIds, possibleNewSlotsIds) && !isListIdsChangesBlocked) || slotsIds.length !== possibleNewSlotsIds.length) {
+    const isDataOrderChanged = !shallowEqual(slotsIds, possibleNewSlotsIds)
+    const isDataSizeChanged = slotsIds.length !== possibleNewSlotsIds.length
+
+    if ((isDataOrderChanged && !isListIdsChangesBlocked) || isDataSizeChanged) {
       setSlotsIds(possibleNewSlotsIds)
     }
   }, [isListIdsChangesBlocked, auctionSlots, slotsIds])
@@ -144,8 +150,8 @@ function ListBottomControlPanel(props: ListBottomControlPanelProps) {
 
   return (
     <div className="absolute w-full h-12 bg-dark-light/10 backdrop-blur-lg bottom-2 rounded-medium">
-      <div className="flex w-full h-full items-center justify-between px-4">
-        <div className="flex gap-x-2">
+      <Group className="w-full h-full px-4">
+        <Group gap="sm">
           <Button
             startContent={<Icons.ArrowRight className="-rotate-90" />}
             size="sm"
@@ -162,13 +168,10 @@ function ListBottomControlPanel(props: ListBottomControlPanelProps) {
           >
             В конец
           </Button>
-        </div>
+        </Group>
 
-        <div className="flex gap-x-2">
-          <DeleteAllLocalSlotsButton size="sm" />
-        </div>
-
-      </div>
+        <DeleteAllLocalSlotsButton size="sm" />
+      </Group>
     </div>
   )
 }

@@ -12,11 +12,6 @@ import { getAuctionSlotsThunk } from '../api'
 import { AUCTION_SLOTS_SLICE_INITIAL_STATE as initialState } from '../constants'
 import { transformAuctionSlotDTO } from '../lib'
 
-type UpdateAlivedSlotsActionPayload = {
-  data: number[]
-  mode: 'add' | 'delete'
-}
-
 const slice = createSlice({
   name: 'auctionSlots',
   initialState,
@@ -99,106 +94,6 @@ const slice = createSlice({
           + payload.reduce((a, b) => a + b.points, 0)
       }
     },
-    updateAlivedSlotsIds(state, action: PayloadAction<UpdateAlivedSlotsActionPayload>) {
-      const { mode, data } = action.payload
-
-      if (data.length === 0)
-        return
-
-      switch (mode) {
-        case 'add': {
-          state.alivedSlotsIds = [...state.alivedSlotsIds.filter(id => !data.includes(id)), ...data]
-
-          break
-        }
-        case 'delete': {
-          const deletedSlotsIdsCollection = new Set(data)
-
-          state.alivedSlotsIds = state.alivedSlotsIds.filter(slot => deletedSlotsIdsCollection.has(slot))
-        }
-      }
-    },
-    updateDroppedSlotsIds(state, action: PayloadAction<UpdateAlivedSlotsActionPayload>) {
-      const { mode, data } = action.payload
-
-      if (data.length === 0)
-        return
-
-      switch (mode) {
-        case 'add': {
-          state.droppedSlotsIds = [...state.droppedSlotsIds.filter(id => !data.includes(id)), ...data]
-
-          break
-        }
-        case 'delete': {
-          const deletedSlotsIdsCollection = new Set(data)
-
-          state.droppedSlotsIds = state.droppedSlotsIds.filter(slot => deletedSlotsIdsCollection.has(slot))
-        }
-      }
-    },
-    // updateDroppedSlots(state, action: PayloadAction<UpdateAlivedSlotsActionPayload>) {
-    // const { mode, data } = action.payload
-
-    // if (Array.isArray(data) && data.length === 0)
-    //   return
-
-    // switch (mode) {
-    //   case 'update': {
-    //     const updatedSlotsCollection = new Set(Array.isArray(data) ? data : [data])
-
-    //     const updatedSlots = state.dropoutSlots.filter((slot) => {
-    //       const isShouldBeUpdated = updatedSlotsCollection.has(slot)
-
-    //       if (!isShouldBeUpdated)
-    //         return false
-
-    //       updatedSlotsCollection.delete(slot)
-    //       return true
-    //     })
-
-    //     state.dropoutSlots = [...state.dropoutSlots, ...updatedSlots, ...updatedSlotsCollection.values()]
-
-    //     break
-    //   }
-    //   case 'delete': {
-    //     const deletedSlotsCollection = new Set(Array.isArray(data) ? data : [data])
-
-    //     state.dropoutSlots = state.dropoutSlots.filter(slot => deletedSlotsCollection.has(slot))
-    //   }
-    // }
-    // },
-    // updateAlivedSlots(state, action: PayloadAction<UpdateAlivedSlotsActionPayload>) {
-    //   const { mode, data } = action.payload
-
-    //   if (Array.isArray(data) && data.length === 0)
-    //     return
-
-    //   switch (mode) {
-    //     case 'update': {
-    //       const updatedSlotsCollection = new Set(Array.isArray(data) ? data : [data])
-
-    //       const updatedSlots = state.alivedSlots.filter((slot) => {
-    //         const isShouldBeUpdated = updatedSlotsCollection.has(slot)
-
-    //         if (!isShouldBeUpdated)
-    //           return false
-
-    //         updatedSlotsCollection.delete(slot)
-    //         return true
-    //       })
-
-    //       state.alivedSlots = [...state.alivedSlots, ...updatedSlots, ...updatedSlotsCollection.values()]
-
-    //       break
-    //     }
-    //     case 'delete': {
-    //       const deletedSlotsCollection = new Set(Array.isArray(data) ? data : [data])
-
-    //       state.alivedSlots = state.alivedSlots.filter(slot => deletedSlotsCollection.has(slot))
-    //     }
-    //   }
-    // },
     setSlots(state, action: PayloadAction<AuctionSlotsDTO[]>) {
       const transformedSlots = action.payload.map(slot => transformAuctionSlotDTO(slot, state.slotsPointsSum))
 
@@ -219,12 +114,6 @@ const slice = createSlice({
     },
     getSlotById(state, id: number) {
       return state.slots.find(slot => slot.id === id)
-    },
-    getAlivedSlotsIds(state) {
-      return state.alivedSlotsIds
-    },
-    getDroppedSlotsIds(state) {
-      return state.droppedSlotsIds
     },
     getSlotsPointsSum(state) {
       return state.slotsPointsSum

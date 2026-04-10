@@ -67,31 +67,14 @@ function SlotCardControls(props: SlotCardControlsProps) {
 
   const { updateSlot } = useActionCreators(auctionSlotsActions)
 
-  const [titleInputValue, setTitleInputValue] = useState(slot.title)
-  const [pointsInputValue, setPointsInputValue] = useState<Maybe<number>>(slot.points)
   const [addedPointsValue, setAddedPointsValue] = useState<string>('')
 
-  useEffect(() => {
-    const isDifferentSlotValues = titleInputValue !== slot.title || pointsInputValue !== slot.points
-
-    if (isDifferentSlotValues) {
-      updateSlot({ id: slot.id, data: { title: titleInputValue, points: pointsInputValue } })
-    }
-  }, [
-    titleInputValue,
-    pointsInputValue,
-    slot.title,
-    slot.points,
-    slot.id,
-    updateSlot,
-  ])
-
   const handleTitleChange = (value: string) => {
-    setTitleInputValue(value)
+    updateSlot({ id: slot.id, data: { title: value } })
   }
 
   const handlePointsChange = (value: Maybe<number>) => {
-    setPointsInputValue(value)
+    updateSlot({ id: slot.id, data: { points: value } })
   }
 
   const handleAddPointsButtonOnClick = () => {
@@ -100,7 +83,7 @@ function SlotCardControls(props: SlotCardControlsProps) {
 
     const addedNum = Number(deleteAllSpacesFromString(addedPointsValue))
 
-    setPointsInputValue(curr => (curr ?? 0) + addedNum)
+    updateSlot({ id: slot.id, data: { points: slot.points + addedNum } })
     setAddedPointsValue('')
   }
 
@@ -108,7 +91,7 @@ function SlotCardControls(props: SlotCardControlsProps) {
     <div className="flex flex-1 min-w-0 gap-x-2">
 
       <SlotTitleInput
-        value={titleInputValue}
+        value={slot.title}
         onInput={handleTitleChange}
       />
 

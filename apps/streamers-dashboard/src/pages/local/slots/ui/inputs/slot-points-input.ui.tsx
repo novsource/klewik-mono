@@ -23,7 +23,7 @@ export const SlotPointsInput = memo((props: SlotPointsInputProps) => {
   return (
     <NumberInput
       variant="ghost"
-      slotClassNames={{ input: 'font-golos-f text-title' }}
+      slotClassNames={{ base: 'w-full', input: 'font-golos-f text-title' }}
       startContent={<Icons.Coin className="text-gray-light" />}
       thousandSeparator=" "
       decimalScale={0}
