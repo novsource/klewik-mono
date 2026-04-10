@@ -9,6 +9,8 @@ import { VList } from 'virtua'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
+import { useLocalSearchFilter } from '~shared/hooks'
+
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from 'klewik-ui/button'
@@ -17,6 +19,7 @@ import { Icons } from 'klewik-ui/icons'
 
 import { cn } from '~shared/utils/react'
 
+import { useLocalAuctionSlotsPageContext } from '../../context/local-auction-slots-page.context'
 import { DeleteAllLocalSlotsButton } from '../buttons/delete-all-local-slots.ui'
 import { LocalAuctionSlotListCard } from '../cards/local-auction-slot-card.ui'
 
@@ -102,14 +105,18 @@ const MemorizedList = memo((props: MemorizedListProps) => {
 export const LocalAuctionSlotsList = () => {
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
+  const pageContext = useLocalAuctionSlotsPageContext()
+
+  const localSearchedSlots = useLocalSearchFilter(pageContext.state.searchQuery, auctionSlots, (query, slot) => {
+    return slot.title.toLocaleLowerCase().includes(query.toLocaleLowerCase())
+  })
+
   const [slotsIds, setSlotsIds] = useState(() => [...auctionSlots].sort((a, b) => b.points - a.points).map(slot => slot.id))
 
   const [isListIdsChangesBlocked, setIsListChangesBlocked] = useState(false)
 
-  console.log(auctionSlots)
-
   useEffect(() => {
-    const possibleNewSlotsIds = [...auctionSlots].sort((a, b) => b.points - a.points).map(slot => slot.id)
+    const possibleNewSlotsIds = [...localSearchedSlots].sort((a, b) => b.points - a.points).map(slot => slot.id)
 
     const isDataOrderChanged = !shallowEqual(slotsIds, possibleNewSlotsIds)
     const isDataSizeChanged = slotsIds.length !== possibleNewSlotsIds.length
@@ -117,7 +124,7 @@ export const LocalAuctionSlotsList = () => {
     if ((isDataOrderChanged && !isListIdsChangesBlocked) || isDataSizeChanged) {
       setSlotsIds(possibleNewSlotsIds)
     }
-  }, [isListIdsChangesBlocked, auctionSlots, slotsIds])
+  }, [isListIdsChangesBlocked, localSearchedSlots, slotsIds])
 
   const handleOnFocusCard = useCallback(() => setIsListChangesBlocked(true), [])
   const handleOnBlurCard = useCallback(() => setIsListChangesBlocked(false), [])
