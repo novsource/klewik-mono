@@ -8,7 +8,7 @@ import { Input } from 'klewik-ui/input'
 
 import { useLocalAuctionSlotsPageContext } from '../../context/local-auction-slots-page.context'
 
-export const LocalSearchSlotsInput = () => {
+export const SearchSlotsInput = () => {
   const pageContext = useLocalAuctionSlotsPageContext()
 
   const [inputValue, setInputValue] = useState('')

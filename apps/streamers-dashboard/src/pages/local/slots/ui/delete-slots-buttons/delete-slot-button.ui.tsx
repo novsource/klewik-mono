@@ -13,7 +13,7 @@ type DeleteLocalSlotButtonProps = ButtonProps & {
   slotId: number
 }
 
-export const DeleteLocalSlotButton = (props: DeleteLocalSlotButtonProps) => {
+export const DeleteSlotButton = (props: DeleteLocalSlotButtonProps) => {
   const { slotId, ...restProps } = props
 
   const targetSlot = useStoreSelector(state => auctionSlotsSelectors.getSlotById(state, slotId))

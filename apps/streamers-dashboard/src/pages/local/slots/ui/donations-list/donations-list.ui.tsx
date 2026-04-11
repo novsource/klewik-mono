@@ -4,16 +4,16 @@ import { createFakeDonationsArray } from '~entities/donation/model/__tests__/don
 import { ShadowVirtualList } from 'klewik-ui/shadow-virtual-list'
 import type { VirtualListRenderFunction } from 'klewik-ui/virtual-list'
 
-import { LocalDonationsListCard } from '../cards/local-donation-card.ui'
+import { DonationsListCard } from './donation-card.ui'
 
 const fakeDonations = createFakeDonationsArray({ maxLength: 100 })
 
-export const LocalDonationsList = () => {
+export const DonationsList = () => {
   const renderGameSlotCard: VirtualListRenderFunction<Donation> = (donations, virtualizedItem) => {
     const { id, index } = virtualizedItem
     const donation = donations[virtualizedItem.index]
 
-    return <LocalDonationsListCard key={id} className={index !== 0 ? 'mt-6' : ''} donation={donation} />
+    return <DonationsListCard key={id} className={index !== 0 ? 'mt-6' : ''} donation={donation} />
   }
 
   return (

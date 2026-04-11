@@ -27,14 +27,14 @@ import { cn } from '~shared/utils/react'
 
 import { useLocalDonationCard } from '../../hooks/use-local-donation-card'
 import { boyerMooreSearch } from '../../utils/boyer-moore-search'
-import { SlotPointsInput } from '../inputs/slot-points-input.ui'
+import { SlotPointsInput } from '../auctions-slots-list/slot-points-input.ui'
 
-export type LocalDonationsListCardProps = {
+export type DonationsListCardProps = {
   donation: Donation
   className?: string
 }
 
-export const LocalDonationsListCard = (props: LocalDonationsListCardProps) => {
+export const DonationsListCard = (props: DonationsListCardProps) => {
   const { donation, className } = props
 
   const [slotInputValue, setSlotInputValue] = useState<string>('')

@@ -61,7 +61,7 @@ export const LocalAuctionLayout = () => {
           <LocalDashboardHeader />
 
           <main className="relative w-full h-full overflow-y-hidden tablet:overflow-x-hidden">
-            <div className="flex h-full w-full px-4">
+            <div className="flex h-full w-full">
               <Outlet />
             </div>
           </main>

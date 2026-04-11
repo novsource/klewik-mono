@@ -20,8 +20,8 @@ import { Icons } from 'klewik-ui/icons'
 import { cn } from '~shared/utils/react'
 
 import { useLocalAuctionSlotsPageContext } from '../../context/local-auction-slots-page.context'
-import { DeleteAllLocalSlotsButton } from '../buttons/delete-all-local-slots.ui'
-import { LocalAuctionSlotListCard } from '../cards/local-auction-slot-card.ui'
+import { DeleteAllSlotsButton } from '../delete-slots-buttons/delete-all-slots-button.ui'
+import { AuctionSlotListCard } from './auction-slot-card.ui'
 
 type MemorizedListProps = {
   data: number[]
@@ -81,7 +81,7 @@ const MemorizedList = memo((props: MemorizedListProps) => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, type: 'tween' }}
               >
-                <LocalAuctionSlotListCard
+                <AuctionSlotListCard
                   className={cn(index !== 0 ? 'mt-2' : '')}
                   slotId={id}
                   onFocus={onFocusCard}
@@ -102,7 +102,7 @@ const MemorizedList = memo((props: MemorizedListProps) => {
   )
 })
 
-export const LocalAuctionSlotsList = () => {
+export const AuctionSlotsList = () => {
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
   const pageContext = useLocalAuctionSlotsPageContext()
@@ -177,7 +177,7 @@ function ListBottomControlPanel(props: ListBottomControlPanelProps) {
           </Button>
         </Group>
 
-        <DeleteAllLocalSlotsButton size="sm" />
+        <DeleteAllSlotsButton size="sm" />
       </Group>
     </div>
   )

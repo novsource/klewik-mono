@@ -13,7 +13,7 @@ import { Text } from 'klewik-ui/typography'
 
 import { cn } from '~shared/utils/react'
 
-export const DeleteAllLocalSlotsButton = (props: ButtonProps) => {
+export const DeleteAllSlotsButton = (props: ButtonProps) => {
   const { setSlots } = useActionCreators(auctionSlotsActions)
 
   const [isOpen, setIsOpen] = useState(false)

@@ -18,16 +18,16 @@ import { Icons } from 'klewik-ui/icons'
 import { deleteAllSpacesFromString } from '~shared/utils'
 import { cn } from '~shared/utils/react'
 
-import { DeleteLocalSlotButton } from '../buttons/delete-local-slot-button.ui'
-import { SlotPointsInput } from '../inputs/slot-points-input.ui'
-import { SlotTitleInput } from '../inputs/slot-title-input.ui'
+import { DeleteSlotButton } from '../delete-slots-buttons/delete-slot-button.ui'
+import { SlotPointsInput } from './slot-points-input.ui'
+import { SlotTitleInput } from './slot-title-input.ui'
 
-export type LocalAuctionSlotListCardProps = Omit<CardProps, 'slot' | 'onFocus' | 'onBlur'> & {
+export type AuctionSlotListCardProps = Omit<CardProps, 'slot' | 'onFocus' | 'onBlur'> & {
   slotId: number
   isWinner?: boolean
 } & UseCardFocusOptions
 
-export const LocalAuctionSlotListCard = memo((props: LocalAuctionSlotListCardProps) => {
+export const AuctionSlotListCard = memo((props: AuctionSlotListCardProps) => {
   const { slotId, className, onFocus, onBlur, ...restProps } = props
 
   const winnerId = useStoreSelector(auctionSelectors.getWinnerId)
@@ -134,7 +134,7 @@ function SlotCardControls(props: SlotCardControlsProps) {
             winPercents={Number.isNaN(Number(slot.winPercents)) ? 0 : Number(slot.winPercents.toFixed(2))}
           />
 
-          <DeleteLocalSlotButton slotId={slot.id} />
+          <DeleteSlotButton slotId={slot.id} />
         </div>
 
       </div>

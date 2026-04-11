@@ -4,10 +4,10 @@ import { PageDashboardLayout } from '~shared/layouts/page-dashboard-layout'
 import { Stack } from 'klewik-ui/stack'
 
 import { LocalAuctionSlotsPageContextProvider } from '../context/local-auction-slots-page.context'
-import { AddSlotPanel } from './flows/add-slot-panel.ui'
-import { LocalSearchSlotsInput } from './inputs/search-slots-input.ui'
-import { LocalAuctionSlotsList } from './lists/local-auction-slots-list.ui'
-import { LocalDonationsList } from './lists/local-donations-list.ui'
+import { AddSlotPanel } from './add-slot-panel/add-slot-panel.ui'
+import { AuctionSlotsList } from './auctions-slots-list/auction-slots-list.ui'
+import { DonationsList } from './donations-list/donations-list.ui'
+import { SearchSlotsInput } from './search-input/search-slots-input.ui'
 
 export const LocalAuctionSlotsPage = () => {
   return (
@@ -20,23 +20,24 @@ export const LocalAuctionSlotsPage = () => {
           }}
           gap={24}
         >
-          <Stack className="w-full h-full px-2 basis-4/5" justify="flex-start" align="stretch">
+          <Stack className="w-full h-full px-2 basis-3/4" justify="flex-start" align="stretch">
             <DividedLayout
               slotClassnames={{
                 container: 'w-full flex gap-x-2 items-center',
               }}
               gap={8}
             >
-              <LocalSearchSlotsInput />
 
+              <SearchSlotsInput />
               <AddSlotPanel />
+
             </DividedLayout>
 
-            <LocalAuctionSlotsList />
+            <AuctionSlotsList />
           </Stack>
 
-          <div className="flex w-full h-full basis-1/5">
-            <LocalDonationsList />
+          <div className="flex w-full h-full basis-1/4">
+            <DonationsList />
           </div>
 
         </DividedLayout>
