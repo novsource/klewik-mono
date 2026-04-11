@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -8,7 +8,6 @@ import type { Donation, DonationMessageType } from '~entities/donation/model'
 import type { IntegrationsPlatforms } from '~entities/integrations/model'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
-import type { HexColor } from '~shared/lib/zod'
 
 import type { AutocompleteTag } from 'klewik-ui/autocomplete'
 import { Autocomplete, AutocompleteContent, AutocompleteInput, AutocompleteItem } from 'klewik-ui/autocomplete'
@@ -22,11 +21,11 @@ import { Switch } from 'klewik-ui/switch'
 import { Text } from 'klewik-ui/typography'
 
 import { formatNumberToIntlString } from '~shared/utils'
-import { getHEXColor, getRandomNumberInRange, hexToRgba } from '~shared/utils/common'
+import { getRandomNumberInRange, hexToRgba } from '~shared/utils/common'
 import { cn } from '~shared/utils/react'
 
 import { useLocalDonationCard } from '../../hooks/use-local-donation-card'
-import { boyerMooreSearch } from '../../utils/boyer-moore-search'
+import { useTextSlotsReferences } from '../../hooks/use-text-slots-references'
 import { SlotPointsInput } from '../auctions-slots-list/slot-points-input.ui'
 
 export type DonationsListCardProps = {
@@ -52,8 +51,20 @@ export const DonationsListCard = (props: DonationsListCardProps) => {
         </Group>
 
         <Group gap="sm">
-          <Button variant="action" isIconOnly icon={<Icons.Like />} size="xs" onClick={() => approveDonation({ title: slotInputValue, points: slotPointsValue })} />
-          <Button variant="error" isIconOnly icon={<Icons.Decline />} size="xs" onClick={declineDonation} />
+          <Button
+            variant="action"
+            isIconOnly
+            icon={<Icons.Like />}
+            size="xs"
+            onClick={() => approveDonation({ title: slotInputValue, points: slotPointsValue })}
+          />
+          <Button
+            variant="error"
+            isIconOnly
+            icon={<Icons.Decline />}
+            size="xs"
+            onClick={declineDonation}
+          />
         </Group>
 
       </Group>
@@ -175,64 +186,14 @@ function DonationMessage(props: DonationMessageProps) {
 
   const [isSlotsHighlightingEnabled, setIsSlotsHighlightingEnabled] = useState(false)
 
-  const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
-
-  const defaultSlotsColorsRef = useRef(auctionSlots.reduce((acc, slot) => {
-    acc[slot.title] = getHEXColor()
-
-    return acc
-  }, {} as Record<string, HexColor>))
-
-  const slotsReferencesColors = useMemo(() => {
-    return auctionSlots.reduce((acc, slot) => {
-      const isSlotAlreadyHaveColor = Reflect.has(defaultSlotsColorsRef.current, slot.title)
-
-      if (isSlotAlreadyHaveColor) {
-        acc[slot.title] = defaultSlotsColorsRef.current[slot.title]
-      }
-      else {
-        const color = getHEXColor()
-        acc[slot.title] = color
-      }
-
-      return acc
-    }, {} as Record<string, HexColor>)
-  }, [auctionSlots])
-
-  defaultSlotsColorsRef.current = slotsReferencesColors
-
-  const slotsReferenceInMessage = useMemo(() => {
-    if (!message || messageType !== 'text')
-      return []
-
-    return auctionSlots.reduce((acc, slot) => {
-      if (slot.title.length < 1) {
-        return acc
-      }
-
-      const index = boyerMooreSearch(message, slot.title)
-
-      if (index === -1)
-        return acc
-
-      acc[index] = {
-        slot,
-        color: slotsReferencesColors[slot.title],
-      }
-
-      return acc
-    }, {} as Record<number, {
-      slot: AuctionSlot
-      color: HexColor
-    }>)
-  }, [auctionSlots, message, messageType, slotsReferencesColors])
+  const slotsReferencesInMessage = useTextSlotsReferences(message ?? '')
 
   const renderMessage = () => {
     if (!message)
       return null
 
     if (
-      Object.keys(slotsReferenceInMessage).length === 0
+      Object.keys(slotsReferencesInMessage).length === 0
       || !isSlotsHighlightingEnabled
     ) {
       return <Text className="text-white/70" asSpan>{message}</Text>
@@ -242,10 +203,10 @@ function DonationMessage(props: DonationMessageProps) {
     const result = []
 
     for (let index = 0; index < message.length; index++) {
-      const isSlotsReferencesIncludeIndex = Reflect.has(slotsReferenceInMessage, index)
+      const isSlotsReferencesIncludeIndex = Reflect.has(slotsReferencesInMessage, index)
 
       if (isSlotsReferencesIncludeIndex) {
-        const { slot, color } = slotsReferenceInMessage[index]
+        const { slot, color } = slotsReferencesInMessage[index]
 
         result.push(<Text className="text-white/70" asSpan>{tempSpanValue}</Text>)
         result.push(
@@ -295,7 +256,7 @@ function DonationMessage(props: DonationMessageProps) {
   return (
     <Stack className="w-full mb-3" gap="sm" align="flex-start">
       <Group gap="xs">
-        {Object.values(slotsReferenceInMessage).map((reference) => {
+        {Object.values(slotsReferencesInMessage).map((reference) => {
           return (
             <Text
               key={reference.slot.title}
@@ -316,7 +277,7 @@ function DonationMessage(props: DonationMessageProps) {
         <Group className="w-full" justify="space-between">
           <Text className="text-gray-light" asSpan>Сообщение</Text>
 
-          {Object.keys(slotsReferenceInMessage).length !== 0
+          {Object.keys(slotsReferencesInMessage).length !== 0
             && (
               <Group gap="sm">
                 <Icons.EyeOpen className="text-gray-accent" size="xs" />
