@@ -216,22 +216,28 @@ export const AuctionSlotCardPointsInfo = (props: AuctionSlotCardPointsInfoProps)
   )
 }
 
-export type AuctionSlotCardStatusInfoProps = Omit<ComponentProps<'div'>, 'children'> & {
+export type AuctionSlotCardStatusInfoProps = ExtractComponentClassnameToSlot<Omit<ComponentProps<'div'>, 'children'>, 'container'> & {
   isDropped: boolean
   isWinner?: boolean
-}
+} & SlotClassname<'wrapper'>
 
 export const AuctionSlotCardStatusInfo = (props: AuctionSlotCardStatusInfoProps) => {
-  const { isDropped, isWinner = false, ...restProps } = props
+  const { isDropped, isWinner = false, slotClassnames, ...restProps } = props
 
   return (
-    <AuctionSlotCardContentInfoWrapper {...restProps}>
-      <div className={cn('size-7.5 tablet:size-8 bg-red/10 flex items-center justify-center rounded-small', isDropped && 'bg-dark-light', isWinner && 'bg-orange/10')}>
+    <AuctionSlotCardContentInfoWrapper className={slotClassnames?.container} {...restProps}>
+      <div className={cn([
+        'size-7.5 tablet:size-8 bg-red/10 text-red flex items-center justify-center rounded-small',
+        isDropped && 'bg-dark-light text-gray-light',
+        isWinner && 'bg-orange/10 text-orange',
+        slotClassnames?.wrapper,
+      ])}
+      >
         {isWinner
-          ? <Icons.Crown className="text-orange" />
+          ? <Icons.Crown />
           : isDropped
-            ? <Icons.BrokenHeart className="text-gray-light" />
-            : <Icons.Heart className="text-red" size="xs" />}
+            ? <Icons.BrokenHeart />
+            : <Icons.Heart size="sm" />}
       </div>
     </AuctionSlotCardContentInfoWrapper>
   )

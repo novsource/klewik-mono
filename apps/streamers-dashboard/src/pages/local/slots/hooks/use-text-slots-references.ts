@@ -1,7 +1,9 @@
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
+
+import { useDebounceState, usePrevious, useUnmount } from '~shared/hooks'
 
 import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import type { HexColor } from '~shared/lib/zod'
@@ -16,54 +18,51 @@ type TextSlotReference = {
 export const useTextSlotsReferences = (text: string) => {
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
-  const defaultSlotsColorsRef = useRef(auctionSlots.reduce((acc, slot) => {
-    acc[slot.title] = getHEXColor()
+  const [debouncedSlots, setDebouncedSlots] = useDebounceState(auctionSlots, 250)
 
-    return acc
-  }, {} as Record<string, HexColor>))
+  const previousDebouncedSlots = usePrevious(debouncedSlots)
 
-  const slotsReferencesColors = useMemo(() => {
-    return auctionSlots.reduce((acc, slot) => {
-      const isSlotAlreadyHaveColor = Reflect.has(defaultSlotsColorsRef.current, slot.title)
+  useEffect(() => {
+    setDebouncedSlots(auctionSlots)
+  }, [auctionSlots, setDebouncedSlots])
 
-      if (isSlotAlreadyHaveColor) {
-        acc[slot.title] = defaultSlotsColorsRef.current[slot.title]
-      }
-      else {
-        const color = getHEXColor()
-        acc[slot.title] = color
-      }
+  useUnmount(() => {
+    setDebouncedSlots.cancel()
+  })
 
-      return acc
-    }, {} as Record<string, HexColor>)
-  }, [auctionSlots])
-
-  defaultSlotsColorsRef.current = slotsReferencesColors
+  const defaultSlotsReferencesRef = useRef(getSlotsReferences(text, debouncedSlots))
 
   const slotsReferenceInMessage = useMemo(() => {
-    if (!text)
-      return []
+    const existingsResults: Record<number, TextSlotReference> = {}
+    const updatedSlots: AuctionSlot[] = []
 
-    return auctionSlots.reduce((acc, slot) => {
-      if (slot.title.length < 1) {
-        return acc
+    for (const slot of debouncedSlots) {
+      const isNewSlot = !previousDebouncedSlots?.find(prevSlot => prevSlot.title === slot.title)
+
+      if (isNewSlot) {
+        updatedSlots.push(slot)
       }
+      else {
+        if (!defaultSlotsReferencesRef.current)
+          continue
 
-      const index = boyerMooreSearch(text, slot.title)
+        for (const key in defaultSlotsReferencesRef.current) {
+          const value = defaultSlotsReferencesRef.current[key]
 
-      if (index === -1)
-        return acc
-
-      acc[index] = {
-        slot,
-        color: slotsReferencesColors[slot.title],
+          if (value.slot.title === slot.title) {
+            existingsResults[key] = value
+          }
+        }
       }
+    }
 
-      return acc
-    }, {} as Record<number, TextSlotReference>)
-  }, [auctionSlots, text, slotsReferencesColors])
+    const referencesInUpdatedSlots = getSlotsReferences(text, updatedSlots)
 
-  return slotsReferenceInMessage
+    return { ...referencesInUpdatedSlots, ...existingsResults }
+  }, [debouncedSlots, text, previousDebouncedSlots])
+  defaultSlotsReferencesRef.current = slotsReferenceInMessage
+
+  return defaultSlotsReferencesRef.current
 }
 
 function boyerMooreSearch(text: string, pattern: string) {
@@ -95,4 +94,27 @@ function boyerMooreSearch(text: string, pattern: string) {
     }
   }
   return -1
+}
+
+function getSlotsReferences(text: string, slots: AuctionSlot[]): NullablePossible<Record<number, TextSlotReference>> {
+  if (text.length < 1)
+    return null
+
+  return slots.reduce((acc, slot) => {
+    if (slot.title.length < 1) {
+      return acc
+    }
+
+    const index = boyerMooreSearch(text, slot.title)
+
+    if (index === -1)
+      return acc
+
+    acc[index] = {
+      slot,
+      color: getHEXColor(),
+    }
+
+    return acc
+  }, {} as Record<number, TextSlotReference>)
 }

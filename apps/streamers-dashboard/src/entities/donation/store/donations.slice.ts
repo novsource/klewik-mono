@@ -2,6 +2,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
 import type {
   DonatePayDonation,
+  Donation,
   DonationAlertsDonation,
   ProcessedDonation,
   ProcessedDonationStatus,
@@ -15,6 +16,7 @@ import { getDonationsStatsThunk } from '../api'
 import { DONATIONS_SLICE_INITIAL_STATE as initialState } from '../constants'
 
 export type DonationsSliceState = {
+  rawDonations: Donation[]
   donations: {
     all: ProcessedDonation[]
     donationAlerts: DonationAlertsDonation[]
@@ -97,6 +99,9 @@ const slice = createSlice({
 
       state.donationsStatusesCounts = counts
     },
+    deleteRawDonation(state, action: PayloadAction<number>) {
+      state.rawDonations = state.rawDonations.filter(donation => donation.id !== action.payload)
+    },
   },
   selectors: {
     getDonationsStatusesCounts(state) {
@@ -107,6 +112,11 @@ const slice = createSlice({
     },
     getDonatePayDonations(state) {
       return state.donations.donatePay
+    },
+    getRawDonation(state, id: number) {
+      return state.rawDonations.find(
+        donation => donation.id === id,
+      )
     },
     getDonation(
       state,
@@ -127,6 +137,12 @@ const slice = createSlice({
     },
     getAllDonations(state) {
       return state.donations.all
+    },
+    getAllRawDonations(state) {
+      return state.rawDonations
+    },
+    getRawDonationById(state, id: number) {
+      return state.rawDonations.find(donation => donation.id === id)
     },
   },
   extraReducers: (builder) => {

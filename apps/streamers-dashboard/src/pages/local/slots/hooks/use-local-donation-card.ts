@@ -1,5 +1,7 @@
 import { auctionSlotsActions, auctionSlotsSelectors } from '~entities/auction-slot/store'
 
+import { donationsActions } from '~entities/donation/store'
+
 import type { AuctionSlotsDTO } from '~shared/api/http/auction-slots'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
@@ -8,8 +10,9 @@ export const useLocalDonationCard = () => {
   const auctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
 
   const { addSlots, updateSlot } = useActionCreators(auctionSlotsActions)
+  const { deleteRawDonation } = useActionCreators(donationsActions)
 
-  const approveDonation = (data: { title: string, points: number }) => {
+  const approveDonation = (data: { donationId: number, title: string, points: number }) => {
     const approveTarget = auctionSlots.find(slot => slot.title === data.title)
 
     if (!approveTarget) {
@@ -40,10 +43,12 @@ export const useLocalDonationCard = () => {
     else {
       updateSlot({ id: approveTarget.id, data: { points: approveTarget.points + data.points } })
     }
+
+    deleteRawDonation(data.donationId)
   }
 
-  const declineDonation = () => {
-
+  const declineDonation = (donationId: number) => {
+    deleteRawDonation(donationId)
   }
 
   return { approveDonation, declineDonation }

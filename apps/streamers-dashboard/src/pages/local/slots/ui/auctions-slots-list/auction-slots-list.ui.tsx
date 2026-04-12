@@ -4,7 +4,7 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react'
 
 import { shallowEqual } from 'react-redux'
 
-import { Reorder } from 'motion/react'
+import { AnimatePresence } from 'motion/react'
 import { VList } from 'virtua'
 
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
@@ -16,6 +16,7 @@ import { useStoreSelector } from '~shared/lib/redux-toolkit'
 import { Button } from 'klewik-ui/button'
 import { Group } from 'klewik-ui/group'
 import { Icons } from 'klewik-ui/icons'
+import { MotionBox } from 'klewik-ui/motion-box'
 
 import { cn } from '~shared/utils/react'
 
@@ -28,6 +29,8 @@ type MemorizedListProps = {
   onFocusCard?: () => void
   onBlurCard?: () => void
 }
+
+const DEBOUNCE_LIST_STATE_TIME_MS = 150
 
 const MemorizedList = memo((props: MemorizedListProps) => {
   const { data, onBlurCard, onFocusCard } = props
@@ -68,31 +71,33 @@ const MemorizedList = memo((props: MemorizedListProps) => {
       <VList
         ref={listRef}
         className="px-0.5 py-1 pb-16"
-        itemSize={64}
         onScroll={checkScrollButtonsAccessibility}
       >
-        <Reorder.Group values={data} onReorder={() => { }}>
-          {data.map((id, index) => {
-            return (
-              <Reorder.Item
-                key={`item-${id}`}
-                value={id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3, type: 'tween' }}
-              >
-                <AuctionSlotListCard
-                  className={cn(index !== 0 ? 'mt-2' : '')}
-                  slotId={id}
-                  onFocus={onFocusCard}
-                  onBlur={onBlurCard}
-                />
-              </Reorder.Item>
-            )
-          })}
-        </Reorder.Group>
-      </VList>
+        {data.map((id, index) => {
+          const isVisible = data.find(actualId => actualId === id) !== undefined
 
+          return (
+            <AnimatePresence key={`presense-${id}`} initial={false} mode="wait">
+              {isVisible && (
+                <MotionBox
+                  key={id}
+                  className={cn(index !== 0 ? 'mt-2' : '')}
+                  initial={{ height: 0 }}
+                  animate={{ height: 'auto' }}
+                  exit={{ height: 0 }}
+                  transition={{ duration: DEBOUNCE_LIST_STATE_TIME_MS }}
+                >
+                  <AuctionSlotListCard
+                    slotId={id}
+                    onFocus={onFocusCard}
+                    onBlur={onBlurCard}
+                  />
+                </MotionBox>
+              )}
+            </AnimatePresence>
+          )
+        })}
+      </VList>
       <ListBottomControlPanel
         listHandle={listRef.current}
         toBottomButtonDisabled={isScrollToBottomButtonDisabled}

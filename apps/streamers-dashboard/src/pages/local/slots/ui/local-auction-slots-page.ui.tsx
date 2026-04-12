@@ -36,7 +36,7 @@ export const LocalAuctionSlotsPage = () => {
             <AuctionSlotsList />
           </Stack>
 
-          <div className="flex w-full h-full basis-1/4">
+          <div className="w-full h-full basis-1/4">
             <DonationsList />
           </div>
 

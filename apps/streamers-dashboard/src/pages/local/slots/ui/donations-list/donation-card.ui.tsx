@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsSelectors } from '~entities/auction-slot/store'
 
-import type { Donation, DonationMessageType } from '~entities/donation/model'
+import type { DonationMessageType } from '~entities/donation/model'
+import { donationsSelectors } from '~entities/donation/store'
 
 import type { IntegrationsPlatforms } from '~entities/integrations/model'
 
@@ -29,12 +30,14 @@ import { useTextSlotsReferences } from '../../hooks/use-text-slots-references'
 import { SlotPointsInput } from '../auctions-slots-list/slot-points-input.ui'
 
 export type DonationsListCardProps = {
-  donation: Donation
+  donationId: number
   className?: string
 }
 
-export const DonationsListCard = (props: DonationsListCardProps) => {
-  const { donation, className } = props
+export const DonationsListCard = memo((props: DonationsListCardProps) => {
+  const { donationId, className } = props
+
+  const donation = useStoreSelector(state => donationsSelectors.getRawDonationById(state, donationId)!)
 
   const [slotInputValue, setSlotInputValue] = useState<string>('')
   const [slotPointsValue, setPointsValue] = useState<number | undefined>(donation.amount)
@@ -56,14 +59,14 @@ export const DonationsListCard = (props: DonationsListCardProps) => {
             isIconOnly
             icon={<Icons.Like />}
             size="xs"
-            onClick={() => approveDonation({ title: slotInputValue, points: slotPointsValue })}
+            onClick={() => approveDonation({ donationId: donation.id, title: slotInputValue, points: slotPointsValue })}
           />
           <Button
             variant="error"
             isIconOnly
             icon={<Icons.Decline />}
             size="xs"
-            onClick={declineDonation}
+            onClick={() => declineDonation(donation.id)}
           />
         </Group>
 
@@ -88,7 +91,7 @@ export const DonationsListCard = (props: DonationsListCardProps) => {
       </Group>
     </Card>
   )
-}
+})
 
 type DonationMoneyBadgeProps = {
   amount: number

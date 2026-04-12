@@ -1,4 +1,6 @@
-import { memo, useEffect, useRef, useState } from 'react'
+import type { UseListCardFocusOptions } from '../../hooks/use-list-card-focus'
+
+import { memo, useState } from 'react'
 
 import { auctionSelectors } from '~entities/auction/store'
 
@@ -6,18 +8,20 @@ import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions, auctionSlotsSelectors } from '~entities/auction-slot/store'
 import { AuctionSlotCardStatusInfo, AuctionSlotCardWinPercents } from '~entities/auction-slot/ui/card'
 
-import { useActiveElement, usePrevious } from '~shared/hooks'
+import { useDebounceCallback, usePrevious } from '~shared/hooks'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
 import { Button } from 'klewik-ui/button'
 import type { CardProps } from 'klewik-ui/card'
 import { Card } from 'klewik-ui/card'
+import { Group } from 'klewik-ui/group'
 import { Icons } from 'klewik-ui/icons'
 
 import { deleteAllSpacesFromString } from '~shared/utils'
 import { cn } from '~shared/utils/react'
 
+import { useListCardFocus } from '../../hooks/use-list-card-focus'
 import { DeleteSlotButton } from '../delete-slots-buttons/delete-slot-button.ui'
 import { SlotPointsInput } from './slot-points-input.ui'
 import { SlotTitleInput } from './slot-title-input.ui'
@@ -25,36 +29,114 @@ import { SlotTitleInput } from './slot-title-input.ui'
 export type AuctionSlotListCardProps = Omit<CardProps, 'slot' | 'onFocus' | 'onBlur'> & {
   slotId: number
   isWinner?: boolean
-} & UseCardFocusOptions
+} & UseListCardFocusOptions
 
 export const AuctionSlotListCard = memo((props: AuctionSlotListCardProps) => {
   const { slotId, className, onFocus, onBlur, ...restProps } = props
 
-  const winnerId = useStoreSelector(auctionSelectors.getWinnerId)
-  const slot = useStoreSelector(state => auctionSlotsSelectors.getSlotById(state, slotId))
+  const { updateSlot } = useActionCreators(auctionSlotsActions)
 
-  const { ref } = useCardFocus({ onFocus, onBlur })
+  const winnerId = useStoreSelector(auctionSelectors.getWinnerId)
+  const storedSlot = useStoreSelector(state => auctionSlotsSelectors.getSlotById(state, slotId))
+
+  const previousSlot = usePrevious(storedSlot)
+
+  const { ref } = useListCardFocus({ onFocus, onBlur })
 
   const isWinner = slotId === winnerId
 
   // useActiveElement throw error when ref changes to undefined
-  if (!slot)
+  if (!storedSlot && !previousSlot) {
     return <div ref={ref} className="hidden" />
+  }
+
+  const slot = storedSlot ?? previousSlot
 
   return (
     <Card ref={ref} className={cn('w-full px-2.75 py-1.5 rounded-medium', className)} {...restProps}>
-      <div className="flex items-center gap-x-2 w-full">
+      <Group className="w-full" gap="sm">
 
         <div className="shrink-0">
           <AuctionSlotCardStatusInfo
-            isDropped={slot.isDropped}
+            slotClassnames={{
+              wrapper: cn('cursor-pointer', slot?.isDropped && 'hover:bg-dark-accent', slot?.isAlived && 'hover:bg-red/20'),
+            }}
+            isDropped={slot!.isDropped}
             isWinner={isWinner}
+            onClick={() => {
+              if (!slot)
+                return
+
+              updateSlot({ id: slot.id, data: { isAlived: !slot.isAlived, isDropped: !slot.isDropped } })
+            }}
           />
         </div>
 
-        <SlotCardControls slot={slot} />
-      </div>
+        <SlotCardControls slot={slot!} />
+      </Group>
     </Card>
+  )
+})
+
+type MemoizedTitleInputProps = {
+  slotId: number
+  value: string
+}
+
+const MemoizedTitleInput = memo((props: MemoizedTitleInputProps) => {
+  const { value, slotId } = props
+
+  const { updateSlot } = useActionCreators(auctionSlotsActions)
+
+  const [titleInputValue, setTitleInputValue] = useState(value)
+
+  const updateSlotTitleDebounced = useDebounceCallback((title: string) => {
+    updateSlot({ id: slotId, data: { title } })
+  }, 250)
+
+  const handleTitleOnInput = (value: string) => {
+    setTitleInputValue(value)
+    updateSlotTitleDebounced(value)
+  }
+
+  return (
+    <SlotTitleInput
+      value={titleInputValue}
+      onInput={handleTitleOnInput}
+    />
+  )
+})
+
+type MemoizedPointsInputProps = {
+  slotId: number
+  value: number
+}
+
+const MemoizedPointsInput = memo((props: MemoizedPointsInputProps) => {
+  const { value, slotId } = props
+
+  const [isFocused, setIsFocused] = useState(false)
+
+  const { updateSlot } = useActionCreators(auctionSlotsActions)
+
+  const [pointsInputValue, setPointsInputValue] = useState<Maybe<number>>(value)
+
+  const updateSlotTitleDebounced = useDebounceCallback((points: number) => {
+    updateSlot({ id: slotId, data: { points } })
+  }, 200)
+
+  const handlePointsOnInput = (value: Maybe<number>) => {
+    setPointsInputValue(value)
+    updateSlotTitleDebounced(value ?? 0)
+  }
+
+  return (
+    <SlotPointsInput
+      value={isFocused ? pointsInputValue : value}
+      onInput={handlePointsOnInput}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+    />
   )
 })
 
@@ -69,14 +151,6 @@ function SlotCardControls(props: SlotCardControlsProps) {
 
   const [addedPointsValue, setAddedPointsValue] = useState<string>('')
 
-  const handleTitleChange = (value: string) => {
-    updateSlot({ id: slot.id, data: { title: value } })
-  }
-
-  const handlePointsChange = (value: Maybe<number>) => {
-    updateSlot({ id: slot.id, data: { points: value } })
-  }
-
   const handleAddPointsButtonOnClick = () => {
     if (addedPointsValue.length === 0)
       return
@@ -90,19 +164,17 @@ function SlotCardControls(props: SlotCardControlsProps) {
   return (
     <div className="flex flex-1 min-w-0 gap-x-2">
 
-      <SlotTitleInput
+      <MemoizedTitleInput
+        slotId={slot.id}
         value={slot.title}
-        onInput={handleTitleChange}
       />
 
-      <div className="flex items-center gap-x-2">
-
-        <div className="flex items-center gap-x-1 flex-1 min-w-0">
-
+      <Group gap="sm">
+        <Group className="flex-1 min-w-0" gap="xs">
           <div className="flex-1 min-w-[115px] tablet:min-w-[135px]">
-            <SlotPointsInput
+            <MemoizedPointsInput
+              slotId={slot.id}
               value={slot.points}
-              onInput={handlePointsChange}
             />
           </div>
 
@@ -122,10 +194,9 @@ function SlotCardControls(props: SlotCardControlsProps) {
               onValueChange={values => setAddedPointsValue(values.formattedValue)}
             />
           </div>
-        </div>
+        </Group>
 
-        <div className="flex items-center gap-x-3 flex-none shrink-0">
-
+        <Group className="gap-x-3 flex-none shrink-0">
           <AuctionSlotCardWinPercents
             numberFlowProps={{
               className: 'w-[6ch] text-right tabular-nums shrink-0 overflow-clip',
@@ -135,42 +206,8 @@ function SlotCardControls(props: SlotCardControlsProps) {
           />
 
           <DeleteSlotButton slotId={slot.id} />
-        </div>
-
-      </div>
+        </Group>
+      </Group>
     </div>
   )
-}
-
-type UseCardFocusOptions = {
-  onFocus?: () => void
-  onBlur?: () => void
-}
-
-function useCardFocus(options?: UseCardFocusOptions) {
-  const optionsRef = useRef(options)
-  optionsRef.current = options
-
-  const { ref, value: activeElement } = useActiveElement<HTMLDivElement>()
-
-  const [isActiveElementInside, setIsActiveElementInside] = useState(() => (ref.current?.contains(activeElement) || ref.current === activeElement) ?? false)
-
-  const previousWasActive = usePrevious(isActiveElementInside)
-
-  useEffect(() => {
-    const isFocused = ref.current?.contains(activeElement) || ref.current === activeElement
-
-    if (isFocused !== isActiveElementInside) {
-      setIsActiveElementInside(isFocused)
-
-      if (isFocused) {
-        optionsRef.current?.onFocus?.()
-      }
-      else {
-        optionsRef.current?.onBlur?.()
-      }
-    }
-  }, [previousWasActive, isActiveElementInside, activeElement, ref.state])
-
-  return { ref, isFocused: isActiveElementInside }
 }
