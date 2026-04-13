@@ -4,10 +4,14 @@ import type { AuctionGamesSliceState } from '~entities/games/store'
 import type { ReactNode } from 'react'
 import { useCallback, useMemo, useRef } from 'react'
 
+import { auctionGamesSelectors } from '~entities/games/store'
+
 import { auctionActions, auctionSelectors } from '~entities/auction/store'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 import { auctionSlotsActions, auctionSlotsSelectors } from '~entities/auction-slot/store'
+
+import { transformSlotsToGameMode } from '~entities/wheel/utils'
 
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
 
@@ -15,11 +19,7 @@ import { getPercentValue } from '~shared/utils/common'
 import { createReactContext } from '~shared/utils/react'
 
 type AuctionGameContextValue = {
-  state: AuctionGamesSliceState & {
-    slots: {
-      all: AuctionSlot[]
-    }
-  }
+  state: AuctionGamesSliceState
   actions: {
     play: (slotId: number) => void
     applyResults: () => void
@@ -53,7 +53,7 @@ export const AuctionGameContextProvider = (props: AuctionGameContextProviderProp
 
   const tempGameResultRef = useRef<NullablePossible<AuctionGameTempResult>>(null)
 
-  const { winner, allGameSlots, alivedGameSlots, droppedGameSlots } = useGameSlotsGroups()
+  const { winner, alivedGameSlots, droppedGameSlots } = useGameSlotsGroups()
 
   const setWinnerSlot = useCallback((slotId: number) => {
     const winnerSlot = allAuctionSlots.find(slot => slot.id === slotId)
@@ -129,7 +129,6 @@ export const AuctionGameContextProvider = (props: AuctionGameContextProviderProp
     state: {
       ...gameSlice,
       slots: {
-        all: allGameSlots,
         alived: alivedGameSlots,
         dropped: droppedGameSlots,
         winner,
@@ -140,7 +139,6 @@ export const AuctionGameContextProvider = (props: AuctionGameContextProviderProp
       applyResults: applyPlayedResults,
     },
   }), [
-    allGameSlots,
     applyPlayedResults,
     gameSlice,
     play,
@@ -158,6 +156,8 @@ export { useAuctionGameContext }
 
 function useGameSlotsGroups() {
   const allAuctionSlots = useStoreSelector(auctionSlotsSelectors.getSlots)
+  const gameMode = useStoreSelector(auctionGamesSelectors.getGameMode)
+
   const { winnerSlotId } = useStoreSelector(auctionSelectors.getInfo)
 
   const winnerSlot = useMemo(() => {
@@ -166,14 +166,6 @@ function useGameSlotsGroups() {
 
     return allAuctionSlots.find(slot => slot.id === winnerSlotId)!
   }, [winnerSlotId, allAuctionSlots])
-
-  const alivedSlotsPointsSum = useMemo(() => {
-    if (winnerSlot) {
-      return winnerSlot.points
-    }
-
-    return allAuctionSlots.reduce((sum, slot) => sum + slot.points, 0)
-  }, [allAuctionSlots, winnerSlot])
 
   const gameSlots = useMemo(() => {
     if (winnerSlot) {
@@ -185,24 +177,30 @@ function useGameSlotsGroups() {
       }))
     }
 
-    return allAuctionSlots.map(slot => (
-      {
-        ...slot,
-        winPercents:
-          slot.isAlived
-            ? getPercentValue(alivedSlotsPointsSum, slot.points)
-            : 0,
-      }))
-  }, [allAuctionSlots, winnerSlot, alivedSlotsPointsSum])
+    const alivedSlotsPoints = allAuctionSlots.reduce((sum, slot) => {
+      if (slot.isDropped) {
+        return sum
+      }
 
-  const alivedSlots = useMemo(() => {
-    if (winnerSlot)
-      return [{ ...winnerSlot, winPercents: 100 }]
+      sum += slot.points
 
-    return gameSlots.filter(slot => slot.isAlived && slot.points > 0)
-  }, [gameSlots, winnerSlot])
+      return sum
+    }, 0)
 
-  const droppedSlots = useMemo(() => gameSlots.filter(slot => slot.isDropped), [gameSlots])
+    const result: AuctionSlot[] = []
 
-  return { winner: winnerSlot, allGameSlots: gameSlots, alivedGameSlots: alivedSlots, droppedGameSlots: droppedSlots }
+    for (const slot of allAuctionSlots) {
+      if (slot.isAlived && slot.points > 0) {
+        result.push({ ...slot, winPercents: getPercentValue(alivedSlotsPoints, slot.points) })
+      }
+    }
+
+    const slotsWithGameMode = transformSlotsToGameMode(result, gameMode)
+
+    return slotsWithGameMode
+  }, [allAuctionSlots, winnerSlot, gameMode])
+
+  const droppedSlots = useMemo(() => allAuctionSlots.filter(slot => slot.isDropped), [allAuctionSlots])
+
+  return { winner: winnerSlot, alivedGameSlots: gameSlots, droppedGameSlots: droppedSlots }
 }

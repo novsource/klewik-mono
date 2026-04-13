@@ -17,7 +17,7 @@ export const WheelCanvas = (props: WheelCanvasProps) => {
 
   const {
     state: { isSpinning, wheelSlots, rotateValue },
-    refs: { wheelRef, innerRef },
+    meta: { wheelRef, innerRef },
   } = useWheelCanvas(auctionSlots)
 
   const wheelMask = `linear-gradient(

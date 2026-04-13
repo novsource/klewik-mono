@@ -1,29 +1,26 @@
-import type { RefObject } from 'react'
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import type { WheelSlicesSizeMode } from '../store/wheel-slice'
 
-import { auctionGamesSelectors } from '~entities/games/store'
+import type { RefObject } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+
 import { animate, transform, useMotionValue } from 'motion/react'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
 
 import type { WheelSlot } from '~entities/wheel/model'
 
-import { useResizeObserver } from '~shared/hooks/use-resize-observer'
-
 import { useActionCreators, useStoreSelector } from '~shared/lib/redux-toolkit'
-import type { HexColor } from '~shared/lib/zod'
+import type { HexColor, RGBAColor } from '~shared/lib/zod'
 
 import { clearCanvas, getHEXColor, getMaxSizeCanvas, resizeCanvasWithRatio } from '~shared/utils/common'
 
 import { wheelActions } from '../store'
-import { formatSlotsToDropoutMode } from '../utils'
 import {
   calculateRotateWheelCSSValue,
   drawEmptyWheel,
   drawSlicesItems,
   getSlotNameOnSelector,
   transformSlotsToWheelSlots,
-  updateSlotsAnglesByRotateValue,
 } from '../utils/wheel-canvas'
 
 const HDR_TINY_CLOVER_PATH_2D = new Path2D(
@@ -142,27 +139,24 @@ const useWheelBackground = (
 }
 
 type UseWheelInitReturn = {
-  refs: {
+  meta: {
     wheelRef: RefObject<HTMLCanvasElement>
     innerRef: RefObject<HTMLCanvasElement>
   }
-  functions: {
-    drawWheel: () => void
+  render: {
+    drawWheel: (slots: WheelSlot[]) => void
     drawInner: () => void
-    resizeWheel: () => void
+    resizeWheel: (slots: WheelSlot[]) => void
     resizeInnerBackground: () => void
   }
-  properties: {
+  state: {
     wheelSize: number
   }
 }
 
-const useWheelInit = (
-  slots: WheelSlot[],
-): UseWheelInitReturn => {
+const useDrawWheelCanvas = (): UseWheelInitReturn => {
   const [wheelSize, setWheelSize] = useState(0)
 
-  const documentBodyRef = useRef(document.body)
   const wheelCanvasRef = useRef<HTMLCanvasElement>(null)
   const innerWheelCanvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -170,25 +164,27 @@ const useWheelInit = (
 
   const { drawBackground, resizeBackground } = useWheelBackground(innerWheelCanvasRef)
 
-  const draw = useCallback(() => {
-    const wheelCanvas = wheelCanvasRef.current
+  const draw = useCallback((slots: WheelSlot[]) => {
+    const canvas = wheelCanvasRef.current
 
-    if (!wheelCanvas)
+    if (!canvas)
       return
 
-    const isSlotsArrEmpty = !slots.length
+    const isNoSlots = slots.length === 0
 
-    if (isSlotsArrEmpty || !slots) {
-      drawEmptyWheel(wheelCanvas, {
+    clearCanvas(canvas)
+
+    if (isNoSlots || !slots) {
+      drawEmptyWheel(canvas, {
         color: defaultWheelColor.current,
       })
     }
     else {
-      drawSlicesItems(wheelCanvas, slots)
+      drawSlicesItems(canvas, slots)
     }
-  }, [wheelCanvasRef, slots])
+  }, [wheelCanvasRef])
 
-  const resizeWheel = useCallback(() => {
+  const resizeWheel = useCallback((slots: WheelSlot[]) => {
     const wheelCanvas = wheelCanvasRef.current
     const innerCanvas = innerWheelCanvasRef.current
 
@@ -211,30 +207,18 @@ const useWheelInit = (
     resizeCanvasWithRatio(innerCanvas, wrapper)
 
     setWheelSize(wheelCanvas.clientWidth)
-    draw()
+    draw(slots)
   }, [wheelCanvasRef, innerWheelCanvasRef, draw])
 
-  useResizeObserver(documentBodyRef, {
-    onChange: () => {
-      drawBackground()
-      resizeWheel()
-      resizeBackground()
-    },
-  })
-
-  useEffect(() => {
-    resizeBackground()
-  }, [slots, resizeBackground])
-
   return {
-    refs: {
+    meta: {
       wheelRef: wheelCanvasRef,
       innerRef: innerWheelCanvasRef,
     },
-    properties: {
+    state: {
       wheelSize,
     },
-    functions: {
+    render: {
       drawWheel: draw,
       resizeWheel,
       resizeInnerBackground: resizeBackground,
@@ -246,11 +230,11 @@ const useWheelInit = (
 type WheelControlCallbacks = {
   rotateValue?: number
   onSpinStart?: (winner: WheelSlot) => void
-  onSpinComplete?: (winnerLot: WheelSlot) => void
+  onSpinComplete?: (winnerLot: WheelSlot, rotateValue: number) => void
 }
 
 type WheelControlOptions = Partial<WheelControlCallbacks> & {
-  wheelRef: RefObject<HTMLElement>
+  wheelRef: RefObject<HTMLCanvasElement>
   initialRotateValue?: number
 }
 
@@ -258,18 +242,12 @@ const useWheelControl = (
   wheelSlots: WheelSlot[],
   options: WheelControlOptions,
 ) => {
-  const {
-    wheelRef,
-    rotateValue,
-    ...listeners
-  } = options
+  const { wheelRef, rotateValue, ...listeners } = options
 
-  const [selectorTargetTitle, setSelectorTargetTitle] = useState<string | null>(
-    null,
-  )
+  const [selectorTargetTitle, setSelectorTargetTitle] = useState<string | null>(null)
   const [isWheelSpinning, setIsWheelSpinning] = useState(false)
-  const framerMotionAnimationValue = useMotionValue(rotateValue ?? 0)
 
+  const framerMotionAnimationValue = useMotionValue(rotateValue ?? 0)
   const [wheelRotateCSSValue, setWheelRotateCSSValue] = useState(() =>
   ({
     current: framerMotionAnimationValue.get(),
@@ -299,21 +277,19 @@ const useWheelControl = (
           setIsWheelSpinning(true)
 
           listeners.onSpinStart?.(target)
-          wheel.style.willChange = 'transform'
         },
         onUpdate(currentDegree) {
           const slotTitle = getSlotNameOnSelector(currentDegree, wheelSlots)
 
           setSelectorTargetTitle(slotTitle)
 
-          wheel.style.transform = `rotateZ(${currentDegree}deg)`
+          wheel.style.rotate = `${currentDegree}deg`
         },
         onComplete: () => {
           setIsWheelSpinning(false)
-
           setWheelRotateCSSValue({ current: framerMotionAnimationValue.get(), final: framerMotionAnimationValue.get() })
 
-          listeners.onSpinComplete?.(target)
+          listeners.onSpinComplete?.(target, framerMotionAnimationValue.get())
         },
       })
     },
@@ -332,98 +308,72 @@ const useWheelControl = (
 
   return {
     state: { wheelRotateCSSValue, isWheelSpinning, selectorTargetTitle },
-    functions: { startWheelSpinAnimation },
+    actions: { startWheelSpinAnimation },
   }
 }
 
 export type UseWheelCanvasReturn = {
-  refs: {
+  meta: {
     wheelRef: RefObject<HTMLCanvasElement>
     innerRef: RefObject<HTMLCanvasElement>
   }
-  functions: {
+  actions: {
     startWheelSpinAnimation: (target: WheelSlot, spinTime: number) => void
   }
   state: {
     isSpinning: boolean
     wheelSlots: WheelSlot[]
     rotateValue: number
+    selectorCurrentSlot: NullablePossible<string>
   }
+  render: {
+    initDraw: (slots: WheelSlot[]) => void
+  } & ReturnType<typeof useDrawWheelCanvas>['render']
 }
 
-export const useWheelCanvas = (slots: AuctionSlot[]): UseWheelCanvasReturn => {
+type UseWheelOptions = {
+  sizeMode: WheelSlicesSizeMode
+}
+
+export const useWheelCanvas = (auctionSlots: AuctionSlot[], options: UseWheelOptions): UseWheelCanvasReturn => {
   const {
     rotateValue: storedRotateWheelValue,
     spinStatus: storedSpinStatus,
-    highlightedSlotId: storedHighlightedSlotId,
     selectorTargetTitle: storeSelectorTitle,
-    spinTarget: storedSpinTarget,
-    settings: storedWheelSettings,
   } = useStoreSelector(state => state.wheel)
 
-  const storedWheelMode = useStoreSelector(auctionGamesSelectors.getGameMode)
+  const initialSlotsColorsRef = useRef<NullablePossible<Record<number, HexColor | RGBAColor>>>(null)
 
-  const { setSlots, setRotateValue, setWheelStatus, setSelectorTitleName } = useActionCreators(wheelActions)
+  const { setRotateValue, setSelectorTitleName } = useActionCreators(wheelActions)
 
-  const preparedSlots = useMemo(() => {
-    const formattedByModeSlots = storedWheelMode === 'classic' ? slots : formatSlotsToDropoutMode(slots)
+  const [wheelSlots, setWheelSlots] = useState(() => {
+    const slots = transformSlotsToWheelSlots(auctionSlots, options.sizeMode)
 
-    if (!storedHighlightedSlotId)
-      return formattedByModeSlots
+    if (initialSlotsColorsRef.current) {
+      return slots.map(slot => ({ ...slot, color: initialSlotsColorsRef.current![slot.id] }))
+    }
 
-    return formattedByModeSlots.map((slot) => {
-      if (slot.id === storedHighlightedSlotId) {
-        return slot
-      }
+    initialSlotsColorsRef.current = slots.reduce<Record<number, HexColor | RGBAColor>>(
+      (acc, slot) => {
+        acc[slot.id] = slot.color
 
-      return { ...slot, color: '#333' as HexColor }
-    })
-  }, [storedHighlightedSlotId, storedWheelMode, slots])
+        return acc
+      },
+      {},
+    )
 
-  const {
-    refs: { wheelRef, innerRef },
-    functions: { drawWheel, drawInner, resizeInnerBackground, resizeWheel },
-  } = useWheelInit(transformSlotsToWheelSlots(preparedSlots))
+    return slots
+  })
+
+  const drawWheelCanvas = useDrawWheelCanvas()
 
   const {
     state: { wheelRotateCSSValue, selectorTargetTitle, isWheelSpinning },
-    functions: { startWheelSpinAnimation },
-  } = useWheelControl(transformSlotsToWheelSlots(preparedSlots), {
+    actions,
+  } = useWheelControl(wheelSlots, {
     rotateValue: storedSpinStatus === 'spinning' ? storedRotateWheelValue.current : storedRotateWheelValue.final,
-    wheelRef,
+    wheelRef: drawWheelCanvas.meta.wheelRef,
   })
-
-  const wheelSlots = useMemo(() => {
-    if (isWheelSpinning)
-      return transformSlotsToWheelSlots(preparedSlots)
-
-    return updateSlotsAnglesByRotateValue(
-      transformSlotsToWheelSlots(preparedSlots),
-      wheelRotateCSSValue.final,
-    )
-  }, [wheelRotateCSSValue, isWheelSpinning, preparedSlots])
-
-  useEffect(() => {
-    if (isWheelSpinning)
-      return
-
-    setSlots(wheelSlots)
-  }, [wheelSlots, isWheelSpinning])
-
-  const storedIsWheelSpinning = storedSpinStatus === 'spinning'
-
-  useEffect(() => {
-    if (!storedSpinTarget)
-      return
-
-    startWheelSpinAnimation(storedSpinTarget, storedWheelSettings.spinTime)
-  }, [storedSpinTarget, storedWheelSettings.spinTime])
-
-  if (storedIsWheelSpinning !== isWheelSpinning) {
-    const wheelStatus = isWheelSpinning ? 'spinning' : 'idle'
-
-    setWheelStatus(wheelStatus)
-  }
 
   if (isWheelSpinning && storeSelectorTitle !== selectorTargetTitle && selectorTargetTitle) {
     setSelectorTitleName(selectorTargetTitle)
@@ -432,18 +382,46 @@ export const useWheelCanvas = (slots: AuctionSlot[]): UseWheelCanvasReturn => {
   if (storedRotateWheelValue.final !== wheelRotateCSSValue.final) {
     setRotateValue(wheelRotateCSSValue)
   }
+  useEffect(() => {
+    // const formattedSlotsWithMode = transformSlotsToGameMode(auctionSlots, options.mode)
+    const wheelSlots = transformSlotsToWheelSlots(auctionSlots, options.sizeMode)
 
-  useLayoutEffect(() => {
-    drawWheel()
+    setWheelSlots(wheelSlots)
+  }, [auctionSlots, options.sizeMode])
+
+  const initDraw = (slots: WheelSlot[]) => {
+    const { render: { drawInner, drawWheel, resizeInnerBackground, resizeWheel } } = drawWheelCanvas
+
+    drawWheel(slots)
     drawInner()
 
     resizeInnerBackground()
-    resizeWheel()
-  }, [drawWheel, resizeWheel, drawInner, resizeInnerBackground])
+    resizeWheel(slots)
+  }
+
+  const updateWheelSlotsColors = () => {
+    setWheelSlots(curr => curr.map((slot) => {
+      const randomHexColor = getHEXColor()
+
+      return { ...slot, color: randomHexColor }
+    }))
+  }
 
   return {
-    state: { isSpinning: isWheelSpinning, wheelSlots, rotateValue: wheelRotateCSSValue.final },
-    refs: { wheelRef, innerRef },
-    functions: { startWheelSpinAnimation },
+    state: {
+      isSpinning: isWheelSpinning,
+      wheelSlots,
+      selectorCurrentSlot: selectorTargetTitle,
+      rotateValue: wheelRotateCSSValue.final,
+    },
+    meta: drawWheelCanvas.meta,
+    actions: {
+      ...actions,
+      updateWheelSlotsColors,
+    },
+    render: {
+      initDraw,
+      ...drawWheelCanvas.render,
+    },
   }
 }

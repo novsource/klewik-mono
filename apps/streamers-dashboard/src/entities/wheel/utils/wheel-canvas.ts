@@ -59,15 +59,14 @@ export const drawSlicesItems = (
   const x = canvas.width / 2
   const y = canvas.height / 2
 
-  let startAngle = 0
-  const sumValues = items.reduce((acc, item) => acc + item.points, 0)
+  let startAngleRadians = 0
 
   for (const item of items) {
     const sliceArcLength
-      = getMaxCircleLength(radius) * getPercentValue(sumValues, item.points)
-    const endAngle
-      = startAngle
-        + convertDegreesToRadians(getDegreeByArcLength(radius, sliceArcLength))
+      = getMaxCircleLength(radius) * item.winPercents
+    const endAngleRadians
+      = startAngleRadians
+      + convertDegreesToRadians(getDegreeByArcLength(radius, sliceArcLength))
 
     drawSlice({
       context,
@@ -75,13 +74,13 @@ export const drawSlicesItems = (
         x,
         y,
         radius,
-        startAngle,
-        endAngle,
+        startAngle: startAngleRadians,
+        endAngle: endAngleRadians,
         color: item.color,
       },
     })
 
-    startAngle = endAngle
+    startAngleRadians = endAngleRadians
   }
 }
 
@@ -207,13 +206,13 @@ export const getSliceInfo = (
 }
 
 export const transformSlotsToWheelSlots = <T extends AuctionSlot>(
-  lots: T[] | null,
+  slots: T[] | null,
   sliceMode: WheelSlicesSizeMode = 'auto',
 ): WheelSlot[] => {
-  if (!lots || lots.length === 0)
+  if (!slots || slots.length === 0)
     return []
 
-  const sumItemsValue = lots.reduce((acc, lot) => acc + lot.points, 0)
+  const sumItemsValue = slots.reduce((acc, slot) => acc + slot.points, 0)
 
   // Radius size not important
   const radius = 1
@@ -223,15 +222,15 @@ export const transformSlotsToWheelSlots = <T extends AuctionSlot>(
   let smallestAnglesDiff = Number.MAX_SAFE_INTEGER
   let startAngle = 0
 
-  const lotsWithAngles = lots.reduce((acc: WheelSlot[], item: AuctionSlot) => {
+  const slotsWithAngles = slots.reduce((acc: WheelSlot[], slot: AuctionSlot) => {
     const itemArcLength
-      = maxWheelArcLength * getPercentValue(sumItemsValue, item.points)
+      = maxWheelArcLength * getPercentValue(sumItemsValue, slot.points)
 
     const degrees = getDegreeByArcLength(radius, itemArcLength)
     const endAngle = startAngle + degrees
 
     acc.push({
-      ...item,
+      ...slot,
       color: getHEXColor(),
       startAngle,
       endAngle,
@@ -249,24 +248,24 @@ export const transformSlotsToWheelSlots = <T extends AuctionSlot>(
   }, [])
 
   if (sliceMode === 'points' || (sliceMode === 'auto' && smallestAnglesDiff > 3))
-    return lotsWithAngles
+    return slotsWithAngles
 
   startAngle = 0
 
-  const part = 360 / lots.length
+  const part = 360 / slots.length
 
-  const updatedAngles = lotsWithAngles.map((lot) => {
+  const slotsWithEqualAngles = slotsWithAngles.map((slotWithAngles) => {
     const endAngle = startAngle + part
 
-    lot.startAngle = startAngle
-    lot.endAngle = endAngle
+    slotWithAngles.startAngle = startAngle
+    slotWithAngles.endAngle = endAngle
 
     startAngle = endAngle
 
-    return lot
+    return slotWithAngles
   })
 
-  return updatedAngles
+  return slotsWithEqualAngles
 }
 
 export const getSlotNameOnSelector = (
@@ -284,14 +283,14 @@ export const getSlotNameOnSelector = (
       = slot.startAngle + rotateAngle <= 360
         ? slot.startAngle + rotateAngle
         : slot.startAngle
-          + rotateAngle
-          - 360 * Math.floor((slot.startAngle + rotateAngle) / 360)
+        + rotateAngle
+        - 360 * Math.floor((slot.startAngle + rotateAngle) / 360)
     const endAngle
       = slot.endAngle + rotateAngle <= 360
         ? slot.endAngle + rotateAngle
         : slot.endAngle
-          + rotateAngle
-          - 360 * Math.floor((slot.endAngle + rotateAngle) / 360)
+        + rotateAngle
+        - 360 * Math.floor((slot.endAngle + rotateAngle) / 360)
 
     if (endAngle < startAngle && startAngle <= selectorDegree) {
       return slot.title
@@ -385,8 +384,8 @@ export const updateSlotsAnglesByRotateValue = (
     if (startAngle + rotateValue > 360) {
       startAngle
         = startAngle
-          + realRotate
-          - Math.floor((startAngle + realRotate) / 360) * 360
+        + realRotate
+        - Math.floor((startAngle + realRotate) / 360) * 360
     }
     else {
       startAngle += realRotate

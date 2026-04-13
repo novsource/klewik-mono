@@ -6,7 +6,7 @@ import { auctionGamesSelectors } from '~entities/games/store'
 import { CardsGame } from '~entities/games/ui/card-game'
 
 import { WheelGameContextProvider } from '~entities/wheel/context'
-import { useWheel } from '~entities/wheel/hooks'
+import { useWheelCanvas } from '~entities/wheel/hooks'
 
 import { useDocumentTitle } from '~shared/hooks'
 
@@ -27,13 +27,11 @@ export const LocalAuctionGame = (props: AuctionGameProps) => {
   const auctionGameContext = useAuctionGameContext()
 
   const auctionGame = useStoreSelector(auctionGamesSelectors.getGame)
-  const gameMode = useStoreSelector(auctionGamesSelectors.getGameMode)
   const wheelGameSettings = useStoreSelector(auctionGamesSelectors.getWheelGameSettings)
 
   const cardsGame = useCardsGame(auctionGameContext.state.slots.alived)
-  const wheelGame = useWheel(auctionGameContext.state.slots.alived, {
+  const wheelGame = useWheelCanvas(auctionGameContext.state.slots.alived, {
     sizeMode: wheelGameSettings.slicesDisplayMode,
-    mode: gameMode,
   })
 
   const { set: setDocumentTitle } = useDocumentTitle(auctionGame === 'cards'

@@ -1,6 +1,6 @@
-import { z } from 'zod'
+import type { z } from 'zod'
 
-import { WheelSlotSchema } from './wheel.contracts'
+import type { WheelSlotSchema } from './wheel.contracts'
 
 export type WheelMode = 'classic' | 'dropout'
 

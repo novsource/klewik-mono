@@ -33,7 +33,10 @@ export const GameSlotsTabContent = (props: GameSlotsTabContentProps) => {
   const [slotCategory, setSlotCategory] = useState<'all' | 'active' | 'dropped'>('all')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const localSortedSlots = useMemo(() => [...auctionGameContext.state.slots.all].sort((a, b) => b.points - a.points), [auctionGameContext.state.slots.all])
+  const localSortedSlots = useMemo(() => [
+    ...auctionGameContext.state.slots.alived,
+    ...auctionGameContext.state.slots.dropped,
+  ].sort((a, b) => b.points - a.points), [auctionGameContext.state.slots])
 
   const localSearchedSlots = useLocalSearchFilter(searchQuery, localSortedSlots, (query, slot) => {
     const isTitleIncludesSearchQuery = slot.title.toLowerCase().includes(query.toLowerCase())

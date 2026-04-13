@@ -1,3 +1,5 @@
+import type { AuctionGameMode } from '~entities/games/model'
+
 import type { WheelSlot } from '../model'
 
 import type { AuctionSlot } from '~entities/auction-slot/model'
@@ -15,19 +17,51 @@ export const formatSlotsToDropoutMode = (slots: AuctionSlot[]) => {
   let right = slots.length - 1
 
   while (left <= right) {
-    const buffer = sortedLots[left].points
+    const temp = sortedLots[left].points
     sortedLots[left].points = sortedLots[right].points
-    sortedLots[right].points = buffer
+    sortedLots[right].points = temp
 
     left++
     right--
   }
 
   return clonedSlots.map((slot) => {
-    const findingLot = sortedLots.find(item => item.id === slot.id)
+    const findedSlot = sortedLots.find(item => item.id === slot.id)
 
-    if (findingLot) {
-      slot.points = findingLot.points
+    if (findedSlot) {
+      slot.points = findedSlot.points
+    }
+
+    return slot
+  })
+}
+
+export const transformSlotsToGameMode = (auctionSlots: AuctionSlot[], mode: AuctionGameMode) => {
+  if (mode === 'classic')
+    return auctionSlots
+
+  const sortedSlots = [...auctionSlots].sort((a, b) => b.points - a.points)
+
+  let left = 0
+  let right = auctionSlots.length - 1
+
+  // reverse
+  while (left <= right) {
+    const temp = sortedSlots[left].points
+    sortedSlots[left].points = sortedSlots[right].points
+    sortedSlots[right].points = temp
+
+    left++
+    right--
+  }
+
+  console.log('sorted', auctionSlots, sortedSlots)
+
+  return auctionSlots.map<AuctionSlot>((slot) => {
+    const findedSlot = sortedSlots.find(item => item.id === slot.id)
+
+    if (findedSlot) {
+      return { ...slot, points: findedSlot.points }
     }
 
     return { ...slot }

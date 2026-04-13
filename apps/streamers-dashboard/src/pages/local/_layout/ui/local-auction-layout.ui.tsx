@@ -23,8 +23,6 @@ import { Icons } from 'klewik-ui/icons'
 import { Stack } from 'klewik-ui/stack'
 
 import { LOCAL_NAVBAR_LINKS } from '../constants/local-navbar-links'
-import { useLocalDashboardStateRestore } from '../hooks/use-local-dashboard-state-restore'
-import { useLocalStateAutosave } from '../hooks/use-local-state-autosave'
 
 export const LocalAuctionLayout = () => {
   const { setDialogOpenStatus } = useActionCreators(globalDialogsActions)
@@ -79,8 +77,8 @@ export const LocalAuctionLayout = () => {
 function useLocalAuctionDashboard() {
   const { setAuctionType } = useActionCreators(auctionActions)
 
-  useLocalDashboardStateRestore()
-  useLocalStateAutosave()
+  // useLocalDashboardStateRestore()
+  // useLocalStateAutosave()
 
   useMount(() => {
     setAuctionType('local')

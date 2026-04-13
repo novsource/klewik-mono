@@ -84,7 +84,7 @@ export const drawSlice = ({
   const sliceHeight = radius * 0.92
 
   context.strokeStyle = '#1F1F22'
-  context.lineWidth = 2
+  context.lineWidth = 1
 
   context.globalCompositeOperation = 'source-over'
 
